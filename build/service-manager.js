@@ -2,7 +2,7 @@
 	typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global));
 })(this, function(exports) {
 	Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-	//#region src/utils.ts
+	// src/utils.ts
 	function mergeObjects(obj1, obj2, excludeUndefined = false) {
 		if (!obj1) return obj2;
 		if (!obj2) return obj1;
@@ -28,8 +28,7 @@
 	function notEmpty(value) {
 		return value !== null && value !== void 0;
 	}
-	//#endregion
-	//#region src/message-types.ts
+	// src/message-types.ts
 	var MessageType = /* @__PURE__ */ function(MessageType) {
 		MessageType[MessageType["init"] = 0] = "init";
 		MessageType[MessageType["format"] = 1] = "format";
@@ -61,7 +60,6 @@
 		MessageType[MessageType["inlineComplete"] = 27] = "inlineComplete";
 		return MessageType;
 	}({});
-	//#endregion
 	exports.ServiceManager = class ServiceManager {
 		constructor(ctx) {
 			this.$services = {};
@@ -215,9 +213,7 @@
 					case MessageType.sendRequest:
 						postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendRequest(message.value, message.args);
 						break;
-					case MessageType.sendResponse:
-						postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendResponse(message.callbackId, message.args);
-						break;
+					case MessageType.sendResponse: postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendResponse(message.callbackId, message.args);
 				}
 				ctx.postMessage(postMessage);
 			});
@@ -246,11 +242,12 @@
 		}
 		static async $initServiceInstance(service, ctx, workspaceUri) {
 			let module;
-			if ("type" in service) if (["socket", "webworker"].includes(service.type)) {
-				module = await service.module();
-				service.serviceInstance = new module["LanguageClient"](service, ctx, workspaceUri);
-			} else throw "Unknown service type";
-			else {
+			if ("type" in service) {
+				if (["socket", "webworker"].includes(service.type)) {
+					module = await service.module();
+					service.serviceInstance = new module["LanguageClient"](service, ctx, workspaceUri);
+				} else throw "Unknown service type";
+			} else {
 				module = await service.module();
 				service.serviceInstance = new module[service.className](service.modes);
 			}

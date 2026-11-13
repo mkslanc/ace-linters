@@ -1,4 +1,5 @@
-import { BaseConfig as CoreBaseConfig, ConfigObject, ConfigOverride as CoreConfigOverride, DeprecatedInfo, EcmaVersion as CoreEcmaVersion, EnvironmentConfig, GlobalAccess, GlobalsConfig, HasRules as CoreHasRules, JavaScriptParserOptionsConfig, JavaScriptSourceType, LanguageOptions as GenericLanguageOptions, LegacyConfigObject, LintMessage as CoreLintMessage, LintSuggestion as CoreLintSuggestion, LinterOptionsConfig, ObjectMetaProperties as CoreObjectMetaProperties, Plugin as CorePlugin, Processor as CoreProcessor, ProcessorFile as CoreProcessorFile, RuleConfig, RuleContext as CoreRuleContext, RuleDefinition, RuleFixer as CoreRuleFixer, RuleTextEdit, RuleTextEditor, RuleVisitor, RulesConfig, RulesMeta, Severity as CoreSeverity, SeverityLevel, SeverityName, SourceRange, SuggestedEdit, SuggestedEditBase, SuggestionMessage, TextSourceCode, TraversalStep, ViolationLocation, ViolationMessage, ViolationReport, ViolationReportBase } from '@eslint/core';
+import { BaseConfig as CoreBaseConfig, ConfigObject, ConfigOverride as CoreConfigOverride, DeprecatedInfo, EcmaVersion as CoreEcmaVersion, EnvironmentConfig, GlobalAccess, GlobalsConfig, HasRules as CoreHasRules, JavaScriptSourceType, LanguageOptions as GenericLanguageOptions, LegacyConfigObject, LintMessage as CoreLintMessage, LintSuggestion as CoreLintSuggestion, LinterOptionsConfig, ObjectMetaProperties as CoreObjectMetaProperties, Plugin as CorePlugin, Processor as CoreProcessor, ProcessorFile as CoreProcessorFile, RuleConfig, RuleContext as CoreRuleContext, RuleDefinition, RuleFixer as CoreRuleFixer, RuleTextEdit, RuleTextEditor, RulesConfig, RulesMeta, Severity as CoreSeverity, SeverityLevel, SeverityName, SourceRange, SuggestedEdit, SuggestedEditBase, SuggestionMessage, TextSourceCode, TraversalStep, ViolationLocation, ViolationMessage, ViolationReport, ViolationReportBase } from '@eslint/core';
+import { CustomRuleVisitorWithExit } from '@eslint/plugin-kit';
 import * as ESTree from 'estree';
 import * as lsp from 'vscode-languageserver-protocol';
 import { LSPAny, TextDocumentIdentifier, TextDocumentItem } from 'vscode-languageserver-protocol';
@@ -16,10 +17,7 @@ declare namespace AST {
 		start: ESTree.Position;
 		end: ESTree.Position;
 	}
-	type Range = [
-		number,
-		number
-	];
+	type Range = SourceRange;
 	interface Program extends ESTree.Program {
 		comments: ESTree.Comment[];
 		tokens: Token[];
@@ -27,15 +25,20 @@ declare namespace AST {
 		range: Range;
 	}
 }
+export interface JSXIdentifier extends ESTree.BaseNode {
+	type: "JSXIdentifier";
+	name: string;
+}
 declare namespace Scope {
 	interface ScopeManager {
 		scopes: Scope[];
 		globalScope: Scope | null;
 		acquire(node: ESTree.Node, inner?: boolean): Scope | null;
 		getDeclaredVariables(node: ESTree.Node): Variable[];
+		addGlobals(names: ReadonlyArray<string>): void;
 	}
 	interface Scope {
-		type: "block" | "catch" | "class" | "class-field-initializer" | "class-static-block" | "for" | "function" | "function-expression-name" | "global" | "module" | "switch" | "with" | "TDZ";
+		type: "block" | "catch" | "class" | "class-field-initializer" | "class-static-block" | "for" | "function" | "function-expression-name" | "global" | "module" | "switch" | "with";
 		isStrict: boolean;
 		upper: Scope | null;
 		childScopes: Scope[];
@@ -59,11 +62,11 @@ declare namespace Scope {
 		defs: Definition[];
 	}
 	interface Reference {
-		identifier: ESTree.Identifier;
+		identifier: ESTree.Identifier | JSXIdentifier;
 		from: Scope;
 		resolved: Variable | null;
-		writeExpr: ESTree.Node | null;
-		init: boolean;
+		writeExpr?: ESTree.Expression | null;
+		init?: boolean;
 		isWrite(): boolean;
 		isRead(): boolean;
 		isWriteOnly(): boolean;
@@ -95,10 +98,6 @@ declare namespace Scope {
 		node: ESTree.FunctionDeclaration | ESTree.FunctionExpression | ESTree.ArrowFunctionExpression;
 		parent: null;
 	} | {
-		type: "TDZ";
-		node: any;
-		parent: null;
-	} | {
 		type: "Variable";
 		node: ESTree.VariableDeclarator;
 		parent: ESTree.VariableDeclaration;
@@ -110,7 +109,7 @@ declare namespace Scope {
 declare class SourceCode implements TextSourceCode<{
 	LangOptions: Linter.LanguageOptions;
 	RootNode: AST.Program;
-	SyntaxElementWithLoc: AST.Token | ESTree.Node;
+	SyntaxElementWithLoc: AST.Token | ESTree.Node | ESTree.Comment;
 	ConfigNode: ESTree.Comment;
 }> {
 	text: string;
@@ -123,18 +122,14 @@ declare class SourceCode implements TextSourceCode<{
 	constructor(text: string, ast: AST.Program);
 	constructor(config: SourceCode.Config);
 	static splitLines(text: string): string[];
-	getLoc(syntaxElement: AST.Token | ESTree.Node): ESTree.SourceLocation;
-	getRange(syntaxElement: AST.Token | ESTree.Node): SourceRange;
-	getText(node?: ESTree.Node, beforeCount?: number, afterCount?: number): string;
+	getLoc(syntaxElement: AST.Token | ESTree.Node | ESTree.Comment): ESTree.SourceLocation;
+	getRange(syntaxElement: AST.Token | ESTree.Node | ESTree.Comment): SourceRange;
+	getText(node?: ESTree.Node | AST.Token | ESTree.Comment, beforeCount?: number, afterCount?: number): string;
 	getLines(): string[];
 	getAllComments(): ESTree.Comment[];
 	getAncestors(node: ESTree.Node): ESTree.Node[];
 	getDeclaredVariables(node: ESTree.Node): Scope.Variable[];
-	/** @deprecated */
-	getJSDocComment(node: ESTree.Node): ESTree.Comment | null;
 	getNodeByRangeIndex(index: number): ESTree.Node | null;
-	/** @deprecated Use `isSpaceBetween()` instead. */
-	isSpaceBetweenTokens(first: ESTree.Node | AST.Token, second: ESTree.Node | AST.Token): boolean;
 	getLocFromIndex(index: number): ESTree.Position;
 	getIndexFromLoc(location: ESTree.Position): number;
 	// Inherited methods from TokenStore
@@ -153,10 +148,6 @@ declare class SourceCode implements TextSourceCode<{
 	getTokensBefore: SourceCode.UnaryCursorWithCountOptions;
 	getTokenAfter: SourceCode.UnaryCursorWithSkipOptions;
 	getTokensAfter: SourceCode.UnaryCursorWithCountOptions;
-	/** @deprecated Use `getTokenBefore()` instead. */
-	getTokenOrCommentBefore(node: ESTree.Node | AST.Token | ESTree.Comment, skip?: number | undefined): AST.Token | ESTree.Comment | null;
-	/** @deprecated Use `getTokenAfter()` instead. */
-	getTokenOrCommentAfter(node: ESTree.Node | AST.Token | ESTree.Comment, skip?: number | undefined): AST.Token | ESTree.Comment | null;
 	getFirstTokenBetween: SourceCode.BinaryCursorWithSkipOptions;
 	getFirstTokensBetween: SourceCode.BinaryCursorWithCountOptions;
 	getLastTokenBetween: SourceCode.BinaryCursorWithSkipOptions;
@@ -337,149 +328,12 @@ declare namespace Rule {
 		create(context: RuleContext): RuleListener;
 	}
 	type NodeTypes = ESTree.Node["type"];
-	interface NodeListener extends RuleVisitor {
-		ArrayExpression?: ((node: ESTree.ArrayExpression & NodeParentExtension) => void) | undefined;
-		"ArrayExpression:exit"?: ((node: ESTree.ArrayExpression & NodeParentExtension) => void) | undefined;
-		ArrayPattern?: ((node: ESTree.ArrayPattern & NodeParentExtension) => void) | undefined;
-		"ArrayPattern:exit"?: ((node: ESTree.ArrayPattern & NodeParentExtension) => void) | undefined;
-		ArrowFunctionExpression?: ((node: ESTree.ArrowFunctionExpression & NodeParentExtension) => void) | undefined;
-		"ArrowFunctionExpression:exit"?: ((node: ESTree.ArrowFunctionExpression & NodeParentExtension) => void) | undefined;
-		AssignmentExpression?: ((node: ESTree.AssignmentExpression & NodeParentExtension) => void) | undefined;
-		"AssignmentExpression:exit"?: ((node: ESTree.AssignmentExpression & NodeParentExtension) => void) | undefined;
-		AssignmentPattern?: ((node: ESTree.AssignmentPattern & NodeParentExtension) => void) | undefined;
-		"AssignmentPattern:exit"?: ((node: ESTree.AssignmentPattern & NodeParentExtension) => void) | undefined;
-		AwaitExpression?: ((node: ESTree.AwaitExpression & NodeParentExtension) => void) | undefined;
-		"AwaitExpression:exit"?: ((node: ESTree.AwaitExpression & NodeParentExtension) => void) | undefined;
-		BinaryExpression?: ((node: ESTree.BinaryExpression & NodeParentExtension) => void) | undefined;
-		"BinaryExpression:exit"?: ((node: ESTree.BinaryExpression & NodeParentExtension) => void) | undefined;
-		BlockStatement?: ((node: ESTree.BlockStatement & NodeParentExtension) => void) | undefined;
-		"BlockStatement:exit"?: ((node: ESTree.BlockStatement & NodeParentExtension) => void) | undefined;
-		BreakStatement?: ((node: ESTree.BreakStatement & NodeParentExtension) => void) | undefined;
-		"BreakStatement:exit"?: ((node: ESTree.BreakStatement & NodeParentExtension) => void) | undefined;
-		CallExpression?: ((node: ESTree.SimpleCallExpression & NodeParentExtension) => void) | undefined;
-		"CallExpression:exit"?: ((node: ESTree.SimpleCallExpression & NodeParentExtension) => void) | undefined;
-		CatchClause?: ((node: ESTree.CatchClause & NodeParentExtension) => void) | undefined;
-		"CatchClause:exit"?: ((node: ESTree.CatchClause & NodeParentExtension) => void) | undefined;
-		ChainExpression?: ((node: ESTree.ChainExpression & NodeParentExtension) => void) | undefined;
-		"ChainExpression:exit"?: ((node: ESTree.ChainExpression & NodeParentExtension) => void) | undefined;
-		ClassBody?: ((node: ESTree.ClassBody & NodeParentExtension) => void) | undefined;
-		"ClassBody:exit"?: ((node: ESTree.ClassBody & NodeParentExtension) => void) | undefined;
-		ClassDeclaration?: ((node: ESTree.ClassDeclaration & NodeParentExtension) => void) | undefined;
-		"ClassDeclaration:exit"?: ((node: ESTree.ClassDeclaration & NodeParentExtension) => void) | undefined;
-		ClassExpression?: ((node: ESTree.ClassExpression & NodeParentExtension) => void) | undefined;
-		"ClassExpression:exit"?: ((node: ESTree.ClassExpression & NodeParentExtension) => void) | undefined;
-		ConditionalExpression?: ((node: ESTree.ConditionalExpression & NodeParentExtension) => void) | undefined;
-		"ConditionalExpression:exit"?: ((node: ESTree.ConditionalExpression & NodeParentExtension) => void) | undefined;
-		ContinueStatement?: ((node: ESTree.ContinueStatement & NodeParentExtension) => void) | undefined;
-		"ContinueStatement:exit"?: ((node: ESTree.ContinueStatement & NodeParentExtension) => void) | undefined;
-		DebuggerStatement?: ((node: ESTree.DebuggerStatement & NodeParentExtension) => void) | undefined;
-		"DebuggerStatement:exit"?: ((node: ESTree.DebuggerStatement & NodeParentExtension) => void) | undefined;
-		DoWhileStatement?: ((node: ESTree.DoWhileStatement & NodeParentExtension) => void) | undefined;
-		"DoWhileStatement:exit"?: ((node: ESTree.DoWhileStatement & NodeParentExtension) => void) | undefined;
-		EmptyStatement?: ((node: ESTree.EmptyStatement & NodeParentExtension) => void) | undefined;
-		"EmptyStatement:exit"?: ((node: ESTree.EmptyStatement & NodeParentExtension) => void) | undefined;
-		ExportAllDeclaration?: ((node: ESTree.ExportAllDeclaration & NodeParentExtension) => void) | undefined;
-		"ExportAllDeclaration:exit"?: ((node: ESTree.ExportAllDeclaration & NodeParentExtension) => void) | undefined;
-		ExportDefaultDeclaration?: ((node: ESTree.ExportDefaultDeclaration & NodeParentExtension) => void) | undefined;
-		"ExportDefaultDeclaration:exit"?: ((node: ESTree.ExportDefaultDeclaration & NodeParentExtension) => void) | undefined;
-		ExportNamedDeclaration?: ((node: ESTree.ExportNamedDeclaration & NodeParentExtension) => void) | undefined;
-		"ExportNamedDeclaration:exit"?: ((node: ESTree.ExportNamedDeclaration & NodeParentExtension) => void) | undefined;
-		ExportSpecifier?: ((node: ESTree.ExportSpecifier & NodeParentExtension) => void) | undefined;
-		"ExportSpecifier:exit"?: ((node: ESTree.ExportSpecifier & NodeParentExtension) => void) | undefined;
-		ExpressionStatement?: ((node: ESTree.ExpressionStatement & NodeParentExtension) => void) | undefined;
-		"ExpressionStatement:exit"?: ((node: ESTree.ExpressionStatement & NodeParentExtension) => void) | undefined;
-		ForInStatement?: ((node: ESTree.ForInStatement & NodeParentExtension) => void) | undefined;
-		"ForInStatement:exit"?: ((node: ESTree.ForInStatement & NodeParentExtension) => void) | undefined;
-		ForOfStatement?: ((node: ESTree.ForOfStatement & NodeParentExtension) => void) | undefined;
-		"ForOfStatement:exit"?: ((node: ESTree.ForOfStatement & NodeParentExtension) => void) | undefined;
-		ForStatement?: ((node: ESTree.ForStatement & NodeParentExtension) => void) | undefined;
-		"ForStatement:exit"?: ((node: ESTree.ForStatement & NodeParentExtension) => void) | undefined;
-		FunctionDeclaration?: ((node: ESTree.FunctionDeclaration & NodeParentExtension) => void) | undefined;
-		"FunctionDeclaration:exit"?: ((node: ESTree.FunctionDeclaration & NodeParentExtension) => void) | undefined;
-		FunctionExpression?: ((node: ESTree.FunctionExpression & NodeParentExtension) => void) | undefined;
-		"FunctionExpression:exit"?: ((node: ESTree.FunctionExpression & NodeParentExtension) => void) | undefined;
-		Identifier?: ((node: ESTree.Identifier & NodeParentExtension) => void) | undefined;
-		"Identifier:exit"?: ((node: ESTree.Identifier & NodeParentExtension) => void) | undefined;
-		IfStatement?: ((node: ESTree.IfStatement & NodeParentExtension) => void) | undefined;
-		"IfStatement:exit"?: ((node: ESTree.IfStatement & NodeParentExtension) => void) | undefined;
-		ImportDeclaration?: ((node: ESTree.ImportDeclaration & NodeParentExtension) => void) | undefined;
-		"ImportDeclaration:exit"?: ((node: ESTree.ImportDeclaration & NodeParentExtension) => void) | undefined;
-		ImportDefaultSpecifier?: ((node: ESTree.ImportDefaultSpecifier & NodeParentExtension) => void) | undefined;
-		"ImportDefaultSpecifier:exit"?: ((node: ESTree.ImportDefaultSpecifier & NodeParentExtension) => void) | undefined;
-		ImportExpression?: ((node: ESTree.ImportExpression & NodeParentExtension) => void) | undefined;
-		"ImportExpression:exit"?: ((node: ESTree.ImportExpression & NodeParentExtension) => void) | undefined;
-		ImportNamespaceSpecifier?: ((node: ESTree.ImportNamespaceSpecifier & NodeParentExtension) => void) | undefined;
-		"ImportNamespaceSpecifier:exit"?: ((node: ESTree.ImportNamespaceSpecifier & NodeParentExtension) => void) | undefined;
-		ImportSpecifier?: ((node: ESTree.ImportSpecifier & NodeParentExtension) => void) | undefined;
-		"ImportSpecifier:exit"?: ((node: ESTree.ImportSpecifier & NodeParentExtension) => void) | undefined;
-		LabeledStatement?: ((node: ESTree.LabeledStatement & NodeParentExtension) => void) | undefined;
-		"LabeledStatement:exit"?: ((node: ESTree.LabeledStatement & NodeParentExtension) => void) | undefined;
-		Literal?: ((node: ESTree.Literal & NodeParentExtension) => void) | undefined;
-		"Literal:exit"?: ((node: ESTree.Literal & NodeParentExtension) => void) | undefined;
-		LogicalExpression?: ((node: ESTree.LogicalExpression & NodeParentExtension) => void) | undefined;
-		"LogicalExpression:exit"?: ((node: ESTree.LogicalExpression & NodeParentExtension) => void) | undefined;
-		MemberExpression?: ((node: ESTree.MemberExpression & NodeParentExtension) => void) | undefined;
-		"MemberExpression:exit"?: ((node: ESTree.MemberExpression & NodeParentExtension) => void) | undefined;
-		MetaProperty?: ((node: ESTree.MetaProperty & NodeParentExtension) => void) | undefined;
-		"MetaProperty:exit"?: ((node: ESTree.MetaProperty & NodeParentExtension) => void) | undefined;
-		MethodDefinition?: ((node: ESTree.MethodDefinition & NodeParentExtension) => void) | undefined;
-		"MethodDefinition:exit"?: ((node: ESTree.MethodDefinition & NodeParentExtension) => void) | undefined;
-		NewExpression?: ((node: ESTree.NewExpression & NodeParentExtension) => void) | undefined;
-		"NewExpression:exit"?: ((node: ESTree.NewExpression & NodeParentExtension) => void) | undefined;
-		ObjectExpression?: ((node: ESTree.ObjectExpression & NodeParentExtension) => void) | undefined;
-		"ObjectExpression:exit"?: ((node: ESTree.ObjectExpression & NodeParentExtension) => void) | undefined;
-		ObjectPattern?: ((node: ESTree.ObjectPattern & NodeParentExtension) => void) | undefined;
-		"ObjectPattern:exit"?: ((node: ESTree.ObjectPattern & NodeParentExtension) => void) | undefined;
-		PrivateIdentifier?: ((node: ESTree.PrivateIdentifier & NodeParentExtension) => void) | undefined;
-		"PrivateIdentifier:exit"?: ((node: ESTree.PrivateIdentifier & NodeParentExtension) => void) | undefined;
+	interface NodeListener extends CustomRuleVisitorWithExit<{
+		[Node in Rule.Node as Node["type"]]?: ((node: Node) => void) | undefined;
+	} & {
+		// A `Program` visitor's node type has no `parent` property.
 		Program?: ((node: AST.Program) => void) | undefined;
-		"Program:exit"?: ((node: AST.Program) => void) | undefined;
-		Property?: ((node: ESTree.Property & NodeParentExtension) => void) | undefined;
-		"Property:exit"?: ((node: ESTree.Property & NodeParentExtension) => void) | undefined;
-		PropertyDefinition?: ((node: ESTree.PropertyDefinition & NodeParentExtension) => void) | undefined;
-		"PropertyDefinition:exit"?: ((node: ESTree.PropertyDefinition & NodeParentExtension) => void) | undefined;
-		RestElement?: ((node: ESTree.RestElement & NodeParentExtension) => void) | undefined;
-		"RestElement:exit"?: ((node: ESTree.RestElement & NodeParentExtension) => void) | undefined;
-		ReturnStatement?: ((node: ESTree.ReturnStatement & NodeParentExtension) => void) | undefined;
-		"ReturnStatement:exit"?: ((node: ESTree.ReturnStatement & NodeParentExtension) => void) | undefined;
-		SequenceExpression?: ((node: ESTree.SequenceExpression & NodeParentExtension) => void) | undefined;
-		"SequenceExpression:exit"?: ((node: ESTree.SequenceExpression & NodeParentExtension) => void) | undefined;
-		SpreadElement?: ((node: ESTree.SpreadElement & NodeParentExtension) => void) | undefined;
-		"SpreadElement:exit"?: ((node: ESTree.SpreadElement & NodeParentExtension) => void) | undefined;
-		StaticBlock?: ((node: ESTree.StaticBlock & NodeParentExtension) => void) | undefined;
-		"StaticBlock:exit"?: ((node: ESTree.StaticBlock & NodeParentExtension) => void) | undefined;
-		Super?: ((node: ESTree.Super & NodeParentExtension) => void) | undefined;
-		"Super:exit"?: ((node: ESTree.Super & NodeParentExtension) => void) | undefined;
-		SwitchCase?: ((node: ESTree.SwitchCase & NodeParentExtension) => void) | undefined;
-		"SwitchCase:exit"?: ((node: ESTree.SwitchCase & NodeParentExtension) => void) | undefined;
-		SwitchStatement?: ((node: ESTree.SwitchStatement & NodeParentExtension) => void) | undefined;
-		"SwitchStatement:exit"?: ((node: ESTree.SwitchStatement & NodeParentExtension) => void) | undefined;
-		TaggedTemplateExpression?: ((node: ESTree.TaggedTemplateExpression & NodeParentExtension) => void) | undefined;
-		"TaggedTemplateExpression:exit"?: ((node: ESTree.TaggedTemplateExpression & NodeParentExtension) => void) | undefined;
-		TemplateElement?: ((node: ESTree.TemplateElement & NodeParentExtension) => void) | undefined;
-		"TemplateElement:exit"?: ((node: ESTree.TemplateElement & NodeParentExtension) => void) | undefined;
-		TemplateLiteral?: ((node: ESTree.TemplateLiteral & NodeParentExtension) => void) | undefined;
-		"TemplateLiteral:exit"?: ((node: ESTree.TemplateLiteral & NodeParentExtension) => void) | undefined;
-		ThisExpression?: ((node: ESTree.ThisExpression & NodeParentExtension) => void) | undefined;
-		"ThisExpression:exit"?: ((node: ESTree.ThisExpression & NodeParentExtension) => void) | undefined;
-		ThrowStatement?: ((node: ESTree.ThrowStatement & NodeParentExtension) => void) | undefined;
-		"ThrowStatement:exit"?: ((node: ESTree.ThrowStatement & NodeParentExtension) => void) | undefined;
-		TryStatement?: ((node: ESTree.TryStatement & NodeParentExtension) => void) | undefined;
-		"TryStatement:exit"?: ((node: ESTree.TryStatement & NodeParentExtension) => void) | undefined;
-		UnaryExpression?: ((node: ESTree.UnaryExpression & NodeParentExtension) => void) | undefined;
-		"UnaryExpression:exit"?: ((node: ESTree.UnaryExpression & NodeParentExtension) => void) | undefined;
-		UpdateExpression?: ((node: ESTree.UpdateExpression & NodeParentExtension) => void) | undefined;
-		"UpdateExpression:exit"?: ((node: ESTree.UpdateExpression & NodeParentExtension) => void) | undefined;
-		VariableDeclaration?: ((node: ESTree.VariableDeclaration & NodeParentExtension) => void) | undefined;
-		"VariableDeclaration:exit"?: ((node: ESTree.VariableDeclaration & NodeParentExtension) => void) | undefined;
-		VariableDeclarator?: ((node: ESTree.VariableDeclarator & NodeParentExtension) => void) | undefined;
-		"VariableDeclarator:exit"?: ((node: ESTree.VariableDeclarator & NodeParentExtension) => void) | undefined;
-		WhileStatement?: ((node: ESTree.WhileStatement & NodeParentExtension) => void) | undefined;
-		"WhileStatement:exit"?: ((node: ESTree.WhileStatement & NodeParentExtension) => void) | undefined;
-		WithStatement?: ((node: ESTree.WithStatement & NodeParentExtension) => void) | undefined;
-		"WithStatement:exit"?: ((node: ESTree.WithStatement & NodeParentExtension) => void) | undefined;
-		YieldExpression?: ((node: ESTree.YieldExpression & NodeParentExtension) => void) | undefined;
-		"YieldExpression:exit"?: ((node: ESTree.YieldExpression & NodeParentExtension) => void) | undefined;
+	}> {
 	}
 	interface NodeParentExtension {
 		parent: Node;
@@ -498,6 +352,15 @@ declare namespace Rule {
 		[key: string]: ((codePath: CodePath, node: Node) => void) | ((segment: CodePathSegment, node: Node) => void) | ((fromSegment: CodePathSegment, toSegment: CodePathSegment, node: Node) => void) | ((node: Node) => void) | NodeListener[keyof NodeListener] | undefined;
 	}
 	type CodePathOrigin = "program" | "function" | "class-field-initializer" | "class-static-block";
+	interface CodePathSegmentTraversalController {
+		skip(): void;
+		break(): void;
+	}
+	type CodePathSegmentTraversalCallback = (this: CodePath, segment: CodePathSegment, controller: CodePathSegmentTraversalController) => void;
+	interface CodePathTraversalOptions {
+		first?: CodePathSegment | undefined;
+		last?: CodePathSegment | undefined;
+	}
 	interface CodePath {
 		id: string;
 		origin: CodePathOrigin;
@@ -507,11 +370,15 @@ declare namespace Rule {
 		thrownSegments: CodePathSegment[];
 		upper: CodePath | null;
 		childCodePaths: CodePath[];
+		traverseSegments(callback: CodePathSegmentTraversalCallback): void;
+		traverseSegments(options: CodePathTraversalOptions, callback: CodePathSegmentTraversalCallback): void;
 	}
 	interface CodePathSegment {
 		id: string;
 		nextSegments: CodePathSegment[];
 		prevSegments: CodePathSegment[];
+		allNextSegments: CodePathSegment[];
+		allPrevSegments: CodePathSegment[];
 		reachable: boolean;
 	}
 	type RuleMetaData = RulesMeta;
@@ -525,15 +392,15 @@ declare namespace Rule {
 	}
 	type ReportFixer = CoreRuleFixer;
 	/** @deprecated Use `ReportDescriptorOptions` instead. */
-	type ReportDescriptorOptionsBase = ViolationReportBase;
+	type ReportDescriptorOptionsBase = Omit<ViolationReportBase, "suggest">;
 	type SuggestionReportOptions = SuggestedEditBase;
 	type SuggestionDescriptorMessage = SuggestionMessage;
 	type SuggestionReportDescriptor = SuggestedEdit;
 	// redundant with ReportDescriptorOptionsBase but kept for clarity
 	type ReportDescriptorOptions = ViolationReportBase;
-	type ReportDescriptor = ViolationReport<ESTree.Node>;
+	type ReportDescriptor = ViolationReport<JSSyntaxElement>;
 	type ReportDescriptorMessage = ViolationMessage;
-	type ReportDescriptorLocation = ViolationLocation<ESTree.Node>;
+	type ReportDescriptorLocation = ViolationLocation<JSSyntaxElement>;
 	type RuleFixer = RuleTextEditor<ESTree.Node | AST.Token>;
 	type Fix = RuleTextEdit;
 }
@@ -542,19 +409,13 @@ declare class Linter {
 	version: string;
 	constructor(options?: {
 		cwd?: string | undefined;
-		configType?: "flat" | "eslintrc";
+		configType?: "flat";
 	});
-	verify(code: SourceCode | string, config: Linter.LegacyConfig | Linter.Config | Linter.Config[], filename?: string): Linter.LintMessage[];
-	verify(code: SourceCode | string, config: Linter.LegacyConfig | Linter.Config | Linter.Config[], options: Linter.LintOptions): Linter.LintMessage[];
-	verifyAndFix(code: string, config: Linter.LegacyConfig | Linter.Config | Linter.Config[], filename?: string): Linter.FixReport;
-	verifyAndFix(code: string, config: Linter.LegacyConfig | Linter.Config | Linter.Config[], options: Linter.FixOptions): Linter.FixReport;
+	verify(code: SourceCode | string, config: Linter.Config | Linter.Config[], filename?: string): Linter.LintMessage[];
+	verify(code: SourceCode | string, config: Linter.Config | Linter.Config[], options: Linter.LintOptions): Linter.LintMessage[];
+	verifyAndFix(code: string, config: Linter.Config | Linter.Config[], filename?: string): Linter.FixReport;
+	verifyAndFix(code: string, config: Linter.Config | Linter.Config[], options: Linter.FixOptions): Linter.FixReport;
 	getSourceCode(): SourceCode;
-	defineRule(name: string, rule: Rule.RuleModule): void;
-	defineRules(rules: {
-		[name: string]: Rule.RuleModule;
-	}): void;
-	getRules(): Map<string, Rule.RuleModule>;
-	defineParser(name: string, parser: Linter.Parser): void;
 	getTimes(): Linter.Stats["times"];
 	getFixPassCount(): Linter.Stats["fixPasses"];
 }
@@ -634,7 +495,41 @@ declare namespace Linter {
 	 *
 	 * @see [Specifying Parser Options](https://eslint.org/docs/latest/use/configure/language-options#specifying-parser-options)
 	 */
-	type ParserOptions = JavaScriptParserOptionsConfig;
+	interface ParserOptions {
+		/**
+		 * Allow the use of reserved words as identifiers (if `ecmaVersion` is 3).
+		 *
+		 * @default false
+		 */
+		allowReserved?: boolean | undefined;
+		/**
+		 * An object indicating which additional language features you'd like to use.
+		 *
+		 * @see https://eslint.org/docs/latest/use/configure/language-options#specifying-parser-options
+		 */
+		ecmaFeatures?: {
+			/**
+			 * Allow `return` statements in the global scope.
+			 *
+			 * @default false
+			 */
+			globalReturn?: boolean | undefined;
+			/**
+			 * Enable global [strict mode](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode) (if `ecmaVersion` is 5 or greater).
+			 *
+			 * @default false
+			 */
+			impliedStrict?: boolean | undefined;
+			/**
+			 * Enable [JSX](https://react.github.io/jsx/).
+			 *
+			 * @default false
+			 */
+			jsx?: boolean | undefined;
+			[key: string]: any;
+		} | undefined;
+		[key: string]: any;
+	}
 	/**
 	 * Options used for linting code with `Linter#verify` and `Linter#verifyAndFix`.
 	 */
@@ -747,8 +642,9 @@ declare namespace Linter {
 	interface TimePass {
 		/**
 		 * The parse object containing all parse time information.
+		 * If no parsing was performed, the property is omitted.
 		 */
-		parse: {
+		parse?: {
 			total: number;
 		};
 		/**
@@ -802,63 +698,69 @@ declare namespace ESLint {
 	type Plugin = CorePlugin;
 	type FixType = "directive" | "problem" | "suggestion" | "layout";
 	type CacheStrategy = "content" | "metadata";
+	/** The options with which to configure the ESLint instance. */
 	interface Options {
 		// File enumeration
+		/** The value to use for the current working directory. */
 		cwd?: string | undefined;
+		/** If `false` then `ESLint#lintFiles()` doesn't throw even if no target files found. Defaults to `true`. */
 		errorOnUnmatchedPattern?: boolean | undefined;
+		/**
+		 * Set to false to skip glob resolution of input file paths to lint (default: true).
+		 * If false, each input file path is assumed to be a non-glob path to an existing file.
+		 */
 		globInputPaths?: boolean | undefined;
+		/** False disables all ignore patterns except for the default ones. */
 		ignore?: boolean | undefined;
+		/** Ignore file patterns to use in addition to config ignores. These patterns are relative to `cwd`. */
 		ignorePatterns?: string[] | null | undefined;
+		/** When set to true, missing patterns cause the linting operation to short circuit and not report any failures. */
 		passOnNoPatterns?: boolean | undefined;
+		/** Show warnings when the file list includes ignored files. */
 		warnIgnored?: boolean | undefined;
 		// Linting
+		/** Enable or disable inline configuration comments. */
 		allowInlineConfig?: boolean | undefined;
+		/** Base config, extended by all configs used with this instance. */
 		baseConfig?: Linter.Config | Linter.Config[] | null | undefined;
+		/** Override config, overrides all configs used with this instance. */
 		overrideConfig?: Linter.Config | Linter.Config[] | null | undefined;
+		/**
+		 * Searches for default config file when falsy; doesn't do any config file lookup when `true`; considered to be a config filename when a string.
+		 */
 		overrideConfigFile?: string | true | null | undefined;
+		/** An array of plugin implementations. */
 		plugins?: Record<string, Plugin> | null | undefined;
+		/**
+		 * Default is `() => true`. A predicate function that filters rules to be run.
+		 * This function is called with an object containing `ruleId` and `severity`, and returns `true` if the rule should be run.
+		 */
 		ruleFilter?: ((arg: {
 			ruleId: string;
 			severity: Exclude<Linter.Severity, 0>;
 		}) => boolean) | undefined;
+		/** True enables added statistics on lint results. */
 		stats?: boolean | undefined;
 		// Autofix
+		/** Execute in autofix mode. If a function, should return a boolean. */
 		fix?: boolean | ((message: Linter.LintMessage) => boolean) | undefined;
+		/** Array of rule types to apply fixes for. */
 		fixTypes?: FixType[] | null | undefined;
 		// Cache-related
+		/** Enable result caching. */
 		cache?: boolean | undefined;
+		/** The cache file to use instead of .eslintcache. */
 		cacheLocation?: string | undefined;
+		/** The strategy used to detect changed files. */
 		cacheStrategy?: CacheStrategy | undefined;
+		/** If true, apply suppressions automatically. Defaults to false. */
+		applySuppressions?: boolean | undefined;
+		/** Path to suppressions file. Relative to cwd. Defaults to eslint-suppressions.json in cwd. */
+		suppressionsLocation?: string | undefined;
 		// Other Options
+		/** Maximum number of linting threads, "auto" to choose automatically, "off" for no multithreading. */
 		concurrency?: number | "auto" | "off" | undefined;
-		flags?: string[] | undefined;
-	}
-	interface LegacyOptions {
-		// File enumeration
-		cwd?: string | undefined;
-		errorOnUnmatchedPattern?: boolean | undefined;
-		extensions?: string[] | undefined;
-		globInputPaths?: boolean | undefined;
-		ignore?: boolean | undefined;
-		ignorePath?: string | undefined;
-		// Linting
-		allowInlineConfig?: boolean | undefined;
-		baseConfig?: Linter.LegacyConfig | undefined;
-		overrideConfig?: Linter.LegacyConfig | undefined;
-		overrideConfigFile?: string | undefined;
-		plugins?: Record<string, Plugin> | undefined;
-		reportUnusedDisableDirectives?: Linter.StringSeverity | undefined;
-		resolvePluginsRelativeTo?: string | undefined;
-		rulePaths?: string[] | undefined;
-		useEslintrc?: boolean | undefined;
-		// Autofix
-		fix?: boolean | ((message: Linter.LintMessage) => boolean) | undefined;
-		fixTypes?: FixType[] | null | undefined;
-		// Cache-related
-		cache?: boolean | undefined;
-		cacheLocation?: string | undefined;
-		cacheStrategy?: CacheStrategy | undefined;
-		// Other Options
+		/** Array of feature flags to enable. */
 		flags?: string[] | undefined;
 	}
 	/** A linting result. */
@@ -901,9 +803,8 @@ declare namespace ESLint {
 		 */
 		foundWarnings: number;
 	}
-	interface LintResultData {
+	interface LintResultData extends ResultsMeta {
 		cwd: string;
-		maxWarningsExceeded?: MaxWarningsExceeded | undefined;
 		rulesMeta: {
 			[ruleId: string]: Rule.RuleMetaData;
 		};
@@ -932,6 +833,13 @@ declare namespace ESLint {
 	 */
 	interface ResultsMeta {
 		/**
+		 * Whether or not to use color in the formatter output.
+		 * - If `--color` was set, this property is `true`.
+		 * - If `--no-color` was set, it is `false`.
+		 * - If neither option was provided, the property is omitted.
+		 */
+		color?: boolean | undefined;
+		/**
 		 * Present if the maxWarnings threshold was exceeded.
 		 */
 		maxWarningsExceeded?: MaxWarningsExceeded | undefined;
@@ -941,9 +849,9 @@ declare namespace ESLint {
 		/**
 		 * Used to call the underlying formatter.
 		 * @param results An array of lint results to format.
-		 * @param resultsMeta An object with an optional `maxWarningsExceeded` property that will be
+		 * @param resultsMeta An object with optional `color` and `maxWarningsExceeded` properties that will be
 		 * passed to the underlying formatter function along with other properties set by ESLint.
-		 * This argument can be omitted if `maxWarningsExceeded` is not needed.
+		 * This argument can be omitted if `color` and `maxWarningsExceeded` are not needed.
 		 * @return The formatter output.
 		 */
 		format(results: LintResult[], resultsMeta?: ResultsMeta): string | Promise<string>;

@@ -2,7 +2,7 @@
 	typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global));
 })(this, function(exports) {
 	Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-	//#region \0rolldown/runtime.js
+	// \0rolldown/runtime.js
 	var __create = Object.create;
 	var __defProp = Object.defineProperty;
 	var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -17,7 +17,7 @@
 			throw err = [e], e;
 		}
 	};
-	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod, mod.exports), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -37,13 +37,12 @@
 		}
 		return to;
 	};
-	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp.call(mod, "default") ? __defProp(target, "default", {
 		value: mod,
 		enumerable: true
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -76,8 +75,7 @@
 		}
 		exports.stringArray = stringArray;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -373,8 +371,7 @@
 			Message.isResponse = isResponse;
 		})(Message || (exports.Message = Message = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -446,9 +443,7 @@
 						case Touch.Last:
 							this.addItemLast(item);
 							break;
-						default:
-							this.addItemLast(item);
-							break;
+						default: this.addItemLast(item);
 					}
 					this._map.set(key, item);
 					this._size++;
@@ -708,8 +703,7 @@
 		};
 		exports.LRUCache = LRUCache;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -721,8 +715,7 @@
 			Disposable.create = create;
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -739,8 +732,7 @@
 		})(RAL || (RAL = {}));
 		exports.default = RAL;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -765,11 +757,13 @@
 			remove(callback, context = null) {
 				if (!this._callbacks) return;
 				let foundCallbackWithDifferentContext = false;
-				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) if (this._contexts[i] === context) {
-					this._callbacks.splice(i, 1);
-					this._contexts.splice(i, 1);
-					return;
-				} else foundCallbackWithDifferentContext = true;
+				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) {
+					if (this._contexts[i] === context) {
+						this._callbacks.splice(i, 1);
+						this._contexts.splice(i, 1);
+						return;
+					} else foundCallbackWithDifferentContext = true;
+				}
 				if (foundCallbackWithDifferentContext) throw new Error("When adding a listener with a context, you should remove it with the same context");
 			}
 			invoke(...args) {
@@ -831,8 +825,7 @@
 		exports.Emitter = Emitter;
 		Emitter._noop = function() {};
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -905,8 +898,7 @@
 		};
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -972,8 +964,7 @@
 		};
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1032,8 +1023,7 @@
 		};
 		exports.Semaphore = Semaphore;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1210,8 +1200,7 @@
 		};
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1320,8 +1309,7 @@
 		};
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1446,8 +1434,7 @@
 		};
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1840,26 +1827,27 @@
 					if (requestMessage.id !== null) requestTokens.set(tokenKey, cancellationSource);
 					try {
 						let handlerResult;
-						if (requestHandler) if (requestMessage.params === void 0) {
-							if (type !== void 0 && type.numberOfParams !== 0) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
-								return;
+						if (requestHandler) {
+							if (requestMessage.params === void 0) {
+								if (type !== void 0 && type.numberOfParams !== 0) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(cancellationSource.token);
+							} else if (Array.isArray(requestMessage.params)) {
+								if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byName) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
+							} else {
+								if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
 							}
-							handlerResult = requestHandler(cancellationSource.token);
-						} else if (Array.isArray(requestMessage.params)) {
-							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byName) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
-								return;
-							}
-							handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
-						} else {
-							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
-								return;
-							}
-							handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
-						}
-						else if (starRequestHandler) handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
+						} else if (starRequestHandler) handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
 						const promise = handlerResult;
 						if (!handlerResult) {
 							requestTokens.delete(tokenKey);
@@ -1887,9 +1875,10 @@
 			}
 			function handleResponse(responseMessage) {
 				if (isDisposed()) return;
-				if (responseMessage.id === null) if (responseMessage.error) logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, void 0, 4)}`);
-				else logger.error(`Received response message without id. No further error information provided.`);
-				else {
+				if (responseMessage.id === null) {
+					if (responseMessage.error) logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, void 0, 4)}`);
+					else logger.error(`Received response message without id. No further error information provided.`);
+				} else {
 					const key = responseMessage.id;
 					const responsePromise = responsePromises.get(key);
 					traceReceivedResponse(responseMessage, responsePromise);
@@ -1926,29 +1915,30 @@
 				}
 				if (notificationHandler || starNotificationHandler) try {
 					traceReceivedNotification(message);
-					if (notificationHandler) if (message.params === void 0) {
-						if (type !== void 0) {
-							if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
-						}
-						notificationHandler();
-					} else if (Array.isArray(message.params)) {
-						const params = message.params;
-						if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) notificationHandler({
-							token: params[0],
-							value: params[1]
-						});
-						else {
+					if (notificationHandler) {
+						if (message.params === void 0) {
 							if (type !== void 0) {
-								if (type.parameterStructures === messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
-								if (type.numberOfParams !== message.params.length) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
+								if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
 							}
-							notificationHandler(...params);
+							notificationHandler();
+						} else if (Array.isArray(message.params)) {
+							const params = message.params;
+							if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) notificationHandler({
+								token: params[0],
+								value: params[1]
+							});
+							else {
+								if (type !== void 0) {
+									if (type.parameterStructures === messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
+									if (type.numberOfParams !== message.params.length) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
+								}
+								notificationHandler(...params);
+							}
+						} else {
+							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
+							notificationHandler(message.params);
 						}
-					} else {
-						if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
-						notificationHandler(message.params);
-					}
-					else if (starNotificationHandler) starNotificationHandler(message.method, message.params);
+					} else if (starNotificationHandler) starNotificationHandler(message.method, message.params);
 				} catch (error) {
 					if (error.message) logger.error(`Notification handler '${message.method}' failed with message: ${error.message}`);
 					else logger.error(`Notification handler '${message.method}' failed unexpectedly.`);
@@ -1988,8 +1978,10 @@
 				if (trace === Trace.Off || !tracer) return;
 				if (traceFormat === TraceFormat.Text) {
 					let data = void 0;
-					if (trace === Trace.Verbose || trace === Trace.Compact) if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
-					else data = "No parameters provided.\n\n";
+					if (trace === Trace.Verbose || trace === Trace.Compact) {
+						if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
+						else data = "No parameters provided.\n\n";
+					}
 					tracer.log(`Sending notification '${message.method}'.`, data);
 				} else logLSPMessage("send-notification", message);
 			}
@@ -2017,8 +2009,10 @@
 				if (trace === Trace.Off || !tracer || message.method === LogTraceNotification.type.method) return;
 				if (traceFormat === TraceFormat.Text) {
 					let data = void 0;
-					if (trace === Trace.Verbose || trace === Trace.Compact) if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
-					else data = "No parameters provided.\n\n";
+					if (trace === Trace.Verbose || trace === Trace.Compact) {
+						if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
+						else data = "No parameters provided.\n\n";
+					}
 					tracer.log(`Received notification '${message.method}'.`, data);
 				} else logLSPMessage("receive-notification", message);
 			}
@@ -2093,7 +2087,6 @@
 						result = [];
 						for (let i = 0; i < params.length && i < numberOfParams; i++) result.push(undefinedToNull(params[i]));
 						if (params.length < numberOfParams) for (let i = params.length; i < numberOfParams; i++) result.push(null);
-						break;
 				}
 				return result;
 			}
@@ -2123,7 +2116,6 @@
 							default:
 								if (parameterStructures === messages_1.ParameterStructures.byName) throw new Error(`Received ${numberOfParams} parameters for 'by Name' notification parameter structure.`);
 								messageParams = args.slice(paramStart, paramEnd).map((value) => undefinedToNull(value));
-								break;
 						}
 					} else {
 						const params = args;
@@ -2145,18 +2137,20 @@
 					throwIfClosedOrDisposed();
 					let method;
 					if (Is.func(type)) starNotificationHandler = type;
-					else if (handler) if (Is.string(type)) {
-						method = type;
-						notificationHandlers.set(type, {
-							type: void 0,
-							handler
-						});
-					} else {
-						method = type.method;
-						notificationHandlers.set(type.method, {
-							type,
-							handler
-						});
+					else if (handler) {
+						if (Is.string(type)) {
+							method = type;
+							notificationHandlers.set(type, {
+								type: void 0,
+								handler
+							});
+						} else {
+							method = type.method;
+							notificationHandlers.set(type.method, {
+								type,
+								handler
+							});
+						}
 					}
 					return { dispose: () => {
 						if (method !== void 0) notificationHandlers.delete(method);
@@ -2209,7 +2203,6 @@
 							default:
 								if (parameterStructures === messages_1.ParameterStructures.byName) throw new Error(`Received ${numberOfParams} parameters for 'by Name' request parameter structure.`);
 								messageParams = args.slice(paramStart, paramEnd).map((value) => undefinedToNull(value));
-								break;
 						}
 					} else {
 						const params = args;
@@ -2298,10 +2291,12 @@
 				trace: async (_value, _tracer, sendNotificationOrTraceOptions) => {
 					let _sendNotification = false;
 					let _traceFormat = TraceFormat.Text;
-					if (sendNotificationOrTraceOptions !== void 0) if (Is.boolean(sendNotificationOrTraceOptions)) _sendNotification = sendNotificationOrTraceOptions;
-					else {
-						_sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
-						_traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
+					if (sendNotificationOrTraceOptions !== void 0) {
+						if (Is.boolean(sendNotificationOrTraceOptions)) _sendNotification = sendNotificationOrTraceOptions;
+						else {
+							_sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
+							_traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
+						}
 					}
 					trace = _value;
 					traceFormat = _traceFormat;
@@ -2353,8 +2348,7 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2731,8 +2725,7 @@
 		});
 		exports.RAL = require_ral().default;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$7();
@@ -2866,10 +2859,9 @@
 		})(RIL || (RIL = {}));
 		exports.default = RIL;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
-	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
+	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports, module, this$5) => {
+		var __createBinding = this$5 && this$5.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -2883,8 +2875,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$3) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$3, p)) __createBinding(exports$3, m, p);
+		var __exportStar = this$5 && this$5.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.BrowserMessageWriter = exports.BrowserMessageReader = void 0;
@@ -2936,13 +2928,11 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-types/lib/esm/main.js
+	// ../../node_modules/vscode-languageserver-types/lib/esm/main.js
 	var main_exports = /* @__PURE__ */ __exportAll({
 		AnnotatedTextEdit: () => AnnotatedTextEdit,
 		ChangeAnnotation: () => ChangeAnnotation,
@@ -3678,8 +3668,10 @@
 			*/
 			get edit() {
 				this.initDocumentChanges();
-				if (this._changeAnnotations !== void 0) if (this._changeAnnotations.size === 0) this._workspaceEdit.changeAnnotations = void 0;
-				else this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
+				if (this._changeAnnotations !== void 0) {
+					if (this._changeAnnotations.size === 0) this._workspaceEdit.changeAnnotations = void 0;
+					else this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
+				}
 				return this._workspaceEdit;
 			}
 			getTextEditChange(key) {
@@ -4818,8 +4810,7 @@
 			Is.typedArray = typedArray;
 		})(Is || (Is = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/messages.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/messages.js
 	var require_messages = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProtocolNotificationType = exports.ProtocolNotificationType0 = exports.ProtocolRequestType = exports.ProtocolRequestType0 = exports.RegistrationType = exports.MessageDirection = void 0;
@@ -4861,8 +4852,7 @@
 		};
 		exports.ProtocolNotificationType = ProtocolNotificationType;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
 	var require_is = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.objectLiteral = exports.typedArray = exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -4903,8 +4893,7 @@
 		}
 		exports.objectLiteral = objectLiteral;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
 	var require_protocol_implementation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ImplementationRequest = void 0;
@@ -4921,8 +4910,7 @@
 			ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
 		})(ImplementationRequest || (exports.ImplementationRequest = ImplementationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
 	var require_protocol_typeDefinition = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.TypeDefinitionRequest = void 0;
@@ -4939,8 +4927,7 @@
 			TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
 		})(TypeDefinitionRequest || (exports.TypeDefinitionRequest = TypeDefinitionRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
 	var require_protocol_workspaceFolder = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = void 0;
@@ -4965,8 +4952,7 @@
 			DidChangeWorkspaceFoldersNotification.type = new messages_1.ProtocolNotificationType(DidChangeWorkspaceFoldersNotification.method);
 		})(DidChangeWorkspaceFoldersNotification || (exports.DidChangeWorkspaceFoldersNotification = DidChangeWorkspaceFoldersNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
 	var require_protocol_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ConfigurationRequest = void 0;
@@ -4987,8 +4973,7 @@
 			ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
 		})(ConfigurationRequest || (exports.ConfigurationRequest = ConfigurationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
 	var require_protocol_colorProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
@@ -5018,8 +5003,7 @@
 			ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
 		})(ColorPresentationRequest || (exports.ColorPresentationRequest = ColorPresentationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
 	var require_protocol_foldingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.FoldingRangeRefreshRequest = exports.FoldingRangeRequest = void 0;
@@ -5047,8 +5031,7 @@
 			FoldingRangeRefreshRequest.type = new messages_1.ProtocolRequestType0(FoldingRangeRefreshRequest.method);
 		})(FoldingRangeRefreshRequest || (exports.FoldingRangeRefreshRequest = FoldingRangeRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
 	var require_protocol_declaration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DeclarationRequest = void 0;
@@ -5066,8 +5049,7 @@
 			DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
 		})(DeclarationRequest || (exports.DeclarationRequest = DeclarationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
 	var require_protocol_selectionRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SelectionRangeRequest = void 0;
@@ -5085,8 +5067,7 @@
 			SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
 		})(SelectionRangeRequest || (exports.SelectionRangeRequest = SelectionRangeRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
 	var require_protocol_progress = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = void 0;
@@ -5121,8 +5102,7 @@
 			WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
 		})(WorkDoneProgressCancelNotification || (exports.WorkDoneProgressCancelNotification = WorkDoneProgressCancelNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
 	var require_protocol_callHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.CallHierarchyPrepareRequest = void 0;
@@ -5162,8 +5142,7 @@
 			CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
 		})(CallHierarchyOutgoingCallsRequest || (exports.CallHierarchyOutgoingCallsRequest = CallHierarchyOutgoingCallsRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
 	var require_protocol_semanticTokens = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.SemanticTokensRegistrationType = exports.TokenFormat = void 0;
@@ -5217,8 +5196,7 @@
 			SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
 		})(SemanticTokensRefreshRequest || (exports.SemanticTokensRefreshRequest = SemanticTokensRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
 	var require_protocol_showDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ShowDocumentRequest = void 0;
@@ -5238,8 +5216,7 @@
 			ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
 		})(ShowDocumentRequest || (exports.ShowDocumentRequest = ShowDocumentRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
 	var require_protocol_linkedEditingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.LinkedEditingRangeRequest = void 0;
@@ -5256,8 +5233,7 @@
 			LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
 		})(LinkedEditingRangeRequest || (exports.LinkedEditingRangeRequest = LinkedEditingRangeRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
 	var require_protocol_fileOperations = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.DidRenameFilesNotification = exports.WillRenameFilesRequest = exports.DidCreateFilesNotification = exports.WillCreateFilesRequest = exports.FileOperationPatternKind = void 0;
@@ -5356,8 +5332,7 @@
 			WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
 		})(WillDeleteFilesRequest || (exports.WillDeleteFilesRequest = WillDeleteFilesRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
 	var require_protocol_moniker = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = void 0;
@@ -5423,8 +5398,7 @@
 			MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
 		})(MonikerRequest || (exports.MonikerRequest = MonikerRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
 	var require_protocol_typeHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.TypeHierarchySubtypesRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchyPrepareRequest = void 0;
@@ -5464,8 +5438,7 @@
 			TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
 		})(TypeHierarchySubtypesRequest || (exports.TypeHierarchySubtypesRequest = TypeHierarchySubtypesRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
 	var require_protocol_inlineValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
@@ -5493,8 +5466,7 @@
 			InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
 		})(InlineValueRefreshRequest || (exports.InlineValueRefreshRequest = InlineValueRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
 	var require_protocol_inlayHint = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = void 0;
@@ -5535,8 +5507,7 @@
 			InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
 		})(InlayHintRefreshRequest || (exports.InlayHintRefreshRequest = InlayHintRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
 	var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = void 0;
@@ -5608,8 +5579,7 @@
 			DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
 		})(DiagnosticRefreshRequest || (exports.DiagnosticRefreshRequest = DiagnosticRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
 	var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = void 0;
@@ -5791,8 +5761,7 @@
 			DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
 		})(DidCloseNotebookDocumentNotification || (exports.DidCloseNotebookDocumentNotification = DidCloseNotebookDocumentNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
 	var require_protocol_inlineCompletion = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlineCompletionRequest = void 0;
@@ -5812,8 +5781,7 @@
 			InlineCompletionRequest.type = new messages_1.ProtocolRequestType(InlineCompletionRequest.method);
 		})(InlineCompletionRequest || (exports.InlineCompletionRequest = InlineCompletionRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.js
 	var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WorkspaceSymbolRequest = exports.CodeActionResolveRequest = exports.CodeActionRequest = exports.DocumentSymbolRequest = exports.DocumentHighlightRequest = exports.ReferencesRequest = exports.DefinitionRequest = exports.SignatureHelpRequest = exports.SignatureHelpTriggerKind = exports.HoverRequest = exports.CompletionResolveRequest = exports.CompletionRequest = exports.CompletionTriggerKind = exports.PublishDiagnosticsNotification = exports.WatchKind = exports.RelativePattern = exports.FileChangeType = exports.DidChangeWatchedFilesNotification = exports.WillSaveTextDocumentWaitUntilRequest = exports.WillSaveTextDocumentNotification = exports.TextDocumentSaveReason = exports.DidSaveTextDocumentNotification = exports.DidCloseTextDocumentNotification = exports.DidChangeTextDocumentNotification = exports.TextDocumentContentChangeEvent = exports.DidOpenTextDocumentNotification = exports.TextDocumentSyncKind = exports.TelemetryEventNotification = exports.LogMessageNotification = exports.ShowMessageRequest = exports.ShowMessageNotification = exports.MessageType = exports.DidChangeConfigurationNotification = exports.ExitNotification = exports.ShutdownRequest = exports.InitializedNotification = exports.InitializeErrorCodes = exports.InitializeRequest = exports.WorkDoneProgressOptions = exports.TextDocumentRegistrationOptions = exports.StaticRegistrationOptions = exports.PositionEncodingKind = exports.FailureHandlingKind = exports.ResourceOperationKind = exports.UnregistrationRequest = exports.RegistrationRequest = exports.DocumentSelector = exports.NotebookCellTextDocumentFilter = exports.NotebookDocumentFilter = exports.TextDocumentFilter = void 0;
@@ -7031,8 +6999,7 @@
 			ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType("workspace/applyEdit");
 		})(ApplyWorkspaceEditRequest || (exports.ApplyWorkspaceEditRequest = ApplyWorkspaceEditRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/connection.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/connection.js
 	var require_connection = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createProtocolConnection = void 0;
@@ -7043,10 +7010,9 @@
 		}
 		exports.createProtocolConnection = createProtocolConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/api.js
-	var require_api$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/api.js
+	var require_api$6 = /* @__PURE__ */ __commonJSMin(((exports, module, this$4) => {
+		var __createBinding = this$4 && this$4.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7060,8 +7026,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$2) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$2, p)) __createBinding(exports$2, m, p);
+		var __exportStar = this$4 && this$4.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.LSPErrorCodes = exports.createProtocolConnection = void 0;
@@ -7127,10 +7093,9 @@
 			LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
 		})(LSPErrorCodes || (exports.LSPErrorCodes = LSPErrorCodes = {}));
 	}));
-	//#endregion
-	//#region src/utils.ts
-	var import_main = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// src/utils.ts
+	var import_main = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module, this$3) => {
+		var __createBinding = this$3 && this$3.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7144,8 +7109,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$1) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$1, p)) __createBinding(exports$1, m, p);
+		var __exportStar = this$3 && this$3.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createProtocolConnection = void 0;
@@ -7184,8 +7149,7 @@
 		for (let i = 0; i < regexpArray.length; i++) if (regexpArray[i].test(value)) return true;
 		return false;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
+	// ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
 	var FullTextDocument = class FullTextDocument {
 		constructor(uri, languageId, version, content) {
 			this._uri = uri;
@@ -7217,6 +7181,13 @@
 				const startOffset = this.offsetAt(range.start);
 				const endOffset = this.offsetAt(range.end);
 				this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+				const insertedEndOffset = startOffset + change.text.length;
+				const crlfAtStart = this._content.charCodeAt(startOffset - 1) === 13 && this._content.charCodeAt(startOffset) === 10;
+				const crlfAtEnd = this._content.charCodeAt(insertedEndOffset - 1) === 13 && this._content.charCodeAt(insertedEndOffset) === 10;
+				if (crlfAtStart || crlfAtEnd) {
+					this._lineOffsets = void 0;
+					continue;
+				}
 				const startLine = Math.max(range.start.line, 0);
 				const endLine = Math.max(range.end.line, 0);
 				let lineOffsets = this._lineOffsets;
@@ -7265,6 +7236,52 @@
 			const nextLineOffset = position.line + 1 < lineOffsets.length ? lineOffsets[position.line + 1] : this._content.length;
 			const offset = Math.min(lineOffset + position.character, nextLineOffset);
 			return this.ensureBeforeEOL(offset, lineOffset);
+		}
+		getLineRange(line) {
+			const lineOffsets = this.getLineOffsets();
+			if (line >= lineOffsets.length) {
+				const lastLine = lineOffsets.length - 1;
+				return {
+					start: {
+						line: lastLine,
+						character: 0
+					},
+					end: {
+						line: lastLine,
+						character: this._content.length - lineOffsets[lastLine]
+					}
+				};
+			} else if (line < 0) return {
+				start: {
+					line: 0,
+					character: 0
+				},
+				end: {
+					line: 0,
+					character: 0
+				}
+			};
+			const startOffset = lineOffsets[line];
+			const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+			const endOffset = this.ensureBeforeEOL(nextLineOffset, startOffset);
+			return {
+				start: {
+					line,
+					character: 0
+				},
+				end: {
+					line,
+					character: endOffset - startOffset
+				}
+			};
+		}
+		getEOLCharacters(line) {
+			const lineOffsets = this.getLineOffsets();
+			if (line >= lineOffsets.length) return "";
+			else if (line < 0) return "";
+			const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+			const eolOffset = this.ensureBeforeEOL(nextLineOffset, lineOffsets[line]);
+			return this._content.substring(eolOffset, nextLineOffset);
 		}
 		ensureBeforeEOL(offset, lineOffset) {
 			while (offset > lineOffset && isEOL(this._content.charCodeAt(offset - 1))) offset--;
@@ -7380,8 +7397,7 @@
 		};
 		return textEdit;
 	}
-	//#endregion
-	//#region src/services/base-service.ts
+	// src/services/base-service.ts
 	var BaseService = class {
 		constructor(mode, workspaceUri) {
 			this.documents = {};
@@ -7566,14 +7582,12 @@
 		}
 		sendResponse(callbackId, args) {}
 	};
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/version.js
+	// ../../node_modules/chevrotain/lib_esm/src/version.js
 	var VERSION$1;
 	var init_version = __esmMin((() => {
 		VERSION$1 = "7.1.1";
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/utils/utils.js
+	// ../../node_modules/chevrotain/lib_esm/src/utils/utils.js
 	function isEmpty(arr) {
 		return arr && arr.length === 0;
 	}
@@ -7884,9 +7898,8 @@
 		};
 	}
 	var init_utils = __esmMin((() => {}));
-	//#endregion
-	//#region ../../node_modules/regexp-to-ast/lib/regexp-to-ast.js
-	var require_regexp_to_ast = /* @__PURE__ */ __commonJSMin(((exports, module) => {
+	// ../../node_modules/regexp-to-ast/lib/regexp-to-ast.js
+	var require_regexp_to_ast = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) => {
 		(function(root, factory) {
 			// istanbul ignore next
 			if (typeof define === "function" && define.amd)
@@ -7896,7 +7909,7 @@
 			else
  // istanbul ignore next
 			root.regexpToAst = factory();
-		})(typeof self !== "undefined" ? self : exports, function() {
+		})(typeof self !== "undefined" ? self : this$2, function() {
 			function RegExpParser() {}
 			RegExpParser.prototype.saveState = function() {
 				return {
@@ -7942,9 +7955,7 @@
 					case "u":
 						addFlag(flags, "unicode");
 						break;
-					case "y":
-						addFlag(flags, "sticky");
-						break;
+					case "y": addFlag(flags, "sticky");
 				}
 				if (this.idx !== this.input.length) throw Error("Redundant input: " + this.input.substring(this.idx));
 				return {
@@ -8013,9 +8024,7 @@
 							case "=":
 								type = "Lookahead";
 								break;
-							case "!":
-								type = "NegativeLookahead";
-								break;
+							case "!": type = "NegativeLookahead";
 						}
 						ASSERT_EXISTS(type);
 						var disjunction = this.disjunction();
@@ -8073,11 +8082,9 @@
 									atMost: Infinity
 								};
 								this.consumeChar("}");
-								break;
 						}
 						if (isBacktracking === true && range === void 0) return;
 						ASSERT_EXISTS(range);
-						break;
 				}
 				if (isBacktracking === true && range === void 0) return;
 				ASSERT_EXISTS(range);
@@ -8102,9 +8109,7 @@
 					case "[":
 						atom = this.characterClass();
 						break;
-					case "(":
-						atom = this.group();
-						break;
+					case "(": atom = this.group();
 				}
 				if (atom === void 0 && this.isPatternCharacter()) atom = this.patternCharacter();
 				ASSERT_EXISTS(atom);
@@ -8185,7 +8190,6 @@
 					case "W":
 						set = wordCharCodes;
 						complement = true;
-						break;
 				}
 				ASSERT_EXISTS(set);
 				return {
@@ -8209,9 +8213,7 @@
 					case "t":
 						escapeCode = cc("	");
 						break;
-					case "v":
-						escapeCode = cc("\v");
-						break;
+					case "v": escapeCode = cc("\v");
 				}
 				ASSERT_EXISTS(escapeCode);
 				return {
@@ -8354,9 +8356,7 @@
 						this.consumeChar(":");
 						capturing = false;
 						break;
-					default:
-						this.groupIdx++;
-						break;
+					default: this.groupIdx++;
 				}
 				var value = this.disjunction();
 				this.consumeChar(")");
@@ -8653,9 +8653,7 @@
 					case "GroupBackReference":
 						this.visitGroupBackReference(node);
 						break;
-					case "Quantifier":
-						this.visitQuantifier(node);
-						break;
+					case "Quantifier": this.visitQuantifier(node);
 				}
 				this.visitChildren(node);
 			};
@@ -8681,8 +8679,7 @@
 			};
 		});
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/scan/reg_exp_parser.js
+	// ../../node_modules/chevrotain/lib_esm/src/scan/reg_exp_parser.js
 	function getRegExpAst(regExp) {
 		var regExpStr = regExp.toString();
 		if (regExpAstCache.hasOwnProperty(regExpStr)) return regExpAstCache[regExpStr];
@@ -8701,8 +8698,7 @@
 		regExpAstCache = {};
 		regExpParser = new import_regexp_to_ast$2.RegExpParser();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/scan/reg_exp.js
+	// ../../node_modules/chevrotain/lib_esm/src/scan/reg_exp.js
 	function getOptimizedStartCodesIndices(regExp, ensureOptimizations) {
 		if (ensureOptimizations === void 0) ensureOptimizations = false;
 		try {
@@ -8880,8 +8876,7 @@
 			return CharCodeFinder;
 		}(import_regexp_to_ast$1.BaseRegExpVisitor);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/scan/lexer.js
+	// ../../node_modules/chevrotain/lib_esm/src/scan/lexer.js
 	function analyzeTokenTypes(tokenTypes, options) {
 		options = defaults(options, {
 			useSticky: SUPPORT_STICKY,
@@ -8938,13 +8933,14 @@
 				} else if (has(currPattern, "exec")) {
 					hasCustom = true;
 					return currPattern;
-				} else if (typeof currPattern === "string") if (currPattern.length === 1) return currPattern;
-				else {
-					var escapedRegExpString = currPattern.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
-					var wrappedRegExp = new RegExp(escapedRegExpString);
-					return options.useSticky ? addStickyFlag(wrappedRegExp) : addStartOfInput(wrappedRegExp);
-				}
-				else throw Error("non exhaustive match");
+				} else if (typeof currPattern === "string") {
+					if (currPattern.length === 1) return currPattern;
+					else {
+						var escapedRegExpString = currPattern.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+						var wrappedRegExp = new RegExp(escapedRegExpString);
+						return options.useSticky ? addStickyFlag(wrappedRegExp) : addStartOfInput(wrappedRegExp);
+					}
+				} else throw Error("non exhaustive match");
 			});
 		});
 		var patternIdxToType;
@@ -9028,18 +9024,19 @@
 							addToMapOfArrays(result, currOptimizedIdx, patternIdxToConfig[idx]);
 						}
 					});
-				} else if (isRegExp(currTokType.PATTERN)) if (currTokType.PATTERN.unicode) {
-					canBeOptimized = false;
-					if (options.ensureOptimizations) PRINT_ERROR("" + failedOptimizationPrefixMsg + ("	Unable to analyze < " + currTokType.PATTERN.toString() + " > pattern.\n") + "	The regexp unicode flag is not currently supported by the regexp-to-ast library.\n	This will disable the lexer's first char optimizations.\n	For details See: https://sap.github.io/chevrotain/docs/guide/resolving_lexer_errors.html#UNICODE_OPTIMIZE");
+				} else if (isRegExp(currTokType.PATTERN)) {
+					if (currTokType.PATTERN.unicode) {
+						canBeOptimized = false;
+						if (options.ensureOptimizations) PRINT_ERROR("" + failedOptimizationPrefixMsg + ("	Unable to analyze < " + currTokType.PATTERN.toString() + " > pattern.\n") + "	The regexp unicode flag is not currently supported by the regexp-to-ast library.\n	This will disable the lexer's first char optimizations.\n	For details See: https://sap.github.io/chevrotain/docs/guide/resolving_lexer_errors.html#UNICODE_OPTIMIZE");
+					} else {
+						var optimizedCodes = getOptimizedStartCodesIndices(currTokType.PATTERN, options.ensureOptimizations);
+						/* istanbul ignore if */
+						if (isEmpty(optimizedCodes)) canBeOptimized = false;
+						forEach(optimizedCodes, function(code) {
+							addToMapOfArrays(result, code, patternIdxToConfig[idx]);
+						});
+					}
 				} else {
-					var optimizedCodes = getOptimizedStartCodesIndices(currTokType.PATTERN, options.ensureOptimizations);
-					/* istanbul ignore if */
-					if (isEmpty(optimizedCodes)) canBeOptimized = false;
-					forEach(optimizedCodes, function(code) {
-						addToMapOfArrays(result, code, patternIdxToConfig[idx]);
-					});
-				}
-				else {
 					if (options.ensureOptimizations) PRINT_ERROR("" + failedOptimizationPrefixMsg + ("	TokenType: <" + currTokType.name + "> is using a custom token pattern without providing <start_chars_hint> parameter.\n") + "	This will disable the lexer's first char optimizations.\n	For details See: https://sap.github.io/chevrotain/docs/guide/resolving_lexer_errors.html#CUSTOM_OPTIMIZE");
 					canBeOptimized = false;
 				}
@@ -9501,8 +9498,7 @@
 		};
 		charCodeToOptimizedIdxMap = [];
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/scan/tokens.js
+	// ../../node_modules/chevrotain/lib_esm/src/scan/tokens.js
 	function tokenStructuredMatcher(tokInstance, tokConstructor) {
 		var instanceType = tokInstance.tokenTypeIdx;
 		if (instanceType === tokConstructor.tokenTypeIdx) return true;
@@ -9590,8 +9586,7 @@
 		tokenShortNameIdx = 1;
 		tokenIdxToClass = {};
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/scan/lexer_errors_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/scan/lexer_errors_public.js
 	var defaultLexerErrorProvider;
 	var init_lexer_errors_public = __esmMin((() => {
 		defaultLexerErrorProvider = {
@@ -9603,8 +9598,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/scan/lexer_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/scan/lexer_public.js
 	var LexerDefinitionErrorType, DEFAULT_LEXER_CONFIG, Lexer;
 	var init_lexer_public = __esmMin((() => {
 		init_lexer();
@@ -10083,8 +10077,7 @@
 			return Lexer;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/scan/tokens_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/scan/tokens_public.js
 	function tokenLabel(tokType) {
 		if (hasTokenLabel(tokType)) return tokType.LABEL;
 		else return tokType.name;
@@ -10151,8 +10144,7 @@
 		});
 		augmentTokenTypes([EOF]);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/gast/gast_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/gast/gast_public.js
 	function serializeGrammar(topRules) {
 		return map(topRules, serializeProduction);
 	}
@@ -10408,8 +10400,7 @@
 			return Terminal;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/rest.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/rest.js
 	function restForRepetitionWithSeparator(repSepProd, currRest, prevRest) {
 		return [new Option({ definition: [new Terminal({ terminalType: repSepProd.separator })].concat(repSepProd.definition) })].concat(currRest, prevRest);
 	}
@@ -10474,8 +10465,7 @@
 			return RestWalker;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/gast/gast_visitor_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/gast/gast_visitor_public.js
 	var GAstVisitor;
 	var init_gast_visitor_public = __esmMin((() => {
 		init_gast_public();
@@ -10511,8 +10501,7 @@
 			return GAstVisitor;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/gast/gast.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/gast/gast.js
 	function isSequenceProd(prod) {
 		return prod instanceof Alternative || prod instanceof Option || prod instanceof Repetition || prod instanceof RepetitionMandatory || prod instanceof RepetitionMandatoryWithSeparator || prod instanceof RepetitionWithSeparator || prod instanceof Terminal || prod instanceof Rule;
 	}
@@ -10631,8 +10620,7 @@
 		}(GAstVisitor);
 		collectorVisitor = new DslMethodsCollectorVisitor();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/first.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/first.js
 	function first(prod) {
 		/* istanbul ignore else */
 		if (prod instanceof NonTerminal) return first(prod.referencedRule);
@@ -10670,14 +10658,12 @@
 		init_gast_public();
 		init_gast();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/constants.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/constants.js
 	var IN;
 	var init_constants = __esmMin((() => {
 		IN = "_~IN~_";
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/follow.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/follow.js
 	function computeAllProdsFollows(topProductions) {
 		var reSyncFollows = {};
 		forEach(topProductions, function(topProd) {
@@ -10727,14 +10713,14 @@
 			ResyncFollowsWalker.prototype.walkTerminal = function(terminal, currRest, prevRest) {};
 			ResyncFollowsWalker.prototype.walkProdRef = function(refProd, currRest, prevRest) {
 				var followName = buildBetweenProdsFollowPrefix(refProd.referencedRule, refProd.idx) + this.topProd.name;
-				var t_in_topProd_follows = first(new Alternative({ definition: currRest.concat(prevRest) }));
+				var fullRest = currRest.concat(prevRest);
+				var t_in_topProd_follows = first(new Alternative({ definition: fullRest }));
 				this.follows[followName] = t_in_topProd_follows;
 			};
 			return ResyncFollowsWalker;
 		}(RestWalker);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/errors_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/errors_public.js
 	var defaultParserErrorProvider, defaultGrammarResolverErrorProvider, defaultGrammarValidatorErrorProvider;
 	var init_errors_public = __esmMin((() => {
 		init_tokens_public();
@@ -10860,8 +10846,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/resolver.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/resolver.js
 	function resolveGrammar$1(topLevels, errMsgProvider) {
 		var refResolver = new GastRefResolverVisitor(topLevels, errMsgProvider);
 		refResolver.resolveRefs();
@@ -10920,8 +10905,7 @@
 			return GastRefResolverVisitor;
 		}(GAstVisitor);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/interpreter.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/interpreter.js
 	function possiblePathsFrom(targetDef, maxLength, currPath) {
 		if (currPath === void 0) currPath = [];
 		currPath = cloneArr(currPath);
@@ -11010,30 +10994,30 @@
 					occurrenceStack: dropRight(currOccurrenceStack)
 				};
 				possiblePaths.push(nextPath);
-			} else if (prod instanceof Terminal)
- /* istanbul ignore else */
-			if (currIdx < tokenVectorLength - 1) {
-				var nextIdx = currIdx + 1;
-				var actualToken = tokenVector[nextIdx];
-				if (tokMatcher(actualToken, prod.terminalType)) {
-					var nextPath = {
-						idx: nextIdx,
-						def: drop(currDef),
+			} else if (prod instanceof Terminal) {
+				/* istanbul ignore else */
+				if (currIdx < tokenVectorLength - 1) {
+					var nextIdx = currIdx + 1;
+					var actualToken = tokenVector[nextIdx];
+					if (tokMatcher(actualToken, prod.terminalType)) {
+						var nextPath = {
+							idx: nextIdx,
+							def: drop(currDef),
+							ruleStack: currRuleStack,
+							occurrenceStack: currOccurrenceStack
+						};
+						possiblePaths.push(nextPath);
+					}
+				} else if (currIdx === tokenVectorLength - 1) {
+					result.push({
+						nextTokenType: prod.terminalType,
+						nextTokenOccurrence: prod.idx,
 						ruleStack: currRuleStack,
 						occurrenceStack: currOccurrenceStack
-					};
-					possiblePaths.push(nextPath);
-				}
-			} else if (currIdx === tokenVectorLength - 1) {
-				result.push({
-					nextTokenType: prod.terminalType,
-					nextTokenOccurrence: prod.idx,
-					ruleStack: currRuleStack,
-					occurrenceStack: currOccurrenceStack
-				});
-				foundCompletePath = true;
-			} else throw Error("non exhaustive match");
-			else if (prod instanceof NonTerminal) {
+					});
+					foundCompletePath = true;
+				} else throw Error("non exhaustive match");
+			} else if (prod instanceof NonTerminal) {
 				var newRuleStack = cloneArr(currRuleStack);
 				newRuleStack.push(prod.nonTerminalName);
 				var newOccurrenceStack = cloneArr(currOccurrenceStack);
@@ -11247,7 +11231,8 @@
 			}
 			NextAfterTokenWalker.prototype.walkTerminal = function(terminal, currRest, prevRest) {
 				if (this.isAtEndOfPath && terminal.terminalType.name === this.nextTerminalName && terminal.idx === this.nextTerminalOccurrence && !this.found) {
-					var restProd = new Alternative({ definition: currRest.concat(prevRest) });
+					var fullRest = currRest.concat(prevRest);
+					var restProd = new Alternative({ definition: fullRest });
 					this.possibleTokTypes = first(restProd);
 					this.found = true;
 				}
@@ -11342,8 +11327,7 @@
 			return NextTerminalAfterAtLeastOneSepWalker;
 		}(AbstractNextTerminalAfterProductionWalker);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/lookahead.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/lookahead.js
 	function getProdType(prod) {
 		/* istanbul ignore else */
 		if (prod instanceof Option) return PROD_TYPE.OPTION;
@@ -11702,8 +11686,7 @@
 			return InsideDefinitionFinderVisitor;
 		}(GAstVisitor);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/checks.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/checks.js
 	function validateGrammar$1(topLevels, globalMaxLookahead, tokenTypes, errMsgProvider, grammarName) {
 		var duplicateErrors = map(topLevels, function(currTopLevel) {
 			return validateDuplicateProductions(currTopLevel, errMsgProvider);
@@ -12098,8 +12081,7 @@
 			return RepetionCollector;
 		}(GAstVisitor);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/gast/gast_resolver_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/gast/gast_resolver_public.js
 	function resolveGrammar(options) {
 		options = defaults(options, { errMsgProvider: defaultGrammarResolverErrorProvider });
 		var topRulesTable = {};
@@ -12130,8 +12112,7 @@
 		init_errors_public();
 		init_gast();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/exceptions_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/exceptions_public.js
 	function isRecognitionException(error) {
 		return contains(RECOGNITION_EXCEPTION_NAMES, error.name);
 	}
@@ -12220,8 +12201,7 @@
 			return EarlyExitException;
 		}(RecognitionException);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/recoverable.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/recoverable.js
 	function InRuleRecoveryException(message) {
 		this.name = IN_RULE_RECOVERY_EXCEPTION;
 		this.message = message;
@@ -12280,12 +12260,13 @@
 				var currToken = this.LA(1);
 				var generateErrorMessage = function() {
 					var previousToken = _this.LA(0);
-					var error = new MismatchedTokenException(_this.errorMessageProvider.buildMismatchTokenMessage({
+					var msg = _this.errorMessageProvider.buildMismatchTokenMessage({
 						expected: expectedTokType,
 						actual: nextTokenWithoutResync,
 						previous: previousToken,
 						ruleName: _this.getCurrRuleFullName()
-					}), nextTokenWithoutResync, _this.LA(0));
+					});
+					var error = new MismatchedTokenException(msg, nextTokenWithoutResync, _this.LA(0));
 					error.resyncedTokens = dropRight(resyncedTokens);
 					_this.SAVE_ERROR(error);
 				};
@@ -12420,8 +12401,7 @@
 			return Recoverable;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/grammar/keys.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/grammar/keys.js
 	function getKeyForAutomaticLookahead(ruleIdx, dslMethodIdx, occurrence) {
 		return occurrence | dslMethodIdx | ruleIdx;
 	}
@@ -12431,8 +12411,7 @@
 		MANY_SEP_IDX = 1280;
 		AT_LEAST_ONE_SEP_IDX = 1536;
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/looksahead.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/looksahead.js
 	var LooksAhead;
 	var init_looksahead = __esmMin((() => {
 		init_lookahead();
@@ -12525,8 +12504,7 @@
 			return LooksAhead;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/cst/cst.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/cst/cst.js
 	/**
 	* This nodeLocation tracking is not efficient and should only be used
 	* when error recovery is enabled or the Token Vector contains virtual Tokens
@@ -12570,8 +12548,7 @@
 		else node.children[ruleName].push(ruleResult);
 	}
 	var init_cst = __esmMin((() => {}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/lang/lang_extensions.js
+	// ../../node_modules/chevrotain/lib_esm/src/lang/lang_extensions.js
 	function classNameFromInstance(instance) {
 		return functionName(instance.constructor);
 	}
@@ -12609,8 +12586,7 @@
 		init_utils();
 		NAME = "name";
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/cst/cst_visitor.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/cst/cst_visitor.js
 	function defaultVisit(ctx, param) {
 		var childrenNames = keys(ctx);
 		var childrenNamesLength = childrenNames.length;
@@ -12694,8 +12670,7 @@
 			"validateVisitor"
 		];
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/tree_builder.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/tree_builder.js
 	var TreeBuilder;
 	var init_tree_builder = __esmMin((() => {
 		init_cst();
@@ -12714,29 +12689,31 @@
 					this.cstPostTerminal = NOOP;
 					this.cstPostNonTerminal = NOOP;
 					this.cstPostRule = NOOP;
-				} else if (/full/i.test(this.nodeLocationTracking)) if (this.recoveryEnabled) {
-					this.setNodeLocationFromToken = setNodeLocationFull;
-					this.setNodeLocationFromNode = setNodeLocationFull;
-					this.cstPostRule = NOOP;
-					this.setInitialNodeLocation = this.setInitialNodeLocationFullRecovery;
-				} else {
-					this.setNodeLocationFromToken = NOOP;
-					this.setNodeLocationFromNode = NOOP;
-					this.cstPostRule = this.cstPostRuleFull;
-					this.setInitialNodeLocation = this.setInitialNodeLocationFullRegular;
-				}
-				else if (/onlyOffset/i.test(this.nodeLocationTracking)) if (this.recoveryEnabled) {
-					this.setNodeLocationFromToken = setNodeLocationOnlyOffset;
-					this.setNodeLocationFromNode = setNodeLocationOnlyOffset;
-					this.cstPostRule = NOOP;
-					this.setInitialNodeLocation = this.setInitialNodeLocationOnlyOffsetRecovery;
-				} else {
-					this.setNodeLocationFromToken = NOOP;
-					this.setNodeLocationFromNode = NOOP;
-					this.cstPostRule = this.cstPostRuleOnlyOffset;
-					this.setInitialNodeLocation = this.setInitialNodeLocationOnlyOffsetRegular;
-				}
-				else if (/none/i.test(this.nodeLocationTracking)) {
+				} else if (/full/i.test(this.nodeLocationTracking)) {
+					if (this.recoveryEnabled) {
+						this.setNodeLocationFromToken = setNodeLocationFull;
+						this.setNodeLocationFromNode = setNodeLocationFull;
+						this.cstPostRule = NOOP;
+						this.setInitialNodeLocation = this.setInitialNodeLocationFullRecovery;
+					} else {
+						this.setNodeLocationFromToken = NOOP;
+						this.setNodeLocationFromNode = NOOP;
+						this.cstPostRule = this.cstPostRuleFull;
+						this.setInitialNodeLocation = this.setInitialNodeLocationFullRegular;
+					}
+				} else if (/onlyOffset/i.test(this.nodeLocationTracking)) {
+					if (this.recoveryEnabled) {
+						this.setNodeLocationFromToken = setNodeLocationOnlyOffset;
+						this.setNodeLocationFromNode = setNodeLocationOnlyOffset;
+						this.cstPostRule = NOOP;
+						this.setInitialNodeLocation = this.setInitialNodeLocationOnlyOffsetRecovery;
+					} else {
+						this.setNodeLocationFromToken = NOOP;
+						this.setNodeLocationFromNode = NOOP;
+						this.cstPostRule = this.cstPostRuleOnlyOffset;
+						this.setInitialNodeLocation = this.setInitialNodeLocationOnlyOffsetRegular;
+					}
+				} else if (/none/i.test(this.nodeLocationTracking)) {
 					this.setNodeLocationFromToken = NOOP;
 					this.setNodeLocationFromNode = NOOP;
 					this.cstPostRule = NOOP;
@@ -12852,8 +12829,7 @@
 			return TreeBuilder;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/lexer_adapter.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/lexer_adapter.js
 	var LexerAdapter;
 	var init_lexer_adapter = __esmMin((() => {
 		init_parser();
@@ -12909,8 +12885,7 @@
 			return LexerAdapter;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/recognizer_api.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/recognizer_api.js
 	var RecognizerApi;
 	var init_recognizer_api = __esmMin((() => {
 		init_utils();
@@ -13234,8 +13209,7 @@
 			return RecognizerApi;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/recognizer_engine.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/recognizer_engine.js
 	var RecognizerEngine;
 	var init_recognizer_engine = __esmMin((() => {
 		init_utils();
@@ -13605,8 +13579,7 @@
 			return RecognizerEngine;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/error_handler.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/error_handler.js
 	var ErrorHandler;
 	var init_error_handler = __esmMin((() => {
 		init_exceptions_public();
@@ -13673,8 +13646,7 @@
 			return ErrorHandler;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/context_assist.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/context_assist.js
 	var ContentAssist;
 	var init_context_assist = __esmMin((() => {
 		init_interpreter();
@@ -13695,8 +13667,7 @@
 			return ContentAssist;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/gast_recorder.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/gast_recorder.js
 	function recordProd(prodConstructor, mainProdArg, occurrence, handleSep) {
 		if (handleSep === void 0) handleSep = false;
 		assertMethodIdxIsValid(occurrence);
@@ -13953,8 +13924,7 @@
 			return GastRecorder;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/perf_tracer.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/perf_tracer.js
 	var PerformanceTracer;
 	var init_perf_tracer = __esmMin((() => {
 		init_utils();
@@ -13989,8 +13959,7 @@
 			return PerformanceTracer;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/parse/parser/parser.js
+	// ../../node_modules/chevrotain/lib_esm/src/parse/parser/parser.js
 	function EMPTY_ALT(value) {
 		if (value === void 0) value = void 0;
 		return function() {
@@ -14182,8 +14151,7 @@
 			return EmbeddedActionsParser;
 		}(Parser$1);
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/diagrams/render_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/diagrams/render_public.js
 	function createSyntaxDiagramsCode(grammar, _a) {
 		var _b = _a === void 0 ? {} : _a, _c = _b.resourceBase, resourceBase = _c === void 0 ? "https://unpkg.com/chevrotain@" + VERSION$1 + "/diagrams/" : _c, _d = _b.css, css = _d === void 0 ? "https://unpkg.com/chevrotain@" + VERSION$1 + "/diagrams/diagrams.css" : _d;
 		var header = "\n<!-- This is a generated file -->\n<!DOCTYPE html>\n<meta charset=\"utf-8\">\n<style>\n  body {\n    background-color: hsl(30, 20%, 95%)\n  }\n</style>\n\n";
@@ -14196,8 +14164,7 @@
 	var init_render_public = __esmMin((() => {
 		init_version();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/generate/generate.js
+	// ../../node_modules/chevrotain/lib_esm/src/generate/generate.js
 	function genUmdModule(options) {
 		return "\n(function (root, factory) {\n    if (typeof define === 'function' && define.amd) {\n        // AMD. Register as an anonymous module.\n        define(['chevrotain'], factory);\n    } else if (typeof module === 'object' && module.exports) {\n        // Node. Does not work with strict CommonJS, but\n        // only CommonJS-like environments that support module.exports,\n        // like Node.\n        module.exports = factory(require('chevrotain'));\n    } else {\n        // Browser globals (root is window)\n        root.returnExports = factory(root.b);\n    }\n}(typeof self !== 'undefined' ? self : this, function (chevrotain) {\n\n" + genClass(options) + "\n    \nreturn {\n    " + options.name + ": " + options.name + " \n}\n}));\n";
 	}
@@ -14288,8 +14255,7 @@
 		init_gast_public();
 		NL = "\n";
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/generate/generate_public.js
+	// ../../node_modules/chevrotain/lib_esm/src/generate/generate_public.js
 	function generateParserFactory(options) {
 		var wrapperText = genWrapperFunction({
 			name: options.name,
@@ -14309,8 +14275,7 @@
 	var init_generate_public = __esmMin((() => {
 		init_generate();
 	}));
-	//#endregion
-	//#region ../../node_modules/chevrotain/lib_esm/src/api.js
+	// ../../node_modules/chevrotain/lib_esm/src/api.js
 	var api_exports = /* @__PURE__ */ __exportAll({
 		Alternation: () => Alternation,
 		Alternative: () => Alternative,
@@ -14356,6 +14321,7 @@
 		tokenName: () => tokenName,
 		validateGrammar: () => validateGrammar
 	});
+	/* istanbul ignore file - tricky to import some things from this module during testing */
 	/* istanbul ignore next */
 	function clearCache() {
 		console.warn("The clearCache function was 'soft' removed from the Chevrotain API.\n	 It performs no action other than printing this message.\n	 Please avoid using it as it will be completely removed in the future");
@@ -14381,8 +14347,7 @@
 			return Parser;
 		}();
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/parser/lib/lexer.js
+	// ../../node_modules/@xml-tools/parser/lib/lexer.js
 	var require_lexer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { createToken: createTokenOrg, Lexer } = (init_api(), __toCommonJS(api_exports));
 		var fragments = {};
@@ -14554,8 +14519,7 @@
 			tokensDictionary
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/parser/lib/parser.js
+	// ../../node_modules/@xml-tools/parser/lib/parser.js
 	var require_parser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { CstParser, tokenMatcher } = (init_api(), __toCommonJS(api_exports));
 		var { tokensDictionary: t } = require_lexer();
@@ -14696,8 +14660,7 @@
 		};
 		module.exports = { xmlParser: new Parser() };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/parser/lib/api.js
+	// ../../node_modules/@xml-tools/parser/lib/api.js
 	var require_api$5 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { xmlLexer } = require_lexer();
 		var { xmlParser } = require_parser();
@@ -14715,15 +14678,13 @@
 			BaseXmlCstVisitor: xmlParser.getBaseCstVisitorConstructor()
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js
+	// ../../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js
 	var global;
 	var init_dist = __esmMin((() => {
 		global = globalThis || self;
 	}));
-	//#endregion
-	//#region ../../node_modules/lodash/lodash.js
-	var require_lodash = /* @__PURE__ */ __commonJSMin(((exports, module) => {
+	// ../../node_modules/lodash/lodash.js
+	var require_lodash = /* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
 		init_dist();
 		/**
 		* @license
@@ -14761,7 +14722,7 @@
 			/** Used to indicate the type of lazy iteratees. */
 			var LAZY_FILTER_FLAG = 1, LAZY_MAP_FLAG = 2, LAZY_WHILE_FLAG = 3;
 			/** Used as references for various `Number` constants. */
-			var INFINITY = Infinity, MAX_SAFE_INTEGER = 9007199254740991, MAX_INTEGER = 17976931348623157e292, NAN = NaN;
+			var INFINITY = 1 / 0, MAX_SAFE_INTEGER = 9007199254740991, MAX_INTEGER = 17976931348623157e292, NAN = NaN;
 			/** Used as references for the maximum length and index of an array. */
 			var MAX_ARRAY_LENGTH = 4294967295, MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1, HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 			/** Used to associate wrap methods with their bit flags. */
@@ -16274,8 +16235,10 @@
 						while (++iterIndex < iterLength) {
 							var data = iteratees[iterIndex], iteratee = data.iteratee, type = data.type, computed = iteratee(value);
 							if (type == LAZY_MAP_FLAG) value = computed;
-							else if (!computed) if (type == LAZY_FILTER_FLAG) continue outer;
-							else break outer;
+							else if (!computed) {
+								if (type == LAZY_FILTER_FLAG) continue outer;
+								else break outer;
+							}
 						}
 						result[resIndex++] = value;
 					}
@@ -16670,7 +16633,7 @@
 					var data = this.__data__;
 					if (data instanceof ListCache) {
 						var pairs = data.__data__;
-						if (!Map || pairs.length < LARGE_ARRAY_SIZE - 1) {
+						if (!Map || pairs.length < 199) {
 							pairs.push([key, value]);
 							this.size = ++data.size;
 							return this;
@@ -17100,9 +17063,10 @@
 					result || (result = []);
 					while (++index < length) {
 						var value = array[index];
-						if (depth > 0 && predicate(value)) if (depth > 1) baseFlatten(value, depth - 1, predicate, isStrict, result);
-						else arrayPush(result, value);
-						else if (!isStrict) result[result.length] = value;
+						if (depth > 0 && predicate(value)) {
+							if (depth > 1) baseFlatten(value, depth - 1, predicate, isStrict, result);
+							else arrayPush(result, value);
+						} else if (!isStrict) result[result.length] = value;
 					}
 					return result;
 				}
@@ -17635,16 +17599,17 @@
 					if (isCommon) {
 						var isArr = isArray(srcValue), isBuff = !isArr && isBuffer(srcValue), isTyped = !isArr && !isBuff && isTypedArray(srcValue);
 						newValue = srcValue;
-						if (isArr || isBuff || isTyped) if (isArray(objValue)) newValue = objValue;
-						else if (isArrayLikeObject(objValue)) newValue = copyArray(objValue);
-						else if (isBuff) {
-							isCommon = false;
-							newValue = cloneBuffer(srcValue, true);
-						} else if (isTyped) {
-							isCommon = false;
-							newValue = cloneTypedArray(srcValue, true);
-						} else newValue = [];
-						else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+						if (isArr || isBuff || isTyped) {
+							if (isArray(objValue)) newValue = objValue;
+							else if (isArrayLikeObject(objValue)) newValue = copyArray(objValue);
+							else if (isBuff) {
+								isCommon = false;
+								newValue = cloneBuffer(srcValue, true);
+							} else if (isTyped) {
+								isCommon = false;
+								newValue = cloneTypedArray(srcValue, true);
+							} else newValue = [];
+						} else if (isPlainObject(srcValue) || isArguments(srcValue)) {
 							newValue = objValue;
 							if (isArguments(objValue)) newValue = toPlainObject(objValue);
 							else if (!isObject(objValue) || isFunction(objValue)) newValue = initCloneObject(srcValue);
@@ -19352,8 +19317,10 @@
 						var unmasked = true;
 					} catch (e) {}
 					var result = nativeObjectToString.call(value);
-					if (unmasked) if (isOwn) value[symToStringTag] = tag;
-					else delete value[symToStringTag];
+					if (unmasked) {
+						if (isOwn) value[symToStringTag] = tag;
+						else delete value[symToStringTag];
+					}
 					return result;
 				}
 				/**
@@ -19428,9 +19395,7 @@
 							case "take":
 								end = nativeMin(end, start + size);
 								break;
-							case "takeRight":
-								start = nativeMax(start, end - size);
-								break;
+							case "takeRight": start = nativeMax(start, end - size);
 						}
 					}
 					return {
@@ -24774,7 +24739,7 @@
 				* // => false
 				*/
 				function isSafeInteger(value) {
-					return isInteger(value) && value >= -9007199254740991 && value <= MAX_SAFE_INTEGER;
+					return isInteger(value) && value >= -MAX_SAFE_INTEGER && value <= MAX_SAFE_INTEGER;
 				}
 				/**
 				* Checks if `value` is classified as a `Set` object.
@@ -25168,7 +25133,7 @@
 				* // => 3
 				*/
 				function toSafeInteger(value) {
-					return value ? baseClamp(toInteger(value), -9007199254740991, MAX_SAFE_INTEGER) : value === 0 ? value : 0;
+					return value ? baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER) : value === 0 ? value : 0;
 				}
 				/**
 				* Converts `value` to a string. An empty string is returned for `null`
@@ -29279,10 +29244,9 @@
 				(freeModule.exports = _)._ = _;
 				freeExports._ = _;
 			} else root._ = _;
-		}).call(exports);
+		}).call(this$1);
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/common/lib/find-next-textual-token.js
+	// ../../node_modules/@xml-tools/common/lib/find-next-textual-token.js
 	var require_find_next_textual_token = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { findIndex } = require_lodash();
 		function findNextTextualToken(tokenVector, prevTokenEndOffset) {
@@ -29301,8 +29265,7 @@
 		}
 		module.exports = { findNextTextualToken };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/common/lib/xml-ns-key.js
+	// ../../node_modules/@xml-tools/common/lib/xml-ns-key.js
 	var require_xml_ns_key = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var namespaceRegex = /^xmlns(?<prefixWithColon>:(?<prefix>[^:]*))?$/;
 		/**
@@ -29335,8 +29298,7 @@
 			getXMLNamespaceKeyPrefix
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/common/lib/api.js
+	// ../../node_modules/@xml-tools/common/lib/api.js
 	var require_api$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { findNextTextualToken } = require_find_next_textual_token();
 		var { isXMLNamespaceKey, getXMLNamespaceKeyPrefix } = require_xml_ns_key();
@@ -29346,8 +29308,7 @@
 			getXMLNamespaceKeyPrefix
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/ast/lib/utils.js
+	// ../../node_modules/@xml-tools/ast/lib/utils.js
 	var require_utils$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { reduce, has, isArray } = require_lodash();
 		function getAstChildrenReflective(astParent) {
@@ -29359,13 +29320,11 @@
 		}
 		module.exports = { getAstChildrenReflective };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/ast/lib/constants.js
+	// ../../node_modules/@xml-tools/ast/lib/constants.js
 	var require_constants = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = { DEFAULT_NS: "::DEFAULT" };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/ast/lib/build-ast.js
+	// ../../node_modules/@xml-tools/ast/lib/build-ast.js
 	var require_build_ast = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { BaseXmlCstVisitor } = require_api$5();
 		var { last, forEach, reduce, map, pick, sortBy, isEmpty, isArray, assign } = require_lodash();
@@ -29689,8 +29648,7 @@
 		}
 		module.exports = { buildAst };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/ast/lib/visit-ast.js
+	// ../../node_modules/@xml-tools/ast/lib/visit-ast.js
 	var require_visit_ast = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { forEach, isFunction } = require_lodash();
 		var { getAstChildrenReflective } = require_utils$1();
@@ -29729,8 +29687,7 @@
 		}
 		module.exports = { accept };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/ast/lib/api.js
+	// ../../node_modules/@xml-tools/ast/lib/api.js
 	var require_api$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { buildAst } = require_build_ast();
 		var { accept } = require_visit_ast();
@@ -29741,8 +29698,7 @@
 			DEFAULT_NS
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/validation/lib/validate.js
+	// ../../node_modules/@xml-tools/validation/lib/validate.js
 	var require_validate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { accept } = require_api$3();
 		var { defaultsDeep, flatMap } = require_lodash();
@@ -29766,14 +29722,12 @@
 		}
 		module.exports = { validate };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/validation/lib/api.js
+	// ../../node_modules/@xml-tools/validation/lib/api.js
 	var require_api$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { validate } = require_validate();
 		module.exports = { validate };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/constraints/lib/constraints/unique-attribute-keys.js
+	// ../../node_modules/@xml-tools/constraints/lib/constraints/unique-attribute-keys.js
 	var require_unique_attribute_keys = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { groupBy, pickBy, reduce, map, filter } = require_lodash();
 		/**
@@ -29796,8 +29750,7 @@
 		}
 		module.exports = { validateUniqueAttributeKeys };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/constraints/lib/constraints/tag-closing-name-match.js
+	// ../../node_modules/@xml-tools/constraints/lib/constraints/tag-closing-name-match.js
 	var require_tag_closing_name_match = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		/**
 		* @param {XMLElement} elem
@@ -29828,8 +29781,7 @@
 		}
 		module.exports = { validateTagClosingNameMatch };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/constraints/lib/api.js
+	// ../../node_modules/@xml-tools/constraints/lib/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { validate } = require_api$2();
 		var { validateUniqueAttributeKeys } = require_unique_attribute_keys();
@@ -29846,8 +29798,7 @@
 		}
 		module.exports = { checkConstraints };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/validators/utils.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/validators/utils.js
 	var require_utils = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { pick } = require_lodash();
 		function tokenToOffsetPosition(token) {
@@ -29855,8 +29806,7 @@
 		}
 		module.exports = { tokenToOffsetPosition };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/validators/attribute-value.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/validators/attribute-value.js
 	var require_attribute_value$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { isRegExp, isArray, includes, has } = require_lodash();
 		var { tokenToOffsetPosition } = require_utils();
@@ -29895,8 +29845,7 @@
 		}
 		module.exports = { validateAttributeValue };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/validators/duplicate-sub-elements.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/validators/duplicate-sub-elements.js
 	var require_duplicate_sub_elements = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { map, forEach, includes, filter, groupBy } = require_lodash();
 		var { tokenToOffsetPosition } = require_utils();
@@ -29927,8 +29876,7 @@
 		}
 		module.exports = { validateDuplicateSubElements };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/validators/required-attributes.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/validators/required-attributes.js
 	var require_required_attributes = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { map, filter, difference } = require_lodash();
 		var { tokenToOffsetPosition } = require_utils();
@@ -29952,8 +29900,7 @@
 		}
 		module.exports = { validateRequiredAttributes };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/validators/required-sub-elements.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/validators/required-sub-elements.js
 	var require_required_sub_elements = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { map, filter, difference } = require_lodash();
 		var { tokenToOffsetPosition } = require_utils();
@@ -29977,8 +29924,7 @@
 		}
 		module.exports = { validateRequiredSubElements };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/validators/unknown-attributes.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/validators/unknown-attributes.js
 	var require_unknown_attributes = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { map, includes, forEach } = require_lodash();
 		var { isXMLNamespaceKey } = require_api$4();
@@ -30013,8 +29959,7 @@
 		}
 		module.exports = { validateUnknownAttributes };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/validators/unknown-sub-elements.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/validators/unknown-sub-elements.js
 	var require_unknown_sub_elements = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { map, forEach, includes } = require_lodash();
 		var { tokenToOffsetPosition } = require_utils();
@@ -30042,8 +29987,7 @@
 		}
 		module.exports = { validateUnknownSubElements };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/path.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/path.js
 	var require_path = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { drop, map, forEach, first } = require_lodash();
 		/**
@@ -30094,8 +30038,7 @@
 			findElementXssDef
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/get-validators.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/get-validators.js
 	var require_get_validators = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { validateAttributeValue } = require_attribute_value$1();
 		var { validateDuplicateSubElements } = require_duplicate_sub_elements();
@@ -30144,8 +30087,7 @@
 		}
 		module.exports = { getSchemaValidators };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/content-assist/attribute-name.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/content-assist/attribute-name.js
 	var require_attribute_name = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { difference, map } = require_lodash();
 		/**
@@ -30165,8 +30107,7 @@
 		}
 		module.exports = { attributeNameCompletion };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/content-assist/attribute-value.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/content-assist/attribute-value.js
 	var require_attribute_value = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { has, isRegExp, forEach, isArray } = require_lodash();
 		/**
@@ -30194,8 +30135,7 @@
 		}
 		module.exports = { attributeValueCompletion };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/content-assist/element-name.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/content-assist/element-name.js
 	var require_element_name = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { difference, map, filter, has, pickBy } = require_lodash();
 		var { DEFAULT_NS } = require_api$3();
@@ -30240,8 +30180,7 @@
 		}
 		module.exports = { elementNameCompletion };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/get-content-assist.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/get-content-assist.js
 	var require_get_content_assist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { attributeNameCompletion } = require_attribute_name();
 		var { attributeValueCompletion } = require_attribute_value();
@@ -30286,8 +30225,7 @@
 		}
 		module.exports = { getSchemaSuggestionsProviders };
 	}));
-	//#endregion
-	//#region ../../node_modules/@xml-tools/simple-schema/lib/api.js
+	// ../../node_modules/@xml-tools/simple-schema/lib/api.js
 	var require_api = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { getSchemaValidators } = require_get_validators();
 		var { getSchemaSuggestionsProviders } = require_get_content_assist();
@@ -30296,8 +30234,7 @@
 			getSchemaSuggestionsProviders
 		};
 	}));
-	//#endregion
-	//#region src/ace/range-singleton.ts
+	// src/ace/range-singleton.ts
 	var import_api = require_api$5();
 	var import_api$1 = require_api$3();
 	var import_api$4 = require_api$2();
@@ -30309,8 +30246,7 @@
 			return AceRange._instance;
 		}
 	};
-	//#endregion
-	//#region src/type-converters/common-converters.ts
+	// src/type-converters/common-converters.ts
 	var CommonConverter;
 	(function(_CommonConverter) {
 		function normalizeRanges(completions) {
@@ -30358,8 +30294,7 @@
 		}
 		_CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 	})(CommonConverter || (CommonConverter = {}));
-	//#endregion
-	//#region src/services/xml/xml-converters.ts
+	// src/services/xml/xml-converters.ts
 	function lexingErrorsToDiagnostic(errors, document, filterErrors) {
 		return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore).map((el) => {
 			return {
@@ -30405,8 +30340,7 @@
 		else severity = toDiagnosticSeverity(issueSeverity);
 		return severity;
 	}
-	//#endregion
-	//#region src/services/xml/validators.ts
+	// src/services/xml/validators.ts
 	function namespaceValidator(element) {
 		const issues = [];
 		const declared = element.namespaces ?? {};
@@ -30423,8 +30357,7 @@
 		if (element.ns) checkPrefix(element.ns, element);
 		return issues;
 	}
-	//#endregion
-	//#region src/services/xml/xml-service.ts
+	// src/services/xml/xml-service.ts
 	var XmlService = class extends BaseService {
 		constructor(mode) {
 			super(mode);
@@ -30487,6 +30420,5 @@
 			];
 		}
 	};
-	//#endregion
 	exports.XmlService = XmlService;
 });

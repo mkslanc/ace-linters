@@ -434,18 +434,18 @@ var aceLegacyWorkerModule = (() => {
       var fulfilled = (value) => {
         try {
           step(generator.next(value));
-        } catch (e) {
-          reject(e);
+        } catch (e2) {
+          reject(e2);
         }
       };
       var rejected = (value) => {
         try {
           step(generator.throw(value));
-        } catch (e) {
-          reject(e);
+        } catch (e2) {
+          reject(e2);
         }
       };
-      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      var step = (x2) => x2.done ? resolve(x2.value) : Promise.resolve(x2.value).then(fulfilled, rejected);
       step((generator = generator.apply(__this, __arguments)).next());
     });
   };
@@ -478,8 +478,8 @@ var aceLegacyWorkerModule = (() => {
   var require_lang = __commonJS({
     "../../node_modules/ace-code/src/lib/lang.js"(exports) {
       "use strict";
-      exports.last = function(a) {
-        return a[a.length - 1];
+      exports.last = function(a2) {
+        return a2[a2.length - 1];
       };
       exports.stringReverse = function(string) {
         return string.split("").reverse().join("");
@@ -511,33 +511,33 @@ var aceLegacyWorkerModule = (() => {
       };
       exports.copyArray = function(array) {
         var copy = [];
-        for (var i = 0, l = array.length; i < l; i++) {
-          if (array[i] && typeof array[i] == "object")
-            copy[i] = this.copyObject(array[i]);
+        for (var i2 = 0, l2 = array.length; i2 < l2; i2++) {
+          if (array[i2] && typeof array[i2] == "object")
+            copy[i2] = this.copyObject(array[i2]);
           else
-            copy[i] = array[i];
+            copy[i2] = array[i2];
         }
         return copy;
       };
       exports.deepCopy = require_deep_copy().deepCopy;
       exports.arrayToMap = function(arr) {
         var map = {};
-        for (var i = 0; i < arr.length; i++) {
-          map[arr[i]] = 1;
+        for (var i2 = 0; i2 < arr.length; i2++) {
+          map[arr[i2]] = 1;
         }
         return map;
       };
       exports.createMap = function(props) {
         var map = /* @__PURE__ */ Object.create(null);
-        for (var i in props) {
-          map[i] = props[i];
+        for (var i2 in props) {
+          map[i2] = props[i2];
         }
         return map;
       };
       exports.arrayRemove = function(array, value) {
-        for (var i = 0; i <= array.length; i++) {
-          if (value === array[i]) {
-            array.splice(i, 1);
+        for (var i2 = 0; i2 <= array.length; i2++) {
+          if (value === array[i2]) {
+            array.splice(i2, 1);
           }
         }
       };
@@ -620,7 +620,7 @@ var aceLegacyWorkerModule = (() => {
       exports.supportsLookbehind = function() {
         try {
           new RegExp("(?<=.)");
-        } catch (e) {
+        } catch (e2) {
           return false;
         }
         return true;
@@ -707,37 +707,37 @@ var aceLegacyWorkerModule = (() => {
       var preventDefault = function() {
         this.defaultPrevented = true;
       };
-      EventEmitter2._emit = EventEmitter2._dispatchEvent = function(eventName, e) {
+      EventEmitter2._emit = EventEmitter2._dispatchEvent = function(eventName, e2) {
         this._eventRegistry || (this._eventRegistry = {});
         this._defaultHandlers || (this._defaultHandlers = {});
         var listeners = this._eventRegistry[eventName] || [];
         var defaultHandler = this._defaultHandlers[eventName];
         if (!listeners.length && !defaultHandler)
           return;
-        if (typeof e != "object" || !e)
-          e = {};
-        if (!e.type)
-          e.type = eventName;
-        if (!e.stopPropagation)
-          e.stopPropagation = stopPropagation;
-        if (!e.preventDefault)
-          e.preventDefault = preventDefault;
+        if (typeof e2 != "object" || !e2)
+          e2 = {};
+        if (!e2.type)
+          e2.type = eventName;
+        if (!e2.stopPropagation)
+          e2.stopPropagation = stopPropagation;
+        if (!e2.preventDefault)
+          e2.preventDefault = preventDefault;
         listeners = listeners.slice();
-        for (var i = 0; i < listeners.length; i++) {
-          listeners[i](e, this);
-          if (e.propagationStopped)
+        for (var i2 = 0; i2 < listeners.length; i2++) {
+          listeners[i2](e2, this);
+          if (e2.propagationStopped)
             break;
         }
-        if (defaultHandler && !e.defaultPrevented)
-          return defaultHandler(e, this);
+        if (defaultHandler && !e2.defaultPrevented)
+          return defaultHandler(e2, this);
       };
-      EventEmitter2._signal = function(eventName, e) {
+      EventEmitter2._signal = function(eventName, e2) {
         var listeners = (this._eventRegistry || {})[eventName];
         if (!listeners)
           return;
         listeners = listeners.slice();
-        for (var i = 0; i < listeners.length; i++)
-          listeners[i](e, this);
+        for (var i2 = 0; i2 < listeners.length; i2++)
+          listeners[i2](e2, this);
       };
       EventEmitter2.once = function(eventName, callback) {
         var _self = this;
@@ -761,9 +761,9 @@ var aceLegacyWorkerModule = (() => {
           if (!disabled)
             handlers._disabled_[eventName] = disabled = [];
           disabled.push(old);
-          var i = disabled.indexOf(callback);
-          if (i != -1)
-            disabled.splice(i, 1);
+          var i2 = disabled.indexOf(callback);
+          if (i2 != -1)
+            disabled.splice(i2, 1);
         }
         handlers[eventName] = callback;
       };
@@ -776,9 +776,9 @@ var aceLegacyWorkerModule = (() => {
           if (disabled)
             this.setDefaultHandler(eventName, disabled.pop());
         } else if (disabled) {
-          var i = disabled.indexOf(callback);
-          if (i != -1)
-            disabled.splice(i, 1);
+          var i2 = disabled.indexOf(callback);
+          if (i2 != -1)
+            disabled.splice(i2, 1);
         }
       };
       EventEmitter2.on = EventEmitter2.addEventListener = function(eventName, callback, capturing) {
@@ -906,8 +906,8 @@ var aceLegacyWorkerModule = (() => {
          * @related [[Range.compare]]
          * @returns {Number}
          **/
-        comparePoint(p) {
-          return this.compare(p.row, p.column);
+        comparePoint(p2) {
+          return this.compare(p2.row, p2.column);
         }
         /**
          * Checks the start and end [[Point]]'s of `range` and compares them to the calling range. Returns `true` if the `range` is contained within the caller's range.
@@ -1294,9 +1294,9 @@ var aceLegacyWorkerModule = (() => {
       } else {
         lines = this.getLines(range.start.row, range.end.row);
         lines[0] = (lines[0] || "").substring(range.start.column);
-        var l = lines.length - 1;
-        if (range.end.row - range.start.row == l)
-          lines[l] = lines[l].substring(0, range.end.column);
+        var l2 = lines.length - 1;
+        if (range.end.row - range.start.row == l2)
+          lines[l2] = lines[l2].substring(0, range.end.column);
       }
       return lines;
     }
@@ -1444,13 +1444,13 @@ var aceLegacyWorkerModule = (() => {
       return end;
     }
     applyDeltas(deltas) {
-      for (var i = 0; i < deltas.length; i++) {
-        this.applyDelta(deltas[i]);
+      for (var i2 = 0; i2 < deltas.length; i2++) {
+        this.applyDelta(deltas[i2]);
       }
     }
     revertDeltas(deltas) {
-      for (var i = deltas.length - 1; i >= 0; i--) {
-        this.revertDelta(deltas[i]);
+      for (var i2 = deltas.length - 1; i2 >= 0; i2--) {
+        this.revertDelta(deltas[i2]);
       }
     }
     /**
@@ -1481,10 +1481,10 @@ var aceLegacyWorkerModule = (() => {
     }
     $splitAndapplyLargeDelta(delta, MAX) {
       var lines = delta.lines;
-      var l = lines.length - MAX + 1;
+      var l2 = lines.length - MAX + 1;
       var row = delta.start.row;
       var column = delta.start.column;
-      for (var from = 0, to = 0; from < l; from = to) {
+      for (var from = 0, to = 0; from < l2; from = to) {
         to += MAX - 1;
         var chunk = lines.slice(from, to);
         chunk.push("");
@@ -1511,20 +1511,20 @@ var aceLegacyWorkerModule = (() => {
     indexToPosition(index, startRow) {
       var lines = this.$lines || this.getAllLines();
       var newlineLength = this.getNewLineCharacter().length;
-      for (var i = startRow || 0, l = lines.length; i < l; i++) {
-        index -= lines[i].length + newlineLength;
+      for (var i2 = startRow || 0, l2 = lines.length; i2 < l2; i2++) {
+        index -= lines[i2].length + newlineLength;
         if (index < 0)
-          return { row: i, column: index + lines[i].length + newlineLength };
+          return { row: i2, column: index + lines[i2].length + newlineLength };
       }
-      return { row: l - 1, column: index + lines[l - 1].length + newlineLength };
+      return { row: l2 - 1, column: index + lines[l2 - 1].length + newlineLength };
     }
     positionToIndex(pos, startRow) {
       var lines = this.$lines || this.getAllLines();
       var newlineLength = this.getNewLineCharacter().length;
       var index = 0;
       var row = Math.min(pos.row, lines.length);
-      for (var i = startRow || 0; i < row; ++i)
-        index += lines[i].length + newlineLength;
+      for (var i2 = startRow || 0; i2 < row; ++i2)
+        index += lines[i2].length + newlineLength;
       return index + pos.column;
     }
     $split(text) {
@@ -1543,29 +1543,29 @@ var aceLegacyWorkerModule = (() => {
         this.onUpdate.bind(this)
       );
       var _self = this;
-      sender.on("change", function(e) {
-        var data = e.data;
+      sender.on("change", function(e2) {
+        var data = e2.data;
         if (data[0].start) {
           doc.applyDeltas(data);
         } else {
-          for (var i = 0; i < data.length; i += 2) {
-            var d, err;
-            if (Array.isArray(data[i + 1])) {
-              d = { action: "insert", start: data[i], lines: data[i + 1] };
+          for (var i2 = 0; i2 < data.length; i2 += 2) {
+            var d2, err;
+            if (Array.isArray(data[i2 + 1])) {
+              d2 = { action: "insert", start: data[i2], lines: data[i2 + 1] };
             } else {
-              d = { action: "remove", start: data[i], end: data[i + 1] };
+              d2 = { action: "remove", start: data[i2], end: data[i2 + 1] };
             }
-            if ((d.action == "insert" ? d.start : d.end).row >= doc["$lines"].length) {
+            if ((d2.action == "insert" ? d2.start : d2.end).row >= doc["$lines"].length) {
               err = new Error("Invalid delta");
               err.data = {
                 path: _self.$path,
                 linesLength: doc["$lines"].length,
-                start: d.start,
-                end: d.end
+                start: d2.start,
+                end: d2.end
               };
               throw err;
             }
-            doc.applyDelta(d, true);
+            doc.applyDelta(d2, true);
           }
         }
         if (_self.$timeout) return deferredUpdate.schedule(_self.$timeout);
@@ -1596,11 +1596,11 @@ var aceLegacyWorkerModule = (() => {
     DocumentUri2.is = is;
   })(DocumentUri || (DocumentUri = {}));
   var URI;
-  (function(URI3) {
+  (function(URI2) {
     function is(value) {
       return typeof value === "string";
     }
-    URI3.is = is;
+    URI2.is = is;
   })(URI || (URI = {}));
   var integer;
   (function(integer2) {
@@ -2584,20 +2584,20 @@ var aceLegacyWorkerModule = (() => {
     TextDocument3.is = is;
     function applyEdits(document, edits) {
       let text = document.getText();
-      let sortedEdits = mergeSort2(edits, (a, b) => {
-        let diff = a.range.start.line - b.range.start.line;
+      let sortedEdits = mergeSort2(edits, (a2, b2) => {
+        let diff = a2.range.start.line - b2.range.start.line;
         if (diff === 0) {
-          return a.range.start.character - b.range.start.character;
+          return a2.range.start.character - b2.range.start.character;
         }
         return diff;
       });
       let lastModifiedOffset = text.length;
-      for (let i = sortedEdits.length - 1; i >= 0; i--) {
-        let e = sortedEdits[i];
-        let startOffset = document.offsetAt(e.range.start);
-        let endOffset = document.offsetAt(e.range.end);
+      for (let i2 = sortedEdits.length - 1; i2 >= 0; i2--) {
+        let e2 = sortedEdits[i2];
+        let startOffset = document.offsetAt(e2.range.start);
+        let endOffset = document.offsetAt(e2.range.end);
         if (endOffset <= lastModifiedOffset) {
-          text = text.substring(0, startOffset) + e.newText + text.substring(endOffset, text.length);
+          text = text.substring(0, startOffset) + e2.newText + text.substring(endOffset, text.length);
         } else {
           throw new Error("Overlapping edit");
         }
@@ -2610,27 +2610,27 @@ var aceLegacyWorkerModule = (() => {
       if (data.length <= 1) {
         return data;
       }
-      const p = data.length / 2 | 0;
-      const left = data.slice(0, p);
-      const right = data.slice(p);
+      const p2 = data.length / 2 | 0;
+      const left = data.slice(0, p2);
+      const right = data.slice(p2);
       mergeSort2(left, compare);
       mergeSort2(right, compare);
       let leftIdx = 0;
       let rightIdx = 0;
-      let i = 0;
+      let i2 = 0;
       while (leftIdx < left.length && rightIdx < right.length) {
         let ret = compare(left[leftIdx], right[rightIdx]);
         if (ret <= 0) {
-          data[i++] = left[leftIdx++];
+          data[i2++] = left[leftIdx++];
         } else {
-          data[i++] = right[rightIdx++];
+          data[i2++] = right[rightIdx++];
         }
       }
       while (leftIdx < left.length) {
-        data[i++] = left[leftIdx++];
+        data[i2++] = left[leftIdx++];
       }
       while (rightIdx < right.length) {
-        data[i++] = right[rightIdx++];
+        data[i2++] = right[rightIdx++];
       }
       return data;
     }
@@ -2670,15 +2670,15 @@ var aceLegacyWorkerModule = (() => {
         let lineOffsets = [];
         let text = this._content;
         let isLineStart = true;
-        for (let i = 0; i < text.length; i++) {
+        for (let i2 = 0; i2 < text.length; i2++) {
           if (isLineStart) {
-            lineOffsets.push(i);
+            lineOffsets.push(i2);
             isLineStart = false;
           }
-          let ch = text.charAt(i);
+          let ch = text.charAt(i2);
           isLineStart = ch === "\r" || ch === "\n";
-          if (ch === "\r" && i + 1 < text.length && text.charAt(i + 1) === "\n") {
-            i++;
+          if (ch === "\r" && i2 + 1 < text.length && text.charAt(i2 + 1) === "\n") {
+            i2++;
           }
         }
         if (isLineStart && text.length > 0) {
@@ -2803,13 +2803,20 @@ var aceLegacyWorkerModule = (() => {
           const startOffset = this.offsetAt(range.start);
           const endOffset = this.offsetAt(range.end);
           this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+          const insertedEndOffset = startOffset + change.text.length;
+          const crlfAtStart = this._content.charCodeAt(startOffset - 1) === 13 && this._content.charCodeAt(startOffset) === 10;
+          const crlfAtEnd = this._content.charCodeAt(insertedEndOffset - 1) === 13 && this._content.charCodeAt(insertedEndOffset) === 10;
+          if (crlfAtStart || crlfAtEnd) {
+            this._lineOffsets = void 0;
+            continue;
+          }
           const startLine = Math.max(range.start.line, 0);
           const endLine = Math.max(range.end.line, 0);
           let lineOffsets = this._lineOffsets;
           const addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
           if (endLine - startLine === addedLineOffsets.length) {
-            for (let i = 0, len = addedLineOffsets.length; i < len; i++) {
-              lineOffsets[i + startLine + 1] = addedLineOffsets[i];
+            for (let i2 = 0, len = addedLineOffsets.length; i2 < len; i2++) {
+              lineOffsets[i2 + startLine + 1] = addedLineOffsets[i2];
             }
           } else {
             if (addedLineOffsets.length < 1e4) {
@@ -2820,8 +2827,8 @@ var aceLegacyWorkerModule = (() => {
           }
           const diff = change.text.length - (endOffset - startOffset);
           if (diff !== 0) {
-            for (let i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
-              lineOffsets[i] = lineOffsets[i] + diff;
+            for (let i2 = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i2 < len; i2++) {
+              lineOffsets[i2] = lineOffsets[i2] + diff;
             }
           }
         } else if (_FullTextDocument.isFull(change)) {
@@ -2873,6 +2880,30 @@ var aceLegacyWorkerModule = (() => {
       const offset = Math.min(lineOffset + position.character, nextLineOffset);
       return this.ensureBeforeEOL(offset, lineOffset);
     }
+    getLineRange(line) {
+      const lineOffsets = this.getLineOffsets();
+      if (line >= lineOffsets.length) {
+        const lastLine = lineOffsets.length - 1;
+        return { start: { line: lastLine, character: 0 }, end: { line: lastLine, character: this._content.length - lineOffsets[lastLine] } };
+      } else if (line < 0) {
+        return { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } };
+      }
+      const startOffset = lineOffsets[line];
+      const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+      const endOffset = this.ensureBeforeEOL(nextLineOffset, startOffset);
+      return { start: { line, character: 0 }, end: { line, character: endOffset - startOffset } };
+    }
+    getEOLCharacters(line) {
+      const lineOffsets = this.getLineOffsets();
+      if (line >= lineOffsets.length) {
+        return "";
+      } else if (line < 0) {
+        return "";
+      }
+      const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+      const eolOffset = this.ensureBeforeEOL(nextLineOffset, lineOffsets[line]);
+      return this._content.substring(eolOffset, nextLineOffset);
+    }
     ensureBeforeEOL(offset, lineOffset) {
       while (offset > lineOffset && isEOL(this._content.charCodeAt(offset - 1))) {
         offset--;
@@ -2908,26 +2939,26 @@ var aceLegacyWorkerModule = (() => {
     TextDocument3.update = update;
     function applyEdits(document, edits) {
       const text = document.getText();
-      const sortedEdits = mergeSort(edits.map(getWellformedEdit), (a, b) => {
-        const diff = a.range.start.line - b.range.start.line;
+      const sortedEdits = mergeSort(edits.map(getWellformedEdit), (a2, b2) => {
+        const diff = a2.range.start.line - b2.range.start.line;
         if (diff === 0) {
-          return a.range.start.character - b.range.start.character;
+          return a2.range.start.character - b2.range.start.character;
         }
         return diff;
       });
       let lastModifiedOffset = 0;
       const spans = [];
-      for (const e of sortedEdits) {
-        const startOffset = document.offsetAt(e.range.start);
+      for (const e2 of sortedEdits) {
+        const startOffset = document.offsetAt(e2.range.start);
         if (startOffset < lastModifiedOffset) {
           throw new Error("Overlapping edit");
         } else if (startOffset > lastModifiedOffset) {
           spans.push(text.substring(lastModifiedOffset, startOffset));
         }
-        if (e.newText.length) {
-          spans.push(e.newText);
+        if (e2.newText.length) {
+          spans.push(e2.newText);
         }
-        lastModifiedOffset = document.offsetAt(e.range.end);
+        lastModifiedOffset = document.offsetAt(e2.range.end);
       }
       spans.push(text.substr(lastModifiedOffset));
       return spans.join("");
@@ -2938,39 +2969,39 @@ var aceLegacyWorkerModule = (() => {
     if (data.length <= 1) {
       return data;
     }
-    const p = data.length / 2 | 0;
-    const left = data.slice(0, p);
-    const right = data.slice(p);
+    const p2 = data.length / 2 | 0;
+    const left = data.slice(0, p2);
+    const right = data.slice(p2);
     mergeSort(left, compare);
     mergeSort(right, compare);
     let leftIdx = 0;
     let rightIdx = 0;
-    let i = 0;
+    let i2 = 0;
     while (leftIdx < left.length && rightIdx < right.length) {
       const ret = compare(left[leftIdx], right[rightIdx]);
       if (ret <= 0) {
-        data[i++] = left[leftIdx++];
+        data[i2++] = left[leftIdx++];
       } else {
-        data[i++] = right[rightIdx++];
+        data[i2++] = right[rightIdx++];
       }
     }
     while (leftIdx < left.length) {
-      data[i++] = left[leftIdx++];
+      data[i2++] = left[leftIdx++];
     }
     while (rightIdx < right.length) {
-      data[i++] = right[rightIdx++];
+      data[i2++] = right[rightIdx++];
     }
     return data;
   }
   function computeLineOffsets(text, isAtLineStart, textOffset = 0) {
     const result = isAtLineStart ? [textOffset] : [];
-    for (let i = 0; i < text.length; i++) {
-      const ch = text.charCodeAt(i);
+    for (let i2 = 0; i2 < text.length; i2++) {
+      const ch = text.charCodeAt(i2);
       if (isEOL(ch)) {
-        if (ch === 13 && i + 1 < text.length && text.charCodeAt(i + 1) === 10) {
-          i++;
+        if (ch === 13 && i2 + 1 < text.length && text.charCodeAt(i2 + 1) === 10) {
+          i2++;
         }
-        result.push(textOffset + i + 1);
+        result.push(textOffset + i2 + 1);
       }
     }
     return result;
@@ -3062,8 +3093,8 @@ var aceLegacyWorkerModule = (() => {
         throw new Error("expected a string as the first argument to l10n.t");
       }
       let str = firstArg[0];
-      for (let i = 1; i < firstArg.length; i++) {
-        str += `{${i - 1}}` + firstArg[i];
+      for (let i2 = 1; i2 < firstArg.length; i2++) {
+        str += `{${i2 - 1}}` + firstArg[i2];
       }
       return t(str, ...replacements);
     } else {
@@ -3114,13 +3145,13 @@ var aceLegacyWorkerModule = (() => {
     if (Array.isArray(one) !== Array.isArray(other)) {
       return false;
     }
-    let i, key;
+    let i2, key;
     if (Array.isArray(one)) {
       if (one.length !== other.length) {
         return false;
       }
-      for (i = 0; i < one.length; i++) {
-        if (!equals(one[i], other[i])) {
+      for (i2 = 0; i2 < one.length; i2++) {
+        if (!equals(one[i2], other[i2])) {
           return false;
         }
       }
@@ -3138,8 +3169,8 @@ var aceLegacyWorkerModule = (() => {
       if (!equals(oneKeys, otherKeys)) {
         return false;
       }
-      for (i = 0; i < oneKeys.length; i++) {
-        if (!equals(one[oneKeys[i]], other[oneKeys[i]])) {
+      for (i2 = 0; i2 < oneKeys.length; i2++) {
+        if (!equals(one[oneKeys[i2]], other[oneKeys[i2]])) {
           return false;
         }
       }
@@ -3227,19 +3258,19 @@ var aceLegacyWorkerModule = (() => {
             trailingCommaSeverity = void 0;
           }
         }
-        for (const p of jsonDocument.syntaxErrors) {
-          if (p.code === ErrorCode.TrailingComma) {
+        for (const p2 of jsonDocument.syntaxErrors) {
+          if (p2.code === ErrorCode.TrailingComma) {
             if (typeof trailingCommaSeverity !== "number") {
               continue;
             }
-            p.severity = trailingCommaSeverity;
+            p2.severity = trailingCommaSeverity;
           }
-          addProblem(p);
+          addProblem(p2);
         }
         if (typeof commentSeverity === "number") {
           const message = t("Comments are not permitted in JSON.");
-          jsonDocument.comments.forEach((c) => {
-            addProblem(Diagnostic.create(c, message, commentSeverity, ErrorCode.CommentNotPermitted));
+          jsonDocument.comments.forEach((c2) => {
+            addProblem(Diagnostic.create(c2, message, commentSeverity, ErrorCode.CommentNotPermitted));
           });
         }
         return diagnostics;
@@ -3730,30 +3761,30 @@ var aceLegacyWorkerModule = (() => {
   })(CharacterCodes || (CharacterCodes = {}));
 
   // ../../node_modules/jsonc-parser/lib/esm/impl/string-intern.js
-  var cachedSpaces = new Array(20).fill(0).map((_, index) => {
+  var cachedSpaces = new Array(20).fill(0).map((_2, index) => {
     return " ".repeat(index);
   });
   var maxCachedValues = 200;
   var cachedBreakLinesWithSpaces = {
     " ": {
-      "\n": new Array(maxCachedValues).fill(0).map((_, index) => {
+      "\n": new Array(maxCachedValues).fill(0).map((_2, index) => {
         return "\n" + " ".repeat(index);
       }),
-      "\r": new Array(maxCachedValues).fill(0).map((_, index) => {
+      "\r": new Array(maxCachedValues).fill(0).map((_2, index) => {
         return "\r" + " ".repeat(index);
       }),
-      "\r\n": new Array(maxCachedValues).fill(0).map((_, index) => {
+      "\r\n": new Array(maxCachedValues).fill(0).map((_2, index) => {
         return "\r\n" + " ".repeat(index);
       })
     },
     "	": {
-      "\n": new Array(maxCachedValues).fill(0).map((_, index) => {
+      "\n": new Array(maxCachedValues).fill(0).map((_2, index) => {
         return "\n" + "	".repeat(index);
       }),
-      "\r": new Array(maxCachedValues).fill(0).map((_, index) => {
+      "\r": new Array(maxCachedValues).fill(0).map((_2, index) => {
         return "\r" + "	".repeat(index);
       }),
-      "\r\n": new Array(maxCachedValues).fill(0).map((_, index) => {
+      "\r\n": new Array(maxCachedValues).fill(0).map((_2, index) => {
         return "\r\n" + "	".repeat(index);
       })
     }
@@ -3838,8 +3869,8 @@ var aceLegacyWorkerModule = (() => {
     if (contains(node, offset, includeRightBound)) {
       const children = node.children;
       if (Array.isArray(children)) {
-        for (let i = 0; i < children.length && children[i].offset <= offset; i++) {
-          const item = findNodeAtOffset(children[i], offset, includeRightBound);
+        for (let i2 = 0; i2 < children.length && children[i2].offset <= offset; i2++) {
+          const item = findNodeAtOffset(children[i2], offset, includeRightBound);
           if (item) {
             return item;
           }
@@ -4215,8 +4246,8 @@ var aceLegacyWorkerModule = (() => {
     if (haystack.length < needle.length) {
       return false;
     }
-    for (let i = 0; i < needle.length; i++) {
-      if (haystack[i] !== needle[i]) {
+    for (let i2 = 0; i2 < needle.length; i2++) {
+      if (haystack[i2] !== needle[i2]) {
         return false;
       }
     }
@@ -4240,363 +4271,360 @@ var aceLegacyWorkerModule = (() => {
     }
     try {
       return new RegExp(pattern, flags + "u");
-    } catch (e) {
+    } catch (e2) {
       try {
         return new RegExp(pattern, flags);
-      } catch (e2) {
+      } catch (e3) {
         return void 0;
       }
     }
   }
   function stringLength(str) {
     let count = 0;
-    for (let i = 0; i < str.length; i++) {
+    for (let i2 = 0; i2 < str.length; i2++) {
       count++;
-      const code = str.charCodeAt(i);
+      const code = str.charCodeAt(i2);
       if (55296 <= code && code <= 56319) {
-        i++;
+        i2++;
       }
     }
     return count;
   }
 
   // ../../node_modules/vscode-uri/lib/esm/index.mjs
-  var LIB;
-  (() => {
-    "use strict";
-    var t2 = { 975: (t3) => {
-      function e2(t4) {
-        if ("string" != typeof t4) throw new TypeError("Path must be a string. Received " + JSON.stringify(t4));
-      }
-      function r2(t4, e3) {
-        for (var r3, n3 = "", i2 = 0, o2 = -1, s2 = 0, h2 = 0; h2 <= t4.length; ++h2) {
-          if (h2 < t4.length) r3 = t4.charCodeAt(h2);
-          else {
-            if (47 === r3) break;
-            r3 = 47;
-          }
-          if (47 === r3) {
-            if (o2 === h2 - 1 || 1 === s2) ;
-            else if (o2 !== h2 - 1 && 2 === s2) {
-              if (n3.length < 2 || 2 !== i2 || 46 !== n3.charCodeAt(n3.length - 1) || 46 !== n3.charCodeAt(n3.length - 2)) {
-                if (n3.length > 2) {
-                  var a2 = n3.lastIndexOf("/");
-                  if (a2 !== n3.length - 1) {
-                    -1 === a2 ? (n3 = "", i2 = 0) : i2 = (n3 = n3.slice(0, a2)).length - 1 - n3.lastIndexOf("/"), o2 = h2, s2 = 0;
-                    continue;
-                  }
-                } else if (2 === n3.length || 1 === n3.length) {
-                  n3 = "", i2 = 0, o2 = h2, s2 = 0;
+  var t2 = { 975(t3) {
+    function e2(t4) {
+      if ("string" != typeof t4) throw new TypeError("Path must be a string. Received " + JSON.stringify(t4));
+    }
+    function r2(t4, e3) {
+      for (var r3, n3 = "", i2 = 0, o2 = -1, h2 = 0, s2 = 0; s2 <= t4.length; ++s2) {
+        if (s2 < t4.length) r3 = t4.charCodeAt(s2);
+        else {
+          if (47 === r3) break;
+          r3 = 47;
+        }
+        if (47 === r3) {
+          if (o2 === s2 - 1 || 1 === h2) ;
+          else if (o2 !== s2 - 1 && 2 === h2) {
+            if (n3.length < 2 || 2 !== i2 || 46 !== n3.charCodeAt(n3.length - 1) || 46 !== n3.charCodeAt(n3.length - 2)) {
+              if (n3.length > 2) {
+                var a2 = n3.lastIndexOf("/");
+                if (a2 !== n3.length - 1) {
+                  -1 === a2 ? (n3 = "", i2 = 0) : i2 = (n3 = n3.slice(0, a2)).length - 1 - n3.lastIndexOf("/"), o2 = s2, h2 = 0;
                   continue;
                 }
+              } else if (2 === n3.length || 1 === n3.length) {
+                n3 = "", i2 = 0, o2 = s2, h2 = 0;
+                continue;
               }
-              e3 && (n3.length > 0 ? n3 += "/.." : n3 = "..", i2 = 2);
-            } else n3.length > 0 ? n3 += "/" + t4.slice(o2 + 1, h2) : n3 = t4.slice(o2 + 1, h2), i2 = h2 - o2 - 1;
-            o2 = h2, s2 = 0;
-          } else 46 === r3 && -1 !== s2 ? ++s2 : s2 = -1;
-        }
-        return n3;
+            }
+            e3 && (n3.length > 0 ? n3 += "/.." : n3 = "..", i2 = 2);
+          } else n3.length > 0 ? n3 += "/" + t4.slice(o2 + 1, s2) : n3 = t4.slice(o2 + 1, s2), i2 = s2 - o2 - 1;
+          o2 = s2, h2 = 0;
+        } else 46 === r3 && -1 !== h2 ? ++h2 : h2 = -1;
       }
-      var n2 = { resolve: function() {
-        for (var t4, n3 = "", i2 = false, o2 = arguments.length - 1; o2 >= -1 && !i2; o2--) {
-          var s2;
-          o2 >= 0 ? s2 = arguments[o2] : (void 0 === t4 && (t4 = process.cwd()), s2 = t4), e2(s2), 0 !== s2.length && (n3 = s2 + "/" + n3, i2 = 47 === s2.charCodeAt(0));
-        }
-        return n3 = r2(n3, !i2), i2 ? n3.length > 0 ? "/" + n3 : "/" : n3.length > 0 ? n3 : ".";
-      }, normalize: function(t4) {
-        if (e2(t4), 0 === t4.length) return ".";
-        var n3 = 47 === t4.charCodeAt(0), i2 = 47 === t4.charCodeAt(t4.length - 1);
-        return 0 !== (t4 = r2(t4, !n3)).length || n3 || (t4 = "."), t4.length > 0 && i2 && (t4 += "/"), n3 ? "/" + t4 : t4;
-      }, isAbsolute: function(t4) {
-        return e2(t4), t4.length > 0 && 47 === t4.charCodeAt(0);
-      }, join: function() {
-        if (0 === arguments.length) return ".";
-        for (var t4, r3 = 0; r3 < arguments.length; ++r3) {
-          var i2 = arguments[r3];
-          e2(i2), i2.length > 0 && (void 0 === t4 ? t4 = i2 : t4 += "/" + i2);
-        }
-        return void 0 === t4 ? "." : n2.normalize(t4);
-      }, relative: function(t4, r3) {
-        if (e2(t4), e2(r3), t4 === r3) return "";
-        if ((t4 = n2.resolve(t4)) === (r3 = n2.resolve(r3))) return "";
-        for (var i2 = 1; i2 < t4.length && 47 === t4.charCodeAt(i2); ++i2) ;
-        for (var o2 = t4.length, s2 = o2 - i2, h2 = 1; h2 < r3.length && 47 === r3.charCodeAt(h2); ++h2) ;
-        for (var a2 = r3.length - h2, c2 = s2 < a2 ? s2 : a2, f2 = -1, u2 = 0; u2 <= c2; ++u2) {
-          if (u2 === c2) {
-            if (a2 > c2) {
-              if (47 === r3.charCodeAt(h2 + u2)) return r3.slice(h2 + u2 + 1);
-              if (0 === u2) return r3.slice(h2 + u2);
-            } else s2 > c2 && (47 === t4.charCodeAt(i2 + u2) ? f2 = u2 : 0 === u2 && (f2 = 0));
-            break;
-          }
-          var l2 = t4.charCodeAt(i2 + u2);
-          if (l2 !== r3.charCodeAt(h2 + u2)) break;
-          47 === l2 && (f2 = u2);
-        }
-        var g2 = "";
-        for (u2 = i2 + f2 + 1; u2 <= o2; ++u2) u2 !== o2 && 47 !== t4.charCodeAt(u2) || (0 === g2.length ? g2 += ".." : g2 += "/..");
-        return g2.length > 0 ? g2 + r3.slice(h2 + f2) : (h2 += f2, 47 === r3.charCodeAt(h2) && ++h2, r3.slice(h2));
-      }, _makeLong: function(t4) {
-        return t4;
-      }, dirname: function(t4) {
-        if (e2(t4), 0 === t4.length) return ".";
-        for (var r3 = t4.charCodeAt(0), n3 = 47 === r3, i2 = -1, o2 = true, s2 = t4.length - 1; s2 >= 1; --s2) if (47 === (r3 = t4.charCodeAt(s2))) {
-          if (!o2) {
-            i2 = s2;
-            break;
-          }
-        } else o2 = false;
-        return -1 === i2 ? n3 ? "/" : "." : n3 && 1 === i2 ? "//" : t4.slice(0, i2);
-      }, basename: function(t4, r3) {
-        if (void 0 !== r3 && "string" != typeof r3) throw new TypeError('"ext" argument must be a string');
-        e2(t4);
-        var n3, i2 = 0, o2 = -1, s2 = true;
-        if (void 0 !== r3 && r3.length > 0 && r3.length <= t4.length) {
-          if (r3.length === t4.length && r3 === t4) return "";
-          var h2 = r3.length - 1, a2 = -1;
-          for (n3 = t4.length - 1; n3 >= 0; --n3) {
-            var c2 = t4.charCodeAt(n3);
-            if (47 === c2) {
-              if (!s2) {
-                i2 = n3 + 1;
-                break;
-              }
-            } else -1 === a2 && (s2 = false, a2 = n3 + 1), h2 >= 0 && (c2 === r3.charCodeAt(h2) ? -1 == --h2 && (o2 = n3) : (h2 = -1, o2 = a2));
-          }
-          return i2 === o2 ? o2 = a2 : -1 === o2 && (o2 = t4.length), t4.slice(i2, o2);
-        }
-        for (n3 = t4.length - 1; n3 >= 0; --n3) if (47 === t4.charCodeAt(n3)) {
-          if (!s2) {
-            i2 = n3 + 1;
-            break;
-          }
-        } else -1 === o2 && (s2 = false, o2 = n3 + 1);
-        return -1 === o2 ? "" : t4.slice(i2, o2);
-      }, extname: function(t4) {
-        e2(t4);
-        for (var r3 = -1, n3 = 0, i2 = -1, o2 = true, s2 = 0, h2 = t4.length - 1; h2 >= 0; --h2) {
-          var a2 = t4.charCodeAt(h2);
-          if (47 !== a2) -1 === i2 && (o2 = false, i2 = h2 + 1), 46 === a2 ? -1 === r3 ? r3 = h2 : 1 !== s2 && (s2 = 1) : -1 !== r3 && (s2 = -1);
-          else if (!o2) {
-            n3 = h2 + 1;
-            break;
-          }
-        }
-        return -1 === r3 || -1 === i2 || 0 === s2 || 1 === s2 && r3 === i2 - 1 && r3 === n3 + 1 ? "" : t4.slice(r3, i2);
-      }, format: function(t4) {
-        if (null === t4 || "object" != typeof t4) throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof t4);
-        return (function(t5, e3) {
-          var r3 = e3.dir || e3.root, n3 = e3.base || (e3.name || "") + (e3.ext || "");
-          return r3 ? r3 === e3.root ? r3 + n3 : r3 + "/" + n3 : n3;
-        })(0, t4);
-      }, parse: function(t4) {
-        e2(t4);
-        var r3 = { root: "", dir: "", base: "", ext: "", name: "" };
-        if (0 === t4.length) return r3;
-        var n3, i2 = t4.charCodeAt(0), o2 = 47 === i2;
-        o2 ? (r3.root = "/", n3 = 1) : n3 = 0;
-        for (var s2 = -1, h2 = 0, a2 = -1, c2 = true, f2 = t4.length - 1, u2 = 0; f2 >= n3; --f2) if (47 !== (i2 = t4.charCodeAt(f2))) -1 === a2 && (c2 = false, a2 = f2 + 1), 46 === i2 ? -1 === s2 ? s2 = f2 : 1 !== u2 && (u2 = 1) : -1 !== s2 && (u2 = -1);
-        else if (!c2) {
-          h2 = f2 + 1;
+      return n3;
+    }
+    var n2 = { resolve: function() {
+      for (var t4, n3 = "", i2 = false, o2 = arguments.length - 1; o2 >= -1 && !i2; o2--) {
+        var h2;
+        o2 >= 0 ? h2 = arguments[o2] : (void 0 === t4 && (t4 = process.cwd()), h2 = t4), e2(h2), 0 !== h2.length && (n3 = h2 + "/" + n3, i2 = 47 === h2.charCodeAt(0));
+      }
+      return n3 = r2(n3, !i2), i2 ? n3.length > 0 ? "/" + n3 : "/" : n3.length > 0 ? n3 : ".";
+    }, normalize: function(t4) {
+      if (e2(t4), 0 === t4.length) return ".";
+      var n3 = 47 === t4.charCodeAt(0), i2 = 47 === t4.charCodeAt(t4.length - 1);
+      return 0 !== (t4 = r2(t4, !n3)).length || n3 || (t4 = "."), t4.length > 0 && i2 && (t4 += "/"), n3 ? "/" + t4 : t4;
+    }, isAbsolute: function(t4) {
+      return e2(t4), t4.length > 0 && 47 === t4.charCodeAt(0);
+    }, join: function() {
+      if (0 === arguments.length) return ".";
+      for (var t4, r3 = 0; r3 < arguments.length; ++r3) {
+        var i2 = arguments[r3];
+        e2(i2), i2.length > 0 && (void 0 === t4 ? t4 = i2 : t4 += "/" + i2);
+      }
+      return void 0 === t4 ? "." : n2.normalize(t4);
+    }, relative: function(t4, r3) {
+      if (e2(t4), e2(r3), t4 === r3) return "";
+      if ((t4 = n2.resolve(t4)) === (r3 = n2.resolve(r3))) return "";
+      for (var i2 = 1; i2 < t4.length && 47 === t4.charCodeAt(i2); ++i2) ;
+      for (var o2 = t4.length, h2 = o2 - i2, s2 = 1; s2 < r3.length && 47 === r3.charCodeAt(s2); ++s2) ;
+      for (var a2 = r3.length - s2, c2 = h2 < a2 ? h2 : a2, f2 = -1, u2 = 0; u2 <= c2; ++u2) {
+        if (u2 === c2) {
+          if (a2 > c2) {
+            if (47 === r3.charCodeAt(s2 + u2)) return r3.slice(s2 + u2 + 1);
+            if (0 === u2) return r3.slice(s2 + u2);
+          } else h2 > c2 && (47 === t4.charCodeAt(i2 + u2) ? f2 = u2 : 0 === u2 && (f2 = 0));
           break;
         }
-        return -1 === s2 || -1 === a2 || 0 === u2 || 1 === u2 && s2 === a2 - 1 && s2 === h2 + 1 ? -1 !== a2 && (r3.base = r3.name = 0 === h2 && o2 ? t4.slice(1, a2) : t4.slice(h2, a2)) : (0 === h2 && o2 ? (r3.name = t4.slice(1, s2), r3.base = t4.slice(1, a2)) : (r3.name = t4.slice(h2, s2), r3.base = t4.slice(h2, a2)), r3.ext = t4.slice(s2, a2)), h2 > 0 ? r3.dir = t4.slice(0, h2 - 1) : o2 && (r3.dir = "/"), r3;
-      }, sep: "/", delimiter: ":", win32: null, posix: null };
-      n2.posix = n2, t3.exports = n2;
-    } }, e = {};
-    function r(n2) {
-      var i2 = e[n2];
-      if (void 0 !== i2) return i2.exports;
-      var o2 = e[n2] = { exports: {} };
-      return t2[n2](o2, o2.exports, r), o2.exports;
+        var l2 = t4.charCodeAt(i2 + u2);
+        if (l2 !== r3.charCodeAt(s2 + u2)) break;
+        47 === l2 && (f2 = u2);
+      }
+      var g2 = "";
+      for (u2 = i2 + f2 + 1; u2 <= o2; ++u2) u2 !== o2 && 47 !== t4.charCodeAt(u2) || (0 === g2.length ? g2 += ".." : g2 += "/..");
+      return g2.length > 0 ? g2 + r3.slice(s2 + f2) : (s2 += f2, 47 === r3.charCodeAt(s2) && ++s2, r3.slice(s2));
+    }, _makeLong: function(t4) {
+      return t4;
+    }, dirname: function(t4) {
+      if (e2(t4), 0 === t4.length) return ".";
+      for (var r3 = t4.charCodeAt(0), n3 = 47 === r3, i2 = -1, o2 = true, h2 = t4.length - 1; h2 >= 1; --h2) if (47 === (r3 = t4.charCodeAt(h2))) {
+        if (!o2) {
+          i2 = h2;
+          break;
+        }
+      } else o2 = false;
+      return -1 === i2 ? n3 ? "/" : "." : n3 && 1 === i2 ? "//" : t4.slice(0, i2);
+    }, basename: function(t4, r3) {
+      if (void 0 !== r3 && "string" != typeof r3) throw new TypeError('"ext" argument must be a string');
+      e2(t4);
+      var n3, i2 = 0, o2 = -1, h2 = true;
+      if (void 0 !== r3 && r3.length > 0 && r3.length <= t4.length) {
+        if (r3.length === t4.length && r3 === t4) return "";
+        var s2 = r3.length - 1, a2 = -1;
+        for (n3 = t4.length - 1; n3 >= 0; --n3) {
+          var c2 = t4.charCodeAt(n3);
+          if (47 === c2) {
+            if (!h2) {
+              i2 = n3 + 1;
+              break;
+            }
+          } else -1 === a2 && (h2 = false, a2 = n3 + 1), s2 >= 0 && (c2 === r3.charCodeAt(s2) ? -1 === --s2 && (o2 = n3) : (s2 = -1, o2 = a2));
+        }
+        return i2 === o2 ? o2 = a2 : -1 === o2 && (o2 = t4.length), t4.slice(i2, o2);
+      }
+      for (n3 = t4.length - 1; n3 >= 0; --n3) if (47 === t4.charCodeAt(n3)) {
+        if (!h2) {
+          i2 = n3 + 1;
+          break;
+        }
+      } else -1 === o2 && (h2 = false, o2 = n3 + 1);
+      return -1 === o2 ? "" : t4.slice(i2, o2);
+    }, extname: function(t4) {
+      e2(t4);
+      for (var r3 = -1, n3 = 0, i2 = -1, o2 = true, h2 = 0, s2 = t4.length - 1; s2 >= 0; --s2) {
+        var a2 = t4.charCodeAt(s2);
+        if (47 !== a2) -1 === i2 && (o2 = false, i2 = s2 + 1), 46 === a2 ? -1 === r3 ? r3 = s2 : 1 !== h2 && (h2 = 1) : -1 !== r3 && (h2 = -1);
+        else if (!o2) {
+          n3 = s2 + 1;
+          break;
+        }
+      }
+      return -1 === r3 || -1 === i2 || 0 === h2 || 1 === h2 && r3 === i2 - 1 && r3 === n3 + 1 ? "" : t4.slice(r3, i2);
+    }, format: function(t4) {
+      if (null === t4 || "object" != typeof t4) throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof t4);
+      return (function(t5, e3) {
+        var r3 = e3.dir || e3.root, n3 = e3.base || (e3.name || "") + (e3.ext || "");
+        return r3 ? r3 === e3.root ? r3 + n3 : r3 + "/" + n3 : n3;
+      })(0, t4);
+    }, parse: function(t4) {
+      e2(t4);
+      var r3 = { root: "", dir: "", base: "", ext: "", name: "" };
+      if (0 === t4.length) return r3;
+      var n3, i2 = t4.charCodeAt(0), o2 = 47 === i2;
+      o2 ? (r3.root = "/", n3 = 1) : n3 = 0;
+      for (var h2 = -1, s2 = 0, a2 = -1, c2 = true, f2 = t4.length - 1, u2 = 0; f2 >= n3; --f2) if (47 !== (i2 = t4.charCodeAt(f2))) -1 === a2 && (c2 = false, a2 = f2 + 1), 46 === i2 ? -1 === h2 ? h2 = f2 : 1 !== u2 && (u2 = 1) : -1 !== h2 && (u2 = -1);
+      else if (!c2) {
+        s2 = f2 + 1;
+        break;
+      }
+      return -1 === h2 || -1 === a2 || 0 === u2 || 1 === u2 && h2 === a2 - 1 && h2 === s2 + 1 ? -1 !== a2 && (r3.base = r3.name = 0 === s2 && o2 ? t4.slice(1, a2) : t4.slice(s2, a2)) : (0 === s2 && o2 ? (r3.name = t4.slice(1, h2), r3.base = t4.slice(1, a2)) : (r3.name = t4.slice(s2, h2), r3.base = t4.slice(s2, a2)), r3.ext = t4.slice(h2, a2)), s2 > 0 ? r3.dir = t4.slice(0, s2 - 1) : o2 && (r3.dir = "/"), r3;
+    }, sep: "/", delimiter: ":", win32: null, posix: null };
+    n2.posix = n2, t3.exports = n2;
+  } };
+  var e = {};
+  function r(n2) {
+    var i2 = e[n2];
+    if (void 0 !== i2) return i2.exports;
+    var o2 = e[n2] = { exports: {} };
+    return t2[n2](o2, o2.exports, r), o2.exports;
+  }
+  var n;
+  if (r.d = (t3, e2) => {
+    for (var n2 in e2) r.o(e2, n2) && !r.o(t3, n2) && Object.defineProperty(t3, n2, { enumerable: true, get: e2[n2] });
+  }, r.o = (t3, e2) => Object.prototype.hasOwnProperty.call(t3, e2), "object" == typeof process) n = "win32" === process.platform;
+  else if ("object" == typeof navigator) {
+    let t3 = navigator.userAgent;
+    n = t3.indexOf("Windows") >= 0;
+  }
+  var i = /^\w[\w\d+.-]*$/;
+  var o = /^\//;
+  var h = /^\/\//;
+  function s(t3, e2) {
+    if (!t3.scheme && e2) throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t3.authority}", path: "${t3.path}", query: "${t3.query}", fragment: "${t3.fragment}"}`);
+    if (t3.scheme && !i.test(t3.scheme)) throw new Error("[UriError]: Scheme contains illegal characters.");
+    if (t3.path) {
+      if (t3.authority) {
+        if (!o.test(t3.path)) throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character');
+      } else if (h.test(t3.path)) throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")');
     }
-    r.d = (t3, e2) => {
-      for (var n2 in e2) r.o(e2, n2) && !r.o(t3, n2) && Object.defineProperty(t3, n2, { enumerable: true, get: e2[n2] });
-    }, r.o = (t3, e2) => Object.prototype.hasOwnProperty.call(t3, e2), r.r = (t3) => {
-      "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(t3, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(t3, "__esModule", { value: true });
+  }
+  var a = "";
+  var c = "/";
+  var f = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+  var u = class _u {
+    constructor(t3, e2, r2, n2, i2, o2 = false) {
+      __publicField(this, "scheme");
+      __publicField(this, "authority");
+      __publicField(this, "path");
+      __publicField(this, "query");
+      __publicField(this, "fragment");
+      "object" == typeof t3 ? (this.scheme = t3.scheme || a, this.authority = t3.authority || a, this.path = t3.path || a, this.query = t3.query || a, this.fragment = t3.fragment || a) : (this.scheme = /* @__PURE__ */ (function(t4, e3) {
+        return t4 || e3 ? t4 : "file";
+      })(t3, o2), this.authority = e2 || a, this.path = (function(t4, e3) {
+        switch (t4) {
+          case "https":
+          case "http":
+          case "file":
+            e3 ? e3[0] !== c && (e3 = c + e3) : e3 = c;
+        }
+        return e3;
+      })(this.scheme, r2 || a), this.query = n2 || a, this.fragment = i2 || a, s(this, o2));
+    }
+    static isUri(t3) {
+      return t3 instanceof _u || !!t3 && "string" == typeof t3.authority && "string" == typeof t3.fragment && "string" == typeof t3.path && "string" == typeof t3.query && "string" == typeof t3.scheme && "string" == typeof t3.fsPath && "function" == typeof t3.with && "function" == typeof t3.toString;
+    }
+    get fsPath() {
+      return y(this, false);
+    }
+    with(t3) {
+      if (!t3) return this;
+      let { scheme: e2, authority: r2, path: n2, query: i2, fragment: o2 } = t3;
+      return void 0 === e2 ? e2 = this.scheme : null === e2 && (e2 = a), void 0 === r2 ? r2 = this.authority : null === r2 && (r2 = a), void 0 === n2 ? n2 = this.path : null === n2 && (n2 = a), void 0 === i2 ? i2 = this.query : null === i2 && (i2 = a), void 0 === o2 ? o2 = this.fragment : null === o2 && (o2 = a), e2 === this.scheme && r2 === this.authority && n2 === this.path && i2 === this.query && o2 === this.fragment ? this : new g(e2, r2, n2, i2, o2);
+    }
+    static parse(t3, e2 = false) {
+      const r2 = f.exec(t3);
+      return r2 ? new g(r2[2] || a, A(r2[4] || a), A(r2[5] || a), A(r2[7] || a), A(r2[9] || a), e2) : new g(a, a, a, a, a);
+    }
+    static file(t3) {
+      let e2 = a;
+      if (n && (t3 = t3.replace(/\\/g, c)), t3[0] === c && t3[1] === c) {
+        const r2 = t3.indexOf(c, 2);
+        -1 === r2 ? (e2 = t3.substring(2), t3 = c) : (e2 = t3.substring(2, r2), t3 = t3.substring(r2) || c);
+      }
+      return new g("file", e2, t3, a, a);
+    }
+    static from(t3) {
+      const e2 = new g(t3.scheme, t3.authority, t3.path, t3.query, t3.fragment);
+      return s(e2, true), e2;
+    }
+    toString(t3 = false) {
+      return v(this, t3);
+    }
+    toJSON() {
+      return this;
+    }
+    static revive(t3) {
+      if (t3) {
+        if (t3 instanceof _u) return t3;
+        {
+          const e2 = new g(t3);
+          return e2._formatted = t3.external, e2._fsPath = t3._sep === l ? t3.fsPath : null, e2;
+        }
+      }
+      return t3;
+    }
+  };
+  var l = n ? 1 : void 0;
+  var g = class extends u {
+    constructor() {
+      super(...arguments);
+      __publicField(this, "_formatted", null);
+      __publicField(this, "_fsPath", null);
+    }
+    get fsPath() {
+      return this._fsPath || (this._fsPath = y(this, false)), this._fsPath;
+    }
+    toString(t3 = false) {
+      return t3 ? v(this, true) : (this._formatted || (this._formatted = v(this, false)), this._formatted);
+    }
+    toJSON() {
+      const t3 = { $mid: 1 };
+      return this._fsPath && (t3.fsPath = this._fsPath, t3._sep = l), this._formatted && (t3.external = this._formatted), this.path && (t3.path = this.path), this.scheme && (t3.scheme = this.scheme), this.authority && (t3.authority = this.authority), this.query && (t3.query = this.query), this.fragment && (t3.fragment = this.fragment), t3;
+    }
+  };
+  var p = { 58: "%3A", 47: "%2F", 63: "%3F", 35: "%23", 91: "%5B", 93: "%5D", 64: "%40", 33: "%21", 36: "%24", 38: "%26", 39: "%27", 40: "%28", 41: "%29", 42: "%2A", 43: "%2B", 44: "%2C", 59: "%3B", 61: "%3D", 32: "%20" };
+  function d(t3, e2, r2) {
+    let n2, i2 = -1;
+    for (let o2 = 0; o2 < t3.length; o2++) {
+      const h2 = t3.charCodeAt(o2);
+      if (h2 >= 97 && h2 <= 122 || h2 >= 65 && h2 <= 90 || h2 >= 48 && h2 <= 57 || 45 === h2 || 46 === h2 || 95 === h2 || 126 === h2 || e2 && 47 === h2 || r2 && 91 === h2 || r2 && 93 === h2 || r2 && 58 === h2) -1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2, o2)), i2 = -1), void 0 !== n2 && (n2 += t3.charAt(o2));
+      else {
+        void 0 === n2 && (n2 = t3.substr(0, o2));
+        const e3 = p[h2];
+        void 0 !== e3 ? (-1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2, o2)), i2 = -1), n2 += e3) : -1 === i2 && (i2 = o2);
+      }
+    }
+    return -1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2))), void 0 !== n2 ? n2 : t3;
+  }
+  function m(t3) {
+    let e2;
+    for (let r2 = 0; r2 < t3.length; r2++) {
+      const n2 = t3.charCodeAt(r2);
+      35 === n2 || 63 === n2 ? (void 0 === e2 && (e2 = t3.substr(0, r2)), e2 += p[n2]) : void 0 !== e2 && (e2 += t3[r2]);
+    }
+    return void 0 !== e2 ? e2 : t3;
+  }
+  function y(t3, e2) {
+    let r2;
+    return r2 = t3.authority && t3.path.length > 1 && "file" === t3.scheme ? `//${t3.authority}${t3.path}` : 47 === t3.path.charCodeAt(0) && (t3.path.charCodeAt(1) >= 65 && t3.path.charCodeAt(1) <= 90 || t3.path.charCodeAt(1) >= 97 && t3.path.charCodeAt(1) <= 122) && 58 === t3.path.charCodeAt(2) ? e2 ? t3.path.substr(1) : t3.path[1].toLowerCase() + t3.path.substr(2) : t3.path, n && (r2 = r2.replace(/\//g, "\\")), r2;
+  }
+  function v(t3, e2) {
+    const r2 = e2 ? m : d;
+    let n2 = "", { scheme: i2, authority: o2, path: h2, query: s2, fragment: a2 } = t3;
+    if (i2 && (n2 += i2, n2 += ":"), (o2 || "file" === i2) && (n2 += c, n2 += c), o2) {
+      let t4 = o2.indexOf("@");
+      if (-1 !== t4) {
+        const e3 = o2.substr(0, t4);
+        o2 = o2.substr(t4 + 1), t4 = e3.lastIndexOf(":"), -1 === t4 ? n2 += r2(e3, false, false) : (n2 += r2(e3.substr(0, t4), false, false), n2 += ":", n2 += r2(e3.substr(t4 + 1), false, true)), n2 += "@";
+      }
+      o2 = o2.toLowerCase(), t4 = o2.lastIndexOf(":"), -1 === t4 ? n2 += r2(o2, false, true) : (n2 += r2(o2.substr(0, t4), false, true), n2 += o2.substr(t4));
+    }
+    if (h2) {
+      if (h2.length >= 3 && 47 === h2.charCodeAt(0) && 58 === h2.charCodeAt(2)) {
+        const t4 = h2.charCodeAt(1);
+        t4 >= 65 && t4 <= 90 && (h2 = `/${String.fromCharCode(t4 + 32)}:${h2.substr(3)}`);
+      } else if (h2.length >= 2 && 58 === h2.charCodeAt(1)) {
+        const t4 = h2.charCodeAt(0);
+        t4 >= 65 && t4 <= 90 && (h2 = `${String.fromCharCode(t4 + 32)}:${h2.substr(2)}`);
+      }
+      n2 += r2(h2, true, false);
+    }
+    return s2 && (n2 += "?", n2 += r2(s2, false, false)), a2 && (n2 += "#", n2 += e2 ? a2 : d(a2, false, false)), n2;
+  }
+  function b(t3) {
+    try {
+      return decodeURIComponent(t3);
+    } catch (e2) {
+      return t3.length > 3 ? t3.substr(0, 3) + b(t3.substr(3)) : t3;
+    }
+  }
+  var C = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
+  function A(t3) {
+    return t3.match(C) ? t3.replace(C, (t4) => b(t4)) : t3;
+  }
+  var w = r(975);
+  var x = w.posix || w;
+  var P = "/";
+  var _;
+  !(function(t3) {
+    t3.joinPath = function(t4, ...e2) {
+      return t4.with({ path: x.join(t4.path, ...e2) });
+    }, t3.resolvePath = function(t4, ...e2) {
+      let r2 = t4.path, n2 = false;
+      r2[0] !== P && (r2 = P + r2, n2 = true);
+      let i2 = x.resolve(r2, ...e2);
+      return n2 && i2[0] === P && !t4.authority && (i2 = i2.substring(1)), t4.with({ path: i2 });
+    }, t3.dirname = function(t4) {
+      if (0 === t4.path.length || t4.path === P) return t4;
+      let e2 = x.dirname(t4.path);
+      return 1 === e2.length && 46 === e2.charCodeAt(0) && (e2 = ""), t4.with({ path: e2 });
+    }, t3.basename = function(t4) {
+      return x.basename(t4.path);
+    }, t3.extname = function(t4) {
+      return x.extname(t4.path);
     };
-    var n = {};
-    let i;
-    if (r.r(n), r.d(n, { URI: () => l, Utils: () => I }), "object" == typeof process) i = "win32" === process.platform;
-    else if ("object" == typeof navigator) {
-      let t3 = navigator.userAgent;
-      i = t3.indexOf("Windows") >= 0;
-    }
-    const o = /^\w[\w\d+.-]*$/, s = /^\//, h = /^\/\//;
-    function a(t3, e2) {
-      if (!t3.scheme && e2) throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t3.authority}", path: "${t3.path}", query: "${t3.query}", fragment: "${t3.fragment}"}`);
-      if (t3.scheme && !o.test(t3.scheme)) throw new Error("[UriError]: Scheme contains illegal characters.");
-      if (t3.path) {
-        if (t3.authority) {
-          if (!s.test(t3.path)) throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character');
-        } else if (h.test(t3.path)) throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")');
-      }
-    }
-    const c = "", f = "/", u = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
-    class l {
-      constructor(t3, e2, r2, n2, i2, o2 = false) {
-        __publicField(this, "scheme");
-        __publicField(this, "authority");
-        __publicField(this, "path");
-        __publicField(this, "query");
-        __publicField(this, "fragment");
-        "object" == typeof t3 ? (this.scheme = t3.scheme || c, this.authority = t3.authority || c, this.path = t3.path || c, this.query = t3.query || c, this.fragment = t3.fragment || c) : (this.scheme = /* @__PURE__ */ (function(t4, e3) {
-          return t4 || e3 ? t4 : "file";
-        })(t3, o2), this.authority = e2 || c, this.path = (function(t4, e3) {
-          switch (t4) {
-            case "https":
-            case "http":
-            case "file":
-              e3 ? e3[0] !== f && (e3 = f + e3) : e3 = f;
-          }
-          return e3;
-        })(this.scheme, r2 || c), this.query = n2 || c, this.fragment = i2 || c, a(this, o2));
-      }
-      static isUri(t3) {
-        return t3 instanceof l || !!t3 && "string" == typeof t3.authority && "string" == typeof t3.fragment && "string" == typeof t3.path && "string" == typeof t3.query && "string" == typeof t3.scheme && "string" == typeof t3.fsPath && "function" == typeof t3.with && "function" == typeof t3.toString;
-      }
-      get fsPath() {
-        return v(this, false);
-      }
-      with(t3) {
-        if (!t3) return this;
-        let { scheme: e2, authority: r2, path: n2, query: i2, fragment: o2 } = t3;
-        return void 0 === e2 ? e2 = this.scheme : null === e2 && (e2 = c), void 0 === r2 ? r2 = this.authority : null === r2 && (r2 = c), void 0 === n2 ? n2 = this.path : null === n2 && (n2 = c), void 0 === i2 ? i2 = this.query : null === i2 && (i2 = c), void 0 === o2 ? o2 = this.fragment : null === o2 && (o2 = c), e2 === this.scheme && r2 === this.authority && n2 === this.path && i2 === this.query && o2 === this.fragment ? this : new d(e2, r2, n2, i2, o2);
-      }
-      static parse(t3, e2 = false) {
-        const r2 = u.exec(t3);
-        return r2 ? new d(r2[2] || c, w(r2[4] || c), w(r2[5] || c), w(r2[7] || c), w(r2[9] || c), e2) : new d(c, c, c, c, c);
-      }
-      static file(t3) {
-        let e2 = c;
-        if (i && (t3 = t3.replace(/\\/g, f)), t3[0] === f && t3[1] === f) {
-          const r2 = t3.indexOf(f, 2);
-          -1 === r2 ? (e2 = t3.substring(2), t3 = f) : (e2 = t3.substring(2, r2), t3 = t3.substring(r2) || f);
-        }
-        return new d("file", e2, t3, c, c);
-      }
-      static from(t3) {
-        const e2 = new d(t3.scheme, t3.authority, t3.path, t3.query, t3.fragment);
-        return a(e2, true), e2;
-      }
-      toString(t3 = false) {
-        return b(this, t3);
-      }
-      toJSON() {
-        return this;
-      }
-      static revive(t3) {
-        if (t3) {
-          if (t3 instanceof l) return t3;
-          {
-            const e2 = new d(t3);
-            return e2._formatted = t3.external, e2._fsPath = t3._sep === g ? t3.fsPath : null, e2;
-          }
-        }
-        return t3;
-      }
-    }
-    const g = i ? 1 : void 0;
-    class d extends l {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "_formatted", null);
-        __publicField(this, "_fsPath", null);
-      }
-      get fsPath() {
-        return this._fsPath || (this._fsPath = v(this, false)), this._fsPath;
-      }
-      toString(t3 = false) {
-        return t3 ? b(this, true) : (this._formatted || (this._formatted = b(this, false)), this._formatted);
-      }
-      toJSON() {
-        const t3 = { $mid: 1 };
-        return this._fsPath && (t3.fsPath = this._fsPath, t3._sep = g), this._formatted && (t3.external = this._formatted), this.path && (t3.path = this.path), this.scheme && (t3.scheme = this.scheme), this.authority && (t3.authority = this.authority), this.query && (t3.query = this.query), this.fragment && (t3.fragment = this.fragment), t3;
-      }
-    }
-    const p = { 58: "%3A", 47: "%2F", 63: "%3F", 35: "%23", 91: "%5B", 93: "%5D", 64: "%40", 33: "%21", 36: "%24", 38: "%26", 39: "%27", 40: "%28", 41: "%29", 42: "%2A", 43: "%2B", 44: "%2C", 59: "%3B", 61: "%3D", 32: "%20" };
-    function m(t3, e2, r2) {
-      let n2, i2 = -1;
-      for (let o2 = 0; o2 < t3.length; o2++) {
-        const s2 = t3.charCodeAt(o2);
-        if (s2 >= 97 && s2 <= 122 || s2 >= 65 && s2 <= 90 || s2 >= 48 && s2 <= 57 || 45 === s2 || 46 === s2 || 95 === s2 || 126 === s2 || e2 && 47 === s2 || r2 && 91 === s2 || r2 && 93 === s2 || r2 && 58 === s2) -1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2, o2)), i2 = -1), void 0 !== n2 && (n2 += t3.charAt(o2));
-        else {
-          void 0 === n2 && (n2 = t3.substr(0, o2));
-          const e3 = p[s2];
-          void 0 !== e3 ? (-1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2, o2)), i2 = -1), n2 += e3) : -1 === i2 && (i2 = o2);
-        }
-      }
-      return -1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2))), void 0 !== n2 ? n2 : t3;
-    }
-    function y(t3) {
-      let e2;
-      for (let r2 = 0; r2 < t3.length; r2++) {
-        const n2 = t3.charCodeAt(r2);
-        35 === n2 || 63 === n2 ? (void 0 === e2 && (e2 = t3.substr(0, r2)), e2 += p[n2]) : void 0 !== e2 && (e2 += t3[r2]);
-      }
-      return void 0 !== e2 ? e2 : t3;
-    }
-    function v(t3, e2) {
-      let r2;
-      return r2 = t3.authority && t3.path.length > 1 && "file" === t3.scheme ? `//${t3.authority}${t3.path}` : 47 === t3.path.charCodeAt(0) && (t3.path.charCodeAt(1) >= 65 && t3.path.charCodeAt(1) <= 90 || t3.path.charCodeAt(1) >= 97 && t3.path.charCodeAt(1) <= 122) && 58 === t3.path.charCodeAt(2) ? e2 ? t3.path.substr(1) : t3.path[1].toLowerCase() + t3.path.substr(2) : t3.path, i && (r2 = r2.replace(/\//g, "\\")), r2;
-    }
-    function b(t3, e2) {
-      const r2 = e2 ? y : m;
-      let n2 = "", { scheme: i2, authority: o2, path: s2, query: h2, fragment: a2 } = t3;
-      if (i2 && (n2 += i2, n2 += ":"), (o2 || "file" === i2) && (n2 += f, n2 += f), o2) {
-        let t4 = o2.indexOf("@");
-        if (-1 !== t4) {
-          const e3 = o2.substr(0, t4);
-          o2 = o2.substr(t4 + 1), t4 = e3.lastIndexOf(":"), -1 === t4 ? n2 += r2(e3, false, false) : (n2 += r2(e3.substr(0, t4), false, false), n2 += ":", n2 += r2(e3.substr(t4 + 1), false, true)), n2 += "@";
-        }
-        o2 = o2.toLowerCase(), t4 = o2.lastIndexOf(":"), -1 === t4 ? n2 += r2(o2, false, true) : (n2 += r2(o2.substr(0, t4), false, true), n2 += o2.substr(t4));
-      }
-      if (s2) {
-        if (s2.length >= 3 && 47 === s2.charCodeAt(0) && 58 === s2.charCodeAt(2)) {
-          const t4 = s2.charCodeAt(1);
-          t4 >= 65 && t4 <= 90 && (s2 = `/${String.fromCharCode(t4 + 32)}:${s2.substr(3)}`);
-        } else if (s2.length >= 2 && 58 === s2.charCodeAt(1)) {
-          const t4 = s2.charCodeAt(0);
-          t4 >= 65 && t4 <= 90 && (s2 = `${String.fromCharCode(t4 + 32)}:${s2.substr(2)}`);
-        }
-        n2 += r2(s2, true, false);
-      }
-      return h2 && (n2 += "?", n2 += r2(h2, false, false)), a2 && (n2 += "#", n2 += e2 ? a2 : m(a2, false, false)), n2;
-    }
-    function C(t3) {
-      try {
-        return decodeURIComponent(t3);
-      } catch (e2) {
-        return t3.length > 3 ? t3.substr(0, 3) + C(t3.substr(3)) : t3;
-      }
-    }
-    const A = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
-    function w(t3) {
-      return t3.match(A) ? t3.replace(A, ((t4) => C(t4))) : t3;
-    }
-    var x = r(975);
-    const P = x.posix || x, _ = "/";
-    var I;
-    !(function(t3) {
-      t3.joinPath = function(t4, ...e2) {
-        return t4.with({ path: P.join(t4.path, ...e2) });
-      }, t3.resolvePath = function(t4, ...e2) {
-        let r2 = t4.path, n2 = false;
-        r2[0] !== _ && (r2 = _ + r2, n2 = true);
-        let i2 = P.resolve(r2, ...e2);
-        return n2 && i2[0] === _ && !t4.authority && (i2 = i2.substring(1)), t4.with({ path: i2 });
-      }, t3.dirname = function(t4) {
-        if (0 === t4.path.length || t4.path === _) return t4;
-        let e2 = P.dirname(t4.path);
-        return 1 === e2.length && 46 === e2.charCodeAt(0) && (e2 = ""), t4.with({ path: e2 });
-      }, t3.basename = function(t4) {
-        return P.basename(t4.path);
-      }, t3.extname = function(t4) {
-        return P.extname(t4.path);
-      };
-    })(I || (I = {})), LIB = n;
-  })();
-  var { URI: URI2, Utils } = LIB;
+  })(_ || (_ = {}));
 
   // ../../node_modules/vscode-json-languageservice/lib/esm/parser/jsonParser.js
   var formats = {
@@ -4700,8 +4728,8 @@ var aceLegacyWorkerModule = (() => {
       id = httpsPrefix + id.substring(httpPrefix.length);
     }
     try {
-      return URI2.parse(id).toString(true);
-    } catch (e) {
+      return u.parse(id).toString(true);
+    } catch (e2) {
       return id;
     }
   }
@@ -4787,7 +4815,7 @@ var aceLegacyWorkerModule = (() => {
       if (!this.enumValueMatch && this.enumValues) {
         for (const error of this.problems) {
           if (error.code === ErrorCode.EnumValueMismatch) {
-            error.message = t("Value is not accepted. Valid values: {0}.", this.enumValues.map((v) => JSON.stringify(v)).join(", "));
+            error.message = t("Value is not accepted. Valid values: {0}.", this.enumValues.map((v2) => JSON.stringify(v2)).join(", "));
           }
         }
       }
@@ -4803,7 +4831,7 @@ var aceLegacyWorkerModule = (() => {
       }
     }
     mergeProcessedProperties(validationResult) {
-      validationResult.processedProperties.forEach((p) => this.processedProperties.add(p));
+      validationResult.processedProperties.forEach((p2) => this.processedProperties.add(p2));
     }
     compare(other) {
       const hasProblems = this.hasProblems();
@@ -4846,8 +4874,8 @@ var aceLegacyWorkerModule = (() => {
           let ctn = visitor(node);
           const children = node.children;
           if (Array.isArray(children)) {
-            for (let i = 0; i < children.length && ctn; i++) {
-              ctn = doVisit(children[i]);
+            for (let i2 = 0; i2 < children.length && ctn; i2++) {
+              ctn = doVisit(children[i2]);
             }
           }
           return ctn;
@@ -4859,10 +4887,10 @@ var aceLegacyWorkerModule = (() => {
       if (this.root && schema) {
         const validationResult = new ValidationResult();
         validate(this.root, schema, validationResult, NoOpSchemaCollector.instance, new EvaluationContext(schemaDraft != null ? schemaDraft : getSchemaDraft(schema)));
-        return validationResult.problems.map((p) => {
+        return validationResult.problems.map((p2) => {
           var _a;
-          const range = Range2.create(textDocument.positionAt(p.location.offset), textDocument.positionAt(p.location.offset + p.location.length));
-          return Diagnostic.create(range, p.message, (_a = p.severity) != null ? _a : severity, p.code);
+          const range = Range2.create(textDocument.positionAt(p2.location.offset), textDocument.positionAt(p2.location.offset + p2.location.length));
+          return Diagnostic.create(range, p2.message, (_a = p2.severity) != null ? _a : severity, p2.code);
         });
       }
       return void 0;
@@ -4886,14 +4914,14 @@ var aceLegacyWorkerModule = (() => {
     }
     return fallBack;
   }
-  function validate(n, schema, validationResult, matchingSchemas, context) {
-    if (!n || !matchingSchemas.include(n)) {
+  function validate(n2, schema, validationResult, matchingSchemas, context) {
+    if (!n2 || !matchingSchemas.include(n2)) {
       return;
     }
-    if (n.type === "property") {
-      return validate(n.valueNode, schema, validationResult, matchingSchemas, context);
+    if (n2.type === "property") {
+      return validate(n2.valueNode, schema, validationResult, matchingSchemas, context);
     }
-    const node = n;
+    const node = n2;
     _validateNode();
     switch (node.type) {
       case "object":
@@ -5035,8 +5063,8 @@ var aceLegacyWorkerModule = (() => {
       if (Array.isArray(schema.enum)) {
         const val = getNodeValue3(node);
         let enumValueMatch = false;
-        for (const e of schema.enum) {
-          if (equals(val, e)) {
+        for (const e2 of schema.enum) {
+          if (equals(val, e2)) {
             enumValueMatch = true;
             break;
           }
@@ -5047,7 +5075,7 @@ var aceLegacyWorkerModule = (() => {
           validationResult.problems.push({
             location: { offset: node.offset, length: node.length },
             code: ErrorCode.EnumValueMismatch,
-            message: schema.errorMessage || t("Value is not accepted. Valid values: {0}.", schema.enum.map((v) => JSON.stringify(v)).join(", "))
+            message: schema.errorMessage || t("Value is not accepted. Valid values: {0}.", schema.enum.map((v2) => JSON.stringify(v2)).join(", "))
           });
         }
       }
@@ -5084,8 +5112,8 @@ var aceLegacyWorkerModule = (() => {
       }
       const buildConstMap = (getSchemas) => {
         const constMap = /* @__PURE__ */ new Map();
-        for (let i = 0; i < alternatives.length; i++) {
-          const schemas = getSchemas(asSchema(alternatives[i]), i);
+        for (let i2 = 0; i2 < alternatives.length; i2++) {
+          const schemas = getSchemas(asSchema(alternatives[i2]), i2);
           if (!schemas) {
             return void 0;
           }
@@ -5098,7 +5126,7 @@ var aceLegacyWorkerModule = (() => {
               if (!valueMap.has(schema2.const)) {
                 valueMap.set(schema2.const, []);
               }
-              valueMap.get(schema2.const).push(i);
+              valueMap.get(schema2.const).push(i2);
             }
           });
         }
@@ -5120,11 +5148,11 @@ var aceLegacyWorkerModule = (() => {
         return void 0;
       };
       if (node.type === "object" && ((_a = node.properties) == null ? void 0 : _a.length)) {
-        const constMap = buildConstMap((schema2) => schema2.properties ? Object.entries(schema2.properties).map(([k, v]) => [k, asSchema(v)]) : void 0);
+        const constMap = buildConstMap((schema2) => schema2.properties ? Object.entries(schema2.properties).map(([k, v2]) => [k, asSchema(v2)]) : void 0);
         if (constMap) {
           return findDiscriminator(constMap, (propName) => {
             var _a2;
-            const prop = node.properties.find((p) => p.keyNode.value === propName);
+            const prop = node.properties.find((p2) => p2.keyNode.value === propName);
             return ((_a2 = prop == null ? void 0 : prop.valueNode) == null ? void 0 : _a2.type) === "string" ? prop.valueNode.value : void 0;
           });
         }
@@ -5367,8 +5395,8 @@ var aceLegacyWorkerModule = (() => {
       }
       const unevaluatedItems = schema.unevaluatedItems;
       if (unevaluatedItems !== void 0) {
-        for (let i = 0; i < node2.items.length; i++) {
-          if (!validationResult.processedProperties.has(String(i))) {
+        for (let i2 = 0; i2 < node2.items.length; i2++) {
+          if (!validationResult.processedProperties.has(String(i2))) {
             if (unevaluatedItems === false) {
               validationResult.problems.push({
                 location: { offset: node2.offset, length: node2.length },
@@ -5376,11 +5404,11 @@ var aceLegacyWorkerModule = (() => {
               });
             } else {
               const itemValidationResult = new ValidationResult();
-              validate(node2.items[i], schema.unevaluatedItems, itemValidationResult, matchingSchemas, context);
+              validate(node2.items[i2], schema.unevaluatedItems, itemValidationResult, matchingSchemas, context);
               validationResult.mergePropertyMatch(itemValidationResult);
             }
           }
-          validationResult.processedProperties.add(String(i));
+          validationResult.processedProperties.add(String(i2));
           validationResult.propertiesValueMatches++;
         }
       }
@@ -5398,9 +5426,9 @@ var aceLegacyWorkerModule = (() => {
       }
       if (schema.uniqueItems === true) {
         let hasDuplicates = function() {
-          for (let i = 0; i < values.length - 1; i++) {
-            const value = values[i];
-            for (let j = i + 1; j < values.length; j++) {
+          for (let i2 = 0; i2 < values.length - 1; i2++) {
+            const value = values[i2];
+            for (let j = i2 + 1; j < values.length; j++) {
               if (equals(value, values[j])) {
                 return true;
               }
@@ -5588,8 +5616,8 @@ var aceLegacyWorkerModule = (() => {
       }
       const propertyNames = asSchema(schema.propertyNames);
       if (propertyNames) {
-        for (const f of node2.properties) {
-          const key = f.keyNode;
+        for (const f2 of node2.properties) {
+          const key = f2.keyNode;
           if (key) {
             validate(key, propertyNames, validationResult, matchingSchemas, context);
           }
@@ -5868,7 +5896,7 @@ var aceLegacyWorkerModule = (() => {
             return _error(t("Invalid number format."), ErrorCode.Undefined, node);
           }
           node.value = numberValue;
-        } catch (e) {
+        } catch (e2) {
           return _error(t("Invalid number format."), ErrorCode.Undefined, node);
         }
         node.isInteger = tokenValue.indexOf(".") === -1;
@@ -7022,10 +7050,10 @@ var aceLegacyWorkerModule = (() => {
     const globstar = opts ? !!opts.globstar : false;
     let inGroup = false;
     const flags = opts && typeof opts.flags === "string" ? opts.flags : "";
-    let c;
-    for (let i = 0, len = str.length; i < len; i++) {
-      c = str[i];
-      switch (c) {
+    let c2;
+    for (let i2 = 0, len = str.length; i2 < len; i2++) {
+      c2 = str[i2];
+      switch (c2) {
         case "/":
         case "$":
         case "^":
@@ -7036,7 +7064,7 @@ var aceLegacyWorkerModule = (() => {
         case "=":
         case "!":
         case "|":
-          reStr += "\\" + c;
+          reStr += "\\" + c2;
           break;
         case "?":
           if (extended) {
@@ -7046,7 +7074,7 @@ var aceLegacyWorkerModule = (() => {
         case "[":
         case "]":
           if (extended) {
-            reStr += c;
+            reStr += c2;
             break;
           }
         case "{":
@@ -7066,23 +7094,23 @@ var aceLegacyWorkerModule = (() => {
             reStr += "|";
             break;
           }
-          reStr += "\\" + c;
+          reStr += "\\" + c2;
           break;
         case "*":
-          const prevChar = str[i - 1];
+          const prevChar = str[i2 - 1];
           let starCount = 1;
-          while (str[i + 1] === "*") {
+          while (str[i2 + 1] === "*") {
             starCount++;
-            i++;
+            i2++;
           }
-          const nextChar = str[i + 1];
+          const nextChar = str[i2 + 1];
           if (!globstar) {
             reStr += ".*";
           } else {
             const isGlobstar = starCount > 1 && (prevChar === "/" || prevChar === void 0 || prevChar === "{" || prevChar === ",") && (nextChar === "/" || nextChar === void 0 || nextChar === "," || nextChar === "}");
             if (isGlobstar) {
               if (nextChar === "/") {
-                i++;
+                i2++;
               } else if (prevChar === "/" && reStr.endsWith("\\/")) {
                 reStr = reStr.substr(0, reStr.length - 2);
               }
@@ -7093,7 +7121,7 @@ var aceLegacyWorkerModule = (() => {
           }
           break;
         default:
-          reStr += c;
+          reStr += c2;
       }
     }
     if (!flags || !~flags.indexOf("g")) {
@@ -7134,7 +7162,7 @@ var aceLegacyWorkerModule = (() => {
           }
           this.folderUri = folderUri;
         }
-      } catch (e) {
+      } catch (e2) {
         this.globWrappers.length = 0;
         this.uris = [];
       }
@@ -7258,7 +7286,7 @@ var aceLegacyWorkerModule = (() => {
     }
     getRegisteredSchemaIds(filter) {
       return Object.keys(this.registeredSchemasIds).filter((id) => {
-        const scheme = URI2.parse(id).scheme;
+        const scheme = u.parse(id).scheme;
         return scheme !== "schemaservice" && (!filter || filter(scheme));
       });
     }
@@ -7278,8 +7306,8 @@ var aceLegacyWorkerModule = (() => {
       const all = Object.keys(this.schemasById).map((key) => this.schemasById[key]);
       while (toWalk.length) {
         const curr = toWalk.pop();
-        for (let i = 0; i < all.length; i++) {
-          const handle = all[i];
+        for (let i2 = 0; i2 < all.length; i2++) {
+          const handle = all[i2];
           if (handle && (handle.uri === curr || handle.dependencies.has(curr))) {
             if (handle.uri !== curr) {
               toWalk.push(handle.uri);
@@ -7287,7 +7315,7 @@ var aceLegacyWorkerModule = (() => {
             if (handle.clearSchema()) {
               hasChanges = true;
             }
-            all[i] = void 0;
+            all[i2] = void 0;
           }
         }
       }
@@ -7514,7 +7542,7 @@ var aceLegacyWorkerModule = (() => {
         });
         return result;
       };
-      return resolveRefs(schema, schema, handle).then((_) => {
+      return resolveRefs(schema, schema, handle).then((_2) => {
         let resolveWarnings = [];
         if (usesUnsupportedFeatures.size) {
           resolveWarnings.push(toDiagnostic(t("The schema uses meta-schema features ({0}) that are not yet supported by the validator.", Array.from(usesUnsupportedFeatures.keys()).join(", ")), ErrorCode.SchemaUnsupportedFeature));
@@ -7586,9 +7614,9 @@ var aceLegacyWorkerModule = (() => {
     getSchemaFromProperty(resource, document) {
       var _a, _b;
       if (((_a = document.root) == null ? void 0 : _a.type) === "object") {
-        for (const p of document.root.properties) {
-          if (p.keyNode.value === "$schema" && ((_b = p.valueNode) == null ? void 0 : _b.type) === "string") {
-            let schemaId = p.valueNode.value;
+        for (const p2 of document.root.properties) {
+          if (p2.keyNode.value === "$schema" && ((_b = p2.valueNode) == null ? void 0 : _b.type) === "string") {
+            let schemaId = p2.valueNode.value;
             if (this.contextService && !/^\w[\w\d+.-]*:/.test(schemaId)) {
               schemaId = this.contextService.resolveRelativePath(schemaId, resource);
             }
@@ -7653,12 +7681,12 @@ var aceLegacyWorkerModule = (() => {
         const id = schema.id || "schemaservice://untitled/matchingSchemas/" + idCounter2++;
         const handle = this.addSchemaHandle(id, schema);
         return handle.getResolvedSchema().then((resolvedSchema) => {
-          return jsonDocument.getMatchingSchemas(resolvedSchema.schema).filter((s) => !s.inverted);
+          return jsonDocument.getMatchingSchemas(resolvedSchema.schema).filter((s2) => !s2.inverted);
         });
       }
       return this.getSchemaForResource(document.uri, jsonDocument).then((schema2) => {
         if (schema2) {
-          return jsonDocument.getMatchingSchemas(schema2.schema).filter((s) => !s.inverted);
+          return jsonDocument.getMatchingSchemas(schema2.schema).filter((s2) => !s2.inverted);
         }
         return [];
       });
@@ -7667,18 +7695,18 @@ var aceLegacyWorkerModule = (() => {
   var idCounter2 = 0;
   function normalizeResourceForMatching(resource) {
     try {
-      return URI2.parse(resource).with({ fragment: null, query: null }).toString(true);
-    } catch (e) {
+      return u.parse(resource).with({ fragment: null, query: null }).toString(true);
+    } catch (e2) {
       return resource;
     }
   }
   function toDisplayString(url) {
     try {
-      const uri = URI2.parse(url);
+      const uri = u.parse(url);
       if (uri.scheme === "file") {
         return uri.fsPath;
       }
-    } catch (e) {
+    } catch (e2) {
     }
     return url;
   }
@@ -7782,13 +7810,13 @@ var aceLegacyWorkerModule = (() => {
   };
   function computeLineOffsets2(text, isAtLineStart, textOffset = 0) {
     const result = isAtLineStart ? [textOffset] : [];
-    for (let i = 0; i < text.length; i++) {
-      const ch = text.charCodeAt(i);
+    for (let i2 = 0; i2 < text.length; i2++) {
+      const ch = text.charCodeAt(i2);
       if (isEOL3(ch)) {
-        if (ch === 13 /* CarriageReturn */ && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* LineFeed */) {
-          i++;
+        if (ch === 13 /* CarriageReturn */ && i2 + 1 < text.length && text.charCodeAt(i2 + 1) === 10 /* LineFeed */) {
+          i2++;
         }
-        result.push(textOffset + i + 1);
+        result.push(textOffset + i2 + 1);
       }
     }
     return result;
@@ -7849,8 +7877,8 @@ var aceLegacyWorkerModule = (() => {
         try {
           let jsonDocument = this.service.parseJSONDocument(fullDocument);
           errors = toAnnotations(yield this.service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.trailingCommas ? "ignore" : "error" }));
-        } catch (e) {
-          console.error(e);
+        } catch (e2) {
+          console.error(e2);
         }
         this.sender.emit("annotate", errors);
       });

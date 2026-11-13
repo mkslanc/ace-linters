@@ -2,9 +2,9 @@
 	typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global));
 })(this, function(exports) {
 	Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-	//#region \0rolldown/runtime.js
+	// \0rolldown/runtime.js
 	var __create = Object.create;
-	var __defProp = Object.defineProperty;
+	var __defProp$1 = Object.defineProperty;
 	var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 	var __getOwnPropNames = Object.getOwnPropertyNames;
 	var __getProtoOf = Object.getPrototypeOf;
@@ -17,33 +17,32 @@
 			throw err = [e], e;
 		}
 	};
-	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod, mod.exports), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
-		for (var name in all) __defProp(target, name, {
+		for (var name in all) __defProp$1(target, name, {
 			get: all[name],
 			enumerable: true
 		});
-		if (!no_symbols) __defProp(target, Symbol.toStringTag, { value: "Module" });
+		if (!no_symbols) __defProp$1(target, Symbol.toStringTag, { value: "Module" });
 		return target;
 	};
 	var __copyProps = (to, from, except, desc) => {
 		if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
 			key = keys[i];
-			if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
+			if (!__hasOwnProp.call(to, key) && key !== except) __defProp$1(to, key, {
 				get: ((k) => from[k]).bind(null, key),
 				enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
 			});
 		}
 		return to;
 	};
-	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp.call(mod, "default") ? __defProp$1(target, "default", {
 		value: mod,
 		enumerable: true
 	}) : target, mod));
-	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
+	var __toCommonJS$1 = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp$1({}, "__esModule", { value: true }), mod);
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -76,8 +75,7 @@
 		}
 		exports.stringArray = stringArray;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -373,8 +371,7 @@
 			Message.isResponse = isResponse;
 		})(Message || (exports.Message = Message = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -446,9 +443,7 @@
 						case Touch.Last:
 							this.addItemLast(item);
 							break;
-						default:
-							this.addItemLast(item);
-							break;
+						default: this.addItemLast(item);
 					}
 					this._map.set(key, item);
 					this._size++;
@@ -708,8 +703,7 @@
 		};
 		exports.LRUCache = LRUCache;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -721,8 +715,7 @@
 			Disposable.create = create;
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -739,8 +732,7 @@
 		})(RAL || (RAL = {}));
 		exports.default = RAL;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -765,11 +757,13 @@
 			remove(callback, context = null) {
 				if (!this._callbacks) return;
 				let foundCallbackWithDifferentContext = false;
-				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) if (this._contexts[i] === context) {
-					this._callbacks.splice(i, 1);
-					this._contexts.splice(i, 1);
-					return;
-				} else foundCallbackWithDifferentContext = true;
+				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) {
+					if (this._contexts[i] === context) {
+						this._callbacks.splice(i, 1);
+						this._contexts.splice(i, 1);
+						return;
+					} else foundCallbackWithDifferentContext = true;
+				}
 				if (foundCallbackWithDifferentContext) throw new Error("When adding a listener with a context, you should remove it with the same context");
 			}
 			invoke(...args) {
@@ -831,8 +825,7 @@
 		exports.Emitter = Emitter;
 		Emitter._noop = function() {};
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -905,8 +898,7 @@
 		};
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -972,8 +964,7 @@
 		};
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1032,8 +1023,7 @@
 		};
 		exports.Semaphore = Semaphore;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1210,8 +1200,7 @@
 		};
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1320,8 +1309,7 @@
 		};
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1446,8 +1434,7 @@
 		};
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1840,26 +1827,27 @@
 					if (requestMessage.id !== null) requestTokens.set(tokenKey, cancellationSource);
 					try {
 						let handlerResult;
-						if (requestHandler) if (requestMessage.params === void 0) {
-							if (type !== void 0 && type.numberOfParams !== 0) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
-								return;
+						if (requestHandler) {
+							if (requestMessage.params === void 0) {
+								if (type !== void 0 && type.numberOfParams !== 0) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(cancellationSource.token);
+							} else if (Array.isArray(requestMessage.params)) {
+								if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byName) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
+							} else {
+								if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
 							}
-							handlerResult = requestHandler(cancellationSource.token);
-						} else if (Array.isArray(requestMessage.params)) {
-							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byName) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
-								return;
-							}
-							handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
-						} else {
-							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
-								return;
-							}
-							handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
-						}
-						else if (starRequestHandler) handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
+						} else if (starRequestHandler) handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
 						const promise = handlerResult;
 						if (!handlerResult) {
 							requestTokens.delete(tokenKey);
@@ -1887,9 +1875,10 @@
 			}
 			function handleResponse(responseMessage) {
 				if (isDisposed()) return;
-				if (responseMessage.id === null) if (responseMessage.error) logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, void 0, 4)}`);
-				else logger.error(`Received response message without id. No further error information provided.`);
-				else {
+				if (responseMessage.id === null) {
+					if (responseMessage.error) logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, void 0, 4)}`);
+					else logger.error(`Received response message without id. No further error information provided.`);
+				} else {
 					const key = responseMessage.id;
 					const responsePromise = responsePromises.get(key);
 					traceReceivedResponse(responseMessage, responsePromise);
@@ -1926,29 +1915,30 @@
 				}
 				if (notificationHandler || starNotificationHandler) try {
 					traceReceivedNotification(message);
-					if (notificationHandler) if (message.params === void 0) {
-						if (type !== void 0) {
-							if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
-						}
-						notificationHandler();
-					} else if (Array.isArray(message.params)) {
-						const params = message.params;
-						if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) notificationHandler({
-							token: params[0],
-							value: params[1]
-						});
-						else {
+					if (notificationHandler) {
+						if (message.params === void 0) {
 							if (type !== void 0) {
-								if (type.parameterStructures === messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
-								if (type.numberOfParams !== message.params.length) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
+								if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
 							}
-							notificationHandler(...params);
+							notificationHandler();
+						} else if (Array.isArray(message.params)) {
+							const params = message.params;
+							if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) notificationHandler({
+								token: params[0],
+								value: params[1]
+							});
+							else {
+								if (type !== void 0) {
+									if (type.parameterStructures === messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
+									if (type.numberOfParams !== message.params.length) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
+								}
+								notificationHandler(...params);
+							}
+						} else {
+							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
+							notificationHandler(message.params);
 						}
-					} else {
-						if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
-						notificationHandler(message.params);
-					}
-					else if (starNotificationHandler) starNotificationHandler(message.method, message.params);
+					} else if (starNotificationHandler) starNotificationHandler(message.method, message.params);
 				} catch (error) {
 					if (error.message) logger.error(`Notification handler '${message.method}' failed with message: ${error.message}`);
 					else logger.error(`Notification handler '${message.method}' failed unexpectedly.`);
@@ -1988,8 +1978,10 @@
 				if (trace === Trace.Off || !tracer) return;
 				if (traceFormat === TraceFormat.Text) {
 					let data = void 0;
-					if (trace === Trace.Verbose || trace === Trace.Compact) if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
-					else data = "No parameters provided.\n\n";
+					if (trace === Trace.Verbose || trace === Trace.Compact) {
+						if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
+						else data = "No parameters provided.\n\n";
+					}
 					tracer.log(`Sending notification '${message.method}'.`, data);
 				} else logLSPMessage("send-notification", message);
 			}
@@ -2017,8 +2009,10 @@
 				if (trace === Trace.Off || !tracer || message.method === LogTraceNotification.type.method) return;
 				if (traceFormat === TraceFormat.Text) {
 					let data = void 0;
-					if (trace === Trace.Verbose || trace === Trace.Compact) if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
-					else data = "No parameters provided.\n\n";
+					if (trace === Trace.Verbose || trace === Trace.Compact) {
+						if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
+						else data = "No parameters provided.\n\n";
+					}
 					tracer.log(`Received notification '${message.method}'.`, data);
 				} else logLSPMessage("receive-notification", message);
 			}
@@ -2093,7 +2087,6 @@
 						result = [];
 						for (let i = 0; i < params.length && i < numberOfParams; i++) result.push(undefinedToNull(params[i]));
 						if (params.length < numberOfParams) for (let i = params.length; i < numberOfParams; i++) result.push(null);
-						break;
 				}
 				return result;
 			}
@@ -2123,7 +2116,6 @@
 							default:
 								if (parameterStructures === messages_1.ParameterStructures.byName) throw new Error(`Received ${numberOfParams} parameters for 'by Name' notification parameter structure.`);
 								messageParams = args.slice(paramStart, paramEnd).map((value) => undefinedToNull(value));
-								break;
 						}
 					} else {
 						const params = args;
@@ -2145,18 +2137,20 @@
 					throwIfClosedOrDisposed();
 					let method;
 					if (Is.func(type)) starNotificationHandler = type;
-					else if (handler) if (Is.string(type)) {
-						method = type;
-						notificationHandlers.set(type, {
-							type: void 0,
-							handler
-						});
-					} else {
-						method = type.method;
-						notificationHandlers.set(type.method, {
-							type,
-							handler
-						});
+					else if (handler) {
+						if (Is.string(type)) {
+							method = type;
+							notificationHandlers.set(type, {
+								type: void 0,
+								handler
+							});
+						} else {
+							method = type.method;
+							notificationHandlers.set(type.method, {
+								type,
+								handler
+							});
+						}
 					}
 					return { dispose: () => {
 						if (method !== void 0) notificationHandlers.delete(method);
@@ -2209,7 +2203,6 @@
 							default:
 								if (parameterStructures === messages_1.ParameterStructures.byName) throw new Error(`Received ${numberOfParams} parameters for 'by Name' request parameter structure.`);
 								messageParams = args.slice(paramStart, paramEnd).map((value) => undefinedToNull(value));
-								break;
 						}
 					} else {
 						const params = args;
@@ -2298,10 +2291,12 @@
 				trace: async (_value, _tracer, sendNotificationOrTraceOptions) => {
 					let _sendNotification = false;
 					let _traceFormat = TraceFormat.Text;
-					if (sendNotificationOrTraceOptions !== void 0) if (Is.boolean(sendNotificationOrTraceOptions)) _sendNotification = sendNotificationOrTraceOptions;
-					else {
-						_sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
-						_traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
+					if (sendNotificationOrTraceOptions !== void 0) {
+						if (Is.boolean(sendNotificationOrTraceOptions)) _sendNotification = sendNotificationOrTraceOptions;
+						else {
+							_sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
+							_traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
+						}
 					}
 					trace = _value;
 					traceFormat = _traceFormat;
@@ -2353,8 +2348,7 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2731,8 +2725,7 @@
 		});
 		exports.RAL = require_ral().default;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -2866,10 +2859,9 @@
 		})(RIL || (RIL = {}));
 		exports.default = RIL;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
-	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
+	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports, module, this$3) => {
+		var __createBinding = this$3 && this$3.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -2883,8 +2875,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$3) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$3, p)) __createBinding(exports$3, m, p);
+		var __exportStar = this$3 && this$3.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.BrowserMessageWriter = exports.BrowserMessageReader = void 0;
@@ -2936,13 +2928,11 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-types/lib/esm/main.js
+	// ../../node_modules/vscode-languageserver-types/lib/esm/main.js
 	var main_exports = /* @__PURE__ */ __exportAll({
 		AnnotatedTextEdit: () => AnnotatedTextEdit,
 		ChangeAnnotation: () => ChangeAnnotation,
@@ -3678,8 +3668,10 @@
 			*/
 			get edit() {
 				this.initDocumentChanges();
-				if (this._changeAnnotations !== void 0) if (this._changeAnnotations.size === 0) this._workspaceEdit.changeAnnotations = void 0;
-				else this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
+				if (this._changeAnnotations !== void 0) {
+					if (this._changeAnnotations.size === 0) this._workspaceEdit.changeAnnotations = void 0;
+					else this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
+				}
 				return this._workspaceEdit;
 			}
 			getTextEditChange(key) {
@@ -4818,8 +4810,7 @@
 			Is.typedArray = typedArray;
 		})(Is || (Is = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/messages.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/messages.js
 	var require_messages = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProtocolNotificationType = exports.ProtocolNotificationType0 = exports.ProtocolRequestType = exports.ProtocolRequestType0 = exports.RegistrationType = exports.MessageDirection = void 0;
@@ -4861,8 +4852,7 @@
 		};
 		exports.ProtocolNotificationType = ProtocolNotificationType;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
 	var require_is = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.objectLiteral = exports.typedArray = exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -4903,8 +4893,7 @@
 		}
 		exports.objectLiteral = objectLiteral;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
 	var require_protocol_implementation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ImplementationRequest = void 0;
@@ -4921,8 +4910,7 @@
 			ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
 		})(ImplementationRequest || (exports.ImplementationRequest = ImplementationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
 	var require_protocol_typeDefinition = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.TypeDefinitionRequest = void 0;
@@ -4939,8 +4927,7 @@
 			TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
 		})(TypeDefinitionRequest || (exports.TypeDefinitionRequest = TypeDefinitionRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
 	var require_protocol_workspaceFolder = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = void 0;
@@ -4965,8 +4952,7 @@
 			DidChangeWorkspaceFoldersNotification.type = new messages_1.ProtocolNotificationType(DidChangeWorkspaceFoldersNotification.method);
 		})(DidChangeWorkspaceFoldersNotification || (exports.DidChangeWorkspaceFoldersNotification = DidChangeWorkspaceFoldersNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
 	var require_protocol_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ConfigurationRequest = void 0;
@@ -4987,8 +4973,7 @@
 			ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
 		})(ConfigurationRequest || (exports.ConfigurationRequest = ConfigurationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
 	var require_protocol_colorProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
@@ -5018,8 +5003,7 @@
 			ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
 		})(ColorPresentationRequest || (exports.ColorPresentationRequest = ColorPresentationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
 	var require_protocol_foldingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.FoldingRangeRefreshRequest = exports.FoldingRangeRequest = void 0;
@@ -5047,8 +5031,7 @@
 			FoldingRangeRefreshRequest.type = new messages_1.ProtocolRequestType0(FoldingRangeRefreshRequest.method);
 		})(FoldingRangeRefreshRequest || (exports.FoldingRangeRefreshRequest = FoldingRangeRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
 	var require_protocol_declaration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DeclarationRequest = void 0;
@@ -5066,8 +5049,7 @@
 			DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
 		})(DeclarationRequest || (exports.DeclarationRequest = DeclarationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
 	var require_protocol_selectionRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SelectionRangeRequest = void 0;
@@ -5085,8 +5067,7 @@
 			SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
 		})(SelectionRangeRequest || (exports.SelectionRangeRequest = SelectionRangeRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
 	var require_protocol_progress = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = void 0;
@@ -5121,8 +5102,7 @@
 			WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
 		})(WorkDoneProgressCancelNotification || (exports.WorkDoneProgressCancelNotification = WorkDoneProgressCancelNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
 	var require_protocol_callHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.CallHierarchyPrepareRequest = void 0;
@@ -5162,8 +5142,7 @@
 			CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
 		})(CallHierarchyOutgoingCallsRequest || (exports.CallHierarchyOutgoingCallsRequest = CallHierarchyOutgoingCallsRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
 	var require_protocol_semanticTokens = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.SemanticTokensRegistrationType = exports.TokenFormat = void 0;
@@ -5217,8 +5196,7 @@
 			SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
 		})(SemanticTokensRefreshRequest || (exports.SemanticTokensRefreshRequest = SemanticTokensRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
 	var require_protocol_showDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ShowDocumentRequest = void 0;
@@ -5238,8 +5216,7 @@
 			ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
 		})(ShowDocumentRequest || (exports.ShowDocumentRequest = ShowDocumentRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
 	var require_protocol_linkedEditingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.LinkedEditingRangeRequest = void 0;
@@ -5256,8 +5233,7 @@
 			LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
 		})(LinkedEditingRangeRequest || (exports.LinkedEditingRangeRequest = LinkedEditingRangeRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
 	var require_protocol_fileOperations = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.DidRenameFilesNotification = exports.WillRenameFilesRequest = exports.DidCreateFilesNotification = exports.WillCreateFilesRequest = exports.FileOperationPatternKind = void 0;
@@ -5356,8 +5332,7 @@
 			WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
 		})(WillDeleteFilesRequest || (exports.WillDeleteFilesRequest = WillDeleteFilesRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
 	var require_protocol_moniker = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = void 0;
@@ -5423,8 +5398,7 @@
 			MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
 		})(MonikerRequest || (exports.MonikerRequest = MonikerRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
 	var require_protocol_typeHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.TypeHierarchySubtypesRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchyPrepareRequest = void 0;
@@ -5464,8 +5438,7 @@
 			TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
 		})(TypeHierarchySubtypesRequest || (exports.TypeHierarchySubtypesRequest = TypeHierarchySubtypesRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
 	var require_protocol_inlineValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
@@ -5493,8 +5466,7 @@
 			InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
 		})(InlineValueRefreshRequest || (exports.InlineValueRefreshRequest = InlineValueRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
 	var require_protocol_inlayHint = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = void 0;
@@ -5535,8 +5507,7 @@
 			InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
 		})(InlayHintRefreshRequest || (exports.InlayHintRefreshRequest = InlayHintRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
 	var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = void 0;
@@ -5608,12 +5579,11 @@
 			DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
 		})(DiagnosticRefreshRequest || (exports.DiagnosticRefreshRequest = DiagnosticRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
 	var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = void 0;
-		var vscode_languageserver_types_1 = (init_main(), __toCommonJS(main_exports));
+		var vscode_languageserver_types_1 = (init_main(), __toCommonJS$1(main_exports));
 		var Is = require_is();
 		var messages_1 = require_messages();
 		/**
@@ -5791,8 +5761,7 @@
 			DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
 		})(DidCloseNotebookDocumentNotification || (exports.DidCloseNotebookDocumentNotification = DidCloseNotebookDocumentNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
 	var require_protocol_inlineCompletion = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlineCompletionRequest = void 0;
@@ -5812,15 +5781,14 @@
 			InlineCompletionRequest.type = new messages_1.ProtocolRequestType(InlineCompletionRequest.method);
 		})(InlineCompletionRequest || (exports.InlineCompletionRequest = InlineCompletionRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.js
 	var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WorkspaceSymbolRequest = exports.CodeActionResolveRequest = exports.CodeActionRequest = exports.DocumentSymbolRequest = exports.DocumentHighlightRequest = exports.ReferencesRequest = exports.DefinitionRequest = exports.SignatureHelpRequest = exports.SignatureHelpTriggerKind = exports.HoverRequest = exports.CompletionResolveRequest = exports.CompletionRequest = exports.CompletionTriggerKind = exports.PublishDiagnosticsNotification = exports.WatchKind = exports.RelativePattern = exports.FileChangeType = exports.DidChangeWatchedFilesNotification = exports.WillSaveTextDocumentWaitUntilRequest = exports.WillSaveTextDocumentNotification = exports.TextDocumentSaveReason = exports.DidSaveTextDocumentNotification = exports.DidCloseTextDocumentNotification = exports.DidChangeTextDocumentNotification = exports.TextDocumentContentChangeEvent = exports.DidOpenTextDocumentNotification = exports.TextDocumentSyncKind = exports.TelemetryEventNotification = exports.LogMessageNotification = exports.ShowMessageRequest = exports.ShowMessageNotification = exports.MessageType = exports.DidChangeConfigurationNotification = exports.ExitNotification = exports.ShutdownRequest = exports.InitializedNotification = exports.InitializeErrorCodes = exports.InitializeRequest = exports.WorkDoneProgressOptions = exports.TextDocumentRegistrationOptions = exports.StaticRegistrationOptions = exports.PositionEncodingKind = exports.FailureHandlingKind = exports.ResourceOperationKind = exports.UnregistrationRequest = exports.RegistrationRequest = exports.DocumentSelector = exports.NotebookCellTextDocumentFilter = exports.NotebookDocumentFilter = exports.TextDocumentFilter = void 0;
 		exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.WillRenameFilesRequest = exports.DidRenameFilesNotification = exports.WillCreateFilesRequest = exports.DidCreateFilesNotification = exports.FileOperationPatternKind = exports.LinkedEditingRangeRequest = exports.ShowDocumentRequest = exports.SemanticTokensRegistrationType = exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.TokenFormat = exports.CallHierarchyPrepareRequest = exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = exports.SelectionRangeRequest = exports.DeclarationRequest = exports.FoldingRangeRefreshRequest = exports.FoldingRangeRequest = exports.ColorPresentationRequest = exports.DocumentColorRequest = exports.ConfigurationRequest = exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = exports.TypeDefinitionRequest = exports.ImplementationRequest = exports.ApplyWorkspaceEditRequest = exports.ExecuteCommandRequest = exports.PrepareRenameRequest = exports.RenameRequest = exports.PrepareSupportDefaultBehavior = exports.DocumentOnTypeFormattingRequest = exports.DocumentRangesFormattingRequest = exports.DocumentRangeFormattingRequest = exports.DocumentFormattingRequest = exports.DocumentLinkResolveRequest = exports.DocumentLinkRequest = exports.CodeLensRefreshRequest = exports.CodeLensResolveRequest = exports.CodeLensRequest = exports.WorkspaceSymbolResolveRequest = void 0;
 		exports.InlineCompletionRequest = exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = exports.InlineValueRefreshRequest = exports.InlineValueRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchySubtypesRequest = exports.TypeHierarchyPrepareRequest = void 0;
 		var messages_1 = require_messages();
-		var vscode_languageserver_types_1 = (init_main(), __toCommonJS(main_exports));
+		var vscode_languageserver_types_1 = (init_main(), __toCommonJS$1(main_exports));
 		var Is = require_is();
 		var protocol_implementation_1 = require_protocol_implementation();
 		Object.defineProperty(exports, "ImplementationRequest", {
@@ -7031,8 +6999,7 @@
 			ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType("workspace/applyEdit");
 		})(ApplyWorkspaceEditRequest || (exports.ApplyWorkspaceEditRequest = ApplyWorkspaceEditRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/connection.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/connection.js
 	var require_connection = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createProtocolConnection = void 0;
@@ -7043,10 +7010,9 @@
 		}
 		exports.createProtocolConnection = createProtocolConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/api.js
-	var require_api = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/api.js
+	var require_api = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) => {
+		var __createBinding = this$2 && this$2.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7060,13 +7026,13 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$2) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$2, p)) __createBinding(exports$2, m, p);
+		var __exportStar = this$2 && this$2.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.LSPErrorCodes = exports.createProtocolConnection = void 0;
 		__exportStar(require_main$1(), exports);
-		__exportStar((init_main(), __toCommonJS(main_exports)), exports);
+		__exportStar((init_main(), __toCommonJS$1(main_exports)), exports);
 		__exportStar(require_messages(), exports);
 		__exportStar(require_protocol(), exports);
 		var connection_1 = require_connection();
@@ -7127,10 +7093,9 @@
 			LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
 		})(LSPErrorCodes || (exports.LSPErrorCodes = LSPErrorCodes = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js
-	var import_main = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js
+	var import_main = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
+		var __createBinding = this$1 && this$1.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7144,8 +7109,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$1) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$1, p)) __createBinding(exports$1, m, p);
+		var __exportStar = this$1 && this$1.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createProtocolConnection = void 0;
@@ -7289,8 +7254,7 @@
 	};
 	var browserExports = browser.exports;
 	var process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
-	//#endregion
-	//#region src/utils.ts
+	// src/utils.ts
 	function mergeObjects(obj1, obj2, excludeUndefined = false) {
 		if (!obj1) return obj2;
 		if (!obj2) return obj1;
@@ -7318,8 +7282,7 @@
 		for (let i = 0; i < regexpArray.length; i++) if (regexpArray[i].test(value)) return true;
 		return false;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
+	// ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
 	var FullTextDocument = class FullTextDocument {
 		constructor(uri, languageId, version, content) {
 			this._uri = uri;
@@ -7351,6 +7314,13 @@
 				const startOffset = this.offsetAt(range.start);
 				const endOffset = this.offsetAt(range.end);
 				this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+				const insertedEndOffset = startOffset + change.text.length;
+				const crlfAtStart = this._content.charCodeAt(startOffset - 1) === 13 && this._content.charCodeAt(startOffset) === 10;
+				const crlfAtEnd = this._content.charCodeAt(insertedEndOffset - 1) === 13 && this._content.charCodeAt(insertedEndOffset) === 10;
+				if (crlfAtStart || crlfAtEnd) {
+					this._lineOffsets = void 0;
+					continue;
+				}
 				const startLine = Math.max(range.start.line, 0);
 				const endLine = Math.max(range.end.line, 0);
 				let lineOffsets = this._lineOffsets;
@@ -7399,6 +7369,52 @@
 			const nextLineOffset = position.line + 1 < lineOffsets.length ? lineOffsets[position.line + 1] : this._content.length;
 			const offset = Math.min(lineOffset + position.character, nextLineOffset);
 			return this.ensureBeforeEOL(offset, lineOffset);
+		}
+		getLineRange(line) {
+			const lineOffsets = this.getLineOffsets();
+			if (line >= lineOffsets.length) {
+				const lastLine = lineOffsets.length - 1;
+				return {
+					start: {
+						line: lastLine,
+						character: 0
+					},
+					end: {
+						line: lastLine,
+						character: this._content.length - lineOffsets[lastLine]
+					}
+				};
+			} else if (line < 0) return {
+				start: {
+					line: 0,
+					character: 0
+				},
+				end: {
+					line: 0,
+					character: 0
+				}
+			};
+			const startOffset = lineOffsets[line];
+			const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+			const endOffset = this.ensureBeforeEOL(nextLineOffset, startOffset);
+			return {
+				start: {
+					line,
+					character: 0
+				},
+				end: {
+					line,
+					character: endOffset - startOffset
+				}
+			};
+		}
+		getEOLCharacters(line) {
+			const lineOffsets = this.getLineOffsets();
+			if (line >= lineOffsets.length) return "";
+			else if (line < 0) return "";
+			const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+			const eolOffset = this.ensureBeforeEOL(nextLineOffset, lineOffsets[line]);
+			return this._content.substring(eolOffset, nextLineOffset);
 		}
 		ensureBeforeEOL(offset, lineOffset) {
 			while (offset > lineOffset && isEOL(this._content.charCodeAt(offset - 1))) offset--;
@@ -7514,8 +7530,7 @@
 		};
 		return textEdit;
 	}
-	//#endregion
-	//#region src/services/base-service.ts
+	// src/services/base-service.ts
 	var BaseService = class {
 		constructor(mode, workspaceUri) {
 			this.documents = {};
@@ -7700,8 +7715,7 @@
 		}
 		sendResponse(callbackId, args) {}
 	};
-	//#endregion
-	//#region ../../node_modules/vite-plugin-node-polyfills/shims/buffer/dist/index.js
+	// ../../node_modules/vite-plugin-node-polyfills/shims/buffer/dist/index.js
 	var buffer = {};
 	var base64Js = {};
 	base64Js.byteLength = byteLength;
@@ -7742,8 +7756,8 @@
 		var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen));
 		var curByte = 0;
 		var len = placeHoldersLen > 0 ? validLen - 4 : validLen;
-		var i;
-		for (i = 0; i < len; i += 4) {
+		var i = 0;
+		for (; i < len; i += 4) {
 			tmp = revLookup[b64.charCodeAt(i)] << 18 | revLookup[b64.charCodeAt(i + 1)] << 12 | revLookup[b64.charCodeAt(i + 2)] << 6 | revLookup[b64.charCodeAt(i + 3)];
 			arr[curByte++] = tmp >> 16 & 255;
 			arr[curByte++] = tmp >> 8 & 255;
@@ -8101,11 +8115,12 @@
 			let pos = 0;
 			for (i = 0; i < list.length; ++i) {
 				let buf = list[i];
-				if (isInstance(buf, GlobalUint8Array)) if (pos + buf.length > buffer.length) {
-					if (!Buffer.isBuffer(buf)) buf = Buffer.from(buf);
-					buf.copy(buffer, pos);
-				} else GlobalUint8Array.prototype.set.call(buffer, buf, pos);
-				else if (!Buffer.isBuffer(buf)) throw new TypeError("\"list\" argument must be an Array of Buffers");
+				if (isInstance(buf, GlobalUint8Array)) {
+					if (pos + buf.length > buffer.length) {
+						if (!Buffer.isBuffer(buf)) buf = Buffer.from(buf);
+						buf.copy(buffer, pos);
+					} else GlobalUint8Array.prototype.set.call(buffer, buf, pos);
+				} else if (!Buffer.isBuffer(buf)) throw new TypeError("\"list\" argument must be an Array of Buffers");
 				else buf.copy(buffer, pos);
 				pos += buf.length;
 			}
@@ -8258,18 +8273,23 @@
 			byteOffset = +byteOffset;
 			if (numberIsNaN(byteOffset)) byteOffset = dir ? 0 : buffer.length - 1;
 			if (byteOffset < 0) byteOffset = buffer.length + byteOffset;
-			if (byteOffset >= buffer.length) if (dir) return -1;
-			else byteOffset = buffer.length - 1;
-			else if (byteOffset < 0) if (dir) byteOffset = 0;
-			else return -1;
+			if (byteOffset >= buffer.length) {
+				if (dir) return -1;
+				else byteOffset = buffer.length - 1;
+			} else if (byteOffset < 0) {
+				if (dir) byteOffset = 0;
+				else return -1;
+			}
 			if (typeof val === "string") val = Buffer.from(val, encoding);
 			if (Buffer.isBuffer(val)) {
 				if (val.length === 0) return -1;
 				return arrayIndexOf(buffer, val, byteOffset, encoding, dir);
 			} else if (typeof val === "number") {
 				val = val & 255;
-				if (typeof GlobalUint8Array.prototype.indexOf === "function") if (dir) return GlobalUint8Array.prototype.indexOf.call(buffer, val, byteOffset);
-				else return GlobalUint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset);
+				if (typeof GlobalUint8Array.prototype.indexOf === "function") {
+					if (dir) return GlobalUint8Array.prototype.indexOf.call(buffer, val, byteOffset);
+					else return GlobalUint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset);
+				}
 				return arrayIndexOf(buffer, [val], byteOffset, encoding, dir);
 			}
 			throw new TypeError("val must be string, number or Buffer");
@@ -8334,8 +8354,8 @@
 			}
 			const strLen = string.length;
 			if (length > strLen / 2) length = strLen / 2;
-			let i;
-			for (i = 0; i < length; ++i) {
+			let i = 0;
+			for (; i < length; ++i) {
 				const parsed = parseInt(string.substr(i * 2, 2), 16);
 				if (numberIsNaN(parsed)) return i;
 				buf[offset + i] = parsed;
@@ -8564,8 +8584,8 @@
 			const first = this[offset];
 			const last = this[offset + 7];
 			if (first === void 0 || last === void 0) boundsError(offset, this.length - 8);
-			const lo = first + this[++offset] * 2 ** 8 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 24;
-			const hi = this[++offset] + this[++offset] * 2 ** 8 + this[++offset] * 2 ** 16 + last * 2 ** 24;
+			const lo = first + this[++offset] * 256 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 24;
+			const hi = this[++offset] + this[++offset] * 256 + this[++offset] * 2 ** 16 + last * 2 ** 24;
 			return BigInt(lo) + (BigInt(hi) << BigInt(32));
 		});
 		Buffer.prototype.readBigUInt64BE = defineBigIntMethod(function readBigUInt64BE(offset) {
@@ -8574,8 +8594,8 @@
 			const first = this[offset];
 			const last = this[offset + 7];
 			if (first === void 0 || last === void 0) boundsError(offset, this.length - 8);
-			const hi = first * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 8 + this[++offset];
-			const lo = this[++offset] * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 8 + last;
+			const hi = first * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 256 + this[++offset];
+			const lo = this[++offset] * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 256 + last;
 			return (BigInt(hi) << BigInt(32)) + BigInt(lo);
 		});
 		Buffer.prototype.readIntLE = function readIntLE(offset, byteLength, noAssert) {
@@ -8636,8 +8656,8 @@
 			const first = this[offset];
 			const last = this[offset + 7];
 			if (first === void 0 || last === void 0) boundsError(offset, this.length - 8);
-			const val = this[offset + 4] + this[offset + 5] * 2 ** 8 + this[offset + 6] * 2 ** 16 + (last << 24);
-			return (BigInt(val) << BigInt(32)) + BigInt(first + this[++offset] * 2 ** 8 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 24);
+			const val = this[offset + 4] + this[offset + 5] * 256 + this[offset + 6] * 2 ** 16 + (last << 24);
+			return (BigInt(val) << BigInt(32)) + BigInt(first + this[++offset] * 256 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 24);
 		});
 		Buffer.prototype.readBigInt64BE = defineBigIntMethod(function readBigInt64BE(offset) {
 			offset = offset >>> 0;
@@ -8645,8 +8665,8 @@
 			const first = this[offset];
 			const last = this[offset + 7];
 			if (first === void 0 || last === void 0) boundsError(offset, this.length - 8);
-			const val = (first << 24) + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 8 + this[++offset];
-			return (BigInt(val) << BigInt(32)) + BigInt(this[++offset] * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 8 + last);
+			const val = (first << 24) + this[++offset] * 2 ** 16 + this[++offset] * 256 + this[++offset];
+			return (BigInt(val) << BigInt(32)) + BigInt(this[++offset] * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 256 + last);
 		});
 		Buffer.prototype.readFloatLE = function readFloatLE(offset, noAssert) {
 			offset = offset >>> 0;
@@ -9021,9 +9041,10 @@
 			if (value > max || value < min) {
 				const n = typeof min === "bigint" ? "n" : "";
 				let range;
-				if (byteLength > 3) if (min === 0 || min === BigInt(0)) range = `>= 0${n} and < 2${n} ** ${(byteLength + 1) * 8}${n}`;
-				else range = `>= -(2${n} ** ${(byteLength + 1) * 8 - 1}${n}) and < 2 ** ${(byteLength + 1) * 8 - 1}${n}`;
-				else range = `>= ${min}${n} and <= ${max}${n}`;
+				if (byteLength > 3) {
+					if (min === 0 || min === BigInt(0)) range = `>= 0${n} and < 2${n} ** ${(byteLength + 1) * 8}${n}`;
+					else range = `>= -(2${n} ** ${(byteLength + 1) * 8 - 1}${n}) and < 2 ** ${(byteLength + 1) * 8 - 1}${n}`;
+				} else range = `>= ${min}${n} and <= ${max}${n}`;
 				throw new errors.ERR_OUT_OF_RANGE("value", range, value);
 			}
 			checkBounds(buf, offset, byteLength);
@@ -9115,8 +9136,8 @@
 			return base64.toByteArray(base64clean(str));
 		}
 		function blitBuffer(src, dst, offset, length) {
-			let i;
-			for (i = 0; i < length; ++i) {
+			let i = 0;
+			for (; i < length; ++i) {
 				if (i + offset >= dst.length || i >= src.length) break;
 				dst[i + offset] = src[i];
 			}
@@ -9144,7 +9165,7 @@
 			throw new Error("BigInt not supported");
 		}
 	})(buffer);
-	var Buffer$1 = buffer.Buffer;
+	var Buffer$2 = buffer.Buffer;
 	buffer.Blob;
 	buffer.BlobOptions;
 	buffer.Buffer;
@@ -9162,11 +9183,9 @@
 	buffer.kStringMaxLength;
 	buffer.resolveObjectURL;
 	buffer.transcode;
-	//#endregion
-	//#region ../../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js
+	// ../../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js
 	var global = globalThis || self;
-	//#endregion
-	//#region src/services/typescript/lib/typescriptServices.js
+	// src/services/typescript/lib/typescriptServices.js
 	var require$1 = void 0;
 	var module$1 = { exports: {} };
 	/*! *****************************************************************************
@@ -11588,8 +11607,10 @@
 			const result = [];
 			for (let i = 0; i < array.length; i++) {
 				const v = array[i];
-				if (v) if (isArray(v)) addRange(result, v);
-				else result.push(v);
+				if (v) {
+					if (isArray(v)) addRange(result, v);
+					else result.push(v);
+				}
 			}
 			return result;
 		}
@@ -11597,8 +11618,10 @@
 			let result;
 			if (array !== void 0) for (let i = 0; i < array.length; i++) {
 				const v = mapfn(array[i], i);
-				if (v) if (isArray(v)) result = addRange(result, v);
-				else result = append(result, v);
+				if (v) {
+					if (isArray(v)) result = addRange(result, v);
+					else result = append(result, v);
+				}
 			}
 			return result ?? emptyArray;
 		}
@@ -11606,8 +11629,10 @@
 			const result = [];
 			if (array !== void 0) for (let i = 0; i < array.length; i++) {
 				const v = mapfn(array[i], i);
-				if (v) if (isArray(v)) addRange(result, v);
-				else result.push(v);
+				if (v) {
+					if (isArray(v)) addRange(result, v);
+					else result.push(v);
+				}
 			}
 			return result;
 		}
@@ -11708,9 +11733,11 @@
 			return result;
 		}
 		function some(array, predicate) {
-			if (array !== void 0) if (predicate !== void 0) {
-				for (let i = 0; i < array.length; i++) if (predicate(array[i])) return true;
-			} else return array.length > 0;
+			if (array !== void 0) {
+				if (predicate !== void 0) {
+					for (let i = 0; i < array.length; i++) if (predicate(array[i])) return true;
+				} else return array.length > 0;
+			}
 			return false;
 		}
 		function getRangesWhere(arr, pred, cb) {
@@ -11945,9 +11972,7 @@
 						low = middle + 1;
 						break;
 					case 0: return middle;
-					case 1:
-						high = middle - 1;
-						break;
+					case 1: high = middle - 1;
 				}
 			}
 			return ~low;
@@ -12885,13 +12910,15 @@ Node ${formatSyntaxKind(node.kind)} was unexpected.`, stackCrawlMark || failBadS
 				});
 			}
 			function attachFlowNodeDebugInfo(flowNode) {
-				if (isDebugInfoEnabled) if (typeof Object.setPrototypeOf === "function") {
-					if (!flowNodeProto) {
-						flowNodeProto = Object.create(Object.prototype);
-						attachFlowNodeDebugInfoWorker(flowNodeProto);
-					}
-					Object.setPrototypeOf(flowNode, flowNodeProto);
-				} else attachFlowNodeDebugInfoWorker(flowNode);
+				if (isDebugInfoEnabled) {
+					if (typeof Object.setPrototypeOf === "function") {
+						if (!flowNodeProto) {
+							flowNodeProto = Object.create(Object.prototype);
+							attachFlowNodeDebugInfoWorker(flowNodeProto);
+						}
+						Object.setPrototypeOf(flowNode, flowNodeProto);
+					} else attachFlowNodeDebugInfoWorker(flowNode);
+				}
 				return flowNode;
 			}
 			Debug2.attachFlowNodeDebugInfo = attachFlowNodeDebugInfo;
@@ -12903,13 +12930,15 @@ Node ${formatSyntaxKind(node.kind)} was unexpected.`, stackCrawlMark || failBadS
 				} } });
 			}
 			function attachNodeArrayDebugInfo(array) {
-				if (isDebugInfoEnabled) if (typeof Object.setPrototypeOf === "function") {
-					if (!nodeArrayProto) {
-						nodeArrayProto = Object.create(Array.prototype);
-						attachNodeArrayDebugInfoWorker(nodeArrayProto);
-					}
-					Object.setPrototypeOf(array, nodeArrayProto);
-				} else attachNodeArrayDebugInfoWorker(array);
+				if (isDebugInfoEnabled) {
+					if (typeof Object.setPrototypeOf === "function") {
+						if (!nodeArrayProto) {
+							nodeArrayProto = Object.create(Array.prototype);
+							attachNodeArrayDebugInfoWorker(nodeArrayProto);
+						}
+						Object.setPrototypeOf(array, nodeArrayProto);
+					} else attachNodeArrayDebugInfoWorker(array);
+				}
 			}
 			Debug2.attachNodeArrayDebugInfo = attachNodeArrayDebugInfo;
 			function enableDebugInfo() {
@@ -13800,7 +13829,7 @@ ${lanes.join("\n")}
 				eventStack.length = 0;
 			}
 			tracingEnabled2.popAll = popAll;
-			const sampleInterval = 1e3 * 10;
+			const sampleInterval = 1e4;
 			function writeStackEvent(index, endTime, results) {
 				const { phase, name, args, time, separateBeginAndEnd } = eventStack[index];
 				if (separateBeginAndEnd) {
@@ -16117,12 +16146,15 @@ ${lanes.join("\n")}
 				else invokeMap = fileNameOrInvokeMap;
 				callbackCache.forEach((callbacks, rootDirName) => {
 					if (invokeMap && invokeMap.get(rootDirName) === true) return;
-					if (rootDirName === dirPath || startsWith(dirPath, rootDirName) && dirPath[rootDirName.length] === directorySeparator) if (invokeMap) if (fileNames) {
-						const existing = invokeMap.get(rootDirName);
-						if (existing) existing.push(...fileNames);
-						else invokeMap.set(rootDirName, fileNames.slice());
-					} else invokeMap.set(rootDirName, true);
-					else callbacks.forEach(({ callback }) => callback(fileName));
+					if (rootDirName === dirPath || startsWith(dirPath, rootDirName) && dirPath[rootDirName.length] === directorySeparator) {
+						if (invokeMap) {
+							if (fileNames) {
+								const existing = invokeMap.get(rootDirName);
+								if (existing) existing.push(...fileNames);
+								else invokeMap.set(rootDirName, fileNames.slice());
+							} else invokeMap.set(rootDirName, true);
+						} else callbacks.forEach(({ callback }) => callback(fileName));
+					}
 				});
 				(_b = (_a = cache.get(dirPath)) == null ? void 0 : _a.links) == null || _b.forEach((link) => {
 					const toPathInLink = (fileName2) => combinePaths(link, getRelativePathFromDirectory(dirName, fileName2, toCanonicalFilePath));
@@ -16566,8 +16598,8 @@ ${lanes.join("\n")}
 						const handle = (_a = process$1.stdout) == null ? void 0 : _a._handle;
 						if (handle && handle.setBlocking) handle.setBlocking(true);
 					},
-					base64decode: (input) => Buffer$1.from(input, "base64").toString("utf8"),
-					base64encode: (input) => Buffer$1.from(input).toString("base64"),
+					base64decode: (input) => Buffer$2.from(input, "base64").toString("utf8"),
+					base64encode: (input) => Buffer$2.from(input).toString("base64"),
 					require: (baseDir, moduleName) => {
 						try {
 							const modulePath = resolveJSModule(moduleName, baseDir, nodeSystem);
@@ -17108,8 +17140,8 @@ ${lanes.join("\n")}
 		function getPathComponentsRelativeTo(from, to, stringEqualityComparer, getCanonicalFileName) {
 			const fromComponents = reducePathComponents(getPathComponents(from));
 			const toComponents = reducePathComponents(getPathComponents(to));
-			let start;
-			for (start = 0; start < fromComponents.length && start < toComponents.length; start++) {
+			let start = 0;
+			for (; start < fromComponents.length && start < toComponents.length; start++) {
 				const fromComponent = getCanonicalFileName(fromComponents[start]);
 				const toComponent = getCanonicalFileName(toComponents[start]);
 				if (!(start === 0 ? equateStringsCaseInsensitive : stringEqualityComparer)(fromComponent, toComponent)) break;
@@ -23941,12 +23973,10 @@ ${lanes.join("\n")}
 						result.push(lineStart);
 						lineStart = pos;
 						break;
-					default:
-						if (ch > 127 && isLineBreak(ch)) {
-							result.push(lineStart);
-							lineStart = pos;
-						}
-						break;
+					default: if (ch > 127 && isLineBreak(ch)) {
+						result.push(lineStart);
+						lineStart = pos;
+					}
 				}
 			}
 			result.push(lineStart);
@@ -23956,8 +23986,10 @@ ${lanes.join("\n")}
 			return sourceFile.getPositionOfLineAndCharacter ? sourceFile.getPositionOfLineAndCharacter(line, character, allowEdits) : computePositionOfLineAndCharacter(getLineStarts(sourceFile), line, character, sourceFile.text, allowEdits);
 		}
 		function computePositionOfLineAndCharacter(lineStarts, line, character, debugText, allowEdits) {
-			if (line < 0 || line >= lineStarts.length) if (allowEdits) line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
-			else Debug.fail(`Bad line number. Line: ${line}, lineStarts.length: ${lineStarts.length} , line map is correct? ${debugText !== void 0 ? arrayIsEqualTo(lineStarts, computeLineStarts(debugText)) : "unknown"}`);
+			if (line < 0 || line >= lineStarts.length) {
+				if (allowEdits) line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
+				else Debug.fail(`Bad line number. Line: ${line}, lineStarts.length: ${lineStarts.length} , line map is correct? ${debugText !== void 0 ? arrayIsEqualTo(lineStarts, computeLineStarts(debugText)) : "unknown"}`);
+			}
 			const res = lineStarts[line] + character;
 			if (allowEdits) return res > lineStarts[line + 1] ? lineStarts[line + 1] : typeof debugText === "string" && res > debugText.length ? debugText.length : res;
 			if (line < lineStarts.length - 1) Debug.assert(res < lineStarts[line + 1]);
@@ -24103,12 +24135,10 @@ ${lanes.join("\n")}
 							continue;
 						}
 						break;
-					default:
-						if (ch > 127 && isWhiteSpaceLike(ch)) {
-							pos++;
-							continue;
-						}
-						break;
+					default: if (ch > 127 && isWhiteSpaceLike(ch)) {
+						pos++;
+						continue;
+					}
 				}
 				return pos;
 			}
@@ -24466,9 +24496,10 @@ ${lanes.join("\n")}
 				if (!isIdentifierStart(codePointUnchecked(pos), languageVersion)) return;
 				const identifierStart = pos;
 				const { length: length3 } = scanIdentifierParts();
-				if (length3 === 1 && text[identifierStart] === "n") if (isScientific) error2(Diagnostics.A_bigint_literal_cannot_use_exponential_notation, numericStart, identifierStart - numericStart + 1);
-				else error2(Diagnostics.A_bigint_literal_must_be_an_integer, numericStart, identifierStart - numericStart + 1);
-				else {
+				if (length3 === 1 && text[identifierStart] === "n") {
+					if (isScientific) error2(Diagnostics.A_bigint_literal_cannot_use_exponential_notation, numericStart, identifierStart - numericStart + 1);
+					else error2(Diagnostics.A_bigint_literal_must_be_an_integer, numericStart, identifierStart - numericStart + 1);
+				} else {
 					error2(Diagnostics.An_identifier_or_keyword_cannot_immediately_follow_a_numeric_literal, identifierStart, length3);
 					pos = identifierStart;
 				}
@@ -25332,7 +25363,6 @@ ${lanes.join("\n")}
 									default:
 										scanAtomEscape();
 										isPreviousTermQuantifiable = true;
-										break;
 								}
 								break;
 							case 40:
@@ -25360,7 +25390,6 @@ ${lanes.join("\n")}
 													if (languageVersion < 5) error2(Diagnostics.Named_capturing_groups_are_only_available_when_targeting_ES2018_or_later, groupNameStart, pos - groupNameStart);
 													numberOfCapturingGroups++;
 													isPreviousTermQuantifiable = true;
-													break;
 											}
 											break;
 										default:
@@ -25373,7 +25402,6 @@ ${lanes.join("\n")}
 											}
 											scanExpectedChar(58);
 											isPreviousTermQuantifiable = true;
-											break;
 									}
 								} else {
 									numberOfCapturingGroups++;
@@ -25395,24 +25423,27 @@ ${lanes.join("\n")}
 									pos++;
 									scanDigits();
 									const max = tokenValue;
-									if (!min2) if (max || charCodeChecked(pos) === 125) error2(Diagnostics.Incomplete_quantifier_Digit_expected, digitsStart, 0);
-									else {
-										error2(Diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start2, 1, String.fromCharCode(ch));
-										isPreviousTermQuantifiable = true;
-										break;
-									}
-									else if (max && Number.parseInt(min2) > Number.parseInt(max) && (anyUnicodeModeOrNonAnnexB || charCodeChecked(pos) === 125)) error2(Diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, pos - digitsStart);
+									if (!min2) {
+										if (max || charCodeChecked(pos) === 125) error2(Diagnostics.Incomplete_quantifier_Digit_expected, digitsStart, 0);
+										else {
+											error2(Diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start2, 1, String.fromCharCode(ch));
+											isPreviousTermQuantifiable = true;
+											break;
+										}
+									} else if (max && Number.parseInt(min2) > Number.parseInt(max) && (anyUnicodeModeOrNonAnnexB || charCodeChecked(pos) === 125)) error2(Diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, pos - digitsStart);
 								} else if (!min2) {
 									if (anyUnicodeModeOrNonAnnexB) error2(Diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, start2, 1, String.fromCharCode(ch));
 									isPreviousTermQuantifiable = true;
 									break;
 								}
-								if (charCodeChecked(pos) !== 125) if (anyUnicodeModeOrNonAnnexB) {
-									error2(Diagnostics._0_expected, pos, 0, String.fromCharCode(125));
-									pos--;
-								} else {
-									isPreviousTermQuantifiable = true;
-									break;
+								if (charCodeChecked(pos) !== 125) {
+									if (anyUnicodeModeOrNonAnnexB) {
+										error2(Diagnostics._0_expected, pos, 0, String.fromCharCode(125));
+										pos--;
+									} else {
+										isPreviousTermQuantifiable = true;
+										break;
+									}
 								}
 							case 42:
 							case 43:
@@ -25445,7 +25476,6 @@ ${lanes.join("\n")}
 							default:
 								scanSourceCharacter();
 								isPreviousTermQuantifiable = true;
-								break;
 						}
 					}
 				}
@@ -25482,9 +25512,7 @@ ${lanes.join("\n")}
 							error2(Diagnostics.q_is_only_available_inside_character_class, pos - 2, 2);
 							break;
 						}
-						default:
-							Debug.assert(scanCharacterClassEscape() || scanDecimalEscape() || scanCharacterEscape(true));
-							break;
+						default: Debug.assert(scanCharacterClassEscape() || scanDecimalEscape() || scanCharacterEscape(true));
 					}
 				}
 				function scanDecimalEscape() {
@@ -25607,9 +25635,7 @@ ${lanes.join("\n")}
 							error2(Diagnostics.Expected_a_class_set_operand);
 							mayContainStrings = false;
 							break;
-						default:
-							operand = scanClassSetOperand();
-							break;
+						default: operand = scanClassSetOperand();
 					}
 					switch (charCodeChecked(pos)) {
 						case 45:
@@ -25633,7 +25659,6 @@ ${lanes.join("\n")}
 						default:
 							if (isCharacterComplement && mayContainStrings) error2(Diagnostics.Anything_that_would_possibly_match_more_than_a_single_character_is_invalid_inside_a_negated_character_class, start2, pos - start2);
 							expressionMayContainStrings = mayContainStrings;
-							break;
 					}
 					while (true) {
 						ch = charCodeChecked(pos);
@@ -25691,9 +25716,7 @@ ${lanes.join("\n")}
 								pos += 2;
 								operand = text.slice(start2, pos);
 								break;
-							default:
-								operand = scanClassSetOperand();
-								break;
+							default: operand = scanClassSetOperand();
 						}
 					}
 					mayContainStrings = !isCharacterComplement && expressionMayContainStrings;
@@ -25722,17 +25745,12 @@ ${lanes.join("\n")}
 									}
 								} else error2(Diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, pos - 1, 1, String.fromCharCode(ch));
 								break;
-							default:
-								switch (expressionType) {
-									case 3:
-										error2(Diagnostics._0_expected, pos, 0, "--");
-										break;
-									case 2:
-										error2(Diagnostics._0_expected, pos, 0, "&&");
-										break;
-									default: break;
-								}
-								break;
+							default: switch (expressionType) {
+								case 3:
+									error2(Diagnostics._0_expected, pos, 0, "--");
+									break;
+								case 2: error2(Diagnostics._0_expected, pos, 0, "&&");
+							}
 						}
 						ch = charCodeChecked(pos);
 						if (isClassContentExit(ch)) {
@@ -25789,7 +25807,6 @@ ${lanes.join("\n")}
 						default:
 							scanClassSetCharacter();
 							characterCount++;
-							break;
 					}
 				}
 				function scanClassSetCharacter() {
@@ -25914,10 +25931,11 @@ ${lanes.join("\n")}
 										if (suggestion) error2(Diagnostics.Did_you_mean_0, propertyValueStart, pos - propertyValueStart, suggestion);
 									}
 								} else if (pos === propertyNameOrValueStart) error2(Diagnostics.Expected_a_Unicode_property_name_or_value);
-								else if (binaryUnicodePropertiesOfStrings.has(propertyNameOrValue)) if (!unicodeSetsMode) error2(Diagnostics.Any_Unicode_property_that_would_possibly_match_more_than_a_single_character_is_only_available_when_the_Unicode_Sets_v_flag_is_set, propertyNameOrValueStart, pos - propertyNameOrValueStart);
-								else if (isCharacterComplement) error2(Diagnostics.Anything_that_would_possibly_match_more_than_a_single_character_is_invalid_inside_a_negated_character_class, propertyNameOrValueStart, pos - propertyNameOrValueStart);
-								else mayContainStrings = true;
-								else if (!valuesOfNonBinaryUnicodeProperties.General_Category.has(propertyNameOrValue) && !binaryUnicodeProperties.has(propertyNameOrValue)) {
+								else if (binaryUnicodePropertiesOfStrings.has(propertyNameOrValue)) {
+									if (!unicodeSetsMode) error2(Diagnostics.Any_Unicode_property_that_would_possibly_match_more_than_a_single_character_is_only_available_when_the_Unicode_Sets_v_flag_is_set, propertyNameOrValueStart, pos - propertyNameOrValueStart);
+									else if (isCharacterComplement) error2(Diagnostics.Anything_that_would_possibly_match_more_than_a_single_character_is_invalid_inside_a_negated_character_class, propertyNameOrValueStart, pos - propertyNameOrValueStart);
+									else mayContainStrings = true;
+								} else if (!valuesOfNonBinaryUnicodeProperties.General_Category.has(propertyNameOrValue) && !binaryUnicodeProperties.has(propertyNameOrValue)) {
 									error2(Diagnostics.Unknown_Unicode_property_name_or_value, propertyNameOrValueStart, pos - propertyNameOrValueStart);
 									const suggestion = getSpellingSuggestion(propertyNameOrValue, [
 										...valuesOfNonBinaryUnicodeProperties.General_Category,
@@ -25967,8 +25985,10 @@ ${lanes.join("\n")}
 					}
 				});
 				forEach(decimalEscapes, (escape) => {
-					if (escape.value > numberOfCapturingGroups) if (numberOfCapturingGroups) error2(Diagnostics.This_backreference_refers_to_a_group_that_does_not_exist_There_are_only_0_capturing_groups_in_this_regular_expression, escape.pos, escape.end - escape.pos, numberOfCapturingGroups);
-					else error2(Diagnostics.This_backreference_refers_to_a_group_that_does_not_exist_There_are_no_capturing_groups_in_this_regular_expression, escape.pos, escape.end - escape.pos);
+					if (escape.value > numberOfCapturingGroups) {
+						if (numberOfCapturingGroups) error2(Diagnostics.This_backreference_refers_to_a_group_that_does_not_exist_There_are_only_0_capturing_groups_in_this_regular_expression, escape.pos, escape.end - escape.pos, numberOfCapturingGroups);
+						else error2(Diagnostics.This_backreference_refers_to_a_group_that_does_not_exist_There_are_no_capturing_groups_in_this_regular_expression, escape.pos, escape.end - escape.pos);
+					}
 				});
 			}
 			function checkRegularExpressionFlagAvailability(flag, size) {
@@ -27080,9 +27100,7 @@ ${lanes.join("\n")}
 					}
 					break;
 				case 217: return getDeclarationIdentifier(hostNode.expression);
-				case 256:
-					if (isDeclaration(hostNode.statement) || isExpression(hostNode.statement)) return getDeclarationIdentifier(hostNode.statement);
-					break;
+				case 256: if (isDeclaration(hostNode.statement) || isExpression(hostNode.statement)) return getDeclarationIdentifier(hostNode.statement);
 			}
 		}
 		function getDeclarationIdentifier(node) {
@@ -27154,14 +27172,16 @@ ${lanes.join("\n")}
 			if (hasSyntacticModifier(node, 98303)) return filter(node.modifiers, isModifier);
 		}
 		function getJSDocParameterTagsWorker(param, noCache) {
-			if (param.name) if (isIdentifier(param.name)) {
-				const name = param.name.escapedText;
-				return getJSDocTagsWorker(param.parent, noCache).filter((tag) => isJSDocParameterTag(tag) && isIdentifier(tag.name) && tag.name.escapedText === name);
-			} else {
-				const i = param.parent.parameters.indexOf(param);
-				Debug.assert(i > -1, "Parameters should always be in their parents' parameter list");
-				const paramTags = getJSDocTagsWorker(param.parent, noCache).filter(isJSDocParameterTag);
-				if (i < paramTags.length) return [paramTags[i]];
+			if (param.name) {
+				if (isIdentifier(param.name)) {
+					const name = param.name.escapedText;
+					return getJSDocTagsWorker(param.parent, noCache).filter((tag) => isJSDocParameterTag(tag) && isIdentifier(tag.name) && tag.name.escapedText === name);
+				} else {
+					const i = param.parent.parameters.indexOf(param);
+					Debug.assert(i > -1, "Parameters should always be in their parents' parameter list");
+					const paramTags = getJSDocTagsWorker(param.parent, noCache).filter(isJSDocParameterTag);
+					if (i < paramTags.length) return [paramTags[i]];
+				}
 			}
 			return emptyArray;
 		}
@@ -29543,10 +29563,8 @@ ${lanes.join("\n")}
 					case 177:
 					case 178:
 					case 175: return node;
-					case 170:
-						if (node.parent.kind === 169 && isClassElement(node.parent.parent)) node = node.parent.parent;
-						else if (isClassElement(node.parent)) node = node.parent;
-						break;
+					case 170: if (node.parent.kind === 169 && isClassElement(node.parent.parent)) node = node.parent.parent;
+					else if (isClassElement(node.parent)) node = node.parent;
 				}
 			}
 		}
@@ -30555,9 +30573,7 @@ ${lanes.join("\n")}
 				case 262:
 				case 218:
 				case 174: if (node.asteriskToken) flags |= 1;
-				case 219:
-					if (hasSyntacticModifier(node, 1024)) flags |= 2;
-					break;
+				case 219: if (hasSyntacticModifier(node, 1024)) flags |= 2;
 			}
 			if (!node.body) flags |= 4;
 			return flags;
@@ -32086,10 +32102,12 @@ ${lanes.join("\n")}
 				if (access.kind === 211) {
 					const res = action(access.name);
 					if (res !== void 0) return res;
-				} else if (access.kind === 212) if (isIdentifier(access.argumentExpression) || isStringLiteralLike(access.argumentExpression)) {
-					const res = action(access.argumentExpression);
-					if (res !== void 0) return res;
-				} else return;
+				} else if (access.kind === 212) {
+					if (isIdentifier(access.argumentExpression) || isStringLiteralLike(access.argumentExpression)) {
+						const res = action(access.argumentExpression);
+						if (res !== void 0) return res;
+					} else return;
+				}
 				if (isAccessExpression(access.expression)) return walkAccessExpression(access.expression);
 				if (isIdentifier(access.expression)) return action(access.expression);
 			}
@@ -32479,9 +32497,7 @@ ${lanes.join("\n")}
 						case 200:
 							moduleResolution = 100;
 							break;
-						default:
-							moduleResolution = 1;
-							break;
+						default: moduleResolution = 1;
 					}
 					return moduleResolution;
 				}
@@ -32725,8 +32741,10 @@ ${lanes.join("\n")}
 		}
 		function hasZeroOrOneAsteriskCharacter(str) {
 			let seenAsterisk = false;
-			for (let i = 0; i < str.length; i++) if (str.charCodeAt(i) === 42) if (!seenAsterisk) seenAsterisk = true;
-			else return false;
+			for (let i = 0; i < str.length; i++) if (str.charCodeAt(i) === 42) {
+				if (!seenAsterisk) seenAsterisk = true;
+				else return false;
+			}
 			return true;
 		}
 		function createSymlinkCache(cwd, getCanonicalFileName) {
@@ -33567,10 +33585,8 @@ ${lanes.join("\n")}
 							state = 3;
 						}
 						break;
-					case 3:
-						if (fullPath.indexOf(nodeModulesPathPart, partStart) === partStart) state = 1;
-						else state = 3;
-						break;
+					case 3: if (fullPath.indexOf(nodeModulesPathPart, partStart) === partStart) state = 1;
+					else state = 3;
 				}
 			}
 			fileNameIndex = partStart;
@@ -33913,8 +33929,10 @@ ${lanes.join("\n")}
 								const moduleExport = moduleExports.get(name);
 								if (moduleExport && moduleExport.flags === 2097152 && (getDeclarationOfKind(moduleExport, 281) || getDeclarationOfKind(moduleExport, 280))) break;
 							}
-							if (name !== "default" && (result = lookup(moduleExports, name, meaning & 2623475))) if (isSourceFile(location) && location.commonJsModuleIndicator && !((_b = result.declarations) == null ? void 0 : _b.some(isJSDocTypeAlias))) result = void 0;
-							else break loop;
+							if (name !== "default" && (result = lookup(moduleExports, name, meaning & 2623475))) {
+								if (isSourceFile(location) && location.commonJsModuleIndicator && !((_b = result.declarations) == null ? void 0 : _b.some(isJSDocTypeAlias))) result = void 0;
+								else break loop;
+							}
 							break;
 						case 266:
 							if (result = lookup(((_c = getSymbolOfDeclaration(location)) == null ? void 0 : _c.exports) || emptySymbols, name, meaning & 8)) {
@@ -34027,9 +34045,7 @@ ${lanes.join("\n")}
 								}
 							}
 							break;
-						case 281:
-							if (lastLocation && lastLocation === location.propertyName && location.parent.parent.moduleSpecifier) location = location.parent.parent.parent;
-							break;
+						case 281: if (lastLocation && lastLocation === location.propertyName && location.parent.parent.moduleSpecifier) location = location.parent.parent.parent;
 					}
 					if (isSelfReferenceLocation(location, lastLocation)) lastSelfReferenceLocation = location;
 					lastLocation = location;
@@ -35456,7 +35472,6 @@ ${lanes.join("\n")}
 					case 110:
 						transformFlags = 16384;
 						node.flowNode = void 0;
-						break;
 				}
 				if (transformFlags) node.transformFlags |= transformFlags;
 				return node;
@@ -38071,23 +38086,25 @@ ${lanes.join("\n")}
 				} else if (getEmitFlags(callee) & 8192) {
 					thisArg = createVoidZero();
 					target = parenthesizerRules().parenthesizeLeftSideOfAccess(callee, false);
-				} else if (isPropertyAccessExpression(callee)) if (shouldBeCapturedInTempVariable(callee.expression, cacheIdentifiers)) {
-					thisArg = createTempVariable(recordTempVariable);
-					target = createPropertyAccessExpression(setTextRange(factory2.createAssignment(thisArg, callee.expression), callee.expression), callee.name);
-					setTextRange(target, callee);
+				} else if (isPropertyAccessExpression(callee)) {
+					if (shouldBeCapturedInTempVariable(callee.expression, cacheIdentifiers)) {
+						thisArg = createTempVariable(recordTempVariable);
+						target = createPropertyAccessExpression(setTextRange(factory2.createAssignment(thisArg, callee.expression), callee.expression), callee.name);
+						setTextRange(target, callee);
+					} else {
+						thisArg = callee.expression;
+						target = callee;
+					}
+				} else if (isElementAccessExpression(callee)) {
+					if (shouldBeCapturedInTempVariable(callee.expression, cacheIdentifiers)) {
+						thisArg = createTempVariable(recordTempVariable);
+						target = createElementAccessExpression(setTextRange(factory2.createAssignment(thisArg, callee.expression), callee.expression), callee.argumentExpression);
+						setTextRange(target, callee);
+					} else {
+						thisArg = callee.expression;
+						target = callee;
+					}
 				} else {
-					thisArg = callee.expression;
-					target = callee;
-				}
-				else if (isElementAccessExpression(callee)) if (shouldBeCapturedInTempVariable(callee.expression, cacheIdentifiers)) {
-					thisArg = createTempVariable(recordTempVariable);
-					target = createElementAccessExpression(setTextRange(factory2.createAssignment(thisArg, callee.expression), callee.expression), callee.argumentExpression);
-					setTextRange(target, callee);
-				} else {
-					thisArg = callee.expression;
-					target = callee;
-				}
-				else {
 					thisArg = createVoidZero();
 					target = parenthesizerRules().parenthesizeLeftSideOfAccess(expression, false);
 				}
@@ -38200,16 +38217,18 @@ ${lanes.join("\n")}
 				if (rightCustomPrologueEnd > rightHoistedVariablesEnd) left.splice(leftHoistedVariablesEnd, 0, ...declarations.slice(rightHoistedVariablesEnd, rightCustomPrologueEnd));
 				if (rightHoistedVariablesEnd > rightHoistedFunctionsEnd) left.splice(leftHoistedFunctionsEnd, 0, ...declarations.slice(rightHoistedFunctionsEnd, rightHoistedVariablesEnd));
 				if (rightHoistedFunctionsEnd > rightStandardPrologueEnd) left.splice(leftStandardPrologueEnd, 0, ...declarations.slice(rightStandardPrologueEnd, rightHoistedFunctionsEnd));
-				if (rightStandardPrologueEnd > 0) if (leftStandardPrologueEnd === 0) left.splice(0, 0, ...declarations.slice(0, rightStandardPrologueEnd));
-				else {
-					const leftPrologues = /* @__PURE__ */ new Map();
-					for (let i = 0; i < leftStandardPrologueEnd; i++) {
-						const leftPrologue = statements[i];
-						leftPrologues.set(leftPrologue.expression.text, true);
-					}
-					for (let i = rightStandardPrologueEnd - 1; i >= 0; i--) {
-						const rightPrologue = declarations[i];
-						if (!leftPrologues.has(rightPrologue.expression.text)) left.unshift(rightPrologue);
+				if (rightStandardPrologueEnd > 0) {
+					if (leftStandardPrologueEnd === 0) left.splice(0, 0, ...declarations.slice(0, rightStandardPrologueEnd));
+					else {
+						const leftPrologues = /* @__PURE__ */ new Map();
+						for (let i = 0; i < leftStandardPrologueEnd; i++) {
+							const leftPrologue = statements[i];
+							leftPrologues.set(leftPrologue.expression.text, true);
+						}
+						for (let i = rightStandardPrologueEnd - 1; i >= 0; i--) {
+							const rightPrologue = declarations[i];
+							if (!leftPrologues.has(rightPrologue.expression.text)) left.unshift(rightPrologue);
+						}
 					}
 				}
 				if (isNodeArray(statements)) return setTextRange(createNodeArray(left, statements.hasTrailingComma), statements);
@@ -38304,9 +38323,7 @@ ${lanes.join("\n")}
 				case 17:
 					rawTextScanner.setText("}" + rawText + "${");
 					break;
-				case 18:
-					rawTextScanner.setText("}" + rawText + "`");
-					break;
+				case 18: rawTextScanner.setText("}" + rawText + "`");
 			}
 			let token = rawTextScanner.scan();
 			if (token === 20) token = rawTextScanner.reScanTemplateToken(false);
@@ -38319,9 +38336,7 @@ ${lanes.join("\n")}
 				case 15:
 				case 16:
 				case 17:
-				case 18:
-					tokenValue = rawTextScanner.getTokenValue();
-					break;
+				case 18: tokenValue = rawTextScanner.getTokenValue();
 			}
 			if (tokenValue === void 0 || rawTextScanner.scan() !== 1) {
 				rawTextScanner.setText(void 0);
@@ -38818,12 +38833,14 @@ ${lanes.join("\n")}
 				let computedTempVariableOffset = 0;
 				for (let i = 0; i < elements.length - 1; i++) {
 					const propertyName = getPropertyNameOfBindingOrAssignmentElement(elements[i]);
-					if (propertyName) if (isComputedPropertyName(propertyName)) {
-						Debug.assertIsDefined(computedTempVariables, "Encountered computed property name but 'computedTempVariables' argument was not provided.");
-						const temp = computedTempVariables[computedTempVariableOffset];
-						computedTempVariableOffset++;
-						propertyNames.push(factory2.createConditionalExpression(factory2.createTypeCheck(temp, "symbol"), void 0, temp, void 0, factory2.createAdd(temp, factory2.createStringLiteral(""))));
-					} else propertyNames.push(factory2.createStringLiteralFromNode(propertyName));
+					if (propertyName) {
+						if (isComputedPropertyName(propertyName)) {
+							Debug.assertIsDefined(computedTempVariables, "Encountered computed property name but 'computedTempVariables' argument was not provided.");
+							const temp = computedTempVariables[computedTempVariableOffset];
+							computedTempVariableOffset++;
+							propertyNames.push(factory2.createConditionalExpression(factory2.createTypeCheck(temp, "symbol"), void 0, temp, void 0, factory2.createAdd(temp, factory2.createStringLiteral(""))));
+						} else propertyNames.push(factory2.createStringLiteralFromNode(propertyName));
+					}
 				}
 				return factory2.createCallExpression(getUnscopedHelperName("__rest"), void 0, [value, setTextRange(factory2.createArrayLiteralExpression(propertyNames), location)]);
 			}
@@ -40223,11 +40240,13 @@ ${lanes.join("\n")}
 		}
 		function createExpressionForJsxFragment(factory2, jsxFactoryEntity, jsxFragmentFactoryEntity, reactNamespace, children, parentElement, location) {
 			const argumentsList = [createJsxFragmentFactoryExpression(factory2, jsxFragmentFactoryEntity, reactNamespace, parentElement), factory2.createNull()];
-			if (children && children.length > 0) if (children.length > 1) for (const child of children) {
-				startOnNewLine(child);
-				argumentsList.push(child);
+			if (children && children.length > 0) {
+				if (children.length > 1) for (const child of children) {
+					startOnNewLine(child);
+					argumentsList.push(child);
+				}
+				else argumentsList.push(children[0]);
 			}
-			else argumentsList.push(children[0]);
 			return setTextRange(factory2.createCallExpression(createJsxFactoryExpression(factory2, jsxFactoryEntity, reactNamespace, parentElement), void 0, argumentsList), location);
 		}
 		function createForOfBindingStatement(factory2, node, boundValue) {
@@ -41549,9 +41568,7 @@ ${lanes.join("\n")}
 								expression2 = parseLiteralNode();
 								break;
 							}
-							default:
-								expression2 = parseObjectLiteralExpression();
-								break;
+							default: expression2 = parseObjectLiteralExpression();
 						}
 						if (expressions && isArray(expressions)) expressions.push(expression2);
 						else if (expressions) expressions = [expressions, expression2];
@@ -41604,9 +41621,7 @@ ${lanes.join("\n")}
 					case 6:
 						contextFlags = 134742016;
 						break;
-					default:
-						contextFlags = 0;
-						break;
+					default: contextFlags = 0;
 				}
 				parseErrorBeforeNextFinishedNode = false;
 				scanner2.setText(sourceText);
@@ -42773,8 +42788,10 @@ ${lanes.join("\n")}
 				const name = parseIdentifier();
 				let constraint;
 				let expression;
-				if (parseOptional(96)) if (isStartOfType() || !isStartOfExpression()) constraint = parseType();
-				else expression = parseUnaryExpressionOrHigher();
+				if (parseOptional(96)) {
+					if (isStartOfType() || !isStartOfExpression()) constraint = parseType();
+					else expression = parseUnaryExpressionOrHigher();
+				}
 				const defaultType = parseOptional(64) ? parseType() : void 0;
 				const node = factory2.createTypeParameterDeclaration(modifiers, name, constraint, defaultType);
 				node.expression = expression;
@@ -43601,13 +43618,14 @@ ${lanes.join("\n")}
 					const newPrecedence = getBinaryOperatorPrecedence(token());
 					if (!(token() === 43 ? newPrecedence >= precedence : newPrecedence > precedence)) break;
 					if (token() === 103 && inDisallowInContext()) break;
-					if (token() === 130 || token() === 152) if (scanner2.hasPrecedingLineBreak()) break;
-					else {
-						const keywordKind = token();
-						nextToken();
-						leftOperand = keywordKind === 152 ? makeSatisfiesExpression(leftOperand, parseType()) : makeAsExpression(leftOperand, parseType());
-					}
-					else leftOperand = makeBinaryExpression(leftOperand, parseTokenNode(), parseBinaryExpressionOrHigher(newPrecedence), pos);
+					if (token() === 130 || token() === 152) {
+						if (scanner2.hasPrecedingLineBreak()) break;
+						else {
+							const keywordKind = token();
+							nextToken();
+							leftOperand = keywordKind === 152 ? makeSatisfiesExpression(leftOperand, parseType()) : makeAsExpression(leftOperand, parseType());
+						}
+					} else leftOperand = makeBinaryExpression(leftOperand, parseTokenNode(), parseBinaryExpressionOrHigher(newPrecedence), pos);
 				}
 				return leftOperand;
 			}
@@ -43717,16 +43735,17 @@ ${lanes.join("\n")}
 			function parseLeftHandSideExpressionOrHigher() {
 				const pos = getNodePos();
 				let expression;
-				if (token() === 102) if (lookAhead(nextTokenIsOpenParenOrLessThan)) {
-					sourceFlags |= 4194304;
-					expression = parseTokenNode();
-				} else if (lookAhead(nextTokenIsDot)) {
-					nextToken();
-					nextToken();
-					expression = finishNode(factory2.createMetaProperty(102, parseIdentifierName()), pos);
-					sourceFlags |= 8388608;
-				} else expression = parseMemberExpressionOrHigher();
-				else expression = token() === 108 ? parseSuperExpression() : parseMemberExpressionOrHigher();
+				if (token() === 102) {
+					if (lookAhead(nextTokenIsOpenParenOrLessThan)) {
+						sourceFlags |= 4194304;
+						expression = parseTokenNode();
+					} else if (lookAhead(nextTokenIsDot)) {
+						nextToken();
+						nextToken();
+						expression = finishNode(factory2.createMetaProperty(102, parseIdentifierName()), pos);
+						sourceFlags |= 8388608;
+					} else expression = parseMemberExpressionOrHigher();
+				} else expression = token() === 108 ? parseSuperExpression() : parseMemberExpressionOrHigher();
 				return parseCallExpressionRest(pos, expression);
 			}
 			function parseMemberExpressionOrHigher() {
@@ -43762,8 +43781,10 @@ ${lanes.join("\n")}
 						closingElement = lastChild.closingElement;
 					} else {
 						closingElement = parseJsxClosingElement(opening, inExpressionContext);
-						if (!tagNamesAreEquivalent(opening.tagName, closingElement.tagName)) if (openingTag && isJsxOpeningElement(openingTag) && tagNamesAreEquivalent(closingElement.tagName, openingTag.tagName)) parseErrorAtRange(opening.tagName, Diagnostics.JSX_element_0_has_no_corresponding_closing_tag, getTextOfNodeFromSourceText(sourceText, opening.tagName));
-						else parseErrorAtRange(closingElement.tagName, Diagnostics.Expected_corresponding_JSX_closing_tag_for_0, getTextOfNodeFromSourceText(sourceText, opening.tagName));
+						if (!tagNamesAreEquivalent(opening.tagName, closingElement.tagName)) {
+							if (openingTag && isJsxOpeningElement(openingTag) && tagNamesAreEquivalent(closingElement.tagName, openingTag.tagName)) parseErrorAtRange(opening.tagName, Diagnostics.JSX_element_0_has_no_corresponding_closing_tag, getTextOfNodeFromSourceText(sourceText, opening.tagName));
+							else parseErrorAtRange(closingElement.tagName, Diagnostics.Expected_corresponding_JSX_closing_tag_for_0, getTextOfNodeFromSourceText(sourceText, opening.tagName));
+						}
 					}
 					result = finishNode(factory2.createJsxElement(opening, children, closingElement), pos);
 				} else if (opening.kind === 289) result = finishNode(factory2.createJsxFragment(opening, parseJsxChildren(opening), parseJsxClosingFragment(inExpressionContext)), pos);
@@ -43841,8 +43862,10 @@ ${lanes.join("\n")}
 					node = factory2.createJsxOpeningElement(tagName, typeArguments, attributes);
 				} else {
 					parseExpected(44);
-					if (parseExpected(32, void 0, false)) if (inExpressionContext) nextToken();
-					else scanJsxText();
+					if (parseExpected(32, void 0, false)) {
+						if (inExpressionContext) nextToken();
+						else scanJsxText();
+					}
 					node = factory2.createJsxSelfClosingElement(tagName, typeArguments, attributes);
 				}
 				return finishNode(node, pos);
@@ -43914,15 +43937,19 @@ ${lanes.join("\n")}
 				const pos = getNodePos();
 				parseExpected(31);
 				const tagName = parseJsxElementName();
-				if (parseExpected(32, void 0, false)) if (inExpressionContext || !tagNamesAreEquivalent(open.tagName, tagName)) nextToken();
-				else scanJsxText();
+				if (parseExpected(32, void 0, false)) {
+					if (inExpressionContext || !tagNamesAreEquivalent(open.tagName, tagName)) nextToken();
+					else scanJsxText();
+				}
 				return finishNode(factory2.createJsxClosingElement(tagName), pos);
 			}
 			function parseJsxClosingFragment(inExpressionContext) {
 				const pos = getNodePos();
 				parseExpected(31);
-				if (parseExpected(32, Diagnostics.Expected_corresponding_closing_tag_for_JSX_fragment, false)) if (inExpressionContext) nextToken();
-				else scanJsxText();
+				if (parseExpected(32, Diagnostics.Expected_corresponding_closing_tag_for_JSX_fragment, false)) {
+					if (inExpressionContext) nextToken();
+					else scanJsxText();
+				}
 				return finishNode(factory2.createJsxJsxClosingFragment(), pos);
 			}
 			function parseTypeAssertion() {
@@ -44292,8 +44319,10 @@ ${lanes.join("\n")}
 				const awaitToken = parseOptionalToken(135);
 				parseExpected(21);
 				let initializer;
-				if (token() !== 27) if (token() === 115 || token() === 121 || token() === 87 || token() === 160 && lookAhead(nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf) || token() === 135 && lookAhead(nextTokenIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine)) initializer = parseVariableDeclarationList(true);
-				else initializer = disallowInAnd(parseExpression);
+				if (token() !== 27) {
+					if (token() === 115 || token() === 121 || token() === 87 || token() === 160 && lookAhead(nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf) || token() === 135 && lookAhead(nextTokenIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine)) initializer = parseVariableDeclarationList(true);
+					else initializer = disallowInAnd(parseExpression);
+				}
 				let node;
 				if (awaitToken ? parseExpected(165) : parseOptional(165)) {
 					const expression = allowInAnd(() => parseAssignmentExpressionOrHigher(true));
@@ -44613,9 +44642,7 @@ ${lanes.join("\n")}
 					case 129:
 					case 126:
 					case 148:
-					case 162:
-						if (isStartOfDeclaration()) return parseDeclaration();
-						break;
+					case 162: if (isStartOfDeclaration()) return parseDeclaration();
 				}
 				return parseExpressionOrLabeledStatement();
 			}
@@ -44984,10 +45011,12 @@ ${lanes.join("\n")}
 					if (constructorDeclaration) return constructorDeclaration;
 				}
 				if (isIndexSignature()) return parseIndexSignatureDeclaration(pos, hasJSDoc, modifiers);
-				if (tokenIsIdentifierOrKeyword(token()) || token() === 11 || token() === 9 || token() === 10 || token() === 42 || token() === 23) if (some(modifiers, isDeclareModifier)) {
-					for (const m of modifiers) m.flags |= 33554432;
-					return doInsideOfContext(33554432, () => parsePropertyOrMethodDeclaration(pos, hasJSDoc, modifiers));
-				} else return parsePropertyOrMethodDeclaration(pos, hasJSDoc, modifiers);
+				if (tokenIsIdentifierOrKeyword(token()) || token() === 11 || token() === 9 || token() === 10 || token() === 42 || token() === 23) {
+					if (some(modifiers, isDeclareModifier)) {
+						for (const m of modifiers) m.flags |= 33554432;
+						return doInsideOfContext(33554432, () => parsePropertyOrMethodDeclaration(pos, hasJSDoc, modifiers));
+					} else return parsePropertyOrMethodDeclaration(pos, hasJSDoc, modifiers);
+				}
 				if (modifiers) return parsePropertyDeclaration(pos, hasJSDoc, modifiers, createMissingNode(80, true, Diagnostics.Declaration_expected), void 0);
 				return Debug.fail("Should not have attempted to parse class member declaration.");
 			}
@@ -45570,7 +45599,6 @@ ${lanes.join("\n")}
 								default:
 									state = 2;
 									pushComment(scanner2.getTokenText());
-									break;
 							}
 							if (state === 2) nextJSDocCommentTextToken(false);
 							else nextTokenJSDoc();
@@ -45707,9 +45735,7 @@ ${lanes.join("\n")}
 							case "import":
 								tag = parseImportTag(start2, tagName, margin, indentText);
 								break;
-							default:
-								tag = parseUnknownTag(start2, tagName, margin, indentText);
-								break;
+							default: tag = parseUnknownTag(start2, tagName, margin, indentText);
 						}
 						return tag;
 					}
@@ -45782,7 +45808,6 @@ ${lanes.join("\n")}
 								default:
 									if (state !== 3) state = 2;
 									pushComment(scanner2.getTokenText());
-									break;
 							}
 							if (state === 2 || state === 3) tok = nextJSDocCommentTextToken(state === 3);
 							else tok = nextTokenJSDoc();
@@ -46014,12 +46039,13 @@ ${lanes.join("\n")}
 							while (child = tryParse(() => parseChildPropertyTag(indent3))) {
 								if (child.kind === 345) break;
 								hasChildren = true;
-								if (child.kind === 344) if (childTypeTag) {
-									const lastError = parseErrorAtCurrentToken(Diagnostics.A_JSDoc_typedef_comment_may_not_contain_multiple_type_tags);
-									if (lastError) addRelatedInfo(lastError, createDetachedDiagnostic(fileName, sourceText, 0, 0, Diagnostics.The_tag_was_first_specified_here));
-									break;
-								} else childTypeTag = child;
-								else jsDocPropertyTags = append(jsDocPropertyTags, child);
+								if (child.kind === 344) {
+									if (childTypeTag) {
+										const lastError = parseErrorAtCurrentToken(Diagnostics.A_JSDoc_typedef_comment_may_not_contain_multiple_type_tags);
+										if (lastError) addRelatedInfo(lastError, createDetachedDiagnostic(fileName, sourceText, 0, 0, Diagnostics.The_tag_was_first_specified_here));
+										break;
+									} else childTypeTag = child;
+								} else jsDocPropertyTags = append(jsDocPropertyTags, child);
 							}
 							if (hasChildren) {
 								const isArrayType = typeExpression && typeExpression.type.kind === 188;
@@ -48291,14 +48317,15 @@ ${lanes.join("\n")}
 				if (optValue === "null") {
 					options[opt.name] = void 0;
 					i++;
-				} else if (opt.type === "boolean") if (optValue === "false") {
-					options[opt.name] = validateJsonOptionValue(opt, false, errors);
-					i++;
+				} else if (opt.type === "boolean") {
+					if (optValue === "false") {
+						options[opt.name] = validateJsonOptionValue(opt, false, errors);
+						i++;
+					} else {
+						if (optValue === "true") i++;
+						errors.push(createCompilerDiagnostic(Diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line, opt.name));
+					}
 				} else {
-					if (optValue === "true") i++;
-					errors.push(createCompilerDiagnostic(Diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line, opt.name));
-				}
-				else {
 					errors.push(createCompilerDiagnostic(Diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line, opt.name));
 					if (optValue && !startsWith(optValue, "-")) i++;
 				}
@@ -48329,7 +48356,6 @@ ${lanes.join("\n")}
 					default:
 						options[opt.name] = parseCustomTypeOption(opt, args[i], errors);
 						i++;
-						break;
 				}
 				else {
 					options[opt.name] = void 0;
@@ -48730,10 +48756,11 @@ ${lanes.join("\n")}
 				if (optionDefinition) {
 					Debug.assert(optionDefinition.type !== "listOrElement");
 					const customTypeMap = getCustomTypeMapOfCommandLineOption(optionDefinition);
-					if (!customTypeMap) if (pathOptions && optionDefinition.isFilePath) result.set(name, getRelativePathFromFile(pathOptions.configFilePath, getNormalizedAbsolutePath(value, getDirectoryPath(pathOptions.configFilePath)), getCanonicalFileName));
-					else if (pathOptions && optionDefinition.type === "list" && optionDefinition.element.isFilePath) result.set(name, value.map((v) => getRelativePathFromFile(pathOptions.configFilePath, getNormalizedAbsolutePath(v, getDirectoryPath(pathOptions.configFilePath)), getCanonicalFileName)));
-					else result.set(name, value);
-					else if (optionDefinition.type === "list") result.set(name, value.map((element) => getNameOfCompilerOptionValue(element, customTypeMap)));
+					if (!customTypeMap) {
+						if (pathOptions && optionDefinition.isFilePath) result.set(name, getRelativePathFromFile(pathOptions.configFilePath, getNormalizedAbsolutePath(value, getDirectoryPath(pathOptions.configFilePath)), getCanonicalFileName));
+						else if (pathOptions && optionDefinition.type === "list" && optionDefinition.element.isFilePath) result.set(name, value.map((v) => getRelativePathFromFile(pathOptions.configFilePath, getNormalizedAbsolutePath(v, getDirectoryPath(pathOptions.configFilePath)), getCanonicalFileName)));
+						else result.set(name, value);
+					} else if (optionDefinition.type === "list") result.set(name, value.map((element) => getNameOfCompilerOptionValue(element, customTypeMap)));
 					else result.set(name, getNameOfCompilerOptionValue(value, customTypeMap));
 				}
 			}
@@ -48900,12 +48927,14 @@ ${lanes.join("\n")}
 				if (filesSpecs) {
 					const hasZeroOrNoReferences = referencesOfRaw === "no-prop" || isArray(referencesOfRaw) && referencesOfRaw.length === 0;
 					const hasExtends = hasProperty(raw, "extends");
-					if (filesSpecs.length === 0 && hasZeroOrNoReferences && !hasExtends) if (sourceFile) {
-						const fileName = configFileName || "tsconfig.json";
-						const diagnosticMessage = Diagnostics.The_files_list_in_config_file_0_is_empty;
-						const error2 = createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, forEachTsConfigPropArray(sourceFile, "files", (property) => property.initializer), diagnosticMessage, fileName);
-						errors.push(error2);
-					} else createCompilerDiagnosticOnlyIfJson(Diagnostics.The_files_list_in_config_file_0_is_empty, configFileName || "tsconfig.json");
+					if (filesSpecs.length === 0 && hasZeroOrNoReferences && !hasExtends) {
+						if (sourceFile) {
+							const fileName = configFileName || "tsconfig.json";
+							const diagnosticMessage = Diagnostics.The_files_list_in_config_file_0_is_empty;
+							const error2 = createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, forEachTsConfigPropArray(sourceFile, "files", (property) => property.initializer), diagnosticMessage, fileName);
+							errors.push(error2);
+						} else createCompilerDiagnosticOnlyIfJson(Diagnostics.The_files_list_in_config_file_0_is_empty, configFileName || "tsconfig.json");
+					}
 				}
 				let includeSpecs = toPropValue(getSpecsFromRaw("include"));
 				const excludeOfRaw = getSpecsFromRaw("exclude");
@@ -48970,13 +48999,15 @@ ${lanes.join("\n")}
 				return getPropFromRaw(prop, isString, "string");
 			}
 			function getPropFromRaw(prop, validateElement, elementTypeName) {
-				if (hasProperty(raw, prop) && !isNullOrUndefined(raw[prop])) if (isArray(raw[prop])) {
-					const result = raw[prop];
-					if (!sourceFile && !every(result, validateElement)) errors.push(createCompilerDiagnostic(Diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, elementTypeName));
-					return result;
-				} else {
-					createCompilerDiagnosticOnlyIfJson(Diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, "Array");
-					return "not-array";
+				if (hasProperty(raw, prop) && !isNullOrUndefined(raw[prop])) {
+					if (isArray(raw[prop])) {
+						const result = raw[prop];
+						if (!sourceFile && !every(result, validateElement)) errors.push(createCompilerDiagnostic(Diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, elementTypeName));
+						return result;
+					} else {
+						createCompilerDiagnosticOnlyIfJson(Diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, "Array");
+						return "not-array";
+					}
 				}
 				return "no-prop";
 			}
@@ -49162,8 +49193,10 @@ ${lanes.join("\n")}
 						else if (parentOption === typeAcquisitionDeclaration) currentOption = typeAcquisition ?? (typeAcquisition = getDefaultTypeAcquisition(configFileName));
 						else Debug.fail("Unknown option");
 						currentOption[option.name] = value;
-					} else if (keyText && (parentOption == null ? void 0 : parentOption.extraKeyDiagnostics)) if (parentOption.elementOptions) errors.push(createUnknownOptionError(keyText, parentOption.extraKeyDiagnostics, void 0, propertyAssignment.name, sourceFile));
-					else errors.push(createDiagnosticForNodeInSourceFile(sourceFile, propertyAssignment.name, parentOption.extraKeyDiagnostics.unknownOptionDiagnostic, keyText));
+					} else if (keyText && (parentOption == null ? void 0 : parentOption.extraKeyDiagnostics)) {
+						if (parentOption.elementOptions) errors.push(createUnknownOptionError(keyText, parentOption.extraKeyDiagnostics, void 0, propertyAssignment.name, sourceFile));
+						else errors.push(createDiagnosticForNodeInSourceFile(sourceFile, propertyAssignment.name, parentOption.extraKeyDiagnostics.unknownOptionDiagnostic, keyText));
+					}
 				} else if (parentOption === rootOptions) {
 					if (option === extendsOptionDeclaration) extendedConfigPath = getExtendsConfigPathOrArray(value, host, basePath, configFileName, errors, propertyAssignment, propertyAssignment.initializer, sourceFile);
 					else if (!option) {
@@ -49582,17 +49615,19 @@ ${lanes.join("\n")}
 			return createResolvedModuleWithFailedLookupLocations(resolved, isExternalLibraryImport, failedLookupLocations, affectingLocations, diagnostics, state.resultFromCache, cache, alternateResult);
 		}
 		function createResolvedModuleWithFailedLookupLocations(resolved, isExternalLibraryImport, failedLookupLocations, affectingLocations, diagnostics, resultFromCache, cache, alternateResult) {
-			if (resultFromCache) if (!(cache == null ? void 0 : cache.isReadonly)) {
-				resultFromCache.failedLookupLocations = updateResolutionField(resultFromCache.failedLookupLocations, failedLookupLocations);
-				resultFromCache.affectingLocations = updateResolutionField(resultFromCache.affectingLocations, affectingLocations);
-				resultFromCache.resolutionDiagnostics = updateResolutionField(resultFromCache.resolutionDiagnostics, diagnostics);
-				return resultFromCache;
-			} else return {
-				...resultFromCache,
-				failedLookupLocations: initializeResolutionFieldForReadonlyCache(resultFromCache.failedLookupLocations, failedLookupLocations),
-				affectingLocations: initializeResolutionFieldForReadonlyCache(resultFromCache.affectingLocations, affectingLocations),
-				resolutionDiagnostics: initializeResolutionFieldForReadonlyCache(resultFromCache.resolutionDiagnostics, diagnostics)
-			};
+			if (resultFromCache) {
+				if (!(cache == null ? void 0 : cache.isReadonly)) {
+					resultFromCache.failedLookupLocations = updateResolutionField(resultFromCache.failedLookupLocations, failedLookupLocations);
+					resultFromCache.affectingLocations = updateResolutionField(resultFromCache.affectingLocations, affectingLocations);
+					resultFromCache.resolutionDiagnostics = updateResolutionField(resultFromCache.resolutionDiagnostics, diagnostics);
+					return resultFromCache;
+				} else return {
+					...resultFromCache,
+					failedLookupLocations: initializeResolutionFieldForReadonlyCache(resultFromCache.failedLookupLocations, failedLookupLocations),
+					affectingLocations: initializeResolutionFieldForReadonlyCache(resultFromCache.affectingLocations, affectingLocations),
+					resolutionDiagnostics: initializeResolutionFieldForReadonlyCache(resultFromCache.resolutionDiagnostics, diagnostics)
+				};
+			}
 			return {
 				resolvedModule: resolved && {
 					resolvedFileName: resolved.path,
@@ -49739,9 +49774,10 @@ ${lanes.join("\n")}
 			}
 			const typeRoots = getEffectiveTypeRoots(options, host);
 			if (traceEnabled) {
-				if (containingFile === void 0) if (typeRoots === void 0) trace(host, Diagnostics.Resolving_type_reference_directive_0_containing_file_not_set_root_directory_not_set, typeReferenceDirectiveName);
-				else trace(host, Diagnostics.Resolving_type_reference_directive_0_containing_file_not_set_root_directory_1, typeReferenceDirectiveName, typeRoots);
-				else if (typeRoots === void 0) trace(host, Diagnostics.Resolving_type_reference_directive_0_containing_file_1_root_directory_not_set, typeReferenceDirectiveName, containingFile);
+				if (containingFile === void 0) {
+					if (typeRoots === void 0) trace(host, Diagnostics.Resolving_type_reference_directive_0_containing_file_not_set_root_directory_not_set, typeReferenceDirectiveName);
+					else trace(host, Diagnostics.Resolving_type_reference_directive_0_containing_file_not_set_root_directory_1, typeReferenceDirectiveName, typeRoots);
+				} else if (typeRoots === void 0) trace(host, Diagnostics.Resolving_type_reference_directive_0_containing_file_1_root_directory_not_set, typeReferenceDirectiveName, containingFile);
 				else trace(host, Diagnostics.Resolving_type_reference_directive_0_containing_file_1_root_directory_2, typeReferenceDirectiveName, containingFile, typeRoots);
 				if (redirectedReference) trace(host, Diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.sourceFile.fileName);
 			}
@@ -49850,9 +49886,7 @@ ${lanes.join("\n")}
 				case 99:
 					features = 30;
 					break;
-				case 100:
-					features = 30;
-					break;
+				case 100: features = 30;
 			}
 			if (options.resolvePackageJsonExports) features |= 8;
 			else if (options.resolvePackageJsonExports === false) features &= -9;
@@ -50219,9 +50253,12 @@ ${lanes.join("\n")}
 					if (!isExternalModuleNameRelative(moduleName)) cache.getOrCreateCacheForNonRelativeName(moduleName, resolutionMode, redirectedReference).set(containingDirectory, result);
 				}
 			}
-			if (traceEnabled) if (result.resolvedModule) if (result.resolvedModule.packageId) trace(host, Diagnostics.Module_name_0_was_successfully_resolved_to_1_with_Package_ID_2, moduleName, result.resolvedModule.resolvedFileName, packageIdToString(result.resolvedModule.packageId));
-			else trace(host, Diagnostics.Module_name_0_was_successfully_resolved_to_1, moduleName, result.resolvedModule.resolvedFileName);
-			else trace(host, Diagnostics.Module_name_0_was_not_resolved, moduleName);
+			if (traceEnabled) {
+				if (result.resolvedModule) {
+					if (result.resolvedModule.packageId) trace(host, Diagnostics.Module_name_0_was_successfully_resolved_to_1_with_Package_ID_2, moduleName, result.resolvedModule.resolvedFileName, packageIdToString(result.resolvedModule.packageId));
+					else trace(host, Diagnostics.Module_name_0_was_successfully_resolved_to_1, moduleName, result.resolvedModule.resolvedFileName);
+				} else trace(host, Diagnostics.Module_name_0_was_not_resolved, moduleName);
+			}
 			return result;
 		}
 		function tryLoadModuleUsingOptionalResolutionSettings(extensions, moduleName, containingDirectory, loader, state) {
@@ -50603,25 +50640,26 @@ ${lanes.join("\n")}
 			return entrypoints;
 			function loadEntrypointsFromTargetExports(target) {
 				var _a, _b;
-				if (typeof target === "string" && startsWith(target, "./")) if (target.includes("*") && state.host.readDirectory) {
-					if (target.indexOf("*") !== target.lastIndexOf("*")) return false;
-					state.host.readDirectory(scope.packageDirectory, extensionsToExtensionsArray(extensions), void 0, [changeFullExtension(replaceFirstStar(target, "**/*"), ".*")]).forEach((entry) => {
-						entrypoints = appendIfUnique(entrypoints, {
-							path: entry,
-							ext: getAnyExtensionFromPath(entry),
-							resolvedUsingTsExtension: void 0
+				if (typeof target === "string" && startsWith(target, "./")) {
+					if (target.includes("*") && state.host.readDirectory) {
+						if (target.indexOf("*") !== target.lastIndexOf("*")) return false;
+						state.host.readDirectory(scope.packageDirectory, extensionsToExtensionsArray(extensions), void 0, [changeFullExtension(replaceFirstStar(target, "**/*"), ".*")]).forEach((entry) => {
+							entrypoints = appendIfUnique(entrypoints, {
+								path: entry,
+								ext: getAnyExtensionFromPath(entry),
+								resolvedUsingTsExtension: void 0
+							});
 						});
-					});
-				} else {
-					const partsAfterFirst = getPathComponents(target).slice(2);
-					if (partsAfterFirst.includes("..") || partsAfterFirst.includes(".") || partsAfterFirst.includes("node_modules")) return false;
-					const result = loadFileNameFromPackageJsonField(extensions, getNormalizedAbsolutePath(combinePaths(scope.packageDirectory, target), (_b = (_a = state.host).getCurrentDirectory) == null ? void 0 : _b.call(_a)), false, state);
-					if (result) {
-						entrypoints = appendIfUnique(entrypoints, result, (a, b) => a.path === b.path);
-						return true;
+					} else {
+						const partsAfterFirst = getPathComponents(target).slice(2);
+						if (partsAfterFirst.includes("..") || partsAfterFirst.includes(".") || partsAfterFirst.includes("node_modules")) return false;
+						const result = loadFileNameFromPackageJsonField(extensions, getNormalizedAbsolutePath(combinePaths(scope.packageDirectory, target), (_b = (_a = state.host).getCurrentDirectory) == null ? void 0 : _b.call(_a)), false, state);
+						if (result) {
+							entrypoints = appendIfUnique(entrypoints, result, (a, b) => a.path === b.path);
+							return true;
+						}
 					}
-				}
-				else if (Array.isArray(target)) {
+				} else if (Array.isArray(target)) {
 					for (const t of target) if (loadEntrypointsFromTargetExports(t)) return true;
 				} else if (typeof target === "object" && target !== null) return forEach(getOwnKeys(target), (key) => {
 					if (key === "default" || contains(state.conditions, key) || isApplicableVersionedTypesKey(state.conditions, key)) {
@@ -50685,17 +50723,19 @@ ${lanes.join("\n")}
 				return;
 			}
 			const existing = (_b = state.packageJsonInfoCache) == null ? void 0 : _b.getPackageJsonInfo(packageJsonPath);
-			if (existing !== void 0) if (isPackageJsonInfo(existing)) {
-				if (traceEnabled) trace(host, Diagnostics.File_0_exists_according_to_earlier_cached_lookups, packageJsonPath);
-				(_c = state.affectingLocations) == null || _c.push(packageJsonPath);
-				return existing.packageDirectory === packageDirectory ? existing : {
-					packageDirectory,
-					contents: existing.contents
-				};
-			} else {
-				if (existing.directoryExists && traceEnabled) trace(host, Diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups, packageJsonPath);
-				(_d = state.failedLookupLocations) == null || _d.push(packageJsonPath);
-				return;
+			if (existing !== void 0) {
+				if (isPackageJsonInfo(existing)) {
+					if (traceEnabled) trace(host, Diagnostics.File_0_exists_according_to_earlier_cached_lookups, packageJsonPath);
+					(_c = state.affectingLocations) == null || _c.push(packageJsonPath);
+					return existing.packageDirectory === packageDirectory ? existing : {
+						packageDirectory,
+						contents: existing.contents
+					};
+				} else {
+					if (existing.directoryExists && traceEnabled) trace(host, Diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups, packageJsonPath);
+					(_d = state.failedLookupLocations) == null || _d.push(packageJsonPath);
+					return;
+				}
 			}
 			const directoryExists = directoryProbablyExists(packageDirectory, host);
 			if (directoryExists && host.fileExists(packageJsonPath)) {
@@ -50724,8 +50764,10 @@ ${lanes.join("\n")}
 		}
 		function loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, state, jsonContent, versionPaths) {
 			let packageFile;
-			if (jsonContent) if (state.isConfigLookup) packageFile = readPackageJsonTSConfigField(jsonContent, candidate, state);
-			else packageFile = extensions & 4 && readPackageJsonTypesFields(jsonContent, candidate, state) || extensions & 7 && readPackageJsonMainField(jsonContent, candidate, state) || void 0;
+			if (jsonContent) {
+				if (state.isConfigLookup) packageFile = readPackageJsonTSConfigField(jsonContent, candidate, state);
+				else packageFile = extensions & 4 && readPackageJsonTypesFields(jsonContent, candidate, state) || extensions & 7 && readPackageJsonMainField(jsonContent, candidate, state) || void 0;
+			}
 			const loader = (extensions2, candidate2, onlyRecordFailures2, state2) => {
 				const fromFile = loadFileNameFromPackageJsonField(extensions2, candidate2, onlyRecordFailures2, state2);
 				if (fromFile) return noPackageId(fromFile);
@@ -50909,31 +50951,32 @@ ${lanes.join("\n")}
 					const inputLink = tryLoadInputFileForPath(finalPath, subpath, combinePaths(scope.packageDirectory, "package.json"), isImports);
 					if (inputLink) return inputLink;
 					return toSearchResult(withPackageId(scope, loadFileNameFromPackageJsonField(extensions, finalPath, false, state), state));
-				} else if (typeof target === "object" && target !== null) if (!Array.isArray(target)) {
-					traceIfEnabled(state, Diagnostics.Entering_conditional_exports);
-					for (const condition of getOwnKeys(target)) if (condition === "default" || state.conditions.includes(condition) || isApplicableVersionedTypesKey(state.conditions, condition)) {
-						traceIfEnabled(state, Diagnostics.Matched_0_condition_1, isImports ? "imports" : "exports", condition);
-						const subTarget = target[condition];
-						const result = loadModuleFromTargetImportOrExport(subTarget, subpath, pattern, key);
-						if (result) {
-							traceIfEnabled(state, Diagnostics.Resolved_under_condition_0, condition);
-							traceIfEnabled(state, Diagnostics.Exiting_conditional_exports);
-							return result;
-						} else traceIfEnabled(state, Diagnostics.Failed_to_resolve_under_condition_0, condition);
-					} else traceIfEnabled(state, Diagnostics.Saw_non_matching_condition_0, condition);
-					traceIfEnabled(state, Diagnostics.Exiting_conditional_exports);
-					return;
-				} else {
-					if (!length(target)) {
-						if (state.traceEnabled) trace(state.host, Diagnostics.package_json_scope_0_has_invalid_type_for_target_of_specifier_1, scope.packageDirectory, moduleName);
-						return toSearchResult(void 0);
+				} else if (typeof target === "object" && target !== null) {
+					if (!Array.isArray(target)) {
+						traceIfEnabled(state, Diagnostics.Entering_conditional_exports);
+						for (const condition of getOwnKeys(target)) if (condition === "default" || state.conditions.includes(condition) || isApplicableVersionedTypesKey(state.conditions, condition)) {
+							traceIfEnabled(state, Diagnostics.Matched_0_condition_1, isImports ? "imports" : "exports", condition);
+							const subTarget = target[condition];
+							const result = loadModuleFromTargetImportOrExport(subTarget, subpath, pattern, key);
+							if (result) {
+								traceIfEnabled(state, Diagnostics.Resolved_under_condition_0, condition);
+								traceIfEnabled(state, Diagnostics.Exiting_conditional_exports);
+								return result;
+							} else traceIfEnabled(state, Diagnostics.Failed_to_resolve_under_condition_0, condition);
+						} else traceIfEnabled(state, Diagnostics.Saw_non_matching_condition_0, condition);
+						traceIfEnabled(state, Diagnostics.Exiting_conditional_exports);
+						return;
+					} else {
+						if (!length(target)) {
+							if (state.traceEnabled) trace(state.host, Diagnostics.package_json_scope_0_has_invalid_type_for_target_of_specifier_1, scope.packageDirectory, moduleName);
+							return toSearchResult(void 0);
+						}
+						for (const elem of target) {
+							const result = loadModuleFromTargetImportOrExport(elem, subpath, pattern, key);
+							if (result) return result;
+						}
 					}
-					for (const elem of target) {
-						const result = loadModuleFromTargetImportOrExport(elem, subpath, pattern, key);
-						if (result) return result;
-					}
-				}
-				else if (target === null) {
+				} else if (target === null) {
 					if (state.traceEnabled) trace(state.host, Diagnostics.package_json_scope_0_explicitly_maps_specifier_1_to_null, scope.packageDirectory, moduleName);
 					return toSearchResult(void 0);
 				}
@@ -51558,12 +51601,13 @@ ${lanes.join("\n")}
 			}
 			function declareModuleMember(node, symbolFlags, symbolExcludes) {
 				const hasExportModifier = !!(getCombinedModifierFlags(node) & 32) || jsdocTreatAsExported(node);
-				if (symbolFlags & 2097152) if (node.kind === 281 || node.kind === 271 && hasExportModifier) return declareSymbol(container.symbol.exports, container.symbol, node, symbolFlags, symbolExcludes);
-				else {
-					Debug.assertNode(container, canHaveLocals);
-					return declareSymbol(container.locals, void 0, node, symbolFlags, symbolExcludes);
-				}
-				else {
+				if (symbolFlags & 2097152) {
+					if (node.kind === 281 || node.kind === 271 && hasExportModifier) return declareSymbol(container.symbol.exports, container.symbol, node, symbolFlags, symbolExcludes);
+					else {
+						Debug.assertNode(container, canHaveLocals);
+						return declareSymbol(container.locals, void 0, node, symbolFlags, symbolExcludes);
+					}
+				} else {
 					if (isJSDocTypeAlias(node)) Debug.assert(isInJSFile(node));
 					if (!isAmbientModule(node) && (hasExportModifier || container.flags & 128)) {
 						if (!canHaveLocals(container) || !container.locals || hasSyntacticModifier(node, 2048) && !getDeclarationName(node)) return declareSymbol(container.symbol.exports, container.symbol, node, symbolFlags, symbolExcludes);
@@ -51778,9 +51822,7 @@ ${lanes.join("\n")}
 					case 209:
 					case 303:
 					case 230: inAssignmentPattern = saveInAssignmentPattern;
-					default:
-						bindEachChild(node);
-						break;
+					default: bindEachChild(node);
 				}
 				bindJSDoc(node);
 				inAssignmentPattern = saveInAssignmentPattern;
@@ -52394,7 +52436,6 @@ ${lanes.join("\n")}
 						bind(node.questionDotToken);
 						bindEach(node.typeArguments);
 						bindEach(node.arguments);
-						break;
 				}
 			}
 			function bindOptionalChain(node, trueTarget, falseTarget) {
@@ -52767,10 +52808,12 @@ ${lanes.join("\n")}
 				inStrictMode = saveInStrictMode;
 			}
 			function bindJSDoc(node) {
-				if (hasJSDocNodes(node)) if (isInJSFile(node)) for (const j of node.jsDoc) bind(j);
-				else for (const j of node.jsDoc) {
-					setParent(j, node);
-					setParentRecursive(j, false);
+				if (hasJSDocNodes(node)) {
+					if (isInJSFile(node)) for (const j of node.jsDoc) bind(j);
+					else for (const j of node.jsDoc) {
+						setParent(j, node);
+						setParentRecursive(j, false);
+					}
 				}
 			}
 			function updateStrictModeStatementList(statements) {
@@ -53071,8 +53114,10 @@ ${lanes.join("\n")}
 			}
 			function bindSpecialPropertyDeclaration(node) {
 				if (node.expression.kind === 110) bindThisPropertyAssignment(node);
-				else if (isBindableStaticAccessExpression(node) && node.parent.parent.kind === 307) if (isPrototypeAccess(node.expression)) bindPrototypePropertyAssignment(node, node.parent);
-				else bindStaticPropertyAssignment(node);
+				else if (isBindableStaticAccessExpression(node) && node.parent.parent.kind === 307) {
+					if (isPrototypeAccess(node.expression)) bindPrototypePropertyAssignment(node, node.parent);
+					else bindStaticPropertyAssignment(node);
+				}
 			}
 			function bindPrototypeAssignment(node) {
 				setParent(node.left, node);
@@ -53720,9 +53765,10 @@ ${lanes.join("\n")}
 					const local = getLocalModuleSpecifier(modulePath.path, info, compilerOptions, host, options.overrideImportMode || importingSourceFile.impliedNodeFormat, preferences, modulePath.isRedirect);
 					if (!local || forAutoImport && isExcludedByRegex(local, preferences.excludeRegexes)) continue;
 					if (modulePath.isRedirect) redirectPathsSpecifiers = append(redirectPathsSpecifiers, local);
-					else if (pathIsBareSpecifier(local)) if (pathContainsNodeModules(local)) relativeSpecifiers = append(relativeSpecifiers, local);
-					else pathsSpecifiers = append(pathsSpecifiers, local);
-					else if (forAutoImport || !importedFileIsInNodeModules || modulePath.isInNodeModules) relativeSpecifiers = append(relativeSpecifiers, local);
+					else if (pathIsBareSpecifier(local)) {
+						if (pathContainsNodeModules(local)) relativeSpecifiers = append(relativeSpecifiers, local);
+						else pathsSpecifiers = append(pathsSpecifiers, local);
+					} else if (forAutoImport || !importedFileIsInNodeModules || modulePath.isInNodeModules) relativeSpecifiers = append(relativeSpecifiers, local);
 				}
 			}
 			return (pathsSpecifiers == null ? void 0 : pathsSpecifiers.length) ? {
@@ -54020,7 +54066,6 @@ ${lanes.join("\n")}
 							const jsExtension = tryGetJSExtensionForFile(declarationFile, options);
 							return jsExtension ? { moduleFileToTry: changeFullExtension(substituted, jsExtension) } : void 0;
 						}
-						break;
 				}
 			} else if (Array.isArray(exports2)) return forEach(exports2, (e) => tryGetModuleNameFromExportsOrImports(options, host, targetFilePath, packageDirectory, packageName, e, conditions, mode, isImports, preferTsExtension));
 			else if (typeof exports2 === "object" && exports2 !== null) {
@@ -55192,22 +55237,24 @@ ${lanes.join("\n")}
 			function getJsxNamespace(location) {
 				if (location) {
 					const file = getSourceFileOfNode(location);
-					if (file) if (isJsxOpeningFragment(location)) {
-						if (file.localJsxFragmentNamespace) return file.localJsxFragmentNamespace;
-						const jsxFragmentPragma = file.pragmas.get("jsxfrag");
-						if (jsxFragmentPragma) {
-							file.localJsxFragmentFactory = parseIsolatedEntityName((isArray(jsxFragmentPragma) ? jsxFragmentPragma[0] : jsxFragmentPragma).arguments.factory, languageVersion);
-							visitNode(file.localJsxFragmentFactory, markAsSynthetic, isEntityName);
-							if (file.localJsxFragmentFactory) return file.localJsxFragmentNamespace = getFirstIdentifier(file.localJsxFragmentFactory).escapedText;
+					if (file) {
+						if (isJsxOpeningFragment(location)) {
+							if (file.localJsxFragmentNamespace) return file.localJsxFragmentNamespace;
+							const jsxFragmentPragma = file.pragmas.get("jsxfrag");
+							if (jsxFragmentPragma) {
+								file.localJsxFragmentFactory = parseIsolatedEntityName((isArray(jsxFragmentPragma) ? jsxFragmentPragma[0] : jsxFragmentPragma).arguments.factory, languageVersion);
+								visitNode(file.localJsxFragmentFactory, markAsSynthetic, isEntityName);
+								if (file.localJsxFragmentFactory) return file.localJsxFragmentNamespace = getFirstIdentifier(file.localJsxFragmentFactory).escapedText;
+							}
+							const entity = getJsxFragmentFactoryEntity(location);
+							if (entity) {
+								file.localJsxFragmentFactory = entity;
+								return file.localJsxFragmentNamespace = getFirstIdentifier(entity).escapedText;
+							}
+						} else {
+							const localJsxNamespace = getLocalJsxNamespace(file);
+							if (localJsxNamespace) return file.localJsxNamespace = localJsxNamespace;
 						}
-						const entity = getJsxFragmentFactoryEntity(location);
-						if (entity) {
-							file.localJsxFragmentFactory = entity;
-							return file.localJsxFragmentNamespace = getFirstIdentifier(entity).escapedText;
-						}
-					} else {
-						const localJsxNamespace = getLocalJsxNamespace(file);
-						if (localJsxNamespace) return file.localJsxNamespace = localJsxNamespace;
 					}
 				}
 				if (!_jsxNamespace) {
@@ -55463,18 +55510,19 @@ ${lanes.join("\n")}
 					let mainModule = resolveExternalModuleNameWorker(moduleName, moduleName, !(moduleName.parent.parent.flags & 33554432) ? Diagnostics.Invalid_module_name_in_augmentation_module_0_cannot_be_found : void 0, false, true);
 					if (!mainModule) return;
 					mainModule = resolveExternalModuleSymbol(mainModule);
-					if (mainModule.flags & 1920) if (some(patternAmbientModules, (module2) => mainModule === module2.symbol)) {
-						const merged = mergeSymbol(moduleAugmentation.symbol, mainModule, true);
-						if (!patternAmbientModuleAugmentations) patternAmbientModuleAugmentations = /* @__PURE__ */ new Map();
-						patternAmbientModuleAugmentations.set(moduleName.text, merged);
-					} else {
-						if (((_b = mainModule.exports) == null ? void 0 : _b.get("__export")) && ((_c = moduleAugmentation.symbol.exports) == null ? void 0 : _c.size)) {
-							const resolvedExports = getResolvedMembersOrExportsOfSymbol(mainModule, "resolvedExports");
-							for (const [key, value] of arrayFrom(moduleAugmentation.symbol.exports.entries())) if (resolvedExports.has(key) && !mainModule.exports.has(key)) mergeSymbol(resolvedExports.get(key), value);
+					if (mainModule.flags & 1920) {
+						if (some(patternAmbientModules, (module2) => mainModule === module2.symbol)) {
+							const merged = mergeSymbol(moduleAugmentation.symbol, mainModule, true);
+							if (!patternAmbientModuleAugmentations) patternAmbientModuleAugmentations = /* @__PURE__ */ new Map();
+							patternAmbientModuleAugmentations.set(moduleName.text, merged);
+						} else {
+							if (((_b = mainModule.exports) == null ? void 0 : _b.get("__export")) && ((_c = moduleAugmentation.symbol.exports) == null ? void 0 : _c.size)) {
+								const resolvedExports = getResolvedMembersOrExportsOfSymbol(mainModule, "resolvedExports");
+								for (const [key, value] of arrayFrom(moduleAugmentation.symbol.exports.entries())) if (resolvedExports.has(key) && !mainModule.exports.has(key)) mergeSymbol(resolvedExports.get(key), value);
+							}
+							mergeSymbol(mainModule, moduleAugmentation.symbol);
 						}
-						mergeSymbol(mainModule, moduleAugmentation.symbol);
-					}
-					else error2(moduleName, Diagnostics.Cannot_augment_module_0_because_it_resolves_to_a_non_module_entity, moduleName.text);
+					} else error2(moduleName, Diagnostics.Cannot_augment_module_0_because_it_resolves_to_a_non_module_entity, moduleName.text);
 				}
 			}
 			function addUndefinedToGlobalsOrErrorOnRedeclaration() {
@@ -55541,16 +55589,16 @@ ${lanes.join("\n")}
 				}
 				if (usage.parent.kind === 281 || usage.parent.kind === 277 && usage.parent.isExportEquals) return true;
 				if (usage.kind === 277 && usage.isExportEquals) return true;
-				if (isUsedInFunctionOrInstanceProperty(usage, declaration)) if (emitStandardClassFields && getContainingClass(declaration) && (isPropertyDeclaration(declaration) || isParameterPropertyDeclaration(declaration, declaration.parent))) return !isPropertyImmediatelyReferencedWithinDeclaration(declaration, usage, true);
-				else return true;
+				if (isUsedInFunctionOrInstanceProperty(usage, declaration)) {
+					if (emitStandardClassFields && getContainingClass(declaration) && (isPropertyDeclaration(declaration) || isParameterPropertyDeclaration(declaration, declaration.parent))) return !isPropertyImmediatelyReferencedWithinDeclaration(declaration, usage, true);
+					else return true;
+				}
 				return false;
 				function isImmediatelyUsedInInitializerOfBlockScopedVariable(declaration2, usage2) {
 					switch (declaration2.parent.parent.kind) {
 						case 243:
 						case 248:
-						case 250:
-							if (isSameScopeDescendentOf(usage2, declaration2, declContainer)) return true;
-							break;
+						case 250: if (isSameScopeDescendentOf(usage2, declaration2, declContainer)) return true;
 					}
 					const grandparent = declaration2.parent.parent;
 					return isForInOrOfStatement(grandparent) && isSameScopeDescendentOf(usage2, grandparent.expression, declContainer);
@@ -55934,14 +55982,15 @@ ${lanes.join("\n")}
 				if (!specifier) return exportDefaultSymbol;
 				const hasDefaultOnly = isOnlyImportableAsDefault(specifier);
 				const hasSyntheticDefault = canHaveSyntheticDefault(file, moduleSymbol, dontResolveAlias, specifier);
-				if (!exportDefaultSymbol && !hasSyntheticDefault && !hasDefaultOnly) if (hasExportAssignmentSymbol(moduleSymbol) && !allowSyntheticDefaultImports) {
-					const compilerOptionName = moduleKind >= 5 ? "allowSyntheticDefaultImports" : "esModuleInterop";
-					const exportAssignment = moduleSymbol.exports.get("export=").valueDeclaration;
-					const err = error2(node.name, Diagnostics.Module_0_can_only_be_default_imported_using_the_1_flag, symbolToString(moduleSymbol), compilerOptionName);
-					if (exportAssignment) addRelatedInfo(err, createDiagnosticForNode(exportAssignment, Diagnostics.This_module_is_declared_with_export_and_can_only_be_used_with_a_default_import_when_using_the_0_flag, compilerOptionName));
-				} else if (isImportClause(node)) reportNonDefaultExport(moduleSymbol, node);
-				else errorNoModuleMemberSymbol(moduleSymbol, moduleSymbol, node, isImportOrExportSpecifier(node) && node.propertyName || node.name);
-				else if (hasSyntheticDefault || hasDefaultOnly) {
+				if (!exportDefaultSymbol && !hasSyntheticDefault && !hasDefaultOnly) {
+					if (hasExportAssignmentSymbol(moduleSymbol) && !allowSyntheticDefaultImports) {
+						const compilerOptionName = moduleKind >= 5 ? "allowSyntheticDefaultImports" : "esModuleInterop";
+						const exportAssignment = moduleSymbol.exports.get("export=").valueDeclaration;
+						const err = error2(node.name, Diagnostics.Module_0_can_only_be_default_imported_using_the_1_flag, symbolToString(moduleSymbol), compilerOptionName);
+						if (exportAssignment) addRelatedInfo(err, createDiagnosticForNode(exportAssignment, Diagnostics.This_module_is_declared_with_export_and_can_only_be_used_with_a_default_import_when_using_the_0_flag, compilerOptionName));
+					} else if (isImportClause(node)) reportNonDefaultExport(moduleSymbol, node);
+					else errorNoModuleMemberSymbol(moduleSymbol, moduleSymbol, node, isImportOrExportSpecifier(node) && node.propertyName || node.name);
+				} else if (hasSyntheticDefault || hasDefaultOnly) {
 					const resolved = resolveExternalModuleSymbol(moduleSymbol, dontResolveAlias) || resolveSymbol(moduleSymbol, dontResolveAlias);
 					markSymbolOfAliasDeclarationIfTypeOnly(node, moduleSymbol, resolved, false);
 					return resolved;
@@ -56179,8 +56228,10 @@ ${lanes.join("\n")}
 					if (!typeOnlyDeclarationIsExportStar && target === typeOnlyResolution || (typeOnlyExportStarTargets == null ? void 0 : typeOnlyExportStarTargets.get(target.escapedName)) === target) break;
 					if (target === unknownSymbol) return -1;
 					if (target === symbol || (seenSymbols == null ? void 0 : seenSymbols.has(target))) break;
-					if (target.flags & 2097152) if (seenSymbols) seenSymbols.add(target);
-					else seenSymbols = /* @__PURE__ */ new Set([symbol, target]);
+					if (target.flags & 2097152) {
+						if (seenSymbols) seenSymbols.add(target);
+						else seenSymbols = /* @__PURE__ */ new Set([symbol, target]);
+					}
 					flags |= target.flags;
 					symbol = target;
 				}
@@ -56383,12 +56434,14 @@ ${lanes.join("\n")}
 						if (errorNode && (moduleResolutionKind === 3 || moduleResolutionKind === 99)) {
 							const isSyncImport = currentSourceFile.impliedNodeFormat === 1 && !findAncestor(location, isImportCall) || !!findAncestor(location, isImportEqualsDeclaration);
 							const overrideHost = findAncestor(location, (l) => isImportTypeNode(l) || isExportDeclaration(l) || isImportDeclaration(l) || isJSDocImportTag(l));
-							if (isSyncImport && sourceFile.impliedNodeFormat === 99 && !hasResolutionModeOverride(overrideHost)) if (findAncestor(location, isImportEqualsDeclaration)) error2(errorNode, Diagnostics.Module_0_cannot_be_imported_using_this_construct_The_specifier_only_resolves_to_an_ES_module_which_cannot_be_imported_with_require_Use_an_ECMAScript_import_instead, moduleReference);
-							else {
-								let diagnosticDetails;
-								const ext = tryGetExtensionFromPath2(currentSourceFile.fileName);
-								if (ext === ".ts" || ext === ".js" || ext === ".tsx" || ext === ".jsx") diagnosticDetails = createModeMismatchDetails(currentSourceFile);
-								diagnostics.add(createDiagnosticForNodeFromMessageChain(getSourceFileOfNode(errorNode), errorNode, chainDiagnosticMessages(diagnosticDetails, Diagnostics.The_current_file_is_a_CommonJS_module_whose_imports_will_produce_require_calls_however_the_referenced_file_is_an_ECMAScript_module_and_cannot_be_imported_with_require_Consider_writing_a_dynamic_import_0_call_instead, moduleReference)));
+							if (isSyncImport && sourceFile.impliedNodeFormat === 99 && !hasResolutionModeOverride(overrideHost)) {
+								if (findAncestor(location, isImportEqualsDeclaration)) error2(errorNode, Diagnostics.Module_0_cannot_be_imported_using_this_construct_The_specifier_only_resolves_to_an_ES_module_which_cannot_be_imported_with_require_Use_an_ECMAScript_import_instead, moduleReference);
+								else {
+									let diagnosticDetails;
+									const ext = tryGetExtensionFromPath2(currentSourceFile.fileName);
+									if (ext === ".ts" || ext === ".js" || ext === ".tsx" || ext === ".jsx") diagnosticDetails = createModeMismatchDetails(currentSourceFile);
+									diagnostics.add(createDiagnosticForNodeFromMessageChain(getSourceFileOfNode(errorNode), errorNode, chainDiagnosticMessages(diagnosticDetails, Diagnostics.The_current_file_is_a_CommonJS_module_whose_imports_will_produce_require_calls_however_the_referenced_file_is_an_ECMAScript_module_and_cannot_be_imported_with_require_Consider_writing_a_dynamic_import_0_call_instead, moduleReference)));
+								}
 							}
 						}
 						return getMergedSymbol(sourceFile.symbol);
@@ -56843,7 +56896,6 @@ ${lanes.join("\n")}
 								if (memberSymbol.flags & 788968) (table || (table = createSymbolTable())).set(key, memberSymbol);
 							});
 							if (table && (result = callback(table, void 0, false, location))) return result;
-							break;
 					}
 				}
 				return callback(globals, void 0, true);
@@ -57803,13 +57855,17 @@ ${lanes.join("\n")}
 					const propertyType = shouldUsePlaceholderForProperty(propertySymbol, context) ? anyType : getNonMissingTypeOfSymbol(propertySymbol);
 					const saveEnclosingDeclaration = context.enclosingDeclaration;
 					context.enclosingDeclaration = void 0;
-					if (context.tracker.canTrackSymbol && isLateBoundName(propertySymbol.escapedName)) if (propertySymbol.declarations) {
-						const decl = first(propertySymbol.declarations);
-						if (hasLateBindableName(decl)) if (isBinaryExpression(decl)) {
-							const name = getNameOfDeclaration(decl);
-							if (name && isElementAccessExpression(name) && isPropertyAccessEntityNameExpression(name.argumentExpression)) trackComputedName(name.argumentExpression, saveEnclosingDeclaration, context);
-						} else trackComputedName(decl.name.expression, saveEnclosingDeclaration, context);
-					} else context.tracker.reportNonSerializableProperty(symbolToString(propertySymbol));
+					if (context.tracker.canTrackSymbol && isLateBoundName(propertySymbol.escapedName)) {
+						if (propertySymbol.declarations) {
+							const decl = first(propertySymbol.declarations);
+							if (hasLateBindableName(decl)) {
+								if (isBinaryExpression(decl)) {
+									const name = getNameOfDeclaration(decl);
+									if (name && isElementAccessExpression(name) && isPropertyAccessEntityNameExpression(name.argumentExpression)) trackComputedName(name.argumentExpression, saveEnclosingDeclaration, context);
+								} else trackComputedName(decl.name.expression, saveEnclosingDeclaration, context);
+							}
+						} else context.tracker.reportNonSerializableProperty(symbolToString(propertySymbol));
+					}
 					context.enclosingDeclaration = propertySymbol.valueDeclaration || ((_a = propertySymbol.declarations) == null ? void 0 : _a[0]) || saveEnclosingDeclaration;
 					const propertyName = getPropertyNameNodeForSymbol(propertySymbol, context);
 					context.enclosingDeclaration = saveEnclosingDeclaration;
@@ -58786,10 +58842,12 @@ ${lanes.join("\n")}
 						}));
 						if (isTypeReferenceNode(node) && isIdentifier(node.typeName) && node.typeName.escapedText === "") return setOriginalNode(factory.createKeywordTypeNode(133), node);
 						if ((isExpressionWithTypeArguments(node) || isTypeReferenceNode(node)) && isJSDocIndexSignature(node)) return factory.createTypeLiteralNode([factory.createIndexSignature(void 0, [factory.createParameterDeclaration(void 0, void 0, "x", void 0, visitNode(node.typeArguments[0], visitExistingNodeTreeSymbols, isTypeNode))], visitNode(node.typeArguments[1], visitExistingNodeTreeSymbols, isTypeNode))]);
-						if (isJSDocFunctionType(node)) if (isJSDocConstructSignature(node)) {
-							let newTypeNode;
-							return factory.createConstructorTypeNode(void 0, visitNodes2(node.typeParameters, visitExistingNodeTreeSymbols, isTypeParameterDeclaration), mapDefined(node.parameters, (p, i) => p.name && isIdentifier(p.name) && p.name.escapedText === "new" ? (newTypeNode = p.type, void 0) : factory.createParameterDeclaration(void 0, getEffectiveDotDotDotForParameter(p), setTextRange2(context, factory.createIdentifier(getNameForJSDocFunctionParameter(p, i)), p), factory.cloneNode(p.questionToken), visitNode(p.type, visitExistingNodeTreeSymbols, isTypeNode), void 0)), visitNode(newTypeNode || node.type, visitExistingNodeTreeSymbols, isTypeNode) || factory.createKeywordTypeNode(133));
-						} else return factory.createFunctionTypeNode(visitNodes2(node.typeParameters, visitExistingNodeTreeSymbols, isTypeParameterDeclaration), map(node.parameters, (p, i) => factory.createParameterDeclaration(void 0, getEffectiveDotDotDotForParameter(p), setTextRange2(context, factory.createIdentifier(getNameForJSDocFunctionParameter(p, i)), p), factory.cloneNode(p.questionToken), visitNode(p.type, visitExistingNodeTreeSymbols, isTypeNode), void 0)), visitNode(node.type, visitExistingNodeTreeSymbols, isTypeNode) || factory.createKeywordTypeNode(133));
+						if (isJSDocFunctionType(node)) {
+							if (isJSDocConstructSignature(node)) {
+								let newTypeNode;
+								return factory.createConstructorTypeNode(void 0, visitNodes2(node.typeParameters, visitExistingNodeTreeSymbols, isTypeParameterDeclaration), mapDefined(node.parameters, (p, i) => p.name && isIdentifier(p.name) && p.name.escapedText === "new" ? (newTypeNode = p.type, void 0) : factory.createParameterDeclaration(void 0, getEffectiveDotDotDotForParameter(p), setTextRange2(context, factory.createIdentifier(getNameForJSDocFunctionParameter(p, i)), p), factory.cloneNode(p.questionToken), visitNode(p.type, visitExistingNodeTreeSymbols, isTypeNode), void 0)), visitNode(newTypeNode || node.type, visitExistingNodeTreeSymbols, isTypeNode) || factory.createKeywordTypeNode(133));
+							} else return factory.createFunctionTypeNode(visitNodes2(node.typeParameters, visitExistingNodeTreeSymbols, isTypeParameterDeclaration), map(node.parameters, (p, i) => factory.createParameterDeclaration(void 0, getEffectiveDotDotDotForParameter(p), setTextRange2(context, factory.createIdentifier(getNameForJSDocFunctionParameter(p, i)), p), factory.cloneNode(p.questionToken), visitNode(p.type, visitExistingNodeTreeSymbols, isTypeNode), void 0)), visitNode(node.type, visitExistingNodeTreeSymbols, isTypeNode) || factory.createKeywordTypeNode(133));
+						}
 						if (isThisTypeNode(node)) {
 							if (canReuseTypeNode(context, node)) return node;
 							hadError = true;
@@ -59104,43 +59162,47 @@ ${lanes.join("\n")}
 						const isConstMergedWithNSPrintableAsSignatureMerge = isConstMergedWithNS && isTypeRepresentableAsFunctionNamespaceMerge(getTypeOfSymbol(symbol), symbol);
 						if (symbol.flags & 8208 || isConstMergedWithNSPrintableAsSignatureMerge) serializeAsFunctionNamespaceMerge(getTypeOfSymbol(symbol), symbol, getInternalSymbolName(symbol, symbolName2), modifierFlags);
 						if (symbol.flags & 524288) serializeTypeAlias(symbol, symbolName2, modifierFlags);
-						if (symbol.flags & 98311 && escapedSymbolName !== "export=" && !(symbol.flags & 4194304) && !(symbol.flags & 32) && !(symbol.flags & 8192) && !isConstMergedWithNSPrintableAsSignatureMerge) if (propertyAsAlias) {
-							if (serializeMaybeAliasAssignment(symbol)) {
-								needsExportDeclaration = false;
-								needsPostExportDefault = false;
-							}
-						} else {
-							const type = getTypeOfSymbol(symbol);
-							const localName = getInternalSymbolName(symbol, symbolName2);
-							if (type.symbol && type.symbol !== symbol && type.symbol.flags & 16 && some(type.symbol.declarations, isFunctionExpressionOrArrowFunction) && (((_a2 = type.symbol.members) == null ? void 0 : _a2.size) || ((_b = type.symbol.exports) == null ? void 0 : _b.size))) {
-								if (!context.remappedSymbolReferences) context.remappedSymbolReferences = /* @__PURE__ */ new Map();
-								context.remappedSymbolReferences.set(getSymbolId(type.symbol), symbol);
-								serializeSymbolWorker(type.symbol, isPrivate, propertyAsAlias, escapedSymbolName);
-								context.remappedSymbolReferences.delete(getSymbolId(type.symbol));
-							} else if (!(symbol.flags & 16) && isTypeRepresentableAsFunctionNamespaceMerge(type, symbol)) serializeAsFunctionNamespaceMerge(type, symbol, localName, modifierFlags);
-							else {
-								const flags = !(symbol.flags & 2) ? ((_c = symbol.parent) == null ? void 0 : _c.valueDeclaration) && isSourceFile((_d = symbol.parent) == null ? void 0 : _d.valueDeclaration) ? 2 : void 0 : isConstantVariable(symbol) ? 2 : 1;
-								const name = needsPostExportDefault || !(symbol.flags & 4) ? localName : getUnusedName(localName, symbol);
-								let textRange = symbol.declarations && find(symbol.declarations, (d) => isVariableDeclaration(d));
-								if (textRange && isVariableDeclarationList(textRange.parent) && textRange.parent.declarations.length === 1) textRange = textRange.parent.parent;
-								const propertyAccessRequire = (_e = symbol.declarations) == null ? void 0 : _e.find(isPropertyAccessExpression);
-								if (propertyAccessRequire && isBinaryExpression(propertyAccessRequire.parent) && isIdentifier(propertyAccessRequire.parent.right) && ((_f = type.symbol) == null ? void 0 : _f.valueDeclaration) && isSourceFile(type.symbol.valueDeclaration)) {
-									const alias = localName === propertyAccessRequire.parent.right.escapedText ? void 0 : propertyAccessRequire.parent.right;
-									addResult(factory.createExportDeclaration(void 0, false, factory.createNamedExports([factory.createExportSpecifier(false, alias, localName)])), 0);
-									context.tracker.trackSymbol(type.symbol, context.enclosingDeclaration, 111551);
-								} else {
-									addResult(setTextRange2(context, factory.createVariableStatement(void 0, factory.createVariableDeclarationList([factory.createVariableDeclaration(name, void 0, serializeTypeForDeclaration(context, void 0, type, symbol))], flags)), textRange), name !== localName ? modifierFlags & -33 : modifierFlags);
-									if (name !== localName && !isPrivate) {
-										addResult(factory.createExportDeclaration(void 0, false, factory.createNamedExports([factory.createExportSpecifier(false, name, localName)])), 0);
-										needsExportDeclaration = false;
-										needsPostExportDefault = false;
+						if (symbol.flags & 98311 && escapedSymbolName !== "export=" && !(symbol.flags & 4194304) && !(symbol.flags & 32) && !(symbol.flags & 8192) && !isConstMergedWithNSPrintableAsSignatureMerge) {
+							if (propertyAsAlias) {
+								if (serializeMaybeAliasAssignment(symbol)) {
+									needsExportDeclaration = false;
+									needsPostExportDefault = false;
+								}
+							} else {
+								const type = getTypeOfSymbol(symbol);
+								const localName = getInternalSymbolName(symbol, symbolName2);
+								if (type.symbol && type.symbol !== symbol && type.symbol.flags & 16 && some(type.symbol.declarations, isFunctionExpressionOrArrowFunction) && (((_a2 = type.symbol.members) == null ? void 0 : _a2.size) || ((_b = type.symbol.exports) == null ? void 0 : _b.size))) {
+									if (!context.remappedSymbolReferences) context.remappedSymbolReferences = /* @__PURE__ */ new Map();
+									context.remappedSymbolReferences.set(getSymbolId(type.symbol), symbol);
+									serializeSymbolWorker(type.symbol, isPrivate, propertyAsAlias, escapedSymbolName);
+									context.remappedSymbolReferences.delete(getSymbolId(type.symbol));
+								} else if (!(symbol.flags & 16) && isTypeRepresentableAsFunctionNamespaceMerge(type, symbol)) serializeAsFunctionNamespaceMerge(type, symbol, localName, modifierFlags);
+								else {
+									const flags = !(symbol.flags & 2) ? ((_c = symbol.parent) == null ? void 0 : _c.valueDeclaration) && isSourceFile((_d = symbol.parent) == null ? void 0 : _d.valueDeclaration) ? 2 : void 0 : isConstantVariable(symbol) ? 2 : 1;
+									const name = needsPostExportDefault || !(symbol.flags & 4) ? localName : getUnusedName(localName, symbol);
+									let textRange = symbol.declarations && find(symbol.declarations, (d) => isVariableDeclaration(d));
+									if (textRange && isVariableDeclarationList(textRange.parent) && textRange.parent.declarations.length === 1) textRange = textRange.parent.parent;
+									const propertyAccessRequire = (_e = symbol.declarations) == null ? void 0 : _e.find(isPropertyAccessExpression);
+									if (propertyAccessRequire && isBinaryExpression(propertyAccessRequire.parent) && isIdentifier(propertyAccessRequire.parent.right) && ((_f = type.symbol) == null ? void 0 : _f.valueDeclaration) && isSourceFile(type.symbol.valueDeclaration)) {
+										const alias = localName === propertyAccessRequire.parent.right.escapedText ? void 0 : propertyAccessRequire.parent.right;
+										addResult(factory.createExportDeclaration(void 0, false, factory.createNamedExports([factory.createExportSpecifier(false, alias, localName)])), 0);
+										context.tracker.trackSymbol(type.symbol, context.enclosingDeclaration, 111551);
+									} else {
+										addResult(setTextRange2(context, factory.createVariableStatement(void 0, factory.createVariableDeclarationList([factory.createVariableDeclaration(name, void 0, serializeTypeForDeclaration(context, void 0, type, symbol))], flags)), textRange), name !== localName ? modifierFlags & -33 : modifierFlags);
+										if (name !== localName && !isPrivate) {
+											addResult(factory.createExportDeclaration(void 0, false, factory.createNamedExports([factory.createExportSpecifier(false, name, localName)])), 0);
+											needsExportDeclaration = false;
+											needsPostExportDefault = false;
+										}
 									}
 								}
 							}
 						}
 						if (symbol.flags & 384) serializeEnum(symbol, symbolName2, modifierFlags);
-						if (symbol.flags & 32) if (symbol.flags & 4 && symbol.valueDeclaration && isBinaryExpression(symbol.valueDeclaration.parent) && isClassExpression(symbol.valueDeclaration.parent.right)) serializeAsAlias(symbol, getInternalSymbolName(symbol, symbolName2), modifierFlags);
-						else serializeAsClass(symbol, getInternalSymbolName(symbol, symbolName2), modifierFlags);
+						if (symbol.flags & 32) {
+							if (symbol.flags & 4 && symbol.valueDeclaration && isBinaryExpression(symbol.valueDeclaration.parent) && isClassExpression(symbol.valueDeclaration.parent.right)) serializeAsAlias(symbol, getInternalSymbolName(symbol, symbolName2), modifierFlags);
+							else serializeAsClass(symbol, getInternalSymbolName(symbol, symbolName2), modifierFlags);
+						}
 						if (symbol.flags & 1536 && (!isConstMergedWithNS || isTypeOnlyNamespace(symbol)) || isConstMergedWithNSPrintableAsSignatureMerge) serializeModule(symbol, symbolName2, modifierFlags);
 						if (symbol.flags & 64 && !(symbol.flags & 32)) serializeInterface(symbol, symbolName2, modifierFlags);
 						if (symbol.flags & 2097152) serializeAsAlias(symbol, getInternalSymbolName(symbol, symbolName2), modifierFlags);
@@ -60008,21 +60070,22 @@ ${lanes.join("\n")}
 				else if (strictNullChecks && pattern.parent.initializer && !hasTypeFacts(getTypeOfInitializer(pattern.parent.initializer), 65536)) parentType = getTypeWithFacts(parentType, 524288);
 				const accessFlags = 32 | (noTupleBoundsCheck || hasDefaultValue(declaration) ? 16 : 0);
 				let type;
-				if (pattern.kind === 206) if (declaration.dotDotDotToken) {
-					parentType = getReducedType(parentType);
-					if (parentType.flags & 2 || !isValidSpreadType(parentType)) {
-						error2(declaration, Diagnostics.Rest_types_may_only_be_created_from_object_types);
-						return errorType;
+				if (pattern.kind === 206) {
+					if (declaration.dotDotDotToken) {
+						parentType = getReducedType(parentType);
+						if (parentType.flags & 2 || !isValidSpreadType(parentType)) {
+							error2(declaration, Diagnostics.Rest_types_may_only_be_created_from_object_types);
+							return errorType;
+						}
+						const literalMembers = [];
+						for (const element of pattern.elements) if (!element.dotDotDotToken) literalMembers.push(element.propertyName || element.name);
+						type = getRestType(parentType, literalMembers, declaration.symbol);
+					} else {
+						const name = declaration.propertyName || declaration.name;
+						const indexType = getLiteralTypeFromPropertyName(name);
+						type = getFlowTypeOfDestructuring(declaration, getIndexedAccessType(parentType, indexType, accessFlags, name));
 					}
-					const literalMembers = [];
-					for (const element of pattern.elements) if (!element.dotDotDotToken) literalMembers.push(element.propertyName || element.name);
-					type = getRestType(parentType, literalMembers, declaration.symbol);
 				} else {
-					const name = declaration.propertyName || declaration.name;
-					const indexType = getLiteralTypeFromPropertyName(name);
-					type = getFlowTypeOfDestructuring(declaration, getIndexedAccessType(parentType, indexType, accessFlags, name));
-				}
-				else {
 					const elementType = checkIteratedTypeOrElementType(65 | (declaration.dotDotDotToken ? 0 : 128), parentType, undefinedType, pattern);
 					const index = pattern.elements.indexOf(declaration);
 					if (declaration.dotDotDotToken) {
@@ -60101,14 +60164,16 @@ ${lanes.join("\n")}
 					}
 					return addOptionality(widenTypeInferredFromInitializer(declaration, checkDeclarationInitializer(declaration, checkMode)), isProperty, isOptional);
 				}
-				if (isPropertyDeclaration(declaration) && (noImplicitAny || isInJSFile(declaration))) if (!hasStaticModifier(declaration)) {
-					const constructor = findConstructorDeclaration(declaration.parent);
-					const type = constructor ? getFlowTypeInConstructor(declaration.symbol, constructor) : getEffectiveModifierFlags(declaration) & 128 ? getTypeOfPropertyInBaseClass(declaration.symbol) : void 0;
-					return type && addOptionality(type, true, isOptional);
-				} else {
-					const staticBlocks = filter(declaration.parent.members, isClassStaticBlockDeclaration);
-					const type = staticBlocks.length ? getFlowTypeInStaticBlocks(declaration.symbol, staticBlocks) : getEffectiveModifierFlags(declaration) & 128 ? getTypeOfPropertyInBaseClass(declaration.symbol) : void 0;
-					return type && addOptionality(type, true, isOptional);
+				if (isPropertyDeclaration(declaration) && (noImplicitAny || isInJSFile(declaration))) {
+					if (!hasStaticModifier(declaration)) {
+						const constructor = findConstructorDeclaration(declaration.parent);
+						const type = constructor ? getFlowTypeInConstructor(declaration.symbol, constructor) : getEffectiveModifierFlags(declaration) & 128 ? getTypeOfPropertyInBaseClass(declaration.symbol) : void 0;
+						return type && addOptionality(type, true, isOptional);
+					} else {
+						const staticBlocks = filter(declaration.parent.members, isClassStaticBlockDeclaration);
+						const type = staticBlocks.length ? getFlowTypeInStaticBlocks(declaration.symbol, staticBlocks) : getEffectiveModifierFlags(declaration) & 128 ? getTypeOfPropertyInBaseClass(declaration.symbol) : void 0;
+						return type && addOptionality(type, true, isOptional);
+					}
 				}
 				if (isJsxAttribute(declaration)) return trueType;
 				if (isBindingPattern(declaration.name)) return getTypeFromBindingPattern(declaration.name, false, true);
@@ -60191,8 +60256,10 @@ ${lanes.join("\n")}
 							const expression = isBinaryExpression(declaration) || isCallExpression(declaration) ? declaration : isAccessExpression(declaration) ? isBinaryExpression(declaration.parent) ? declaration.parent : declaration : void 0;
 							if (!expression) continue;
 							const kind = isAccessExpression(expression) ? getAssignmentDeclarationPropertyAccessKind(expression) : getAssignmentDeclarationKind(expression);
-							if (kind === 4 || isBinaryExpression(expression) && isPossiblyAliasedThisProperty(expression, kind)) if (isDeclarationInConstructor(expression)) definedInConstructor = true;
-							else definedInMethod = true;
+							if (kind === 4 || isBinaryExpression(expression) && isPossiblyAliasedThisProperty(expression, kind)) {
+								if (isDeclarationInConstructor(expression)) definedInConstructor = true;
+								else definedInMethod = true;
+							}
 							if (!isCallExpression(expression)) jsdocType = getAnnotatedTypeForAssignmentDeclaration(jsdocType, expression, symbol, declaration);
 							if (!jsdocType) (types || (types = [])).push(isBinaryExpression(expression) || isCallExpression(expression) ? getInitializerTypeFromAssignmentDeclaration(symbol, resolvedSymbol, expression, kind) : neverType);
 						}
@@ -60283,20 +60350,21 @@ ${lanes.join("\n")}
 					(resolvedSymbol || symbol).exports.forEach((s, name) => {
 						var _a;
 						const exportedMember = members.get(name);
-						if (exportedMember && exportedMember !== s && !(s.flags & 2097152)) if (s.flags & 111551 && exportedMember.flags & 111551) {
-							if (s.valueDeclaration && exportedMember.valueDeclaration && getSourceFileOfNode(s.valueDeclaration) !== getSourceFileOfNode(exportedMember.valueDeclaration)) {
-								const unescapedName = unescapeLeadingUnderscores(s.escapedName);
-								const exportedMemberName = ((_a = tryCast(exportedMember.valueDeclaration, isNamedDeclaration)) == null ? void 0 : _a.name) || exportedMember.valueDeclaration;
-								addRelatedInfo(error2(s.valueDeclaration, Diagnostics.Duplicate_identifier_0, unescapedName), createDiagnosticForNode(exportedMemberName, Diagnostics._0_was_also_declared_here, unescapedName));
-								addRelatedInfo(error2(exportedMemberName, Diagnostics.Duplicate_identifier_0, unescapedName), createDiagnosticForNode(s.valueDeclaration, Diagnostics._0_was_also_declared_here, unescapedName));
-							}
-							const union = createSymbol(s.flags | exportedMember.flags, name);
-							union.links.type = getUnionType([getTypeOfSymbol(s), getTypeOfSymbol(exportedMember)]);
-							union.valueDeclaration = exportedMember.valueDeclaration;
-							union.declarations = concatenate(exportedMember.declarations, s.declarations);
-							members.set(name, union);
-						} else members.set(name, mergeSymbol(s, exportedMember));
-						else members.set(name, s);
+						if (exportedMember && exportedMember !== s && !(s.flags & 2097152)) {
+							if (s.flags & 111551 && exportedMember.flags & 111551) {
+								if (s.valueDeclaration && exportedMember.valueDeclaration && getSourceFileOfNode(s.valueDeclaration) !== getSourceFileOfNode(exportedMember.valueDeclaration)) {
+									const unescapedName = unescapeLeadingUnderscores(s.escapedName);
+									const exportedMemberName = ((_a = tryCast(exportedMember.valueDeclaration, isNamedDeclaration)) == null ? void 0 : _a.name) || exportedMember.valueDeclaration;
+									addRelatedInfo(error2(s.valueDeclaration, Diagnostics.Duplicate_identifier_0, unescapedName), createDiagnosticForNode(exportedMemberName, Diagnostics._0_was_also_declared_here, unescapedName));
+									addRelatedInfo(error2(exportedMemberName, Diagnostics.Duplicate_identifier_0, unescapedName), createDiagnosticForNode(s.valueDeclaration, Diagnostics._0_was_also_declared_here, unescapedName));
+								}
+								const union = createSymbol(s.flags | exportedMember.flags, name);
+								union.links.type = getUnionType([getTypeOfSymbol(s), getTypeOfSymbol(exportedMember)]);
+								union.valueDeclaration = exportedMember.valueDeclaration;
+								union.declarations = concatenate(exportedMember.declarations, s.declarations);
+								members.set(name, union);
+							} else members.set(name, mergeSymbol(s, exportedMember));
+						} else members.set(name, s);
 					});
 					const result = createAnonymousType(initialSize !== members.size ? void 0 : exportedType.symbol, members, exportedType.callSignatures, exportedType.constructSignatures, exportedType.indexInfos);
 					if (initialSize === members.size) {
@@ -60855,8 +60923,10 @@ ${lanes.join("\n")}
 					if (!implementsTypeNodes) continue;
 					for (const node of implementsTypeNodes) {
 						const implementsType = getTypeFromTypeNode(node);
-						if (!isErrorType(implementsType)) if (resolvedImplementsTypes === emptyArray) resolvedImplementsTypes = [implementsType];
-						else resolvedImplementsTypes.push(implementsType);
+						if (!isErrorType(implementsType)) {
+							if (resolvedImplementsTypes === emptyArray) resolvedImplementsTypes = [implementsType];
+							else resolvedImplementsTypes.push(implementsType);
+						}
 					}
 				}
 				return resolvedImplementsTypes;
@@ -60935,10 +61005,14 @@ ${lanes.join("\n")}
 				if (type.symbol.declarations) {
 					for (const declaration of type.symbol.declarations) if (declaration.kind === 264 && getInterfaceBaseTypeNodes(declaration)) for (const node of getInterfaceBaseTypeNodes(declaration)) {
 						const baseType = getReducedType(getTypeFromTypeNode(node));
-						if (!isErrorType(baseType)) if (isValidBaseType(baseType)) if (type !== baseType && !hasBaseType(baseType, type)) if (type.resolvedBaseTypes === emptyArray) type.resolvedBaseTypes = [baseType];
-						else type.resolvedBaseTypes.push(baseType);
-						else reportCircularBaseType(declaration, type);
-						else error2(node, Diagnostics.An_interface_can_only_extend_an_object_type_or_intersection_of_object_types_with_statically_known_members);
+						if (!isErrorType(baseType)) {
+							if (isValidBaseType(baseType)) {
+								if (type !== baseType && !hasBaseType(baseType, type)) {
+									if (type.resolvedBaseTypes === emptyArray) type.resolvedBaseTypes = [baseType];
+									else type.resolvedBaseTypes.push(baseType);
+								} else reportCircularBaseType(declaration, type);
+							} else error2(node, Diagnostics.An_interface_can_only_extend_an_object_type_or_intersection_of_object_types_with_statically_known_members);
+						}
 					}
 				}
 			}
@@ -61824,11 +61898,13 @@ ${lanes.join("\n")}
 				return constraintDeclaration.kind === 198 && constraintDeclaration.operator === 143;
 			}
 			function getModifiersTypeFromMappedType(type) {
-				if (!type.modifiersType) if (isMappedTypeWithKeyofConstraintDeclaration(type)) type.modifiersType = instantiateType(getTypeFromTypeNode(getConstraintDeclarationForMappedType(type).type), type.mapper);
-				else {
-					const constraint = getConstraintTypeFromMappedType(getTypeFromMappedTypeNode(type.declaration));
-					const extendedConstraint = constraint && constraint.flags & 262144 ? getConstraintOfTypeParameter(constraint) : constraint;
-					type.modifiersType = extendedConstraint && extendedConstraint.flags & 4194304 ? instantiateType(extendedConstraint.type, type.mapper) : unknownType;
+				if (!type.modifiersType) {
+					if (isMappedTypeWithKeyofConstraintDeclaration(type)) type.modifiersType = instantiateType(getTypeFromTypeNode(getConstraintDeclarationForMappedType(type).type), type.mapper);
+					else {
+						const constraint = getConstraintTypeFromMappedType(getTypeFromMappedTypeNode(type.declaration));
+						const extendedConstraint = constraint && constraint.flags & 262144 ? getConstraintOfTypeParameter(constraint) : constraint;
+						type.modifiersType = extendedConstraint && extendedConstraint.flags & 4194304 ? instantiateType(extendedConstraint.type, type.mapper) : unknownType;
+					}
 				}
 				return type.modifiersType;
 			}
@@ -61866,15 +61942,18 @@ ${lanes.join("\n")}
 				return isTypeAssignableTo(nameType, getTypeParameterFromMappedType(type)) ? 1 : 2;
 			}
 			function resolveStructuredTypeMembers(type) {
-				if (!type.members) if (type.flags & 524288) if (type.objectFlags & 4) resolveTypeReferenceMembers(type);
-				else if (type.objectFlags & 3) resolveClassOrInterfaceMembers(type);
-				else if (type.objectFlags & 1024) resolveReverseMappedTypeMembers(type);
-				else if (type.objectFlags & 16) resolveAnonymousTypeMembers(type);
-				else if (type.objectFlags & 32) resolveMappedTypeMembers(type);
-				else Debug.fail("Unhandled object type " + Debug.formatObjectFlags(type.objectFlags));
-				else if (type.flags & 1048576) resolveUnionTypeMembers(type);
-				else if (type.flags & 2097152) resolveIntersectionTypeMembers(type);
-				else Debug.fail("Unhandled type " + Debug.formatTypeFlags(type.flags));
+				if (!type.members) {
+					if (type.flags & 524288) {
+						if (type.objectFlags & 4) resolveTypeReferenceMembers(type);
+						else if (type.objectFlags & 3) resolveClassOrInterfaceMembers(type);
+						else if (type.objectFlags & 1024) resolveReverseMappedTypeMembers(type);
+						else if (type.objectFlags & 16) resolveAnonymousTypeMembers(type);
+						else if (type.objectFlags & 32) resolveMappedTypeMembers(type);
+						else Debug.fail("Unhandled object type " + Debug.formatObjectFlags(type.objectFlags));
+					} else if (type.flags & 1048576) resolveUnionTypeMembers(type);
+					else if (type.flags & 2097152) resolveIntersectionTypeMembers(type);
+					else Debug.fail("Unhandled type " + Debug.formatTypeFlags(type.flags));
+				}
 				return type;
 			}
 			function getPropertiesOfObjectType(type) {
@@ -62106,16 +62185,17 @@ ${lanes.join("\n")}
 				return getCachedType(key) ?? setCachedType(key, getTypeWithThisArgument(type, thisArgument, true));
 			}
 			function getResolvedTypeParameterDefault(typeParameter) {
-				if (!typeParameter.default) if (typeParameter.target) {
-					const targetDefault = getResolvedTypeParameterDefault(typeParameter.target);
-					typeParameter.default = targetDefault ? instantiateType(targetDefault, typeParameter.mapper) : noConstraintType;
-				} else {
-					typeParameter.default = resolvingDefaultType;
-					const defaultDeclaration = typeParameter.symbol && forEach(typeParameter.symbol.declarations, (decl) => isTypeParameterDeclaration(decl) && decl.default);
-					const defaultType = defaultDeclaration ? getTypeFromTypeNode(defaultDeclaration) : noConstraintType;
-					if (typeParameter.default === resolvingDefaultType) typeParameter.default = defaultType;
-				}
-				else if (typeParameter.default === resolvingDefaultType) typeParameter.default = circularConstraintType;
+				if (!typeParameter.default) {
+					if (typeParameter.target) {
+						const targetDefault = getResolvedTypeParameterDefault(typeParameter.target);
+						typeParameter.default = targetDefault ? instantiateType(targetDefault, typeParameter.mapper) : noConstraintType;
+					} else {
+						typeParameter.default = resolvingDefaultType;
+						const defaultDeclaration = typeParameter.symbol && forEach(typeParameter.symbol.declarations, (decl) => isTypeParameterDeclaration(decl) && decl.default);
+						const defaultType = defaultDeclaration ? getTypeFromTypeNode(defaultDeclaration) : noConstraintType;
+						if (typeParameter.default === resolvingDefaultType) typeParameter.default = defaultType;
+					}
+				} else if (typeParameter.default === resolvingDefaultType) typeParameter.default = circularConstraintType;
 				return typeParameter.default;
 			}
 			function getDefaultFromTypeParameter(typeParameter) {
@@ -62178,14 +62258,16 @@ ${lanes.join("\n")}
 								else optionalFlag &= prop.flags;
 							}
 							if (!singleProp) singleProp = prop;
-							else if (prop !== singleProp) if ((getTargetSymbol(prop) || prop) === (getTargetSymbol(singleProp) || singleProp) && compareProperties2(singleProp, prop, (a, b) => a === b ? -1 : 0) === -1) mergedInstantiations = !!singleProp.parent && !!length(getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.parent));
-							else {
-								if (!propSet) {
-									propSet = /* @__PURE__ */ new Map();
-									propSet.set(getSymbolId(singleProp), singleProp);
+							else if (prop !== singleProp) {
+								if ((getTargetSymbol(prop) || prop) === (getTargetSymbol(singleProp) || singleProp) && compareProperties2(singleProp, prop, (a, b) => a === b ? -1 : 0) === -1) mergedInstantiations = !!singleProp.parent && !!length(getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.parent));
+								else {
+									if (!propSet) {
+										propSet = /* @__PURE__ */ new Map();
+										propSet.set(getSymbolId(singleProp), singleProp);
+									}
+									const id = getSymbolId(prop);
+									if (!propSet.has(id)) propSet.set(id, prop);
 								}
-								const id = getSymbolId(prop);
-								if (!propSet.has(id)) propSet.set(id, prop);
 							}
 							if (isUnion && isReadonlySymbol(prop)) checkFlags |= 8;
 							else if (!isUnion && !isReadonlySymbol(prop)) checkFlags &= -9;
@@ -62204,15 +62286,17 @@ ${lanes.join("\n")}
 					}
 				}
 				if (!singleProp || isUnion && (propSet || checkFlags & 48) && checkFlags & 1536 && !(propSet && getCommonDeclarationsOfSymbols(propSet.values()))) return;
-				if (!propSet && !(checkFlags & 16) && !indexTypes) if (mergedInstantiations) {
-					const links = (_a = tryCast(singleProp, isTransientSymbol)) == null ? void 0 : _a.links;
-					const clone2 = createSymbolWithType(singleProp, links == null ? void 0 : links.type);
-					clone2.parent = (_c = (_b = singleProp.valueDeclaration) == null ? void 0 : _b.symbol) == null ? void 0 : _c.parent;
-					clone2.links.containingType = containingType;
-					clone2.links.mapper = links == null ? void 0 : links.mapper;
-					clone2.links.writeType = getWriteTypeOfSymbol(singleProp);
-					return clone2;
-				} else return singleProp;
+				if (!propSet && !(checkFlags & 16) && !indexTypes) {
+					if (mergedInstantiations) {
+						const links = (_a = tryCast(singleProp, isTransientSymbol)) == null ? void 0 : _a.links;
+						const clone2 = createSymbolWithType(singleProp, links == null ? void 0 : links.type);
+						clone2.parent = (_c = (_b = singleProp.valueDeclaration) == null ? void 0 : _b.symbol) == null ? void 0 : _c.parent;
+						clone2.links.containingType = containingType;
+						clone2.links.mapper = links == null ? void 0 : links.mapper;
+						clone2.links.writeType = getWriteTypeOfSymbol(singleProp);
+						return clone2;
+					} else return singleProp;
+				}
 				const props = propSet ? arrayFrom(propSet.values()) : [singleProp];
 				let declarations;
 				let firstType;
@@ -62388,8 +62472,10 @@ ${lanes.join("\n")}
 				let applicableInfo;
 				let applicableInfos;
 				for (const info of indexInfos) if (info.keyType === stringType) stringIndexInfo = info;
-				else if (isApplicableIndexType(keyType, info.keyType)) if (!applicableInfo) applicableInfo = info;
-				else (applicableInfos || (applicableInfos = [applicableInfo])).push(info);
+				else if (isApplicableIndexType(keyType, info.keyType)) {
+					if (!applicableInfo) applicableInfo = info;
+					else (applicableInfos || (applicableInfos = [applicableInfo])).push(info);
+				}
 				return applicableInfos ? createIndexInfo(unknownType, getIntersectionType(map(applicableInfos, (info) => info.type)), reduceLeft(applicableInfos, (isReadonly, info) => isReadonly && info.isReadonly, true)) : applicableInfo ? applicableInfo : stringIndexInfo && isApplicableIndexType(keyType, stringType) ? stringIndexInfo : void 0;
 			}
 			function isApplicableIndexType(source, target) {
@@ -62564,8 +62650,10 @@ ${lanes.join("\n")}
 			}
 			function containsArgumentsReference(declaration) {
 				const links = getNodeLinks(declaration);
-				if (links.containsArgumentsReference === void 0) if (links.flags & 512) links.containsArgumentsReference = true;
-				else links.containsArgumentsReference = traverse(declaration.body);
+				if (links.containsArgumentsReference === void 0) {
+					if (links.flags & 512) links.containsArgumentsReference = true;
+					else links.containsArgumentsReference = traverse(declaration.body);
+				}
 				return links.containsArgumentsReference;
 				function traverse(node) {
 					if (!node) return false;
@@ -62856,16 +62944,18 @@ ${lanes.join("\n")}
 				return inferences && getIntersectionType(inferences);
 			}
 			function getConstraintFromTypeParameter(typeParameter) {
-				if (!typeParameter.constraint) if (typeParameter.target) {
-					const targetConstraint = getConstraintOfTypeParameter(typeParameter.target);
-					typeParameter.constraint = targetConstraint ? instantiateType(targetConstraint, typeParameter.mapper) : noConstraintType;
-				} else {
-					const constraintDeclaration = getConstraintDeclaration(typeParameter);
-					if (!constraintDeclaration) typeParameter.constraint = getInferredTypeParameterConstraint(typeParameter) || noConstraintType;
-					else {
-						let type = getTypeFromTypeNode(constraintDeclaration);
-						if (type.flags & 1 && !isErrorType(type)) type = constraintDeclaration.parent.parent.kind === 200 ? stringNumberSymbolType : unknownType;
-						typeParameter.constraint = type;
+				if (!typeParameter.constraint) {
+					if (typeParameter.target) {
+						const targetConstraint = getConstraintOfTypeParameter(typeParameter.target);
+						typeParameter.constraint = targetConstraint ? instantiateType(targetConstraint, typeParameter.mapper) : noConstraintType;
+					} else {
+						const constraintDeclaration = getConstraintDeclaration(typeParameter);
+						if (!constraintDeclaration) typeParameter.constraint = getInferredTypeParameterConstraint(typeParameter) || noConstraintType;
+						else {
+							let type = getTypeFromTypeNode(constraintDeclaration);
+							if (type.flags & 1 && !isErrorType(type)) type = constraintDeclaration.parent.parent.kind === 200 ? stringNumberSymbolType : unknownType;
+							typeParameter.constraint = type;
+						}
 					}
 				}
 				return typeParameter.constraint === noConstraintType ? void 0 : typeParameter.constraint;
@@ -63613,20 +63703,21 @@ ${lanes.join("\n")}
 				for (let i = 0; i < elementTypes.length; i++) {
 					const type = elementTypes[i];
 					const flags = target.elementFlags[i];
-					if (flags & 8) if (type.flags & 1) addElement(type, 4, (_a = target.labeledElementDeclarations) == null ? void 0 : _a[i]);
-					else if (type.flags & 58982400 || isGenericMappedType(type)) addElement(type, 8, (_b = target.labeledElementDeclarations) == null ? void 0 : _b[i]);
-					else if (isTupleType(type)) {
-						const elements = getElementTypes(type);
-						if (elements.length + expandedTypes.length >= 1e4) {
-							error2(currentNode, isPartOfTypeNode(currentNode) ? Diagnostics.Type_produces_a_tuple_type_that_is_too_large_to_represent : Diagnostics.Expression_produces_a_tuple_type_that_is_too_large_to_represent);
-							return errorType;
-						}
-						forEach(elements, (t, n) => {
-							var _a2;
-							return addElement(t, type.target.elementFlags[n], (_a2 = type.target.labeledElementDeclarations) == null ? void 0 : _a2[n]);
-						});
-					} else addElement(isArrayLikeType(type) && getIndexTypeOfType(type, numberType) || errorType, 4, (_c = target.labeledElementDeclarations) == null ? void 0 : _c[i]);
-					else addElement(type, flags, (_d = target.labeledElementDeclarations) == null ? void 0 : _d[i]);
+					if (flags & 8) {
+						if (type.flags & 1) addElement(type, 4, (_a = target.labeledElementDeclarations) == null ? void 0 : _a[i]);
+						else if (type.flags & 58982400 || isGenericMappedType(type)) addElement(type, 8, (_b = target.labeledElementDeclarations) == null ? void 0 : _b[i]);
+						else if (isTupleType(type)) {
+							const elements = getElementTypes(type);
+							if (elements.length + expandedTypes.length >= 1e4) {
+								error2(currentNode, isPartOfTypeNode(currentNode) ? Diagnostics.Type_produces_a_tuple_type_that_is_too_large_to_represent : Diagnostics.Expression_produces_a_tuple_type_that_is_too_large_to_represent);
+								return errorType;
+							}
+							forEach(elements, (t, n) => {
+								var _a2;
+								return addElement(t, type.target.elementFlags[n], (_a2 = type.target.labeledElementDeclarations) == null ? void 0 : _a2[n]);
+							});
+						} else addElement(isArrayLikeType(type) && getIndexTypeOfType(type, numberType) || errorType, 4, (_c = target.labeledElementDeclarations) == null ? void 0 : _c[i]);
+					} else addElement(type, flags, (_d = target.labeledElementDeclarations) == null ? void 0 : _d[i]);
 				}
 				for (let i = 0; i < lastRequiredIndex; i++) if (expandedFlags[i] & 2) expandedFlags[i] = 1;
 				if (firstRestIndex >= 0 && firstRestIndex < lastOptionalOrRestIndex) {
@@ -64049,23 +64140,24 @@ ${lanes.join("\n")}
 				const id = getTypeListId(typeSet) + (flags & 2 ? "*" : getAliasId(aliasSymbol, aliasTypeArguments));
 				let result = intersectionTypes.get(id);
 				if (!result) {
-					if (includes & 1048576) if (intersectUnionsOfPrimitiveTypes(typeSet)) result = getIntersectionType(typeSet, flags, aliasSymbol, aliasTypeArguments);
-					else if (every(typeSet, (t) => !!(t.flags & 1048576 && t.types[0].flags & 32768))) {
-						const containedUndefinedType = some(typeSet, containsMissingType) ? missingType : undefinedType;
-						removeFromEach(typeSet, 32768);
-						result = getUnionType([getIntersectionType(typeSet, flags), containedUndefinedType], 1, aliasSymbol, aliasTypeArguments);
-					} else if (every(typeSet, (t) => !!(t.flags & 1048576 && (t.types[0].flags & 65536 || t.types[1].flags & 65536)))) {
-						removeFromEach(typeSet, 65536);
-						result = getUnionType([getIntersectionType(typeSet, flags), nullType], 1, aliasSymbol, aliasTypeArguments);
-					} else if (typeSet.length >= 3 && types.length > 2) {
-						const middle = Math.floor(typeSet.length / 2);
-						result = getIntersectionType([getIntersectionType(typeSet.slice(0, middle), flags), getIntersectionType(typeSet.slice(middle), flags)], flags, aliasSymbol, aliasTypeArguments);
-					} else {
-						if (!checkCrossProductUnion(typeSet)) return errorType;
-						const constituents = getCrossProductIntersections(typeSet, flags);
-						result = getUnionType(constituents, 1, aliasSymbol, aliasTypeArguments, some(constituents, (t) => !!(t.flags & 2097152)) && getConstituentCountOfTypes(constituents) > getConstituentCountOfTypes(typeSet) ? createOriginUnionOrIntersectionType(2097152, typeSet) : void 0);
-					}
-					else result = createIntersectionType(typeSet, objectFlags, aliasSymbol, aliasTypeArguments);
+					if (includes & 1048576) {
+						if (intersectUnionsOfPrimitiveTypes(typeSet)) result = getIntersectionType(typeSet, flags, aliasSymbol, aliasTypeArguments);
+						else if (every(typeSet, (t) => !!(t.flags & 1048576 && t.types[0].flags & 32768))) {
+							const containedUndefinedType = some(typeSet, containsMissingType) ? missingType : undefinedType;
+							removeFromEach(typeSet, 32768);
+							result = getUnionType([getIntersectionType(typeSet, flags), containedUndefinedType], 1, aliasSymbol, aliasTypeArguments);
+						} else if (every(typeSet, (t) => !!(t.flags & 1048576 && (t.types[0].flags & 65536 || t.types[1].flags & 65536)))) {
+							removeFromEach(typeSet, 65536);
+							result = getUnionType([getIntersectionType(typeSet, flags), nullType], 1, aliasSymbol, aliasTypeArguments);
+						} else if (typeSet.length >= 3 && types.length > 2) {
+							const middle = Math.floor(typeSet.length / 2);
+							result = getIntersectionType([getIntersectionType(typeSet.slice(0, middle), flags), getIntersectionType(typeSet.slice(middle), flags)], flags, aliasSymbol, aliasTypeArguments);
+						} else {
+							if (!checkCrossProductUnion(typeSet)) return errorType;
+							const constituents = getCrossProductIntersections(typeSet, flags);
+							result = getUnionType(constituents, 1, aliasSymbol, aliasTypeArguments, some(constituents, (t) => !!(t.flags & 2097152)) && getConstituentCountOfTypes(constituents) > getConstituentCountOfTypes(typeSet) ? createOriginUnionOrIntersectionType(2097152, typeSet) : void 0);
+						}
+					} else result = createIntersectionType(typeSet, objectFlags, aliasSymbol, aliasTypeArguments);
 					intersectionTypes.set(id, result);
 				}
 				return result;
@@ -64375,8 +64467,10 @@ ${lanes.join("\n")}
 					const indexInfo = getApplicableIndexInfo(objectType, indexType) || getIndexInfoOfType(objectType, stringType);
 					if (indexInfo) {
 						if (accessFlags & 2 && indexInfo.keyType !== numberType) {
-							if (accessExpression) if (accessFlags & 4) error2(accessExpression, Diagnostics.Type_0_is_generic_and_can_only_be_indexed_for_reading, typeToString(originalObjectType));
-							else error2(accessExpression, Diagnostics.Type_0_cannot_be_used_to_index_type_1, typeToString(indexType), typeToString(originalObjectType));
+							if (accessExpression) {
+								if (accessFlags & 4) error2(accessExpression, Diagnostics.Type_0_is_generic_and_can_only_be_indexed_for_reading, typeToString(originalObjectType));
+								else error2(accessExpression, Diagnostics.Type_0_cannot_be_used_to_index_type_1, typeToString(indexType), typeToString(originalObjectType));
+							}
 							return;
 						}
 						if (accessNode && indexInfo.keyType === stringType && !isTypeAssignableToKind(indexType, 12)) {
@@ -64399,28 +64493,30 @@ ${lanes.join("\n")}
 							}), undefinedType));
 						}
 						if (objectType.symbol === globalThisSymbol && propName !== void 0 && globalThisSymbol.exports.has(propName) && globalThisSymbol.exports.get(propName).flags & 418) error2(accessExpression, Diagnostics.Property_0_does_not_exist_on_type_1, unescapeLeadingUnderscores(propName), typeToString(objectType));
-						else if (noImplicitAny && !(accessFlags & 128)) if (propName !== void 0 && typeHasStaticProperty(propName, objectType)) {
-							const typeName = typeToString(objectType);
-							error2(accessExpression, Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_to_access_the_static_member_2_instead, propName, typeName, typeName + "[" + getTextOfNode(accessExpression.argumentExpression) + "]");
-						} else if (getIndexTypeOfType(objectType, numberType)) error2(accessExpression.argumentExpression, Diagnostics.Element_implicitly_has_an_any_type_because_index_expression_is_not_of_type_number);
-						else {
-							let suggestion;
-							if (propName !== void 0 && (suggestion = getSuggestionForNonexistentProperty(propName, objectType))) {
-								if (suggestion !== void 0) error2(accessExpression.argumentExpression, Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, typeToString(objectType), suggestion);
-							} else {
-								const suggestion2 = getSuggestionForNonexistentIndexSignature(objectType, accessExpression, indexType);
-								if (suggestion2 !== void 0) error2(accessExpression, Diagnostics.Element_implicitly_has_an_any_type_because_type_0_has_no_index_signature_Did_you_mean_to_call_1, typeToString(objectType), suggestion2);
-								else {
-									let errorInfo;
-									if (indexType.flags & 1024) errorInfo = chainDiagnosticMessages(void 0, Diagnostics.Property_0_does_not_exist_on_type_1, "[" + typeToString(indexType) + "]", typeToString(objectType));
-									else if (indexType.flags & 8192) {
-										const symbolName2 = getFullyQualifiedName(indexType.symbol, accessExpression);
-										errorInfo = chainDiagnosticMessages(void 0, Diagnostics.Property_0_does_not_exist_on_type_1, "[" + symbolName2 + "]", typeToString(objectType));
-									} else if (indexType.flags & 128) errorInfo = chainDiagnosticMessages(void 0, Diagnostics.Property_0_does_not_exist_on_type_1, indexType.value, typeToString(objectType));
-									else if (indexType.flags & 256) errorInfo = chainDiagnosticMessages(void 0, Diagnostics.Property_0_does_not_exist_on_type_1, indexType.value, typeToString(objectType));
-									else if (indexType.flags & 12) errorInfo = chainDiagnosticMessages(void 0, Diagnostics.No_index_signature_with_a_parameter_of_type_0_was_found_on_type_1, typeToString(indexType), typeToString(objectType));
-									errorInfo = chainDiagnosticMessages(errorInfo, Diagnostics.Element_implicitly_has_an_any_type_because_expression_of_type_0_can_t_be_used_to_index_type_1, typeToString(fullIndexType), typeToString(objectType));
-									diagnostics.add(createDiagnosticForNodeFromMessageChain(getSourceFileOfNode(accessExpression), accessExpression, errorInfo));
+						else if (noImplicitAny && !(accessFlags & 128)) {
+							if (propName !== void 0 && typeHasStaticProperty(propName, objectType)) {
+								const typeName = typeToString(objectType);
+								error2(accessExpression, Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_to_access_the_static_member_2_instead, propName, typeName, typeName + "[" + getTextOfNode(accessExpression.argumentExpression) + "]");
+							} else if (getIndexTypeOfType(objectType, numberType)) error2(accessExpression.argumentExpression, Diagnostics.Element_implicitly_has_an_any_type_because_index_expression_is_not_of_type_number);
+							else {
+								let suggestion;
+								if (propName !== void 0 && (suggestion = getSuggestionForNonexistentProperty(propName, objectType))) {
+									if (suggestion !== void 0) error2(accessExpression.argumentExpression, Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, typeToString(objectType), suggestion);
+								} else {
+									const suggestion2 = getSuggestionForNonexistentIndexSignature(objectType, accessExpression, indexType);
+									if (suggestion2 !== void 0) error2(accessExpression, Diagnostics.Element_implicitly_has_an_any_type_because_type_0_has_no_index_signature_Did_you_mean_to_call_1, typeToString(objectType), suggestion2);
+									else {
+										let errorInfo;
+										if (indexType.flags & 1024) errorInfo = chainDiagnosticMessages(void 0, Diagnostics.Property_0_does_not_exist_on_type_1, "[" + typeToString(indexType) + "]", typeToString(objectType));
+										else if (indexType.flags & 8192) {
+											const symbolName2 = getFullyQualifiedName(indexType.symbol, accessExpression);
+											errorInfo = chainDiagnosticMessages(void 0, Diagnostics.Property_0_does_not_exist_on_type_1, "[" + symbolName2 + "]", typeToString(objectType));
+										} else if (indexType.flags & 128) errorInfo = chainDiagnosticMessages(void 0, Diagnostics.Property_0_does_not_exist_on_type_1, indexType.value, typeToString(objectType));
+										else if (indexType.flags & 256) errorInfo = chainDiagnosticMessages(void 0, Diagnostics.Property_0_does_not_exist_on_type_1, indexType.value, typeToString(objectType));
+										else if (indexType.flags & 12) errorInfo = chainDiagnosticMessages(void 0, Diagnostics.No_index_signature_with_a_parameter_of_type_0_was_found_on_type_1, typeToString(indexType), typeToString(objectType));
+										errorInfo = chainDiagnosticMessages(errorInfo, Diagnostics.Element_implicitly_has_an_any_type_because_expression_of_type_0_can_t_be_used_to_index_type_1, typeToString(fullIndexType), typeToString(objectType));
+										diagnostics.add(createDiagnosticForNodeFromMessageChain(getSourceFileOfNode(accessExpression), accessExpression, errorInfo));
+									}
 								}
 							}
 						}
@@ -65269,8 +65365,10 @@ ${lanes.join("\n")}
 						const resultObjectFlags = getObjectFlags(result);
 						if (result.flags & 3899393 && !(resultObjectFlags & 524288)) {
 							const resultCouldContainTypeVariables = some(typeArguments, couldContainTypeVariables);
-							if (!(getObjectFlags(result) & 524288)) if (resultObjectFlags & 52) result.objectFlags |= 524288 | (resultCouldContainTypeVariables ? 1048576 : 0);
-							else result.objectFlags |= !resultCouldContainTypeVariables ? 524288 : 0;
+							if (!(getObjectFlags(result) & 524288)) {
+								if (resultObjectFlags & 52) result.objectFlags |= 524288 | (resultCouldContainTypeVariables ? 1048576 : 0);
+								else result.objectFlags |= !resultCouldContainTypeVariables ? 524288 : 0;
+							}
 						}
 					}
 					return result;
@@ -66351,20 +66449,21 @@ ${lanes.join("\n")}
 							reportError(Diagnostics._0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1, targetType, generalizedSourceType);
 						}
 					}
-					if (!message) if (relation === comparableRelation) message = Diagnostics.Type_0_is_not_comparable_to_type_1;
-					else if (sourceType === targetType) message = Diagnostics.Type_0_is_not_assignable_to_type_1_Two_different_types_with_this_name_exist_but_they_are_unrelated;
-					else if (exactOptionalPropertyTypes && getExactOptionalUnassignableProperties(source2, target2).length) message = Diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties;
-					else {
-						if (source2.flags & 128 && target2.flags & 1048576) {
-							const suggestedType = getSuggestedTypeForNonexistentStringLiteralType(source2, target2);
-							if (suggestedType) {
-								reportError(Diagnostics.Type_0_is_not_assignable_to_type_1_Did_you_mean_2, generalizedSourceType, targetType, typeToString(suggestedType));
-								return;
+					if (!message) {
+						if (relation === comparableRelation) message = Diagnostics.Type_0_is_not_comparable_to_type_1;
+						else if (sourceType === targetType) message = Diagnostics.Type_0_is_not_assignable_to_type_1_Two_different_types_with_this_name_exist_but_they_are_unrelated;
+						else if (exactOptionalPropertyTypes && getExactOptionalUnassignableProperties(source2, target2).length) message = Diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties;
+						else {
+							if (source2.flags & 128 && target2.flags & 1048576) {
+								const suggestedType = getSuggestedTypeForNonexistentStringLiteralType(source2, target2);
+								if (suggestedType) {
+									reportError(Diagnostics.Type_0_is_not_assignable_to_type_1_Did_you_mean_2, generalizedSourceType, targetType, typeToString(suggestedType));
+									return;
+								}
 							}
+							message = Diagnostics.Type_0_is_not_assignable_to_type_1;
 						}
-						message = Diagnostics.Type_0_is_not_assignable_to_type_1;
-					}
-					else if (message === Diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1 && exactOptionalPropertyTypes && getExactOptionalUnassignableProperties(source2, target2).length) message = Diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties;
+					} else if (message === Diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1 && exactOptionalPropertyTypes && getExactOptionalUnassignableProperties(source2, target2).length) message = Diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties;
 					reportError(message, generalizedSourceType, targetType);
 				}
 				function tryElaborateErrorsForPrimitivesAndObjects(source2, target2) {
@@ -66695,17 +66794,19 @@ ${lanes.join("\n")}
 					if (overflow) return 0;
 					const id = getRelationKey(source2, target2, intersectionState, relation, false);
 					const entry = relation.get(id);
-					if (entry !== void 0) if (reportErrors2 && entry & 2 && !(entry & 96)) {} else {
-						if (outofbandVarianceMarkerHandler) {
-							const saved = entry & 24;
-							if (saved & 8) instantiateType(source2, reportUnmeasurableMapper);
-							if (saved & 16) instantiateType(source2, reportUnreliableMapper);
+					if (entry !== void 0) {
+						if (reportErrors2 && entry & 2 && !(entry & 96)) {} else {
+							if (outofbandVarianceMarkerHandler) {
+								const saved = entry & 24;
+								if (saved & 8) instantiateType(source2, reportUnmeasurableMapper);
+								if (saved & 16) instantiateType(source2, reportUnreliableMapper);
+							}
+							if (reportErrors2 && entry & 96) {
+								reportError(entry & 32 ? Diagnostics.Excessive_complexity_comparing_types_0_and_1 : Diagnostics.Excessive_stack_depth_comparing_types_0_and_1, typeToString(source2), typeToString(target2));
+								overrideNextErrorInfo++;
+							}
+							return entry & 1 ? -1 : 0;
 						}
-						if (reportErrors2 && entry & 96) {
-							reportError(entry & 32 ? Diagnostics.Excessive_complexity_comparing_types_0_and_1 : Diagnostics.Excessive_stack_depth_comparing_types_0_and_1, typeToString(source2), typeToString(target2));
-							overrideNextErrorInfo++;
-						}
-						return entry & 1 ? -1 : 0;
 					}
 					if (relationCount <= 0) {
 						overflow = true;
@@ -66773,8 +66874,10 @@ ${lanes.join("\n")}
 					if (recursionFlags & 2) targetDepth--;
 					expandingFlags = saveExpandingFlags;
 					if (result2) {
-						if (result2 === -1 || sourceDepth === 0 && targetDepth === 0) if (result2 === -1 || result2 === 3) resetMaybeStack(true);
-						else resetMaybeStack(false);
+						if (result2 === -1 || sourceDepth === 0 && targetDepth === 0) {
+							if (result2 === -1 || result2 === 3) resetMaybeStack(true);
+							else resetMaybeStack(false);
+						}
 					} else {
 						relation.set(id, 2 | propagatingVarianceFlags);
 						relationCount--;
@@ -66990,14 +67093,15 @@ ${lanes.join("\n")}
 							const constraint = getBaseConstraintOfType(source2);
 							if (constraint && constraint !== source2 && (result2 = isRelatedTo(constraint, target2, 1, reportErrors2))) return result2;
 						}
-					} else if (sourceFlags & 268435456) if (targetFlags & 268435456) {
-						if (source2.symbol !== target2.symbol) return 0;
-						if (result2 = isRelatedTo(source2.type, target2.type, 3, reportErrors2)) return result2;
-					} else {
-						const constraint = getBaseConstraintOfType(source2);
-						if (constraint && (result2 = isRelatedTo(constraint, target2, 1, reportErrors2))) return result2;
-					}
-					else if (sourceFlags & 16777216) {
+					} else if (sourceFlags & 268435456) {
+						if (targetFlags & 268435456) {
+							if (source2.symbol !== target2.symbol) return 0;
+							if (result2 = isRelatedTo(source2.type, target2.type, 3, reportErrors2)) return result2;
+						} else {
+							const constraint = getBaseConstraintOfType(source2);
+							if (constraint && (result2 = isRelatedTo(constraint, target2, 1, reportErrors2))) return result2;
+						}
+					} else if (sourceFlags & 16777216) {
 						if (isDeeplyNestedType(source2, sourceStack, sourceDepth, 10)) return 3;
 						if (targetFlags & 16777216) {
 							const sourceParams = source2.root.inferTypeParameters;
@@ -67042,9 +67146,10 @@ ${lanes.join("\n")}
 							if (variances === emptyArray) return 1;
 							const varianceResult = relateVariances(getTypeArguments(source2), getTypeArguments(target2), variances, intersectionState);
 							if (varianceResult !== void 0) return varianceResult;
-						} else if (isReadonlyArrayType(target2) ? everyType(source2, isArrayOrTupleType) : isArrayType(target2) && everyType(source2, (t) => isTupleType(t) && !t.target.readonly)) if (relation !== identityRelation) return isRelatedTo(getIndexTypeOfType(source2, numberType) || anyType, getIndexTypeOfType(target2, numberType) || anyType, 3, reportErrors2);
-						else return 0;
-						else if (isGenericTupleType(source2) && isTupleType(target2) && !isGenericTupleType(target2)) {
+						} else if (isReadonlyArrayType(target2) ? everyType(source2, isArrayOrTupleType) : isArrayType(target2) && everyType(source2, (t) => isTupleType(t) && !t.target.readonly)) {
+							if (relation !== identityRelation) return isRelatedTo(getIndexTypeOfType(source2, numberType) || anyType, getIndexTypeOfType(target2, numberType) || anyType, 3, reportErrors2);
+							else return 0;
+						} else if (isGenericTupleType(source2) && isTupleType(target2) && !isGenericTupleType(target2)) {
 							const constraint = getBaseConstraintOrType(source2);
 							if (constraint !== source2) return isRelatedTo(constraint, target2, 1, reportErrors2);
 						} else if ((relation === subtypeRelation || relation === strictSubtypeRelation) && isEmptyObjectType(target2) && getObjectFlags(target2) & 8192 && !isEmptyObjectType(source2)) return 0;
@@ -67173,8 +67278,10 @@ ${lanes.join("\n")}
 					const targetPropFlags = getDeclarationModifierFlagsFromSymbol(targetProp);
 					if (sourcePropFlags & 2 || targetPropFlags & 2) {
 						if (sourceProp.valueDeclaration !== targetProp.valueDeclaration) {
-							if (reportErrors2) if (sourcePropFlags & 2 && targetPropFlags & 2) reportError(Diagnostics.Types_have_separate_declarations_of_a_private_property_0, symbolToString(targetProp));
-							else reportError(Diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, symbolToString(targetProp), typeToString(sourcePropFlags & 2 ? source2 : target2), typeToString(sourcePropFlags & 2 ? target2 : source2));
+							if (reportErrors2) {
+								if (sourcePropFlags & 2 && targetPropFlags & 2) reportError(Diagnostics.Types_have_separate_declarations_of_a_private_property_0, symbolToString(targetProp));
+								else reportError(Diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, symbolToString(targetProp), typeToString(sourcePropFlags & 2 ? source2 : target2), typeToString(sourcePropFlags & 2 ? target2 : source2));
+							}
 							return 0;
 						}
 					} else if (targetPropFlags & 4) {
@@ -67244,8 +67351,10 @@ ${lanes.join("\n")}
 								return 0;
 							}
 							if (!targetHasRestElement && (sourceRestFlag || targetArity < sourceArity)) {
-								if (reportErrors2) if (sourceMinLength < targetMinLength) reportError(Diagnostics.Target_requires_0_element_s_but_source_may_have_fewer, targetMinLength);
-								else reportError(Diagnostics.Target_allows_only_0_element_s_but_source_may_have_more, targetArity);
+								if (reportErrors2) {
+									if (sourceMinLength < targetMinLength) reportError(Diagnostics.Target_requires_0_element_s_but_source_may_have_fewer, targetMinLength);
+									else reportError(Diagnostics.Target_allows_only_0_element_s_but_source_may_have_more, targetArity);
+								}
 								return 0;
 							}
 							const sourceTypeArguments = getTypeArguments(source2);
@@ -67278,8 +67387,10 @@ ${lanes.join("\n")}
 								const targetType = targetTypeArguments[targetPosition];
 								const related = isRelatedTo(sourceType, sourceFlags & 8 && targetFlags & 4 ? createArrayType(targetType) : removeMissingType(targetType, !!(targetFlags & 2)), 3, reportErrors2, void 0, intersectionState);
 								if (!related) {
-									if (reportErrors2 && (targetArity > 1 || sourceArity > 1)) if (targetHasRestElement && sourcePosition >= targetStartCount && sourcePositionFromEnd >= targetEndCount && targetStartCount !== sourceArity - targetEndCount - 1) reportIncompatibleError(Diagnostics.Type_at_positions_0_through_1_in_source_is_not_compatible_with_type_at_position_2_in_target, targetStartCount, sourceArity - targetEndCount - 1, targetPosition);
-									else reportIncompatibleError(Diagnostics.Type_at_position_0_in_source_is_not_compatible_with_type_at_position_1_in_target, sourcePosition, targetPosition);
+									if (reportErrors2 && (targetArity > 1 || sourceArity > 1)) {
+										if (targetHasRestElement && sourcePosition >= targetStartCount && sourcePositionFromEnd >= targetEndCount && targetStartCount !== sourceArity - targetEndCount - 1) reportIncompatibleError(Diagnostics.Type_at_positions_0_through_1_in_source_is_not_compatible_with_type_at_position_2_in_target, targetStartCount, sourceArity - targetEndCount - 1, targetPosition);
+										else reportIncompatibleError(Diagnostics.Type_at_position_0_in_source_is_not_compatible_with_type_at_position_1_in_target, sourcePosition, targetPosition);
+									}
 									return 0;
 								}
 								result2 &= related;
@@ -67450,8 +67561,10 @@ ${lanes.join("\n")}
 				}
 				function indexInfoRelatedTo(sourceInfo, targetInfo, reportErrors2, intersectionState) {
 					const related = isRelatedTo(sourceInfo.type, targetInfo.type, 3, reportErrors2, void 0, intersectionState);
-					if (!related && reportErrors2) if (sourceInfo.keyType === targetInfo.keyType) reportError(Diagnostics._0_index_signatures_are_incompatible, typeToString(sourceInfo.keyType));
-					else reportError(Diagnostics._0_and_1_index_signatures_are_incompatible, typeToString(sourceInfo.keyType), typeToString(targetInfo.keyType));
+					if (!related && reportErrors2) {
+						if (sourceInfo.keyType === targetInfo.keyType) reportError(Diagnostics._0_index_signatures_are_incompatible, typeToString(sourceInfo.keyType));
+						else reportError(Diagnostics._0_and_1_index_signatures_are_incompatible, typeToString(sourceInfo.keyType), typeToString(targetInfo.keyType));
+					}
 					return related;
 				}
 				function indexSignaturesRelatedTo(source2, target2, sourceIsPrimitive, reportErrors2, intersectionState) {
@@ -68141,9 +68254,10 @@ ${lanes.join("\n")}
 				var _a;
 				let errorReported = false;
 				if (getObjectFlags(type) & 65536) {
-					if (type.flags & 1048576) if (some(type.types, isEmptyObjectType)) errorReported = true;
-					else for (const t of type.types) errorReported || (errorReported = reportWideningErrorsInType(t));
-					else if (isArrayOrTupleType(type)) for (const t of getTypeArguments(type)) errorReported || (errorReported = reportWideningErrorsInType(t));
+					if (type.flags & 1048576) {
+						if (some(type.types, isEmptyObjectType)) errorReported = true;
+						else for (const t of type.types) errorReported || (errorReported = reportWideningErrorsInType(t));
+					} else if (isArrayOrTupleType(type)) for (const t of getTypeArguments(type)) errorReported || (errorReported = reportWideningErrorsInType(t));
 					else if (isObjectLiteralType2(type)) for (const p of getPropertiesOfObjectType(type)) {
 						const t = getTypeOfSymbol(p);
 						if (getObjectFlags(t) & 65536) {
@@ -69574,8 +69688,10 @@ ${lanes.join("\n")}
 				for (const t of types) {
 					const mapped = t.flags & 1048576 ? mapType(t, mapper, noReductions) : mapper(t);
 					changed || (changed = t !== mapped);
-					if (mapped) if (!mappedTypes) mappedTypes = [mapped];
-					else mappedTypes.push(mapped);
+					if (mapped) {
+						if (!mappedTypes) mappedTypes = [mapped];
+						else mappedTypes.push(mapped);
+					}
 				}
 				return changed ? mappedTypes && getUnionType(mappedTypes, noReductions ? 0 : 1) : type;
 			}
@@ -69691,8 +69807,10 @@ ${lanes.join("\n")}
 					let funcType;
 					if (isBinaryExpression(node)) funcType = getSymbolHasInstanceMethodOfObjectType(checkNonNullExpression(node.right));
 					else if (node.parent.kind === 244) funcType = getTypeOfDottedName(node.expression, void 0);
-					else if (node.expression.kind !== 108) if (isOptionalChain(node)) funcType = checkNonNullType(getOptionalExpressionType(checkExpression(node.expression), node.expression), node.expression);
-					else funcType = checkNonNullExpression(node.expression);
+					else if (node.expression.kind !== 108) {
+						if (isOptionalChain(node)) funcType = checkNonNullType(getOptionalExpressionType(checkExpression(node.expression), node.expression), node.expression);
+						else funcType = checkNonNullExpression(node.expression);
+					}
 					const signatures = getSignaturesOfType(funcType && getApparentType(funcType) || unknownType, 0);
 					const candidate = signatures.length === 1 && !signatures[0].typeParameters ? signatures[0] : some(signatures, hasTypePredicateOrNeverReturnType) ? getResolvedSignature(node) : void 0;
 					signature = links.effectsSignature = candidate && hasTypePredicateOrNeverReturnType(candidate) ? candidate : unknownSignature;
@@ -70433,9 +70551,7 @@ ${lanes.join("\n")}
 						case 217:
 						case 235: return narrowType(type, expr.expression, assumeTrue);
 						case 226: return narrowTypeByBinaryExpression(type, expr, assumeTrue);
-						case 224:
-							if (expr.operator === 54) return narrowType(type, expr.operand, !assumeTrue);
-							break;
+						case 224: if (expr.operator === 54) return narrowType(type, expr.operand, !assumeTrue);
 					}
 					return type;
 				}
@@ -70732,7 +70848,6 @@ ${lanes.join("\n")}
 							const containingSignature = node.parent;
 							for (const parameter of containingSignature.parameters) markDecoratorMedataDataTypeNodeAsReferenced(getParameterTypeNodeForDecoratorCheck(parameter));
 							markDecoratorMedataDataTypeNodeAsReferenced(getEffectiveReturnTypeNode(containingSignature));
-							break;
 					}
 				}
 			}
@@ -71037,9 +71152,7 @@ ${lanes.join("\n")}
 					case 267:
 						error2(node, Diagnostics.this_cannot_be_referenced_in_a_module_or_namespace_body);
 						break;
-					case 266:
-						error2(node, Diagnostics.this_cannot_be_referenced_in_current_location);
-						break;
+					case 266: error2(node, Diagnostics.this_cannot_be_referenced_in_current_location);
 				}
 				if (!isNodeInTypeQuery && capturedByArrowFunction && languageVersion < 2) captureLexicalThis(node, container);
 				const type = tryGetThisTypeAt(node, true, container);
@@ -71140,13 +71253,17 @@ ${lanes.join("\n")}
 					});
 				} else nodeCheckFlag = 16;
 				getNodeLinks(node).flags |= nodeCheckFlag;
-				if (container.kind === 174 && inAsyncFunction) if (isSuperProperty(node.parent) && isAssignmentTarget(node.parent)) getNodeLinks(container).flags |= 256;
-				else getNodeLinks(container).flags |= 128;
+				if (container.kind === 174 && inAsyncFunction) {
+					if (isSuperProperty(node.parent) && isAssignmentTarget(node.parent)) getNodeLinks(container).flags |= 256;
+					else getNodeLinks(container).flags |= 128;
+				}
 				if (needToCaptureLexicalThis) captureLexicalThis(node.parent, container);
-				if (container.parent.kind === 210) if (languageVersion < 2) {
-					error2(node, Diagnostics.super_is_only_allowed_in_members_of_object_literal_expressions_when_option_target_is_ES2015_or_higher);
-					return errorType;
-				} else return anyType;
+				if (container.parent.kind === 210) {
+					if (languageVersion < 2) {
+						error2(node, Diagnostics.super_is_only_allowed_in_members_of_object_literal_expressions_when_option_target_is_ES2015_or_higher);
+						return errorType;
+					} else return anyType;
+				}
 				const classLikeDeclaration = container.parent;
 				if (!getClassExtendsHeritageElement(classLikeDeclaration)) {
 					error2(node, Diagnostics.super_can_only_be_referenced_in_a_derived_class);
@@ -71163,8 +71280,10 @@ ${lanes.join("\n")}
 				return nodeCheckFlag === 32 ? getBaseConstructorTypeOfClass(classType) : getTypeWithThisArgument(baseClassType, classType.thisType);
 				function isLegalUsageOfSuperExpression(container2) {
 					if (isCallExpression2) return container2.kind === 176;
-					else if (isClassLike(container2.parent) || container2.parent.kind === 210) if (isStatic(container2)) return container2.kind === 174 || container2.kind === 173 || container2.kind === 177 || container2.kind === 178 || container2.kind === 172 || container2.kind === 175;
-					else return container2.kind === 174 || container2.kind === 173 || container2.kind === 177 || container2.kind === 178 || container2.kind === 172 || container2.kind === 171 || container2.kind === 176;
+					else if (isClassLike(container2.parent) || container2.parent.kind === 210) {
+						if (isStatic(container2)) return container2.kind === 174 || container2.kind === 173 || container2.kind === 177 || container2.kind === 178 || container2.kind === 172 || container2.kind === 175;
+						else return container2.kind === 174 || container2.kind === 173 || container2.kind === 177 || container2.kind === 178 || container2.kind === 172 || container2.kind === 171 || container2.kind === 176;
+					}
 					return false;
 				}
 			}
@@ -71894,9 +72013,11 @@ ${lanes.join("\n")}
 				const types = type.types;
 				for (const current of types) {
 					const signature = getContextualCallSignature(current, node);
-					if (signature) if (!signatureList) signatureList = [signature];
-					else if (!compareSignaturesIdentical(signatureList[0], signature, false, true, true, compareTypesIdentical)) return;
-					else signatureList.push(signature);
+					if (signature) {
+						if (!signatureList) signatureList = [signature];
+						else if (!compareSignaturesIdentical(signatureList[0], signature, false, true, true, compareTypesIdentical)) return;
+						else signatureList.push(signature);
+					}
 				}
 				if (signatureList) return signatureList.length === 1 ? signatureList[0] : createUnionSignature(signatureList[0], signatureList);
 			}
@@ -73189,12 +73310,13 @@ ${lanes.join("\n")}
 				for (const signature of signatures) {
 					const symbol = signature.declaration && getSymbolOfDeclaration(signature.declaration);
 					const parent2 = signature.declaration && signature.declaration.parent;
-					if (!lastSymbol || symbol === lastSymbol) if (lastParent && parent2 === lastParent) index = index + 1;
-					else {
-						lastParent = parent2;
-						index = cutoffIndex;
-					}
-					else {
+					if (!lastSymbol || symbol === lastSymbol) {
+						if (lastParent && parent2 === lastParent) index = index + 1;
+						else {
+							lastParent = parent2;
+							index = cutoffIndex;
+						}
+					} else {
 						index = cutoffIndex = result.length;
 						lastParent = parent2;
 					}
@@ -73758,62 +73880,63 @@ ${lanes.join("\n")}
 				getNodeLinks(node).resolvedSignature = result;
 				if (reportErrors2) {
 					if (!headMessage && isInstanceof) headMessage = Diagnostics.The_left_hand_side_of_an_instanceof_expression_must_be_assignable_to_the_first_argument_of_the_right_hand_side_s_Symbol_hasInstance_method;
-					if (candidatesForArgumentError) if (candidatesForArgumentError.length === 1 || candidatesForArgumentError.length > 3) {
-						const last2 = candidatesForArgumentError[candidatesForArgumentError.length - 1];
-						let chain;
-						if (candidatesForArgumentError.length > 3) {
-							chain = chainDiagnosticMessages(chain, Diagnostics.The_last_overload_gave_the_following_error);
-							chain = chainDiagnosticMessages(chain, Diagnostics.No_overload_matches_this_call);
+					if (candidatesForArgumentError) {
+						if (candidatesForArgumentError.length === 1 || candidatesForArgumentError.length > 3) {
+							const last2 = candidatesForArgumentError[candidatesForArgumentError.length - 1];
+							let chain;
+							if (candidatesForArgumentError.length > 3) {
+								chain = chainDiagnosticMessages(chain, Diagnostics.The_last_overload_gave_the_following_error);
+								chain = chainDiagnosticMessages(chain, Diagnostics.No_overload_matches_this_call);
+							}
+							if (headMessage) chain = chainDiagnosticMessages(chain, headMessage);
+							const diags = getSignatureApplicabilityError(node, args, last2, assignableRelation, 0, true, () => chain, void 0);
+							if (diags) for (const d of diags) {
+								if (last2.declaration && candidatesForArgumentError.length > 3) addRelatedInfo(d, createDiagnosticForNode(last2.declaration, Diagnostics.The_last_overload_is_declared_here));
+								addImplementationSuccessElaboration(last2, d);
+								diagnostics.add(d);
+							}
+							else Debug.fail("No error for last overload signature");
+						} else {
+							const allDiagnostics = [];
+							let max = 0;
+							let min2 = Number.MAX_VALUE;
+							let minIndex = 0;
+							let i = 0;
+							for (const c of candidatesForArgumentError) {
+								const chain2 = () => chainDiagnosticMessages(void 0, Diagnostics.Overload_0_of_1_2_gave_the_following_error, i + 1, candidates.length, signatureToString(c));
+								const diags2 = getSignatureApplicabilityError(node, args, c, assignableRelation, 0, true, chain2, void 0);
+								if (diags2) {
+									if (diags2.length <= min2) {
+										min2 = diags2.length;
+										minIndex = i;
+									}
+									max = Math.max(max, diags2.length);
+									allDiagnostics.push(diags2);
+								} else Debug.fail("No error for 3 or fewer overload signatures");
+								i++;
+							}
+							const diags = max > 1 ? allDiagnostics[minIndex] : flatten(allDiagnostics);
+							Debug.assert(diags.length > 0, "No errors reported for 3 or fewer overload signatures");
+							let chain = chainDiagnosticMessages(map(diags, createDiagnosticMessageChainFromDiagnostic), Diagnostics.No_overload_matches_this_call);
+							if (headMessage) chain = chainDiagnosticMessages(chain, headMessage);
+							const related = [...flatMap(diags, (d) => d.relatedInformation)];
+							let diag2;
+							if (every(diags, (d) => d.start === diags[0].start && d.length === diags[0].length && d.file === diags[0].file)) {
+								const { file, start, length: length2 } = diags[0];
+								diag2 = {
+									file,
+									start,
+									length: length2,
+									code: chain.code,
+									category: chain.category,
+									messageText: chain,
+									relatedInformation: related
+								};
+							} else diag2 = createDiagnosticForNodeFromMessageChain(getSourceFileOfNode(node), getErrorNodeForCallNode(node), chain, related);
+							addImplementationSuccessElaboration(candidatesForArgumentError[0], diag2);
+							diagnostics.add(diag2);
 						}
-						if (headMessage) chain = chainDiagnosticMessages(chain, headMessage);
-						const diags = getSignatureApplicabilityError(node, args, last2, assignableRelation, 0, true, () => chain, void 0);
-						if (diags) for (const d of diags) {
-							if (last2.declaration && candidatesForArgumentError.length > 3) addRelatedInfo(d, createDiagnosticForNode(last2.declaration, Diagnostics.The_last_overload_is_declared_here));
-							addImplementationSuccessElaboration(last2, d);
-							diagnostics.add(d);
-						}
-						else Debug.fail("No error for last overload signature");
-					} else {
-						const allDiagnostics = [];
-						let max = 0;
-						let min2 = Number.MAX_VALUE;
-						let minIndex = 0;
-						let i = 0;
-						for (const c of candidatesForArgumentError) {
-							const chain2 = () => chainDiagnosticMessages(void 0, Diagnostics.Overload_0_of_1_2_gave_the_following_error, i + 1, candidates.length, signatureToString(c));
-							const diags2 = getSignatureApplicabilityError(node, args, c, assignableRelation, 0, true, chain2, void 0);
-							if (diags2) {
-								if (diags2.length <= min2) {
-									min2 = diags2.length;
-									minIndex = i;
-								}
-								max = Math.max(max, diags2.length);
-								allDiagnostics.push(diags2);
-							} else Debug.fail("No error for 3 or fewer overload signatures");
-							i++;
-						}
-						const diags = max > 1 ? allDiagnostics[minIndex] : flatten(allDiagnostics);
-						Debug.assert(diags.length > 0, "No errors reported for 3 or fewer overload signatures");
-						let chain = chainDiagnosticMessages(map(diags, createDiagnosticMessageChainFromDiagnostic), Diagnostics.No_overload_matches_this_call);
-						if (headMessage) chain = chainDiagnosticMessages(chain, headMessage);
-						const related = [...flatMap(diags, (d) => d.relatedInformation)];
-						let diag2;
-						if (every(diags, (d) => d.start === diags[0].start && d.length === diags[0].length && d.file === diags[0].file)) {
-							const { file, start, length: length2 } = diags[0];
-							diag2 = {
-								file,
-								start,
-								length: length2,
-								code: chain.code,
-								category: chain.category,
-								messageText: chain,
-								relatedInformation: related
-							};
-						} else diag2 = createDiagnosticForNodeFromMessageChain(getSourceFileOfNode(node), getErrorNodeForCallNode(node), chain, related);
-						addImplementationSuccessElaboration(candidatesForArgumentError[0], diag2);
-						diagnostics.add(diag2);
-					}
-					else if (candidateForArgumentArityError) diagnostics.add(getArgumentArityError(node, [candidateForArgumentArityError], args, headMessage));
+					} else if (candidateForArgumentArityError) diagnostics.add(getArgumentArityError(node, [candidateForArgumentArityError], args, headMessage));
 					else if (candidateForTypeArgumentError) checkTypeArguments(candidateForTypeArgumentError, node.typeArguments, true, headMessage);
 					else {
 						const signaturesWithCorrectTypeArgumentArity = filter(signatures, (s) => hasCorrectTypeArgumentArity(s, typeArguments));
@@ -74479,12 +74602,14 @@ ${lanes.join("\n")}
 				var _a;
 				if (allowSyntheticDefaultImports && type && !isErrorType(type)) {
 					const synthType = type;
-					if (!synthType.syntheticType) if (canHaveSyntheticDefault((_a = originalSymbol.declarations) == null ? void 0 : _a.find(isSourceFile), originalSymbol, false, moduleSpecifier)) {
-						const anonymousSymbol = createSymbol(2048, "__type");
-						const defaultContainingObject = createDefaultPropertyWrapperForModule(symbol, originalSymbol, anonymousSymbol);
-						anonymousSymbol.links.type = defaultContainingObject;
-						synthType.syntheticType = isValidSpreadType(type) ? getSpreadType(type, defaultContainingObject, anonymousSymbol, 0, false) : defaultContainingObject;
-					} else synthType.syntheticType = type;
+					if (!synthType.syntheticType) {
+						if (canHaveSyntheticDefault((_a = originalSymbol.declarations) == null ? void 0 : _a.find(isSourceFile), originalSymbol, false, moduleSpecifier)) {
+							const anonymousSymbol = createSymbol(2048, "__type");
+							const defaultContainingObject = createDefaultPropertyWrapperForModule(symbol, originalSymbol, anonymousSymbol);
+							anonymousSymbol.links.type = defaultContainingObject;
+							synthType.syntheticType = isValidSpreadType(type) ? getSpreadType(type, defaultContainingObject, anonymousSymbol, 0, false) : defaultContainingObject;
+						} else synthType.syntheticType = type;
+					}
 					return synthType.syntheticType;
 				}
 				return type;
@@ -74565,7 +74690,6 @@ ${lanes.join("\n")}
 					case 217:
 						type = getJSDocTypeAssertionType(node);
 						expression = node.expression;
-						break;
 				}
 				return {
 					type,
@@ -74701,17 +74825,15 @@ ${lanes.join("\n")}
 						if (node.dotDotDotToken) return elementFlags & 12 ? name : `${name}_${index}`;
 						else return elementFlags & 3 ? name : `${name}_n`;
 					}
-					case 207:
-						if (node.dotDotDotToken) {
-							const elements = node.name.elements;
-							const lastElement = tryCast(lastOrUndefined(elements), isBindingElement);
-							const elementCount = elements.length - ((lastElement == null ? void 0 : lastElement.dotDotDotToken) ? 1 : 0);
-							if (index < elementCount) {
-								const element = elements[index];
-								if (isBindingElement(element)) return getTupleElementLabelFromBindingElement(element, index, elementFlags);
-							} else if (lastElement == null ? void 0 : lastElement.dotDotDotToken) return getTupleElementLabelFromBindingElement(lastElement, index - elementCount, elementFlags);
-						}
-						break;
+					case 207: if (node.dotDotDotToken) {
+						const elements = node.name.elements;
+						const lastElement = tryCast(lastOrUndefined(elements), isBindingElement);
+						const elementCount = elements.length - ((lastElement == null ? void 0 : lastElement.dotDotDotToken) ? 1 : 0);
+						if (index < elementCount) {
+							const element = elements[index];
+							if (isBindingElement(element)) return getTupleElementLabelFromBindingElement(element, index, elementFlags);
+						} else if (lastElement == null ? void 0 : lastElement.dotDotDotToken) return getTupleElementLabelFromBindingElement(lastElement, index - elementCount, elementFlags);
+					}
 				}
 				return `arg_${index}`;
 			}
@@ -74905,8 +75027,10 @@ ${lanes.join("\n")}
 				}
 			}
 			function assignContextualParameterTypes(signature, context) {
-				if (context.typeParameters) if (!signature.typeParameters) signature.typeParameters = context.typeParameters;
-				else return;
+				if (context.typeParameters) {
+					if (!signature.typeParameters) signature.typeParameters = context.typeParameters;
+					else return;
+				}
 				if (context.thisParameter) {
 					const parameter = signature.thisParameter;
 					if (!parameter || parameter.valueDeclaration && !parameter.valueDeclaration.type) {
@@ -75371,18 +75495,19 @@ ${lanes.join("\n")}
 						links.flags |= 64;
 						const signature = firstOrUndefined(getSignaturesOfType(getTypeOfSymbol(getSymbolOfDeclaration(node)), 0));
 						if (!signature) return;
-						if (isContextSensitive(node)) if (contextualSignature) {
-							const inferenceContext = getInferenceContext(node);
-							let instantiatedContextualSignature;
-							if (checkMode && checkMode & 2) {
-								inferFromAnnotatedParameters(signature, contextualSignature, inferenceContext);
-								const restType = getEffectiveRestType(contextualSignature);
-								if (restType && restType.flags & 262144) instantiatedContextualSignature = instantiateSignature(contextualSignature, inferenceContext.nonFixingMapper);
-							}
-							instantiatedContextualSignature || (instantiatedContextualSignature = inferenceContext ? instantiateSignature(contextualSignature, inferenceContext.mapper) : contextualSignature);
-							assignContextualParameterTypes(signature, instantiatedContextualSignature);
-						} else assignNonContextualParameterTypes(signature);
-						else if (contextualSignature && !node.typeParameters && contextualSignature.parameters.length > node.parameters.length) {
+						if (isContextSensitive(node)) {
+							if (contextualSignature) {
+								const inferenceContext = getInferenceContext(node);
+								let instantiatedContextualSignature;
+								if (checkMode && checkMode & 2) {
+									inferFromAnnotatedParameters(signature, contextualSignature, inferenceContext);
+									const restType = getEffectiveRestType(contextualSignature);
+									if (restType && restType.flags & 262144) instantiatedContextualSignature = instantiateSignature(contextualSignature, inferenceContext.nonFixingMapper);
+								}
+								instantiatedContextualSignature || (instantiatedContextualSignature = inferenceContext ? instantiateSignature(contextualSignature, inferenceContext.mapper) : contextualSignature);
+								assignContextualParameterTypes(signature, instantiatedContextualSignature);
+							} else assignNonContextualParameterTypes(signature);
+						} else if (contextualSignature && !node.typeParameters && contextualSignature.parameters.length > node.parameters.length) {
 							const inferenceContext = getInferenceContext(node);
 							if (checkMode && checkMode & 2) inferFromAnnotatedParameters(signature, contextualSignature, inferenceContext);
 						}
@@ -75492,8 +75617,10 @@ ${lanes.join("\n")}
 				}
 				if (isPropertyAccessExpression(expr) && isPrivateIdentifier(expr.name)) error2(expr, Diagnostics.The_operand_of_a_delete_operator_cannot_be_a_private_identifier);
 				const symbol = getExportSymbolOfValueSymbolIfExported(getNodeLinks(expr).resolvedSymbol);
-				if (symbol) if (isReadonlySymbol(symbol)) error2(expr, Diagnostics.The_operand_of_a_delete_operator_cannot_be_a_read_only_property);
-				else checkDeleteExpressionMustBeOptional(expr, symbol);
+				if (symbol) {
+					if (isReadonlySymbol(symbol)) error2(expr, Diagnostics.The_operand_of_a_delete_operator_cannot_be_a_read_only_property);
+					else checkDeleteExpressionMustBeOptional(expr, symbol);
+				}
 				return booleanType;
 			}
 			function checkDeleteExpressionMustBeOptional(expr, symbol) {
@@ -75514,46 +75641,47 @@ ${lanes.join("\n")}
 				if (container && isClassStaticBlockDeclaration(container)) {
 					error2(node, isAwaitExpression(node) ? Diagnostics.await_expression_cannot_be_used_inside_a_class_static_block : Diagnostics.await_using_statements_cannot_be_used_inside_a_class_static_block);
 					hasError = true;
-				} else if (!(node.flags & 65536)) if (isInTopLevelContext(node)) {
-					const sourceFile = getSourceFileOfNode(node);
-					if (!hasParseDiagnostics(sourceFile)) {
-						let span;
-						if (!isEffectiveExternalModule(sourceFile, compilerOptions)) {
-							span ?? (span = getSpanOfTokenAtPosition(sourceFile, node.pos));
-							const message = isAwaitExpression(node) ? Diagnostics.await_expressions_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module : Diagnostics.await_using_statements_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module;
+				} else if (!(node.flags & 65536)) {
+					if (isInTopLevelContext(node)) {
+						const sourceFile = getSourceFileOfNode(node);
+						if (!hasParseDiagnostics(sourceFile)) {
+							let span;
+							if (!isEffectiveExternalModule(sourceFile, compilerOptions)) {
+								span ?? (span = getSpanOfTokenAtPosition(sourceFile, node.pos));
+								const message = isAwaitExpression(node) ? Diagnostics.await_expressions_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module : Diagnostics.await_using_statements_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module;
+								const diagnostic = createFileDiagnostic(sourceFile, span.start, span.length, message);
+								diagnostics.add(diagnostic);
+								hasError = true;
+							}
+							switch (moduleKind) {
+								case 100:
+								case 199: if (sourceFile.impliedNodeFormat === 1) {
+									span ?? (span = getSpanOfTokenAtPosition(sourceFile, node.pos));
+									diagnostics.add(createFileDiagnostic(sourceFile, span.start, span.length, Diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level));
+									hasError = true;
+									break;
+								}
+								case 7:
+								case 99:
+								case 200:
+								case 4: if (languageVersion >= 4) break;
+								default:
+									span ?? (span = getSpanOfTokenAtPosition(sourceFile, node.pos));
+									const message = isAwaitExpression(node) ? Diagnostics.Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher : Diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher;
+									diagnostics.add(createFileDiagnostic(sourceFile, span.start, span.length, message));
+									hasError = true;
+							}
+						}
+					} else {
+						const sourceFile = getSourceFileOfNode(node);
+						if (!hasParseDiagnostics(sourceFile)) {
+							const span = getSpanOfTokenAtPosition(sourceFile, node.pos);
+							const message = isAwaitExpression(node) ? Diagnostics.await_expressions_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules : Diagnostics.await_using_statements_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules;
 							const diagnostic = createFileDiagnostic(sourceFile, span.start, span.length, message);
+							if (container && container.kind !== 176 && (getFunctionFlags(container) & 2) === 0) addRelatedInfo(diagnostic, createDiagnosticForNode(container, Diagnostics.Did_you_mean_to_mark_this_function_as_async));
 							diagnostics.add(diagnostic);
 							hasError = true;
 						}
-						switch (moduleKind) {
-							case 100:
-							case 199: if (sourceFile.impliedNodeFormat === 1) {
-								span ?? (span = getSpanOfTokenAtPosition(sourceFile, node.pos));
-								diagnostics.add(createFileDiagnostic(sourceFile, span.start, span.length, Diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level));
-								hasError = true;
-								break;
-							}
-							case 7:
-							case 99:
-							case 200:
-							case 4: if (languageVersion >= 4) break;
-							default:
-								span ?? (span = getSpanOfTokenAtPosition(sourceFile, node.pos));
-								const message = isAwaitExpression(node) ? Diagnostics.Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher : Diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher;
-								diagnostics.add(createFileDiagnostic(sourceFile, span.start, span.length, message));
-								hasError = true;
-								break;
-						}
-					}
-				} else {
-					const sourceFile = getSourceFileOfNode(node);
-					if (!hasParseDiagnostics(sourceFile)) {
-						const span = getSpanOfTokenAtPosition(sourceFile, node.pos);
-						const message = isAwaitExpression(node) ? Diagnostics.await_expressions_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules : Diagnostics.await_using_statements_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules;
-						const diagnostic = createFileDiagnostic(sourceFile, span.start, span.length, message);
-						if (container && container.kind !== 176 && (getFunctionFlags(container) & 2) === 0) addRelatedInfo(diagnostic, createDiagnosticForNode(container, Diagnostics.Did_you_mean_to_mark_this_function_as_async));
-						diagnostics.add(diagnostic);
-						hasError = true;
 					}
 				}
 				if (isAwaitExpression(node) && isInParameterInitializerBeforeContainingFunction(node)) {
@@ -75697,18 +75825,19 @@ ${lanes.join("\n")}
 					}
 					const type = getFlowTypeOfDestructuring(property, getIndexedAccessType(objectLiteralType, exprType, 32 | (hasDefaultValue(property) ? 16 : 0), name));
 					return checkDestructuringAssignment(property.kind === 304 ? property : property.initializer, type);
-				} else if (property.kind === 305) if (propertyIndex < properties.length - 1) error2(property, Diagnostics.A_rest_element_must_be_last_in_a_destructuring_pattern);
-				else {
-					if (languageVersion < 5) checkExternalEmitHelpers(property, 4);
-					const nonRestNames = [];
-					if (allProperties) {
-						for (const otherProperty of allProperties) if (!isSpreadAssignment(otherProperty)) nonRestNames.push(otherProperty.name);
+				} else if (property.kind === 305) {
+					if (propertyIndex < properties.length - 1) error2(property, Diagnostics.A_rest_element_must_be_last_in_a_destructuring_pattern);
+					else {
+						if (languageVersion < 5) checkExternalEmitHelpers(property, 4);
+						const nonRestNames = [];
+						if (allProperties) {
+							for (const otherProperty of allProperties) if (!isSpreadAssignment(otherProperty)) nonRestNames.push(otherProperty.name);
+						}
+						const type = getRestType(objectLiteralType, nonRestNames, objectLiteralType.symbol);
+						checkGrammarForDisallowedTrailingComma(allProperties, Diagnostics.A_rest_parameter_or_binding_pattern_may_not_have_a_trailing_comma);
+						return checkDestructuringAssignment(property.expression, type);
 					}
-					const type = getRestType(objectLiteralType, nonRestNames, objectLiteralType.symbol);
-					checkGrammarForDisallowedTrailingComma(allProperties, Diagnostics.A_rest_parameter_or_binding_pattern_may_not_have_a_trailing_comma);
-					return checkDestructuringAssignment(property.expression, type);
-				}
-				else error2(property, Diagnostics.Property_assignment_expected);
+				} else error2(property, Diagnostics.Property_assignment_expected);
 			}
 			function checkArrayLiteralAssignment(node, sourceType, checkMode) {
 				const elements = node.elements;
@@ -75910,9 +76039,11 @@ ${lanes.join("\n")}
 					if (isBinaryExpression(right) && (right.operatorToken.kind === 57 || right.operatorToken.kind === 56)) grammarErrorOnNode(right, Diagnostics._0_and_1_operations_cannot_be_mixed_without_parentheses, tokenToString(right.operatorToken.kind), tokenToString(operatorToken.kind));
 					const leftTarget = skipOuterExpressions(left, 31);
 					const nullishSemantics = getSyntacticNullishnessSemantics(leftTarget);
-					if (nullishSemantics !== 3) if (node.parent.kind === 226) error2(leftTarget, Diagnostics.This_binary_expression_is_never_nullish_Are_you_missing_parentheses);
-					else if (nullishSemantics === 1) error2(leftTarget, Diagnostics.This_expression_is_always_nullish);
-					else error2(leftTarget, Diagnostics.Right_operand_of_is_unreachable_because_the_left_operand_is_never_nullish);
+					if (nullishSemantics !== 3) {
+						if (node.parent.kind === 226) error2(leftTarget, Diagnostics.This_binary_expression_is_never_nullish_Are_you_missing_parentheses);
+						else if (nullishSemantics === 1) error2(leftTarget, Diagnostics.This_expression_is_always_nullish);
+						else error2(leftTarget, Diagnostics.Right_operand_of_is_unreachable_because_the_left_operand_is_never_nullish);
+					}
 				}
 			}
 			function getSyntacticNullishnessSemantics(node) {
@@ -76015,8 +76146,6 @@ ${lanes.join("\n")}
 									case 73:
 										const rhsEval = evaluate(right);
 										if (typeof rhsEval.value === "number" && Math.abs(rhsEval.value) >= 32) errorOrSuggestion(isEnumMember(walkUpParenthesizedExpressions(right.parent.parent)), errorNode || operatorToken, Diagnostics.This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2, getTextOfNode(left), tokenToString(operator), rhsEval.value % 32);
-										break;
-									default: break;
 								}
 							}
 							return resultType2;
@@ -76816,9 +76945,7 @@ ${lanes.join("\n")}
 						case 180:
 							error2(node, Diagnostics.Construct_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type);
 							break;
-						case 179:
-							error2(node, Diagnostics.Call_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type);
-							break;
+						case 179: error2(node, Diagnostics.Call_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type);
 					}
 					if (returnTypeNode && returnTypeErrorLocation) {
 						const functionFlags2 = getFunctionFlags(node);
@@ -76859,23 +76986,22 @@ ${lanes.join("\n")}
 						case 172:
 							addName(names, name, memberName, 3 | privateStaticFlags);
 							break;
-						case 174:
-							addName(names, name, memberName, 8 | privateStaticFlags);
-							break;
+						case 174: addName(names, name, memberName, 8 | privateStaticFlags);
 					}
 				}
 				function addName(names, location, name, meaning) {
 					const prev = names.get(name);
-					if (prev) if ((prev & 16) !== (meaning & 16)) error2(location, Diagnostics.Duplicate_identifier_0_Static_and_instance_elements_cannot_share_the_same_private_name, getTextOfNode(location));
-					else {
-						const prevIsMethod = !!(prev & 8);
-						const isMethod = !!(meaning & 8);
-						if (prevIsMethod || isMethod) {
-							if (prevIsMethod !== isMethod) error2(location, Diagnostics.Duplicate_identifier_0, getTextOfNode(location));
-						} else if (prev & meaning & -17) error2(location, Diagnostics.Duplicate_identifier_0, getTextOfNode(location));
-						else names.set(name, prev | meaning);
-					}
-					else names.set(name, meaning);
+					if (prev) {
+						if ((prev & 16) !== (meaning & 16)) error2(location, Diagnostics.Duplicate_identifier_0_Static_and_instance_elements_cannot_share_the_same_private_name, getTextOfNode(location));
+						else {
+							const prevIsMethod = !!(prev & 8);
+							const isMethod = !!(meaning & 8);
+							if (prevIsMethod || isMethod) {
+								if (prevIsMethod !== isMethod) error2(location, Diagnostics.Duplicate_identifier_0, getTextOfNode(location));
+							} else if (prev & meaning & -17) error2(location, Diagnostics.Duplicate_identifier_0, getTextOfNode(location));
+							else names.set(name, prev | meaning);
+						}
+					} else names.set(name, meaning);
 				}
 			}
 			function checkClassForStaticPropertyNameConflicts(node) {
@@ -76891,7 +77017,6 @@ ${lanes.join("\n")}
 							case "prototype":
 								const message = Diagnostics.Static_property_0_conflicts_with_built_in_property_Function_0_of_constructor_function_1;
 								error2(memberNameNode, message, memberName, getNameOfSymbolAsWritten(getSymbolOfDeclaration(node)));
-								break;
 						}
 					}
 				}
@@ -76995,17 +77120,19 @@ ${lanes.join("\n")}
 						const superCall = findFirstSuperCall(node.body);
 						if (superCall) {
 							if (classExtendsNull) error2(superCall, Diagnostics.A_constructor_cannot_contain_a_super_call_when_its_class_extends_null);
-							if (!emitStandardClassFields && (some(node.parent.members, isInstancePropertyWithInitializerOrPrivateIdentifierProperty) || some(node.parameters, (p) => hasSyntacticModifier(p, 31)))) if (!superCallIsRootLevelInConstructor(superCall, node.body)) error2(superCall, Diagnostics.A_super_call_must_be_a_root_level_statement_within_a_constructor_of_a_derived_class_that_contains_initialized_properties_parameter_properties_or_private_identifiers);
-							else {
-								let superCallStatement;
-								for (const statement of node.body.statements) {
-									if (isExpressionStatement(statement) && isSuperCall(skipOuterExpressions(statement.expression))) {
-										superCallStatement = statement;
-										break;
+							if (!emitStandardClassFields && (some(node.parent.members, isInstancePropertyWithInitializerOrPrivateIdentifierProperty) || some(node.parameters, (p) => hasSyntacticModifier(p, 31)))) {
+								if (!superCallIsRootLevelInConstructor(superCall, node.body)) error2(superCall, Diagnostics.A_super_call_must_be_a_root_level_statement_within_a_constructor_of_a_derived_class_that_contains_initialized_properties_parameter_properties_or_private_identifiers);
+								else {
+									let superCallStatement;
+									for (const statement of node.body.statements) {
+										if (isExpressionStatement(statement) && isSuperCall(skipOuterExpressions(statement.expression))) {
+											superCallStatement = statement;
+											break;
+										}
+										if (nodeImmediatelyReferencesSuperOrThis(statement)) break;
 									}
-									if (nodeImmediatelyReferencesSuperOrThis(statement)) break;
+									if (superCallStatement === void 0) error2(node, Diagnostics.A_super_call_must_be_the_first_statement_in_the_constructor_to_refer_to_super_or_this_when_a_derived_class_contains_initialized_properties_parameter_properties_or_private_identifiers);
 								}
-								if (superCallStatement === void 0) error2(node, Diagnostics.A_super_call_must_be_the_first_statement_in_the_constructor_to_refer_to_super_or_this_when_a_derived_class_contains_initialized_properties_parameter_properties_or_private_identifiers);
 							}
 						} else if (!classExtendsNull) error2(node, Diagnostics.Constructors_for_derived_classes_must_contain_a_super_call);
 					}
@@ -77363,9 +77490,10 @@ ${lanes.join("\n")}
 						someHaveQuestionToken = someHaveQuestionToken || hasQuestionToken(node);
 						allHaveQuestionToken = allHaveQuestionToken && hasQuestionToken(node);
 						const bodyIsPresent = nodeIsPresent(node.body);
-						if (bodyIsPresent && bodyDeclaration) if (isConstructor) multipleConstructorImplementation = true;
-						else duplicateFunctionDeclaration = true;
-						else if ((previousDeclaration == null ? void 0 : previousDeclaration.parent) === node.parent && previousDeclaration.end !== node.pos) reportImplementationExpectedError(previousDeclaration);
+						if (bodyIsPresent && bodyDeclaration) {
+							if (isConstructor) multipleConstructorImplementation = true;
+							else duplicateFunctionDeclaration = true;
+						} else if ((previousDeclaration == null ? void 0 : previousDeclaration.parent) === node.parent && previousDeclaration.end !== node.pos) reportImplementationExpectedError(previousDeclaration);
 						if (bodyIsPresent) {
 							if (!bodyDeclaration) bodyDeclaration = node;
 						} else hasOverloads = true;
@@ -77419,9 +77547,10 @@ ${lanes.join("\n")}
 				for (const d of symbol.declarations) {
 					const declarationSpaces = getDeclarationSpaces(d);
 					const effectiveDeclarationFlags = getEffectiveDeclarationFlags(d, 2080);
-					if (effectiveDeclarationFlags & 32) if (effectiveDeclarationFlags & 2048) defaultExportedDeclarationSpaces |= declarationSpaces;
-					else exportedDeclarationSpaces |= declarationSpaces;
-					else nonExportedDeclarationSpaces |= declarationSpaces;
+					if (effectiveDeclarationFlags & 32) {
+						if (effectiveDeclarationFlags & 2048) defaultExportedDeclarationSpaces |= declarationSpaces;
+						else exportedDeclarationSpaces |= declarationSpaces;
+					} else nonExportedDeclarationSpaces |= declarationSpaces;
 				}
 				const nonDefaultExportedDeclarationSpaces = exportedDeclarationSpaces | nonExportedDeclarationSpaces;
 				const commonDeclarationSpacesForExportsAndLocals = exportedDeclarationSpaces & nonExportedDeclarationSpaces;
@@ -78013,8 +78142,10 @@ ${lanes.join("\n")}
 							const parameter = local.valueDeclaration && tryGetRootParameterDeclaration(local.valueDeclaration);
 							const name = local.valueDeclaration && getNameOfDeclaration(local.valueDeclaration);
 							if (parameter && name) {
-								if (!isParameterPropertyDeclaration(parameter, parameter.parent) && !parameterIsThisKeyword(parameter) && !isIdentifierThatStartsWithUnderscore(name)) if (isBindingElement(declaration) && isArrayBindingPattern(declaration.parent)) addToGroup(unusedDestructures, declaration.parent, declaration, getNodeId);
-								else addDiagnostic(parameter, 1, createDiagnosticForNode(name, Diagnostics._0_is_declared_but_its_value_is_never_read, symbolName(local)));
+								if (!isParameterPropertyDeclaration(parameter, parameter.parent) && !parameterIsThisKeyword(parameter) && !isIdentifierThatStartsWithUnderscore(name)) {
+									if (isBindingElement(declaration) && isArrayBindingPattern(declaration.parent)) addToGroup(unusedDestructures, declaration.parent, declaration, getNodeId);
+									else addDiagnostic(parameter, 1, createDiagnosticForNode(name, Diagnostics._0_is_declared_but_its_value_is_never_read, symbolName(local)));
+								}
 							} else errorUnusedLocal(declaration, symbolName(local), addDiagnostic);
 						}
 					}
@@ -78026,9 +78157,10 @@ ${lanes.join("\n")}
 				});
 				unusedDestructures.forEach(([bindingPattern, bindingElements]) => {
 					const kind = tryGetRootParameterDeclaration(bindingPattern.parent) ? 1 : 0;
-					if (bindingPattern.elements.length === bindingElements.length) if (bindingElements.length === 1 && bindingPattern.parent.kind === 260 && bindingPattern.parent.parent.kind === 261) addToGroup(unusedVariables, bindingPattern.parent.parent, bindingPattern.parent, getNodeId);
-					else addDiagnostic(bindingPattern, kind, bindingElements.length === 1 ? createDiagnosticForNode(bindingPattern, Diagnostics._0_is_declared_but_its_value_is_never_read, bindingNameText(first(bindingElements).name)) : createDiagnosticForNode(bindingPattern, Diagnostics.All_destructured_elements_are_unused));
-					else for (const e of bindingElements) addDiagnostic(e, kind, createDiagnosticForNode(e, Diagnostics._0_is_declared_but_its_value_is_never_read, bindingNameText(e.name)));
+					if (bindingPattern.elements.length === bindingElements.length) {
+						if (bindingElements.length === 1 && bindingPattern.parent.kind === 260 && bindingPattern.parent.parent.kind === 261) addToGroup(unusedVariables, bindingPattern.parent.parent, bindingPattern.parent, getNodeId);
+						else addDiagnostic(bindingPattern, kind, bindingElements.length === 1 ? createDiagnosticForNode(bindingPattern, Diagnostics._0_is_declared_but_its_value_is_never_read, bindingNameText(first(bindingElements).name)) : createDiagnosticForNode(bindingPattern, Diagnostics.All_destructured_elements_are_unused));
+					} else for (const e of bindingElements) addDiagnostic(e, kind, createDiagnosticForNode(e, Diagnostics._0_is_declared_but_its_value_is_never_read, bindingNameText(e.name)));
 				});
 				unusedVariables.forEach(([declarationList, declarations]) => {
 					if (declarationList.declarations.length === declarations.length) addDiagnostic(declarationList, 0, declarations.length === 1 ? createDiagnosticForNode(first(declarations).name, Diagnostics._0_is_declared_but_its_value_is_never_read, bindingNameText(first(declarations).name)) : createDiagnosticForNode(declarationList.parent.kind === 243 ? declarationList.parent : declarationList, Diagnostics.All_variables_are_unused));
@@ -78371,8 +78503,10 @@ ${lanes.join("\n")}
 					const testedNode = isIdentifier(location) ? location : isPropertyAccessExpression(location) ? location.name : void 0;
 					const testedSymbol = testedNode && getSymbolAtLocation(testedNode);
 					if (!testedSymbol && !isPromise) return;
-					if (!(testedSymbol && isBinaryExpression(condExpr2.parent) && isSymbolUsedInBinaryExpressionChain(condExpr2.parent, testedSymbol) || testedSymbol && body2 && isSymbolUsedInConditionBody(condExpr2, body2, testedNode, testedSymbol))) if (isPromise) errorAndMaybeSuggestAwait(location, true, Diagnostics.This_condition_will_always_return_true_since_this_0_is_always_defined, getTypeNameForErrorDisplay(type));
-					else error2(location, Diagnostics.This_condition_will_always_return_true_since_this_function_is_always_defined_Did_you_mean_to_call_it_instead);
+					if (!(testedSymbol && isBinaryExpression(condExpr2.parent) && isSymbolUsedInBinaryExpressionChain(condExpr2.parent, testedSymbol) || testedSymbol && body2 && isSymbolUsedInConditionBody(condExpr2, body2, testedNode, testedSymbol))) {
+						if (isPromise) errorAndMaybeSuggestAwait(location, true, Diagnostics.This_condition_will_always_return_true_since_this_0_is_always_defined, getTypeNameForErrorDisplay(type));
+						else error2(location, Diagnostics.This_condition_will_always_return_true_since_this_function_is_always_defined_Did_you_mean_to_call_it_instead);
+					}
 				}
 			}
 			function isSymbolUsedInConditionBody(expr, body, testedNode, testedSymbol) {
@@ -78461,8 +78595,10 @@ ${lanes.join("\n")}
 				if (!checkGrammarStatementInAmbientContext(node)) {
 					if (node.initializer && node.initializer.kind === 261) checkGrammarVariableDeclarationList(node.initializer);
 				}
-				if (node.initializer) if (node.initializer.kind === 261) checkVariableDeclarationList(node.initializer);
-				else checkExpression(node.initializer);
+				if (node.initializer) {
+					if (node.initializer.kind === 261) checkVariableDeclarationList(node.initializer);
+					else checkExpression(node.initializer);
+				}
 				if (node.condition) checkTruthinessExpression(node.condition);
 				if (node.incrementor) checkExpression(node.incrementor);
 				checkSourceElement(node.statement);
@@ -78683,18 +78819,22 @@ ${lanes.join("\n")}
 				let noCache = false;
 				if (use & 2) {
 					const iterationTypes = getIterationTypesOfIterableCached(type, asyncIterationTypesResolver) || getIterationTypesOfIterableFast(type, asyncIterationTypesResolver);
-					if (iterationTypes) if (iterationTypes === noIterationTypes && errorNode) noCache = true;
-					else return use & 8 ? getAsyncFromSyncIterationTypes(iterationTypes, errorNode) : iterationTypes;
+					if (iterationTypes) {
+						if (iterationTypes === noIterationTypes && errorNode) noCache = true;
+						else return use & 8 ? getAsyncFromSyncIterationTypes(iterationTypes, errorNode) : iterationTypes;
+					}
 				}
 				if (use & 1) {
 					let iterationTypes = getIterationTypesOfIterableCached(type, syncIterationTypesResolver) || getIterationTypesOfIterableFast(type, syncIterationTypesResolver);
-					if (iterationTypes) if (iterationTypes === noIterationTypes && errorNode) noCache = true;
-					else if (use & 2) {
-						if (iterationTypes !== noIterationTypes) {
-							iterationTypes = getAsyncFromSyncIterationTypes(iterationTypes, errorNode);
-							return noCache ? iterationTypes : setCachedIterationTypes(type, "iterationTypesOfAsyncIterable", iterationTypes);
-						}
-					} else return iterationTypes;
+					if (iterationTypes) {
+						if (iterationTypes === noIterationTypes && errorNode) noCache = true;
+						else if (use & 2) {
+							if (iterationTypes !== noIterationTypes) {
+								iterationTypes = getAsyncFromSyncIterationTypes(iterationTypes, errorNode);
+								return noCache ? iterationTypes : setCachedIterationTypes(type, "iterationTypesOfAsyncIterable", iterationTypes);
+							}
+						} else return iterationTypes;
+					}
 				}
 				if (use & 2) {
 					const iterationTypes = getIterationTypesOfIterableSlow(type, asyncIterationTypesResolver, errorNode, errorOutputContainer, noCache);
@@ -78702,10 +78842,12 @@ ${lanes.join("\n")}
 				}
 				if (use & 1) {
 					let iterationTypes = getIterationTypesOfIterableSlow(type, syncIterationTypesResolver, errorNode, errorOutputContainer, noCache);
-					if (iterationTypes !== noIterationTypes) if (use & 2) {
-						iterationTypes = getAsyncFromSyncIterationTypes(iterationTypes, errorNode);
-						return noCache ? iterationTypes : setCachedIterationTypes(type, "iterationTypesOfAsyncIterable", iterationTypes);
-					} else return iterationTypes;
+					if (iterationTypes !== noIterationTypes) {
+						if (use & 2) {
+							iterationTypes = getAsyncFromSyncIterationTypes(iterationTypes, errorNode);
+							return noCache ? iterationTypes : setCachedIterationTypes(type, "iterationTypesOfAsyncIterable", iterationTypes);
+						} else return iterationTypes;
+					}
 				}
 				return noIterationTypes;
 			}
@@ -78851,10 +78993,12 @@ ${lanes.join("\n")}
 				const methodReturnType = methodReturnTypes ? getIntersectionType(methodReturnTypes) : neverType;
 				const iterationTypes = getIterationTypesOfIteratorResult(resolver.resolveIterationType(methodReturnType, errorNode) || anyType);
 				if (iterationTypes === noIterationTypes) {
-					if (errorNode) if (errorOutputContainer) {
-						errorOutputContainer.errors ?? (errorOutputContainer.errors = []);
-						errorOutputContainer.errors.push(createDiagnosticForNode(errorNode, resolver.mustHaveAValueDiagnostic, methodName));
-					} else error2(errorNode, resolver.mustHaveAValueDiagnostic, methodName);
+					if (errorNode) {
+						if (errorOutputContainer) {
+							errorOutputContainer.errors ?? (errorOutputContainer.errors = []);
+							errorOutputContainer.errors.push(createDiagnosticForNode(errorNode, resolver.mustHaveAValueDiagnostic, methodName));
+						} else error2(errorNode, resolver.mustHaveAValueDiagnostic, methodName);
+					}
 					yieldType = anyType;
 					returnTypes = append(returnTypes, anyType);
 				} else {
@@ -78943,10 +79087,12 @@ ${lanes.join("\n")}
 				let hasDuplicateDefaultClause = false;
 				const expressionType = checkExpression(node.expression);
 				forEach(node.caseBlock.clauses, (clause) => {
-					if (clause.kind === 297 && !hasDuplicateDefaultClause) if (firstDefaultClause === void 0) firstDefaultClause = clause;
-					else {
-						grammarErrorOnNode(clause, Diagnostics.A_default_clause_cannot_appear_more_than_once_in_a_switch_statement);
-						hasDuplicateDefaultClause = true;
+					if (clause.kind === 297 && !hasDuplicateDefaultClause) {
+						if (firstDefaultClause === void 0) firstDefaultClause = clause;
+						else {
+							grammarErrorOnNode(clause, Diagnostics.A_default_clause_cannot_appear_more_than_once_in_a_switch_statement);
+							hasDuplicateDefaultClause = true;
+						}
 					}
 					if (clause.kind === 296) addLazyDiagnostic(createLazyCaseClauseDiagnostics(clause));
 					forEach(clause.statements, checkSourceElement);
@@ -79253,11 +79399,13 @@ ${lanes.join("\n")}
 				function createImplementsDiagnostics(typeRefNode) {
 					return () => {
 						const t = getReducedType(getTypeFromTypeNode(typeRefNode));
-						if (!isErrorType(t)) if (isValidBaseType(t)) {
-							const genericDiag = t.symbol && t.symbol.flags & 32 ? Diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass : Diagnostics.Class_0_incorrectly_implements_interface_1;
-							const baseWithThis = getTypeWithThisArgument(t, type.thisType);
-							if (!checkTypeAssignableTo(typeWithThis, baseWithThis, void 0)) issueMemberSpecificError(node, typeWithThis, baseWithThis, genericDiag);
-						} else error2(typeRefNode, Diagnostics.A_class_can_only_implement_an_object_type_or_intersection_of_object_types_with_statically_known_members);
+						if (!isErrorType(t)) {
+							if (isValidBaseType(t)) {
+								const genericDiag = t.symbol && t.symbol.flags & 32 ? Diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass : Diagnostics.Class_0_incorrectly_implements_interface_1;
+								const baseWithThis = getTypeWithThisArgument(t, type.thisType);
+								if (!checkTypeAssignableTo(typeWithThis, baseWithThis, void 0)) issueMemberSpecificError(node, typeWithThis, baseWithThis, genericDiag);
+							} else error2(typeRefNode, Diagnostics.A_class_can_only_implement_an_object_type_or_intersection_of_object_types_with_statically_known_members);
+						}
 					};
 				}
 			}
@@ -79409,19 +79557,21 @@ ${lanes.join("\n")}
 								}
 							}
 							continue;
-						} else if (isPrototypeProperty(base)) if (isPrototypeProperty(derived) || derived.flags & 4) continue;
-						else {
-							Debug.assert(!!(derived.flags & 98304));
-							errorMessage = Diagnostics.Class_0_defines_instance_member_function_1_but_extended_class_2_defines_it_as_instance_member_accessor;
-						}
-						else if (base.flags & 98304) errorMessage = Diagnostics.Class_0_defines_instance_member_accessor_1_but_extended_class_2_defines_it_as_instance_member_function;
+						} else if (isPrototypeProperty(base)) {
+							if (isPrototypeProperty(derived) || derived.flags & 4) continue;
+							else {
+								Debug.assert(!!(derived.flags & 98304));
+								errorMessage = Diagnostics.Class_0_defines_instance_member_function_1_but_extended_class_2_defines_it_as_instance_member_accessor;
+							}
+						} else if (base.flags & 98304) errorMessage = Diagnostics.Class_0_defines_instance_member_accessor_1_but_extended_class_2_defines_it_as_instance_member_function;
 						else errorMessage = Diagnostics.Class_0_defines_instance_member_property_1_but_extended_class_2_defines_it_as_instance_member_function;
 						error2(getNameOfDeclaration(derived.valueDeclaration) || derived.valueDeclaration, errorMessage, typeToString(baseType), symbolToString(base), typeToString(type));
 					}
 				}
-				for (const [errorNode, memberInfo] of notImplementedInfo) if (length(memberInfo.missedProperties) === 1) if (isClassExpression(errorNode)) error2(errorNode, Diagnostics.Non_abstract_class_expression_does_not_implement_inherited_abstract_member_0_from_class_1, first(memberInfo.missedProperties), memberInfo.baseTypeName);
-				else error2(errorNode, Diagnostics.Non_abstract_class_0_does_not_implement_inherited_abstract_member_1_from_class_2, memberInfo.typeName, first(memberInfo.missedProperties), memberInfo.baseTypeName);
-				else if (length(memberInfo.missedProperties) > 5) {
+				for (const [errorNode, memberInfo] of notImplementedInfo) if (length(memberInfo.missedProperties) === 1) {
+					if (isClassExpression(errorNode)) error2(errorNode, Diagnostics.Non_abstract_class_expression_does_not_implement_inherited_abstract_member_0_from_class_1, first(memberInfo.missedProperties), memberInfo.baseTypeName);
+					else error2(errorNode, Diagnostics.Non_abstract_class_0_does_not_implement_inherited_abstract_member_1_from_class_2, memberInfo.typeName, first(memberInfo.missedProperties), memberInfo.baseTypeName);
+				} else if (length(memberInfo.missedProperties) > 5) {
 					const missedProperties = map(memberInfo.missedProperties.slice(0, 4), (prop) => `'${prop}'`).join(", ");
 					const remainingMissedProperties = length(memberInfo.missedProperties) - 4;
 					if (isClassExpression(errorNode)) error2(errorNode, Diagnostics.Non_abstract_class_expression_is_missing_implementations_for_the_following_members_of_0_Colon_1_and_2_more, memberInfo.baseTypeName, missedProperties, remainingMissedProperties);
@@ -79672,8 +79822,10 @@ ${lanes.join("\n")}
 						const enumDeclaration = declaration;
 						if (!enumDeclaration.members.length) return false;
 						const firstEnumMember = enumDeclaration.members[0];
-						if (!firstEnumMember.initializer) if (seenEnumMissingInitialInitializer) error2(firstEnumMember.name, Diagnostics.In_an_enum_with_multiple_declarations_only_one_declaration_can_omit_an_initializer_for_its_first_enum_element);
-						else seenEnumMissingInitialInitializer = true;
+						if (!firstEnumMember.initializer) {
+							if (seenEnumMissingInitialInitializer) error2(firstEnumMember.name, Diagnostics.In_an_enum_with_multiple_declarations_only_one_declaration_can_omit_an_initializer_for_its_first_enum_element);
+							else seenEnumMissingInitialInitializer = true;
+						}
 					});
 				}
 			}
@@ -79736,13 +79888,15 @@ ${lanes.join("\n")}
 							if (exportModifier) error2(exportModifier, Diagnostics.A_top_level_export_modifier_cannot_be_used_on_value_declarations_in_a_CommonJS_module_when_verbatimModuleSyntax_is_enabled);
 						}
 					}
-					if (isAmbientExternalModule) if (isExternalModuleAugmentation(node)) {
-						if ((isGlobalAugmentation || getSymbolOfDeclaration(node).flags & 33554432) && node.body) for (const statement of node.body.statements) checkModuleAugmentationElement(statement, isGlobalAugmentation);
-					} else if (isGlobalSourceFile(node.parent)) {
-						if (isGlobalAugmentation) error2(node.name, Diagnostics.Augmentations_for_the_global_scope_can_only_be_directly_nested_in_external_modules_or_ambient_module_declarations);
-						else if (isExternalModuleNameRelative(getTextOfIdentifierOrLiteral(node.name))) error2(node.name, Diagnostics.Ambient_module_declaration_cannot_specify_relative_module_name);
-					} else if (isGlobalAugmentation) error2(node.name, Diagnostics.Augmentations_for_the_global_scope_can_only_be_directly_nested_in_external_modules_or_ambient_module_declarations);
-					else error2(node.name, Diagnostics.Ambient_modules_cannot_be_nested_in_other_modules_or_namespaces);
+					if (isAmbientExternalModule) {
+						if (isExternalModuleAugmentation(node)) {
+							if ((isGlobalAugmentation || getSymbolOfDeclaration(node).flags & 33554432) && node.body) for (const statement of node.body.statements) checkModuleAugmentationElement(statement, isGlobalAugmentation);
+						} else if (isGlobalSourceFile(node.parent)) {
+							if (isGlobalAugmentation) error2(node.name, Diagnostics.Augmentations_for_the_global_scope_can_only_be_directly_nested_in_external_modules_or_ambient_module_declarations);
+							else if (isExternalModuleNameRelative(getTextOfIdentifierOrLiteral(node.name))) error2(node.name, Diagnostics.Ambient_module_declaration_cannot_specify_relative_module_name);
+						} else if (isGlobalAugmentation) error2(node.name, Diagnostics.Augmentations_for_the_global_scope_can_only_be_directly_nested_in_external_modules_or_ambient_module_declarations);
+						else error2(node.name, Diagnostics.Ambient_modules_cannot_be_nested_in_other_modules_or_namespaces);
+					}
 				}
 			}
 			function checkModuleAugmentationElement(node, isGlobalAugmentation) {
@@ -79770,9 +79924,7 @@ ${lanes.join("\n")}
 					case 262:
 					case 264:
 					case 267:
-					case 265:
-						if (isGlobalAugmentation) return;
-						break;
+					case 265: if (isGlobalAugmentation) return;
 				}
 			}
 			function getFirstNonModuleExportsIdentifier(node) {
@@ -79898,12 +80050,14 @@ ${lanes.join("\n")}
 					const target = getImmediateAliasedSymbol(symbol);
 					if (target) {
 						if (target === targetSymbol) break;
-						if (target.declarations && length(target.declarations)) if (isDeprecatedSymbol(target)) {
-							addDeprecatedSuggestion(location, target.declarations, target.escapedName);
-							break;
-						} else {
-							if (symbol === targetSymbol) break;
-							symbol = target;
+						if (target.declarations && length(target.declarations)) {
+							if (isDeprecatedSymbol(target)) {
+								addDeprecatedSuggestion(location, target.declarations, target.escapedName);
+								break;
+							} else {
+								if (symbol === targetSymbol) break;
+								symbol = target;
+							}
 						}
 					} else break;
 				}
@@ -79976,21 +80130,25 @@ ${lanes.join("\n")}
 				if (checkGrammarModuleElementContext(node, isInJSFile(node) ? Diagnostics.An_export_declaration_can_only_be_used_at_the_top_level_of_a_module : Diagnostics.An_export_declaration_can_only_be_used_at_the_top_level_of_a_namespace_or_module)) return;
 				if (!checkGrammarModifiers(node) && hasSyntacticModifiers(node)) grammarErrorOnFirstToken(node, Diagnostics.An_export_declaration_cannot_have_modifiers);
 				checkGrammarExportDeclaration(node);
-				if (!node.moduleSpecifier || checkExternalImportOrExportDeclaration(node)) if (node.exportClause && !isNamespaceExport(node.exportClause)) {
-					forEach(node.exportClause.elements, checkExportSpecifier);
-					const inAmbientExternalModule = node.parent.kind === 268 && isAmbientModule(node.parent.parent);
-					const inAmbientNamespaceDeclaration = !inAmbientExternalModule && node.parent.kind === 268 && !node.moduleSpecifier && node.flags & 33554432;
-					if (node.parent.kind !== 307 && !inAmbientExternalModule && !inAmbientNamespaceDeclaration) error2(node, Diagnostics.Export_declarations_are_not_permitted_in_a_namespace);
-				} else {
-					const moduleSymbol = resolveExternalModuleName(node, node.moduleSpecifier);
-					if (moduleSymbol && hasExportAssignmentSymbol(moduleSymbol)) error2(node.moduleSpecifier, Diagnostics.Module_0_uses_export_and_cannot_be_used_with_export_Asterisk, symbolToString(moduleSymbol));
-					else if (node.exportClause) {
-						checkAliasSymbol(node.exportClause);
-						checkModuleExportName(node.exportClause.name);
+				if (!node.moduleSpecifier || checkExternalImportOrExportDeclaration(node)) {
+					if (node.exportClause && !isNamespaceExport(node.exportClause)) {
+						forEach(node.exportClause.elements, checkExportSpecifier);
+						const inAmbientExternalModule = node.parent.kind === 268 && isAmbientModule(node.parent.parent);
+						const inAmbientNamespaceDeclaration = !inAmbientExternalModule && node.parent.kind === 268 && !node.moduleSpecifier && node.flags & 33554432;
+						if (node.parent.kind !== 307 && !inAmbientExternalModule && !inAmbientNamespaceDeclaration) error2(node, Diagnostics.Export_declarations_are_not_permitted_in_a_namespace);
+					} else {
+						const moduleSymbol = resolveExternalModuleName(node, node.moduleSpecifier);
+						if (moduleSymbol && hasExportAssignmentSymbol(moduleSymbol)) error2(node.moduleSpecifier, Diagnostics.Module_0_uses_export_and_cannot_be_used_with_export_Asterisk, symbolToString(moduleSymbol));
+						else if (node.exportClause) {
+							checkAliasSymbol(node.exportClause);
+							checkModuleExportName(node.exportClause.name);
+						}
+						if (host.getEmitModuleFormatOfFile(getSourceFileOfNode(node)) < 4) {
+							if (node.exportClause) {
+								if (getESModuleInterop(compilerOptions)) checkExternalEmitHelpers(node, 65536);
+							} else checkExternalEmitHelpers(node, 32768);
+						}
 					}
-					if (host.getEmitModuleFormatOfFile(getSourceFileOfNode(node)) < 4) if (node.exportClause) {
-						if (getESModuleInterop(compilerOptions)) checkExternalEmitHelpers(node, 65536);
-					} else checkExternalEmitHelpers(node, 32768);
 				}
 				checkImportAttributes(node);
 			}
@@ -80222,13 +80380,15 @@ ${lanes.join("\n")}
 				});
 			}
 			function checkJSDocTypeIsInJsFile(node) {
-				if (!isInJSFile(node)) if (isJSDocNonNullableType(node) || isJSDocNullableType(node)) {
-					const token = tokenToString(isJSDocNonNullableType(node) ? 54 : 58);
-					const diagnostic = node.postfix ? Diagnostics._0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1 : Diagnostics._0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1;
-					const typeNode = node.type;
-					const type = getTypeFromTypeNode(typeNode);
-					grammarErrorOnNode(node, diagnostic, token, typeToString(isJSDocNullableType(node) && !(type === neverType || type === voidType) ? getUnionType(append([type, undefinedType], node.postfix ? void 0 : nullType)) : type));
-				} else grammarErrorOnNode(node, Diagnostics.JSDoc_types_can_only_be_used_inside_documentation_comments);
+				if (!isInJSFile(node)) {
+					if (isJSDocNonNullableType(node) || isJSDocNullableType(node)) {
+						const token = tokenToString(isJSDocNonNullableType(node) ? 54 : 58);
+						const diagnostic = node.postfix ? Diagnostics._0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1 : Diagnostics._0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1;
+						const typeNode = node.type;
+						const type = getTypeFromTypeNode(typeNode);
+						grammarErrorOnNode(node, diagnostic, token, typeToString(isJSDocNullableType(node) && !(type === neverType || type === voidType) ? getUnionType(append([type, undefinedType], node.postfix ? void 0 : nullType)) : type));
+					} else grammarErrorOnNode(node, Diagnostics.JSDoc_types_can_only_be_used_inside_documentation_comments);
+				}
 			}
 			function checkJSDocVariadicType(node) {
 				checkJSDocTypeIsInJsFile(node);
@@ -80326,9 +80486,7 @@ ${lanes.join("\n")}
 					case 222:
 						checkExpression(node.expression);
 						break;
-					case 226:
-						if (isInstanceOfExpression(node)) resolveUntypedCall(node);
-						break;
+					case 226: if (isInstanceOfExpression(node)) resolveUntypedCall(node);
 				}
 				currentNode = saveCurrentNode;
 				(_b = tracing) == null || _b.pop();
@@ -80488,9 +80646,7 @@ ${lanes.join("\n")}
 							case 264:
 								if (!isStaticSymbol) copySymbols(getMembersOfSymbol(getSymbolOfDeclaration(location)), meaning & 788968);
 								break;
-							case 218:
-								if (location.name) copySymbol(location.symbol, meaning);
-								break;
+							case 218: if (location.name) copySymbol(location.symbol, meaning);
 						}
 						if (introducesArgumentsExoticObject(location)) copySymbol(argumentsSymbol, meaning);
 						isStaticSymbol = isStatic(location);
@@ -80935,13 +81091,15 @@ ${lanes.join("\n")}
 					const links = getSymbolLinks(symbol);
 					if (links.isDeclarationWithCollidingName === void 0) {
 						const container = getEnclosingBlockScopeContainer(symbol.valueDeclaration);
-						if (isStatementWithLocals(container) || isSymbolOfDestructuredElementOfCatchBinding(symbol)) if (resolveName(container.parent, symbol.escapedName, 111551, void 0, false)) links.isDeclarationWithCollidingName = true;
-						else if (hasNodeCheckFlag(symbol.valueDeclaration, 16384)) {
-							const isDeclaredInLoop = hasNodeCheckFlag(symbol.valueDeclaration, 32768);
-							const inLoopInitializer = isIterationStatement(container, false);
-							const inLoopBodyBlock = container.kind === 241 && isIterationStatement(container.parent, false);
-							links.isDeclarationWithCollidingName = !isBlockScopedContainerTopLevel(container) && (!isDeclaredInLoop || !inLoopInitializer && !inLoopBodyBlock);
-						} else links.isDeclarationWithCollidingName = false;
+						if (isStatementWithLocals(container) || isSymbolOfDestructuredElementOfCatchBinding(symbol)) {
+							if (resolveName(container.parent, symbol.escapedName, 111551, void 0, false)) links.isDeclarationWithCollidingName = true;
+							else if (hasNodeCheckFlag(symbol.valueDeclaration, 16384)) {
+								const isDeclaredInLoop = hasNodeCheckFlag(symbol.valueDeclaration, 32768);
+								const inLoopInitializer = isIterationStatement(container, false);
+								const inLoopBodyBlock = container.kind === 241 && isIterationStatement(container.parent, false);
+								links.isDeclarationWithCollidingName = !isBlockScopedContainerTopLevel(container) && (!isDeclaredInLoop || !inLoopInitializer && !inLoopBodyBlock);
+							} else links.isDeclarationWithCollidingName = false;
+						}
 					}
 					return links.isDeclarationWithCollidingName;
 				}
@@ -81595,9 +81753,10 @@ ${lanes.join("\n")}
 				let sawExportBeforeDecorators = false;
 				let hasLeadingDecorators = false;
 				for (const modifier of node.modifiers) if (isDecorator(modifier)) {
-					if (!nodeCanBeDecorated(legacyDecorators, node, node.parent, node.parent.parent)) if (node.kind === 174 && !nodeIsPresent(node.body)) return grammarErrorOnFirstToken(node, Diagnostics.A_decorator_can_only_decorate_a_method_implementation_not_an_overload);
-					else return grammarErrorOnFirstToken(node, Diagnostics.Decorators_are_not_valid_here);
-					else if (legacyDecorators && (node.kind === 177 || node.kind === 178)) {
+					if (!nodeCanBeDecorated(legacyDecorators, node, node.parent, node.parent.parent)) {
+						if (node.kind === 174 && !nodeIsPresent(node.body)) return grammarErrorOnFirstToken(node, Diagnostics.A_decorator_can_only_decorate_a_method_implementation_not_an_overload);
+						else return grammarErrorOnFirstToken(node, Diagnostics.Decorators_are_not_valid_here);
+					} else if (legacyDecorators && (node.kind === 177 || node.kind === 178)) {
 						const accessors = getAllAccessorDeclarationsForDeclaration(node);
 						if (hasDecorators(accessors.firstAccessor) && node === accessors.secondAccessor) return grammarErrorOnFirstToken(node, Diagnostics.Decorators_cannot_be_applied_to_multiple_get_Slashset_accessors_of_the_same_name);
 					}
@@ -81649,9 +81808,10 @@ ${lanes.join("\n")}
 							else if (flags & 8) return grammarErrorOnNode(modifier, Diagnostics._0_modifier_must_precede_1_modifier, text, "readonly");
 							else if (flags & 1024) return grammarErrorOnNode(modifier, Diagnostics._0_modifier_must_precede_1_modifier, text, "async");
 							else if (node.parent.kind === 268 || node.parent.kind === 307) return grammarErrorOnNode(modifier, Diagnostics._0_modifier_cannot_appear_on_a_module_or_namespace_element, text);
-							else if (flags & 64) if (modifier.kind === 123) return grammarErrorOnNode(modifier, Diagnostics._0_modifier_cannot_be_used_with_1_modifier, text, "abstract");
-							else return grammarErrorOnNode(modifier, Diagnostics._0_modifier_must_precede_1_modifier, text, "abstract");
-							else if (isPrivateIdentifierClassElementDeclaration(node)) return grammarErrorOnNode(modifier, Diagnostics.An_accessibility_modifier_cannot_be_used_with_a_private_identifier);
+							else if (flags & 64) {
+								if (modifier.kind === 123) return grammarErrorOnNode(modifier, Diagnostics._0_modifier_cannot_be_used_with_1_modifier, text, "abstract");
+								else return grammarErrorOnNode(modifier, Diagnostics._0_modifier_must_precede_1_modifier, text, "abstract");
+							} else if (isPrivateIdentifierClassElementDeclaration(node)) return grammarErrorOnNode(modifier, Diagnostics.An_accessibility_modifier_cannot_be_used_with_a_private_identifier);
 							flags |= modifierToFlag(modifier.kind);
 							break;
 						case 126:
@@ -81889,8 +82049,10 @@ ${lanes.join("\n")}
 			}
 			function checkGrammarIndexSignatureParameters(node) {
 				const parameter = node.parameters[0];
-				if (node.parameters.length !== 1) if (parameter) return grammarErrorOnNode(parameter.name, Diagnostics.An_index_signature_must_have_exactly_one_parameter);
-				else return grammarErrorOnNode(node, Diagnostics.An_index_signature_must_have_exactly_one_parameter);
+				if (node.parameters.length !== 1) {
+					if (parameter) return grammarErrorOnNode(parameter.name, Diagnostics.An_index_signature_must_have_exactly_one_parameter);
+					else return grammarErrorOnNode(node, Diagnostics.An_index_signature_must_have_exactly_one_parameter);
+				}
 				checkGrammarForDisallowedTrailingComma(node.parameters, Diagnostics.An_index_signature_cannot_have_a_trailing_comma);
 				if (parameter.dotDotDotToken) return grammarErrorOnNode(parameter.dotDotDotToken, Diagnostics.An_index_signature_cannot_have_a_rest_parameter);
 				if (hasEffectiveModifiers(parameter)) return grammarErrorOnNode(parameter.name, Diagnostics.An_index_signature_parameter_cannot_have_an_accessibility_modifier);
@@ -82031,9 +82193,10 @@ ${lanes.join("\n")}
 						if (!existingKind) seen.set(effectiveName, currentKind);
 						else if (currentKind & 8 && existingKind & 8) grammarErrorOnNode(name, Diagnostics.Duplicate_identifier_0, getTextOfNode(name));
 						else if (currentKind & 4 && existingKind & 4) grammarErrorOnNode(name, Diagnostics.An_object_literal_cannot_have_multiple_properties_with_the_same_name, getTextOfNode(name));
-						else if (currentKind & 3 && existingKind & 3) if (existingKind !== 3 && currentKind !== existingKind) seen.set(effectiveName, currentKind | existingKind);
-						else return grammarErrorOnNode(name, Diagnostics.An_object_literal_cannot_have_multiple_get_Slashset_accessors_with_the_same_name);
-						else return grammarErrorOnNode(name, Diagnostics.An_object_literal_cannot_have_property_and_accessor_with_the_same_name);
+						else if (currentKind & 3 && existingKind & 3) {
+							if (existingKind !== 3 && currentKind !== existingKind) seen.set(effectiveName, currentKind | existingKind);
+							else return grammarErrorOnNode(name, Diagnostics.An_object_literal_cannot_have_multiple_get_Slashset_accessors_with_the_same_name);
+						} else return grammarErrorOnNode(name, Diagnostics.An_object_literal_cannot_have_property_and_accessor_with_the_same_name);
 					}
 				}
 			}
@@ -82075,9 +82238,7 @@ ${lanes.join("\n")}
 									case 99:
 									case 200:
 									case 4: if (languageVersion >= 4) break;
-									default:
-										diagnostics.add(createDiagnosticForNode(forInOrOfStatement.awaitModifier, Diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher));
-										break;
+									default: diagnostics.add(createDiagnosticForNode(forInOrOfStatement.awaitModifier, Diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher));
 								}
 							}
 						} else if (!hasParseDiagnostics(sourceFile)) {
@@ -82203,9 +82364,7 @@ ${lanes.join("\n")}
 						case 255:
 							if (node.kind === 252 && !node.label) return false;
 							break;
-						default:
-							if (isIterationStatement(current, false) && !node.label) return false;
-							break;
+						default: if (isIterationStatement(current, false) && !node.label) return false;
 					}
 					current = current.parent;
 				}
@@ -82319,9 +82478,7 @@ ${lanes.join("\n")}
 					case 105:
 						if (escapedText !== "target") return grammarErrorOnNode(node.name, Diagnostics._0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, unescapeLeadingUnderscores(node.name.escapedText), tokenToString(node.keywordToken), "target");
 						break;
-					case 102:
-						if (escapedText !== "meta") return grammarErrorOnNode(node.name, Diagnostics._0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, unescapeLeadingUnderscores(node.name.escapedText), tokenToString(node.keywordToken), "meta");
-						break;
+					case 102: if (escapedText !== "meta") return grammarErrorOnNode(node.name, Diagnostics._0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, unescapeLeadingUnderscores(node.name.escapedText), tokenToString(node.keywordToken), "meta");
 				}
 			}
 			function hasParseDiagnostics(sourceFile) {
@@ -82768,13 +82925,15 @@ ${lanes.join("\n")}
 						updated = nodes.slice(0, i);
 						Debug.assertEachNode(updated, test);
 					}
-					if (visited) if (isArray(visited)) for (const visitedNode of visited) {
-						Debug.assertNode(visitedNode, test);
-						updated.push(visitedNode);
-					}
-					else {
-						Debug.assertNode(visited, test);
-						updated.push(visited);
+					if (visited) {
+						if (isArray(visited)) for (const visitedNode of visited) {
+							Debug.assertNode(visitedNode, test);
+							updated.push(visitedNode);
+						}
+						else {
+							Debug.assertNode(visited, test);
+							updated.push(visited);
+						}
 					}
 				}
 			}
@@ -83823,26 +83982,27 @@ ${lanes.join("\n")}
 					if (node.moduleReference.kind === 283) externalImports.push(node);
 					break;
 				case 278:
-					if (node.moduleSpecifier) if (!node.exportClause) {
-						externalImports.push(node);
-						hasExportStarsToExportValues = true;
-					} else {
-						externalImports.push(node);
-						if (isNamedExports(node.exportClause)) {
-							addExportedNamesForExportDeclaration(node);
-							hasImportDefault || (hasImportDefault = containsDefaultReference(node.exportClause));
+					if (node.moduleSpecifier) {
+						if (!node.exportClause) {
+							externalImports.push(node);
+							hasExportStarsToExportValues = true;
 						} else {
-							const name = node.exportClause.name;
-							const nameText = moduleExportNameTextUnescaped(name);
-							if (!uniqueExports.get(nameText)) {
-								multiMapSparseArrayAdd(exportedBindings, getOriginalNodeId(node), name);
-								uniqueExports.set(nameText, true);
-								exportedNames = append(exportedNames, name);
+							externalImports.push(node);
+							if (isNamedExports(node.exportClause)) {
+								addExportedNamesForExportDeclaration(node);
+								hasImportDefault || (hasImportDefault = containsDefaultReference(node.exportClause));
+							} else {
+								const name = node.exportClause.name;
+								const nameText = moduleExportNameTextUnescaped(name);
+								if (!uniqueExports.get(nameText)) {
+									multiMapSparseArrayAdd(exportedBindings, getOriginalNodeId(node), name);
+									uniqueExports.set(nameText, true);
+									exportedNames = append(exportedNames, name);
+								}
+								hasImportStar = true;
 							}
-							hasImportStar = true;
 						}
-					}
-					else addExportedNamesForExportDeclaration(node);
+					} else addExportedNamesForExportDeclaration(node);
 					break;
 				case 277:
 					if (node.isExportEquals && !exportEquals) exportEquals = node;
@@ -83853,8 +84013,8 @@ ${lanes.join("\n")}
 				case 262:
 					if (hasSyntacticModifier(node, 32)) addExportedFunctionDeclaration(node, void 0, hasSyntacticModifier(node, 2048));
 					break;
-				case 263:
-					if (hasSyntacticModifier(node, 32)) if (hasSyntacticModifier(node, 2048)) {
+				case 263: if (hasSyntacticModifier(node, 32)) {
+					if (hasSyntacticModifier(node, 2048)) {
 						if (!hasExportDefault) {
 							multiMapSparseArrayAdd(exportedBindings, getOriginalNodeId(node), context.factory.getDeclarationName(node));
 							hasExportDefault = true;
@@ -83867,7 +84027,7 @@ ${lanes.join("\n")}
 							exportedNames = append(exportedNames, name);
 						}
 					}
-					break;
+				}
 			}
 			const externalHelpersImportDeclaration = createExternalHelpersImportDeclarationIfNeeded(context.factory, context.getEmitHelperFactory(), sourceFile, compilerOptions, hasExportStarsToExportValues, hasImportStar, hasImportDefault);
 			if (externalHelpersImportDeclaration) externalImports.unshift(externalHelpersImportDeclaration);
@@ -84305,11 +84465,12 @@ ${lanes.join("\n")}
 			const bindingTarget = getTargetOfBindingOrAssignmentElement(element);
 			if (!skipInitializer) {
 				const initializer = visitNode(getInitializerOfBindingOrAssignmentElement(element), flattenContext.visitor, isExpression);
-				if (initializer) if (value) {
-					value = createDefaultValueCheck(flattenContext, value, initializer, location);
-					if (!isSimpleInlineableExpression(initializer) && isBindingOrAssignmentPattern(bindingTarget)) value = ensureIdentifier(flattenContext, value, true, location);
-				} else value = initializer;
-				else if (!value) value = flattenContext.context.factory.createVoidZero();
+				if (initializer) {
+					if (value) {
+						value = createDefaultValueCheck(flattenContext, value, initializer, location);
+						if (!isSimpleInlineableExpression(initializer) && isBindingOrAssignmentPattern(bindingTarget)) value = ensureIdentifier(flattenContext, value, true, location);
+					} else value = initializer;
+				} else if (!value) value = flattenContext.context.factory.createVoidZero();
 			}
 			if (isObjectBindingOrAssignmentPattern(bindingTarget)) flattenObjectBindingOrAssignmentPattern(flattenContext, element, bindingTarget, value, location);
 			else if (isArrayBindingOrAssignmentPattern(bindingTarget)) flattenArrayBindingOrAssignmentPattern(flattenContext, element, bindingTarget, value, location);
@@ -84360,14 +84521,15 @@ ${lanes.join("\n")}
 			let restContainingElements;
 			for (let i = 0; i < numElements; i++) {
 				const element = elements[i];
-				if (flattenContext.level >= 1) if (element.transformFlags & 65536 || flattenContext.hasTransformedPriorElement && !isSimpleBindingOrAssignmentElement(element)) {
-					flattenContext.hasTransformedPriorElement = true;
-					const temp = flattenContext.context.factory.createTempVariable(void 0);
-					if (flattenContext.hoistTempVariables) flattenContext.context.hoistVariableDeclaration(temp);
-					restContainingElements = append(restContainingElements, [temp, element]);
-					bindingElements = append(bindingElements, flattenContext.createArrayBindingOrAssignmentElement(temp));
-				} else bindingElements = append(bindingElements, element);
-				else if (isOmittedExpression(element)) continue;
+				if (flattenContext.level >= 1) {
+					if (element.transformFlags & 65536 || flattenContext.hasTransformedPriorElement && !isSimpleBindingOrAssignmentElement(element)) {
+						flattenContext.hasTransformedPriorElement = true;
+						const temp = flattenContext.context.factory.createTempVariable(void 0);
+						if (flattenContext.hoistTempVariables) flattenContext.context.hoistVariableDeclaration(temp);
+						restContainingElements = append(restContainingElements, [temp, element]);
+						bindingElements = append(bindingElements, flattenContext.createArrayBindingOrAssignmentElement(temp));
+					} else bindingElements = append(bindingElements, element);
+				} else if (isOmittedExpression(element)) continue;
 				else if (!getRestIndicatorOfBindingOrAssignmentElement(element)) flattenBindingOrAssignmentElement(flattenContext, element, flattenContext.context.factory.createElementAccessExpression(value, i), element);
 				else if (i === numElements - 1) flattenBindingOrAssignmentElement(flattenContext, element, flattenContext.context.factory.createArraySliceCall(value, i), element);
 			}
@@ -84706,7 +84868,6 @@ ${lanes.join("\n")}
 						if (hasSyntacticModifier(node, 128)) break;
 						if (node.name) recordEmittedDeclarationInScope(node);
 						else Debug.assert(node.kind === 263 || hasSyntacticModifier(node, 2048));
-						break;
 				}
 			}
 			function visitor(node) {
@@ -84748,7 +84909,6 @@ ${lanes.join("\n")}
 						Debug.assertNode(parsed, isExportDeclaration);
 						if (node.exportClause !== parsed.exportClause) return true;
 						if (node.attributes !== parsed.attributes) return true;
-						break;
 				}
 				return false;
 			}
@@ -85418,16 +85578,20 @@ ${lanes.join("\n")}
 				startLexicalEnvironment();
 				let statementsLocation;
 				let blockLocation;
-				if (node.body) if (node.body.kind === 268) {
-					saveStateAndInvoke(node.body, (body) => addRange(statements, visitNodes2(body.statements, namespaceElementVisitor, isStatement)));
-					statementsLocation = node.body.statements;
-					blockLocation = node.body;
-				} else {
-					const result = visitModuleDeclaration(node.body);
-					if (result) if (isArray(result)) addRange(statements, result);
-					else statements.push(result);
-					const moduleBlock = getInnerMostModuleDeclarationFromDottedModule(node).body;
-					statementsLocation = moveRangePos(moduleBlock.statements, -1);
+				if (node.body) {
+					if (node.body.kind === 268) {
+						saveStateAndInvoke(node.body, (body) => addRange(statements, visitNodes2(body.statements, namespaceElementVisitor, isStatement)));
+						statementsLocation = node.body.statements;
+						blockLocation = node.body;
+					} else {
+						const result = visitModuleDeclaration(node.body);
+						if (result) {
+							if (isArray(result)) addRange(statements, result);
+							else statements.push(result);
+						}
+						const moduleBlock = getInnerMostModuleDeclarationFromDottedModule(node).body;
+						statementsLocation = moveRangePos(moduleBlock.statements, -1);
+					}
 				}
 				insertStatementsAfterStandardPrologue(statements, endLexicalEnvironment());
 				currentNamespaceContainerName = savedCurrentNamespaceContainerName;
@@ -85766,9 +85930,7 @@ ${lanes.join("\n")}
 					case 172: return transformFieldInitializer(node);
 					case 177:
 					case 178: return classElementVisitor(node);
-					default:
-						Debug.assertMissingNode(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration");
-						break;
+					default: Debug.assertMissingNode(node, "Expected node to either be a PropertyDeclaration, GetAccessorDeclaration, or SetAccessorDeclaration");
 				}
 			}
 			function visitPrivateIdentifier(node) {
@@ -86323,13 +86485,15 @@ ${lanes.join("\n")}
 			function visitClassDeclarationInNewClassLexicalEnvironment(node, facts) {
 				var _a, _b;
 				let pendingClassReferenceAssignment;
-				if (facts & 2) if (shouldTransformPrivateElementsOrClassStaticBlocks && ((_a = node.emitNode) == null ? void 0 : _a.classThis)) {
-					getClassLexicalEnvironment().classConstructor = node.emitNode.classThis;
-					pendingClassReferenceAssignment = factory2.createAssignment(node.emitNode.classThis, factory2.getInternalName(node));
-				} else {
-					const temp = factory2.createTempVariable(hoistVariableDeclaration, true);
-					getClassLexicalEnvironment().classConstructor = factory2.cloneNode(temp);
-					pendingClassReferenceAssignment = factory2.createAssignment(temp, factory2.getInternalName(node));
+				if (facts & 2) {
+					if (shouldTransformPrivateElementsOrClassStaticBlocks && ((_a = node.emitNode) == null ? void 0 : _a.classThis)) {
+						getClassLexicalEnvironment().classConstructor = node.emitNode.classThis;
+						pendingClassReferenceAssignment = factory2.createAssignment(node.emitNode.classThis, factory2.getInternalName(node));
+					} else {
+						const temp = factory2.createTempVariable(hoistVariableDeclaration, true);
+						getClassLexicalEnvironment().classConstructor = factory2.cloneNode(temp);
+						pendingClassReferenceAssignment = factory2.createAssignment(temp, factory2.getInternalName(node));
+					}
 				}
 				if ((_b = node.emitNode) == null ? void 0 : _b.classThis) getClassLexicalEnvironment().classThis = node.emitNode.classThis;
 				const isClassWithConstructorReference = resolver.hasNodeCheckFlag(node, 262144);
@@ -86384,27 +86548,28 @@ ${lanes.join("\n")}
 				const classExpression = factory2.updateClassExpression(node, modifiers, node.name, void 0, heritageClauses, members);
 				const expressions = [];
 				if (prologue) expressions.push(prologue);
-				if ((shouldTransformPrivateElementsOrClassStaticBlocks || getInternalEmitFlags(node) & 32) && some(staticPropertiesOrClassStaticBlocks, (node2) => isClassStaticBlockDeclaration(node2) || isPrivateIdentifierClassElementDeclaration(node2) || shouldTransformInitializers && isInitializedProperty(node2)) || some(pendingExpressions)) if (isDecoratedClassDeclaration) {
-					Debug.assertIsDefined(pendingStatements, "Decorated classes transformed by TypeScript are expected to be within a variable declaration.");
-					if (some(pendingExpressions)) addRange(pendingStatements, map(pendingExpressions, factory2.createExpressionStatement));
-					if (some(staticPropertiesOrClassStaticBlocks)) addPropertyOrClassStaticBlockStatements(pendingStatements, staticPropertiesOrClassStaticBlocks, ((_b = node.emitNode) == null ? void 0 : _b.classThis) ?? factory2.getInternalName(node));
-					if (temp) expressions.push(factory2.createAssignment(temp, classExpression));
-					else if (shouldTransformPrivateElementsOrClassStaticBlocks && ((_c = node.emitNode) == null ? void 0 : _c.classThis)) expressions.push(factory2.createAssignment(node.emitNode.classThis, classExpression));
-					else expressions.push(classExpression);
-				} else {
-					temp ?? (temp = createClassTempVar());
-					if (isClassWithConstructorReference) {
-						enableSubstitutionForClassAliases();
-						const alias = factory2.cloneNode(temp);
-						alias.emitNode.autoGenerate.flags &= -9;
-						classAliases[getOriginalNodeId(node)] = alias;
+				if ((shouldTransformPrivateElementsOrClassStaticBlocks || getInternalEmitFlags(node) & 32) && some(staticPropertiesOrClassStaticBlocks, (node2) => isClassStaticBlockDeclaration(node2) || isPrivateIdentifierClassElementDeclaration(node2) || shouldTransformInitializers && isInitializedProperty(node2)) || some(pendingExpressions)) {
+					if (isDecoratedClassDeclaration) {
+						Debug.assertIsDefined(pendingStatements, "Decorated classes transformed by TypeScript are expected to be within a variable declaration.");
+						if (some(pendingExpressions)) addRange(pendingStatements, map(pendingExpressions, factory2.createExpressionStatement));
+						if (some(staticPropertiesOrClassStaticBlocks)) addPropertyOrClassStaticBlockStatements(pendingStatements, staticPropertiesOrClassStaticBlocks, ((_b = node.emitNode) == null ? void 0 : _b.classThis) ?? factory2.getInternalName(node));
+						if (temp) expressions.push(factory2.createAssignment(temp, classExpression));
+						else if (shouldTransformPrivateElementsOrClassStaticBlocks && ((_c = node.emitNode) == null ? void 0 : _c.classThis)) expressions.push(factory2.createAssignment(node.emitNode.classThis, classExpression));
+						else expressions.push(classExpression);
+					} else {
+						temp ?? (temp = createClassTempVar());
+						if (isClassWithConstructorReference) {
+							enableSubstitutionForClassAliases();
+							const alias = factory2.cloneNode(temp);
+							alias.emitNode.autoGenerate.flags &= -9;
+							classAliases[getOriginalNodeId(node)] = alias;
+						}
+						expressions.push(factory2.createAssignment(temp, classExpression));
+						addRange(expressions, pendingExpressions);
+						addRange(expressions, generateInitializedPropertyExpressionsOrClassStaticBlock(staticPropertiesOrClassStaticBlocks, temp));
+						expressions.push(factory2.cloneNode(temp));
 					}
-					expressions.push(factory2.createAssignment(temp, classExpression));
-					addRange(expressions, pendingExpressions);
-					addRange(expressions, generateInitializedPropertyExpressionsOrClassStaticBlock(staticPropertiesOrClassStaticBlocks, temp));
-					expressions.push(factory2.cloneNode(temp));
-				}
-				else expressions.push(classExpression);
+				} else expressions.push(classExpression);
 				if (expressions.length > 1) {
 					addEmitFlags(classExpression, 131072);
 					expressions.forEach(startOnNewLine);
@@ -86424,8 +86589,10 @@ ${lanes.join("\n")}
 			function transformClassMembers(node) {
 				const shouldTransformPrivateStaticElementsInClass = !!(getInternalEmitFlags(node) & 32);
 				if (shouldTransformPrivateElementsOrClassStaticBlocks || shouldTransformPrivateStaticElementsInFile) {
-					for (const member of node.members) if (isPrivateIdentifierClassElementDeclaration(member)) if (shouldTransformClassElementToWeakMap(member)) addPrivateIdentifierToEnvironment(member, member.name, addPrivateIdentifierClassElementToEnvironment);
-					else setPrivateIdentifier(getPrivateIdentifierEnvironment(), member.name, { kind: "untransformed" });
+					for (const member of node.members) if (isPrivateIdentifierClassElementDeclaration(member)) {
+						if (shouldTransformClassElementToWeakMap(member)) addPrivateIdentifierToEnvironment(member, member.name, addPrivateIdentifierClassElementToEnvironment);
+						else setPrivateIdentifier(getPrivateIdentifierEnvironment(), member.name, { kind: "untransformed" });
+					}
 					if (shouldTransformPrivateElementsOrClassStaticBlocks) {
 						if (some(getPrivateInstanceMethodsAndAccessors(node))) createBrandCheckWeakSetForPrivateMethods();
 					}
@@ -86613,10 +86780,12 @@ ${lanes.join("\n")}
 				if (hasStaticModifier(property)) currentClassElement = property;
 				if (isPrivateIdentifier(propertyName) && shouldTransformClassElementToWeakMap(property)) {
 					const privateIdentifierInfo = accessPrivateIdentifier2(propertyName);
-					if (privateIdentifierInfo) if (privateIdentifierInfo.kind === "f") if (!privateIdentifierInfo.isStatic) return createPrivateInstanceFieldInitializer(factory2, receiver, visitNode(property.initializer, visitor, isExpression), privateIdentifierInfo.brandCheckIdentifier);
-					else return createPrivateStaticFieldInitializer(factory2, privateIdentifierInfo.variableName, visitNode(property.initializer, visitor, isExpression));
-					else return;
-					else Debug.fail("Undeclared private name for property declaration.");
+					if (privateIdentifierInfo) {
+						if (privateIdentifierInfo.kind === "f") {
+							if (!privateIdentifierInfo.isStatic) return createPrivateInstanceFieldInitializer(factory2, receiver, visitNode(property.initializer, visitor, isExpression), privateIdentifierInfo.brandCheckIdentifier);
+							else return createPrivateStaticFieldInitializer(factory2, privateIdentifierInfo.variableName, visitNode(property.initializer, visitor, isExpression));
+						} else return;
+					} else Debug.fail("Undeclared private name for property declaration.");
 				}
 				if ((isPrivateIdentifier(propertyName) || hasStaticModifier(property)) && !property.initializer) return;
 				const propertyOriginalNode = getOriginalNode(property);
@@ -87322,12 +87491,14 @@ ${lanes.join("\n")}
 				const statements = [varStatement];
 				addRange(statements, decorationStatements);
 				addConstructorDecorationStatement(statements, node);
-				if (isExport) if (isDefault) {
-					const exportStatement = factory2.createExportDefault(declName);
-					statements.push(exportStatement);
-				} else {
-					const exportStatement = factory2.createExternalModuleExport(factory2.getDeclarationName(node));
-					statements.push(exportStatement);
+				if (isExport) {
+					if (isDefault) {
+						const exportStatement = factory2.createExportDefault(declName);
+						statements.push(exportStatement);
+					} else {
+						const exportStatement = factory2.createExternalModuleExport(factory2.getDeclarationName(node));
+						statements.push(exportStatement);
+					}
 				}
 				return statements;
 			}
@@ -87536,7 +87707,6 @@ ${lanes.join("\n")}
 							classThis = grandparent.classThis;
 							classSuper = grandparent.classSuper;
 						}
-						break;
 				}
 			}
 			function enterClass(classInfo2) {
@@ -87723,28 +87893,32 @@ ${lanes.join("\n")}
 					classThis2 = factory2.createUniqueName("_classThis", needsUniqueClassThis ? 24 : 48);
 				}
 				for (const member of node.members) {
-					if (isMethodOrAccessor(member) && nodeOrChildIsDecorated(false, member, node)) if (hasStaticModifier(member)) {
-						if (!staticMethodExtraInitializersName) {
-							staticMethodExtraInitializersName = factory2.createUniqueName("_staticExtraInitializers", 48);
-							const initializer = emitHelpers().createRunInitializersHelper(classThis2 ?? factory2.createThis(), staticMethodExtraInitializersName);
-							setSourceMapRange(initializer, node.name ?? moveRangePastDecorators(node));
-							pendingStaticInitializers ?? (pendingStaticInitializers = []);
-							pendingStaticInitializers.push(initializer);
+					if (isMethodOrAccessor(member) && nodeOrChildIsDecorated(false, member, node)) {
+						if (hasStaticModifier(member)) {
+							if (!staticMethodExtraInitializersName) {
+								staticMethodExtraInitializersName = factory2.createUniqueName("_staticExtraInitializers", 48);
+								const initializer = emitHelpers().createRunInitializersHelper(classThis2 ?? factory2.createThis(), staticMethodExtraInitializersName);
+								setSourceMapRange(initializer, node.name ?? moveRangePastDecorators(node));
+								pendingStaticInitializers ?? (pendingStaticInitializers = []);
+								pendingStaticInitializers.push(initializer);
+							}
+						} else {
+							if (!instanceMethodExtraInitializersName) {
+								instanceMethodExtraInitializersName = factory2.createUniqueName("_instanceExtraInitializers", 48);
+								const initializer = emitHelpers().createRunInitializersHelper(factory2.createThis(), instanceMethodExtraInitializersName);
+								setSourceMapRange(initializer, node.name ?? moveRangePastDecorators(node));
+								pendingInstanceInitializers ?? (pendingInstanceInitializers = []);
+								pendingInstanceInitializers.push(initializer);
+							}
+							instanceMethodExtraInitializersName ?? (instanceMethodExtraInitializersName = factory2.createUniqueName("_instanceExtraInitializers", 48));
 						}
-					} else {
-						if (!instanceMethodExtraInitializersName) {
-							instanceMethodExtraInitializersName = factory2.createUniqueName("_instanceExtraInitializers", 48);
-							const initializer = emitHelpers().createRunInitializersHelper(factory2.createThis(), instanceMethodExtraInitializersName);
-							setSourceMapRange(initializer, node.name ?? moveRangePastDecorators(node));
-							pendingInstanceInitializers ?? (pendingInstanceInitializers = []);
-							pendingInstanceInitializers.push(initializer);
-						}
-						instanceMethodExtraInitializersName ?? (instanceMethodExtraInitializersName = factory2.createUniqueName("_instanceExtraInitializers", 48));
 					}
 					if (isClassStaticBlockDeclaration(member)) {
 						if (!isClassNamedEvaluationHelperBlock(member)) hasStaticInitializers = true;
-					} else if (isPropertyDeclaration(member)) if (hasStaticModifier(member)) hasStaticInitializers || (hasStaticInitializers = !!member.initializer || hasDecorators(member));
-					else hasNonAmbientInstanceFields || (hasNonAmbientInstanceFields = !isAmbientPropertyDeclaration(member));
+					} else if (isPropertyDeclaration(member)) {
+						if (hasStaticModifier(member)) hasStaticInitializers || (hasStaticInitializers = !!member.initializer || hasDecorators(member));
+						else hasNonAmbientInstanceFields || (hasNonAmbientInstanceFields = !isAmbientPropertyDeclaration(member));
+					}
 					if ((isPrivateIdentifierClassElementDeclaration(member) || isAutoAccessorPropertyDeclaration(member)) && hasStaticModifier(member)) hasStaticPrivateClassElements = true;
 					if (staticMethodExtraInitializersName && instanceMethodExtraInitializersName && hasStaticInitializers && hasNonAmbientInstanceFields && hasStaticPrivateClassElements) break;
 				}
@@ -88258,17 +88432,19 @@ ${lanes.join("\n")}
 				if (isStatic(node) && classInfo && initializer) classInfo.hasStaticInitializers = true;
 				const declarations = endLexicalEnvironment();
 				if (some(declarations)) initializer = factory2.createImmediatelyInvokedArrowFunction([...declarations, factory2.createReturnStatement(initializer)]);
-				if (classInfo) if (isStatic(node)) {
-					initializer = injectPendingInitializers(classInfo, true, initializer);
-					if (extraInitializersName) {
-						classInfo.pendingStaticInitializers ?? (classInfo.pendingStaticInitializers = []);
-						classInfo.pendingStaticInitializers.push(emitHelpers().createRunInitializersHelper(classInfo.classThis ?? factory2.createThis(), extraInitializersName));
-					}
-				} else {
-					initializer = injectPendingInitializers(classInfo, false, initializer);
-					if (extraInitializersName) {
-						classInfo.pendingInstanceInitializers ?? (classInfo.pendingInstanceInitializers = []);
-						classInfo.pendingInstanceInitializers.push(emitHelpers().createRunInitializersHelper(factory2.createThis(), extraInitializersName));
+				if (classInfo) {
+					if (isStatic(node)) {
+						initializer = injectPendingInitializers(classInfo, true, initializer);
+						if (extraInitializersName) {
+							classInfo.pendingStaticInitializers ?? (classInfo.pendingStaticInitializers = []);
+							classInfo.pendingStaticInitializers.push(emitHelpers().createRunInitializersHelper(classInfo.classThis ?? factory2.createThis(), extraInitializersName));
+						}
+					} else {
+						initializer = injectPendingInitializers(classInfo, false, initializer);
+						if (extraInitializersName) {
+							classInfo.pendingInstanceInitializers ?? (classInfo.pendingInstanceInitializers = []);
+							classInfo.pendingInstanceInitializers.push(emitHelpers().createRunInitializersHelper(factory2.createThis(), extraInitializersName));
+						}
 					}
 				}
 				exitClassElement();
@@ -88595,14 +88771,17 @@ ${lanes.join("\n")}
 				return factory2.updatePartiallyEmittedExpression(node, expression);
 			}
 			function injectPendingExpressionsCommon(pendingExpressions2, expression) {
-				if (some(pendingExpressions2)) if (expression) if (isParenthesizedExpression(expression)) {
-					pendingExpressions2.push(expression.expression);
-					expression = factory2.updateParenthesizedExpression(expression, factory2.inlineExpressions(pendingExpressions2));
-				} else {
-					pendingExpressions2.push(expression);
-					expression = factory2.inlineExpressions(pendingExpressions2);
+				if (some(pendingExpressions2)) {
+					if (expression) {
+						if (isParenthesizedExpression(expression)) {
+							pendingExpressions2.push(expression.expression);
+							expression = factory2.updateParenthesizedExpression(expression, factory2.inlineExpressions(pendingExpressions2));
+						} else {
+							pendingExpressions2.push(expression);
+							expression = factory2.inlineExpressions(pendingExpressions2);
+						}
+					} else expression = factory2.inlineExpressions(pendingExpressions2);
 				}
-				else expression = factory2.inlineExpressions(pendingExpressions2);
 				return expression;
 			}
 			function injectPendingExpressions(expression) {
@@ -88613,8 +88792,10 @@ ${lanes.join("\n")}
 			}
 			function injectPendingInitializers(classInfo2, isStatic2, expression) {
 				const result = injectPendingExpressionsCommon(isStatic2 ? classInfo2.pendingStaticInitializers : classInfo2.pendingInstanceInitializers, expression);
-				if (result !== expression) if (isStatic2) classInfo2.pendingStaticInitializers = void 0;
-				else classInfo2.pendingInstanceInitializers = void 0;
+				if (result !== expression) {
+					if (isStatic2) classInfo2.pendingStaticInitializers = void 0;
+					else classInfo2.pendingInstanceInitializers = void 0;
+				}
 				return result;
 			}
 			function transformAllDecoratorsOfDeclaration(allDecorators) {
@@ -88749,9 +88930,7 @@ ${lanes.join("\n")}
 					case 169:
 					case 208:
 					case 260: break;
-					case 80:
-						if (lexicalArgumentsBinding && resolver.isArgumentsLocalBinding(node)) return lexicalArgumentsBinding;
-						break;
+					case 80: if (lexicalArgumentsBinding && resolver.isArgumentsLocalBinding(node)) return lexicalArgumentsBinding;
 				}
 				return visitEachChild(node, argumentsVisitor, context);
 			}
@@ -88986,23 +89165,25 @@ ${lanes.join("\n")}
 				const captureLexicalArguments = resolver.hasNodeCheckFlag(node, 512) && !lexicalArgumentsBinding;
 				if (captureLexicalArguments) lexicalArgumentsBinding = factory2.createUniqueName("arguments");
 				let argumentsExpression;
-				if (innerParameters) if (isArrowFunction2) {
-					const parameterBindings = [];
-					Debug.assert(outerParameters.length <= node.parameters.length);
-					for (let i = 0; i < node.parameters.length; i++) {
-						Debug.assert(i < outerParameters.length);
-						const originalParameter = node.parameters[i];
-						const outerParameter = outerParameters[i];
-						Debug.assertNode(outerParameter.name, isIdentifier);
-						if (originalParameter.initializer || originalParameter.dotDotDotToken) {
-							Debug.assert(i === outerParameters.length - 1);
-							parameterBindings.push(factory2.createSpreadElement(outerParameter.name));
-							break;
+				if (innerParameters) {
+					if (isArrowFunction2) {
+						const parameterBindings = [];
+						Debug.assert(outerParameters.length <= node.parameters.length);
+						for (let i = 0; i < node.parameters.length; i++) {
+							Debug.assert(i < outerParameters.length);
+							const originalParameter = node.parameters[i];
+							const outerParameter = outerParameters[i];
+							Debug.assertNode(outerParameter.name, isIdentifier);
+							if (originalParameter.initializer || originalParameter.dotDotDotToken) {
+								Debug.assert(i === outerParameters.length - 1);
+								parameterBindings.push(factory2.createSpreadElement(outerParameter.name));
+								break;
+							}
+							parameterBindings.push(outerParameter.name);
 						}
-						parameterBindings.push(outerParameter.name);
-					}
-					argumentsExpression = factory2.createArrayLiteralExpression(parameterBindings);
-				} else argumentsExpression = factory2.createIdentifier("arguments");
+						argumentsExpression = factory2.createArrayLiteralExpression(parameterBindings);
+					} else argumentsExpression = factory2.createIdentifier("arguments");
+				}
 				const savedEnclosingFunctionParameterNames = enclosingFunctionParameterNames;
 				enclosingFunctionParameterNames = /* @__PURE__ */ new Set();
 				for (const parameter of node.parameters) recordDeclarationName(parameter, enclosingFunctionParameterNames);
@@ -89796,10 +89977,12 @@ ${lanes.join("\n")}
 				let expression = visitNode(node.expression, visitor, isExpression);
 				Debug.assertNotNode(expression, isSyntheticReference);
 				let thisArg;
-				if (captureThisArg) if (!isSimpleCopiableExpression(expression)) {
-					thisArg = factory2.createTempVariable(hoistVariableDeclaration);
-					expression = factory2.createAssignment(thisArg, expression);
-				} else thisArg = expression;
+				if (captureThisArg) {
+					if (!isSimpleCopiableExpression(expression)) {
+						thisArg = factory2.createTempVariable(hoistVariableDeclaration);
+						expression = factory2.createAssignment(thisArg, expression);
+					} else thisArg = expression;
+				}
 				expression = node.kind === 211 ? factory2.updatePropertyAccessExpression(node, expression, visitNode(node.name, visitor, isIdentifier)) : factory2.updateElementAccessExpression(node, expression, visitNode(node.argumentExpression, visitor, isExpression));
 				return thisArg ? factory2.createSyntheticReferenceExpression(expression, thisArg) : expression;
 			}
@@ -89839,21 +90022,21 @@ ${lanes.join("\n")}
 					switch (segment.kind) {
 						case 211:
 						case 212:
-							if (i === chain.length - 1 && captureThisArg) if (!isSimpleCopiableExpression(rightExpression)) {
-								thisArg = factory2.createTempVariable(hoistVariableDeclaration);
-								rightExpression = factory2.createAssignment(thisArg, rightExpression);
-							} else thisArg = rightExpression;
+							if (i === chain.length - 1 && captureThisArg) {
+								if (!isSimpleCopiableExpression(rightExpression)) {
+									thisArg = factory2.createTempVariable(hoistVariableDeclaration);
+									rightExpression = factory2.createAssignment(thisArg, rightExpression);
+								} else thisArg = rightExpression;
+							}
 							rightExpression = segment.kind === 211 ? factory2.createPropertyAccessExpression(rightExpression, visitNode(segment.name, visitor, isIdentifier)) : factory2.createElementAccessExpression(rightExpression, visitNode(segment.argumentExpression, visitor, isExpression));
 							break;
-						case 213:
-							if (i === 0 && leftThisArg) {
-								if (!isGeneratedIdentifier(leftThisArg)) {
-									leftThisArg = factory2.cloneNode(leftThisArg);
-									addEmitFlags(leftThisArg, 3072);
-								}
-								rightExpression = factory2.createFunctionCallCall(rightExpression, leftThisArg.kind === 108 ? factory2.createThis() : leftThisArg, visitNodes2(segment.arguments, visitor, isExpression));
-							} else rightExpression = factory2.createCallExpression(rightExpression, void 0, visitNodes2(segment.arguments, visitor, isExpression));
-							break;
+						case 213: if (i === 0 && leftThisArg) {
+							if (!isGeneratedIdentifier(leftThisArg)) {
+								leftThisArg = factory2.cloneNode(leftThisArg);
+								addEmitFlags(leftThisArg, 3072);
+							}
+							rightExpression = factory2.createFunctionCallCall(rightExpression, leftThisArg.kind === 108 ? factory2.createThis() : leftThisArg, visitNodes2(segment.arguments, visitor, isExpression));
+						} else rightExpression = factory2.createCallExpression(rightExpression, void 0, visitNodes2(segment.arguments, visitor, isExpression));
 					}
 					setOriginalNode(rightExpression, segment);
 				}
@@ -89996,8 +90179,10 @@ ${lanes.join("\n")}
 				return visitEachChild(node, visitor, context);
 			}
 			function visitCaseOrDefaultClause(node, envBinding) {
-				if (getUsingKindOfStatements(node.statements) !== 0) if (isCaseClause(node)) return factory2.updateCaseClause(node, visitNode(node.expression, visitor, isExpression), transformUsingDeclarations(node.statements, 0, node.statements.length, envBinding, void 0));
-				else return factory2.updateDefaultClause(node, transformUsingDeclarations(node.statements, 0, node.statements.length, envBinding, void 0));
+				if (getUsingKindOfStatements(node.statements) !== 0) {
+					if (isCaseClause(node)) return factory2.updateCaseClause(node, visitNode(node.expression, visitor, isExpression), transformUsingDeclarations(node.statements, 0, node.statements.length, envBinding, void 0));
+					else return factory2.updateDefaultClause(node, transformUsingDeclarations(node.statements, 0, node.statements.length, envBinding, void 0));
+				}
 				return visitEachChild(node, visitor, context);
 			}
 			function visitSwitchStatement(node) {
@@ -91018,14 +91203,15 @@ ${lanes.join("\n")}
 					if (!(node.label && convertedLoopState.labels && convertedLoopState.labels.get(idText(node.label)) || !node.label && convertedLoopState.allowedNonLabeledJumps & jump)) {
 						let labelMarker;
 						const label = node.label;
-						if (!label) if (node.kind === 252) {
-							convertedLoopState.nonLocalJumps |= 2;
-							labelMarker = "break";
-						} else {
-							convertedLoopState.nonLocalJumps |= 4;
-							labelMarker = "continue";
-						}
-						else if (node.kind === 252) {
+						if (!label) {
+							if (node.kind === 252) {
+								convertedLoopState.nonLocalJumps |= 2;
+								labelMarker = "break";
+							} else {
+								convertedLoopState.nonLocalJumps |= 4;
+								labelMarker = "continue";
+							}
+						} else if (node.kind === 252) {
 							labelMarker = `break-${label.escapedText}`;
 							setLabeledJump(convertedLoopState, true, idText(label), labelMarker);
 						} else {
@@ -91469,9 +91655,7 @@ ${lanes.join("\n")}
 						break;
 					case 176:
 					case 175: break;
-					default:
-						Debug.failBadSyntaxKind(member, currentSourceFile && currentSourceFile.fileName);
-						break;
+					default: Debug.failBadSyntaxKind(member, currentSourceFile && currentSourceFile.fileName);
 				}
 			}
 			function transformSemicolonClassElementToStatement(member) {
@@ -91618,8 +91802,10 @@ ${lanes.join("\n")}
 					Debug.assert(node.kind === 219);
 					statementsLocation = moveRangeEnd(body, -1);
 					const equalsGreaterThanToken = node.equalsGreaterThanToken;
-					if (!nodeIsSynthesized(equalsGreaterThanToken) && !nodeIsSynthesized(body)) if (rangeEndIsOnSameLineAsRangeStart(equalsGreaterThanToken, body, currentSourceFile)) singleLine = true;
-					else multiLine = true;
+					if (!nodeIsSynthesized(equalsGreaterThanToken) && !nodeIsSynthesized(body)) {
+						if (rangeEndIsOnSameLineAsRangeStart(equalsGreaterThanToken, body, currentSourceFile)) singleLine = true;
+						else multiLine = true;
+					}
 					const expression = visitNode(body, visitor, isExpression);
 					const returnStatement = factory2.createReturnStatement(expression);
 					setTextRange(returnStatement, body);
@@ -91912,12 +92098,13 @@ ${lanes.join("\n")}
 				addExtraDeclarationsForConvertedLoop(statements, currentState, outerConvertedLoopState);
 				if (initializerFunction) statements.push(generateCallToConvertedLoopInitializer(initializerFunction.functionName, initializerFunction.containsYield));
 				let loop;
-				if (bodyFunction) if (convert) loop = convert(node, outermostLabeledStatement, bodyFunction.part, ancestorFacts);
-				else {
-					const clone2 = convertIterationStatementCore(node, initializerFunction, factory2.createBlock(bodyFunction.part, true));
-					loop = factory2.restoreEnclosingLabel(clone2, outermostLabeledStatement, convertedLoopState && resetLabel);
-				}
-				else {
+				if (bodyFunction) {
+					if (convert) loop = convert(node, outermostLabeledStatement, bodyFunction.part, ancestorFacts);
+					else {
+						const clone2 = convertIterationStatementCore(node, initializerFunction, factory2.createBlock(bodyFunction.part, true));
+						loop = factory2.restoreEnclosingLabel(clone2, outermostLabeledStatement, convertedLoopState && resetLabel);
+					}
+				} else {
 					const clone2 = convertIterationStatementCore(node, initializerFunction, Debug.checkDefined(visitNode(node.statement, visitor, isStatement, factory2.liftToBlock)));
 					loop = factory2.restoreEnclosingLabel(clone2, outermostLabeledStatement, convertedLoopState && resetLabel);
 				}
@@ -91959,7 +92146,6 @@ ${lanes.join("\n")}
 					case 250:
 						const initializer = node.initializer;
 						if (initializer && initializer.kind === 261) loopInitializer = initializer;
-						break;
 				}
 				const loopParameters = [];
 				const loopOutParameters = [];
@@ -91980,14 +92166,20 @@ ${lanes.join("\n")}
 			}
 			function addExtraDeclarationsForConvertedLoop(statements, state, outerState) {
 				let extraVariableDeclarations;
-				if (state.argumentsName) if (outerState) outerState.argumentsName = state.argumentsName;
-				else (extraVariableDeclarations || (extraVariableDeclarations = [])).push(factory2.createVariableDeclaration(state.argumentsName, void 0, void 0, factory2.createIdentifier("arguments")));
-				if (state.thisName) if (outerState) outerState.thisName = state.thisName;
-				else (extraVariableDeclarations || (extraVariableDeclarations = [])).push(factory2.createVariableDeclaration(state.thisName, void 0, void 0, factory2.createIdentifier("this")));
-				if (state.hoistedLocalVariables) if (outerState) outerState.hoistedLocalVariables = state.hoistedLocalVariables;
-				else {
-					if (!extraVariableDeclarations) extraVariableDeclarations = [];
-					for (const identifier of state.hoistedLocalVariables) extraVariableDeclarations.push(factory2.createVariableDeclaration(identifier));
+				if (state.argumentsName) {
+					if (outerState) outerState.argumentsName = state.argumentsName;
+					else (extraVariableDeclarations || (extraVariableDeclarations = [])).push(factory2.createVariableDeclaration(state.argumentsName, void 0, void 0, factory2.createIdentifier("arguments")));
+				}
+				if (state.thisName) {
+					if (outerState) outerState.thisName = state.thisName;
+					else (extraVariableDeclarations || (extraVariableDeclarations = [])).push(factory2.createVariableDeclaration(state.thisName, void 0, void 0, factory2.createIdentifier("this")));
+				}
+				if (state.hoistedLocalVariables) {
+					if (outerState) outerState.hoistedLocalVariables = state.hoistedLocalVariables;
+					else {
+						if (!extraVariableDeclarations) extraVariableDeclarations = [];
+						for (const identifier of state.hoistedLocalVariables) extraVariableDeclarations.push(factory2.createVariableDeclaration(identifier));
+					}
 				}
 				if (state.loopOutParameters.length) {
 					if (!extraVariableDeclarations) extraVariableDeclarations = [];
@@ -92158,9 +92350,7 @@ ${lanes.join("\n")}
 						case 304:
 							expressions.push(transformShorthandPropertyAssignmentToExpression(property, receiver, node.multiLine));
 							break;
-						default:
-							Debug.failBadSyntaxKind(node);
-							break;
+						default: Debug.failBadSyntaxKind(node);
 					}
 				}
 			}
@@ -92702,9 +92892,7 @@ ${lanes.join("\n")}
 						case 212:
 							target = factory2.updateElementAccessExpression(left, cacheExpression(Debug.checkDefined(visitNode(left.expression, visitor, isLeftHandSideExpression))), cacheExpression(Debug.checkDefined(visitNode(left.argumentExpression, visitor, isExpression))));
 							break;
-						default:
-							target = Debug.checkDefined(visitNode(left, visitor, isExpression));
-							break;
+						default: target = Debug.checkDefined(visitNode(left, visitor, isExpression));
 					}
 					const operator = node.operatorToken.kind;
 					if (isCompoundAssignment(operator)) return setTextRange(factory2.createAssignment(target, setTextRange(factory2.createBinaryExpression(cacheExpression(target), getNonAssignmentOperatorForCompoundAssignment(operator), Debug.checkDefined(visitNode(right, visitor, isExpression))), node)), node);
@@ -92917,19 +93105,20 @@ ${lanes.join("\n")}
 				return setSourceMapRange(factory2.createAssignment(setSourceMapRange(factory2.cloneNode(node.name), node.name), Debug.checkDefined(visitNode(node.initializer, visitor, isExpression))), node);
 			}
 			function transformAndEmitIfStatement(node) {
-				if (containsYield(node)) if (containsYield(node.thenStatement) || containsYield(node.elseStatement)) {
-					const endLabel = defineLabel();
-					const elseLabel = node.elseStatement ? defineLabel() : void 0;
-					emitBreakWhenFalse(node.elseStatement ? elseLabel : endLabel, Debug.checkDefined(visitNode(node.expression, visitor, isExpression)), node.expression);
-					transformAndEmitEmbeddedStatement(node.thenStatement);
-					if (node.elseStatement) {
-						emitBreak(endLabel);
-						markLabel(elseLabel);
-						transformAndEmitEmbeddedStatement(node.elseStatement);
-					}
-					markLabel(endLabel);
+				if (containsYield(node)) {
+					if (containsYield(node.thenStatement) || containsYield(node.elseStatement)) {
+						const endLabel = defineLabel();
+						const elseLabel = node.elseStatement ? defineLabel() : void 0;
+						emitBreakWhenFalse(node.elseStatement ? elseLabel : endLabel, Debug.checkDefined(visitNode(node.expression, visitor, isExpression)), node.expression);
+						transformAndEmitEmbeddedStatement(node.thenStatement);
+						if (node.elseStatement) {
+							emitBreak(endLabel);
+							markLabel(elseLabel);
+							transformAndEmitEmbeddedStatement(node.elseStatement);
+						}
+						markLabel(endLabel);
+					} else emitStatement(visitNode(node, visitor, isStatement));
 				} else emitStatement(visitNode(node, visitor, isStatement));
-				else emitStatement(visitNode(node, visitor, isStatement));
 			}
 			function transformAndEmitDoStatement(node) {
 				if (containsYield(node)) {
@@ -93413,25 +93602,29 @@ ${lanes.join("\n")}
 				return false;
 			}
 			function findBreakTarget(labelText) {
-				if (blockStack) if (labelText) for (let i = blockStack.length - 1; i >= 0; i--) {
-					const block = blockStack[i];
-					if (supportsLabeledBreakOrContinue(block) && block.labelText === labelText) return block.breakLabel;
-					else if (supportsUnlabeledBreak(block) && hasImmediateContainingLabeledBlock(labelText, i - 1)) return block.breakLabel;
-				}
-				else for (let i = blockStack.length - 1; i >= 0; i--) {
-					const block = blockStack[i];
-					if (supportsUnlabeledBreak(block)) return block.breakLabel;
+				if (blockStack) {
+					if (labelText) for (let i = blockStack.length - 1; i >= 0; i--) {
+						const block = blockStack[i];
+						if (supportsLabeledBreakOrContinue(block) && block.labelText === labelText) return block.breakLabel;
+						else if (supportsUnlabeledBreak(block) && hasImmediateContainingLabeledBlock(labelText, i - 1)) return block.breakLabel;
+					}
+					else for (let i = blockStack.length - 1; i >= 0; i--) {
+						const block = blockStack[i];
+						if (supportsUnlabeledBreak(block)) return block.breakLabel;
+					}
 				}
 				return 0;
 			}
 			function findContinueTarget(labelText) {
-				if (blockStack) if (labelText) for (let i = blockStack.length - 1; i >= 0; i--) {
-					const block = blockStack[i];
-					if (supportsUnlabeledContinue(block) && hasImmediateContainingLabeledBlock(labelText, i - 1)) return block.continueLabel;
-				}
-				else for (let i = blockStack.length - 1; i >= 0; i--) {
-					const block = blockStack[i];
-					if (supportsUnlabeledContinue(block)) return block.continueLabel;
+				if (blockStack) {
+					if (labelText) for (let i = blockStack.length - 1; i >= 0; i--) {
+						const block = blockStack[i];
+						if (supportsUnlabeledContinue(block) && hasImmediateContainingLabeledBlock(labelText, i - 1)) return block.continueLabel;
+					}
+					else for (let i = blockStack.length - 1; i >= 0; i--) {
+						const block = blockStack[i];
+						if (supportsUnlabeledContinue(block)) return block.continueLabel;
+					}
 				}
 				return 0;
 			}
@@ -93607,12 +93800,10 @@ ${lanes.join("\n")}
 								currentExceptionBlock = block;
 							} else if (blockAction === 1) currentExceptionBlock = exceptionBlockStack.pop();
 							break;
-						case 1:
-							if (blockAction === 0) {
-								if (!withBlockStack) withBlockStack = [];
-								withBlockStack.push(block);
-							} else if (blockAction === 1) withBlockStack.pop();
-							break;
+						case 1: if (blockAction === 0) {
+							if (!withBlockStack) withBlockStack = [];
+							withBlockStack.push(block);
+						} else if (blockAction === 1) withBlockStack.pop();
 					}
 				}
 			}
@@ -93640,8 +93831,10 @@ ${lanes.join("\n")}
 				}
 			}
 			function writeStatement(statement) {
-				if (statement) if (!statements) statements = [statement];
-				else statements.push(statement);
+				if (statement) {
+					if (!statements) statements = [statement];
+					else statements.push(statement);
+				}
 			}
 			function writeAssign(left, right, operationLocation) {
 				writeStatement(setTextRange(factory2.createExpressionStatement(factory2.createAssignment(left, right)), operationLocation));
@@ -93798,11 +93991,13 @@ ${lanes.join("\n")}
 				for (const importNode of currentModuleInfo.externalImports) {
 					const externalModuleName = getExternalModuleNameLiteral(factory2, importNode, currentSourceFile, host, resolver, compilerOptions);
 					const importAliasName = getLocalNameForExternalImport(factory2, importNode, currentSourceFile);
-					if (externalModuleName) if (includeNonAmdDependencies && importAliasName) {
-						setEmitFlags(importAliasName, 8);
-						aliasedModuleNames.push(externalModuleName);
-						importAliasNames.push(factory2.createParameterDeclaration(void 0, void 0, importAliasName));
-					} else unaliasedModuleNames.push(externalModuleName);
+					if (externalModuleName) {
+						if (includeNonAmdDependencies && importAliasName) {
+							setEmitFlags(importAliasName, 8);
+							aliasedModuleNames.push(externalModuleName);
+							importAliasNames.push(factory2.createParameterDeclaration(void 0, void 0, importAliasName));
+						} else unaliasedModuleNames.push(externalModuleName);
+					}
 				}
 				return {
 					aliasedModuleNames,
@@ -93836,16 +94031,18 @@ ${lanes.join("\n")}
 			function addExportEqualsIfNeeded(statements, emitAsReturn) {
 				if (currentModuleInfo.exportEquals) {
 					const expressionResult = visitNode(currentModuleInfo.exportEquals.expression, visitor, isExpression);
-					if (expressionResult) if (emitAsReturn) {
-						const statement = factory2.createReturnStatement(expressionResult);
-						setTextRange(statement, currentModuleInfo.exportEquals);
-						setEmitFlags(statement, 3840);
-						statements.push(statement);
-					} else {
-						const statement = factory2.createExpressionStatement(factory2.createAssignment(factory2.createPropertyAccessExpression(factory2.createIdentifier("module"), "exports"), expressionResult));
-						setTextRange(statement, currentModuleInfo.exportEquals);
-						setEmitFlags(statement, 3072);
-						statements.push(statement);
+					if (expressionResult) {
+						if (emitAsReturn) {
+							const statement = factory2.createReturnStatement(expressionResult);
+							setTextRange(statement, currentModuleInfo.exportEquals);
+							setEmitFlags(statement, 3840);
+							statements.push(statement);
+						} else {
+							const statement = factory2.createExpressionStatement(factory2.createAssignment(factory2.createPropertyAccessExpression(factory2.createIdentifier("module"), "exports"), expressionResult));
+							setTextRange(statement, currentModuleInfo.exportEquals);
+							setEmitFlags(statement, 3072);
+							statements.push(statement);
+						}
 					}
 				}
 			}
@@ -94118,17 +94315,18 @@ ${lanes.join("\n")}
 			function visitTopLevelImportDeclaration(node) {
 				let statements;
 				const namespaceDeclaration = getNamespaceDeclarationNode(node);
-				if (moduleKind !== 2) if (!node.importClause) return setOriginalNode(setTextRange(factory2.createExpressionStatement(createRequireCall2(node)), node), node);
-				else {
-					const variables = [];
-					if (namespaceDeclaration && !isDefaultImport(node)) variables.push(factory2.createVariableDeclaration(factory2.cloneNode(namespaceDeclaration.name), void 0, void 0, getHelperExpressionForImport(node, createRequireCall2(node))));
+				if (moduleKind !== 2) {
+					if (!node.importClause) return setOriginalNode(setTextRange(factory2.createExpressionStatement(createRequireCall2(node)), node), node);
 					else {
-						variables.push(factory2.createVariableDeclaration(factory2.getGeneratedNameForNode(node), void 0, void 0, getHelperExpressionForImport(node, createRequireCall2(node))));
-						if (namespaceDeclaration && isDefaultImport(node)) variables.push(factory2.createVariableDeclaration(factory2.cloneNode(namespaceDeclaration.name), void 0, void 0, factory2.getGeneratedNameForNode(node)));
+						const variables = [];
+						if (namespaceDeclaration && !isDefaultImport(node)) variables.push(factory2.createVariableDeclaration(factory2.cloneNode(namespaceDeclaration.name), void 0, void 0, getHelperExpressionForImport(node, createRequireCall2(node))));
+						else {
+							variables.push(factory2.createVariableDeclaration(factory2.getGeneratedNameForNode(node), void 0, void 0, getHelperExpressionForImport(node, createRequireCall2(node))));
+							if (namespaceDeclaration && isDefaultImport(node)) variables.push(factory2.createVariableDeclaration(factory2.cloneNode(namespaceDeclaration.name), void 0, void 0, factory2.getGeneratedNameForNode(node)));
+						}
+						statements = append(statements, setOriginalNode(setTextRange(factory2.createVariableStatement(void 0, factory2.createVariableDeclarationList(variables, languageVersion >= 2 ? 2 : 0)), node), node));
 					}
-					statements = append(statements, setOriginalNode(setTextRange(factory2.createVariableStatement(void 0, factory2.createVariableDeclarationList(variables, languageVersion >= 2 ? 2 : 0)), node), node));
-				}
-				else if (namespaceDeclaration && isDefaultImport(node)) statements = append(statements, factory2.createVariableStatement(void 0, factory2.createVariableDeclarationList([setOriginalNode(setTextRange(factory2.createVariableDeclaration(factory2.cloneNode(namespaceDeclaration.name), void 0, void 0, factory2.getGeneratedNameForNode(node)), node), node)], languageVersion >= 2 ? 2 : 0)));
+				} else if (namespaceDeclaration && isDefaultImport(node)) statements = append(statements, factory2.createVariableStatement(void 0, factory2.createVariableDeclarationList([setOriginalNode(setTextRange(factory2.createVariableDeclaration(factory2.cloneNode(namespaceDeclaration.name), void 0, void 0, factory2.getGeneratedNameForNode(node)), node), node)], languageVersion >= 2 ? 2 : 0)));
 				statements = appendExportsOfImportDeclaration(statements, node);
 				return singleOrMany(statements);
 			}
@@ -94141,9 +94339,10 @@ ${lanes.join("\n")}
 			function visitTopLevelImportEqualsDeclaration(node) {
 				Debug.assert(isExternalModuleImportEqualsDeclaration(node), "import= for internal module references should be handled in an earlier transformer.");
 				let statements;
-				if (moduleKind !== 2) if (hasSyntacticModifier(node, 32)) statements = append(statements, setOriginalNode(setTextRange(factory2.createExpressionStatement(createExportExpression(node.name, createRequireCall2(node))), node), node));
-				else statements = append(statements, setOriginalNode(setTextRange(factory2.createVariableStatement(void 0, factory2.createVariableDeclarationList([factory2.createVariableDeclaration(factory2.cloneNode(node.name), void 0, void 0, createRequireCall2(node))], languageVersion >= 2 ? 2 : 0)), node), node));
-				else if (hasSyntacticModifier(node, 32)) statements = append(statements, setOriginalNode(setTextRange(factory2.createExpressionStatement(createExportExpression(factory2.getExportName(node), factory2.getLocalName(node))), node), node));
+				if (moduleKind !== 2) {
+					if (hasSyntacticModifier(node, 32)) statements = append(statements, setOriginalNode(setTextRange(factory2.createExpressionStatement(createExportExpression(node.name, createRequireCall2(node))), node), node));
+					else statements = append(statements, setOriginalNode(setTextRange(factory2.createVariableStatement(void 0, factory2.createVariableDeclarationList([factory2.createVariableDeclaration(factory2.cloneNode(node.name), void 0, void 0, createRequireCall2(node))], languageVersion >= 2 ? 2 : 0)), node), node));
+				} else if (hasSyntacticModifier(node, 32)) statements = append(statements, setOriginalNode(setTextRange(factory2.createExpressionStatement(createExportExpression(factory2.getExportName(node), factory2.getLocalName(node))), node), node));
 				statements = appendExportsOfImportEqualsDeclaration(statements, node);
 				return singleOrMany(statements);
 			}
@@ -94196,13 +94395,15 @@ ${lanes.join("\n")}
 							const updatedVariable = factory2.updateVariableDeclaration(variable, variable.name, void 0, void 0, createExportExpression(variable.name, visitNode(variable.initializer, visitor, isExpression)));
 							variables = append(variables, updatedVariable);
 						} else variables = append(variables, variable);
-					} else if (variable.initializer) if (!isBindingPattern(variable.name) && (isArrowFunction(variable.initializer) || isFunctionExpression(variable.initializer) || isClassExpression(variable.initializer))) {
-						const expression = factory2.createAssignment(setTextRange(factory2.createPropertyAccessExpression(factory2.createIdentifier("exports"), variable.name), variable.name), factory2.createIdentifier(getTextOfIdentifierOrLiteral(variable.name)));
-						const updatedVariable = factory2.createVariableDeclaration(variable.name, variable.exclamationToken, variable.type, visitNode(variable.initializer, visitor, isExpression));
-						variables = append(variables, updatedVariable);
-						expressions = append(expressions, expression);
-						removeCommentsOnExpressions = true;
-					} else expressions = append(expressions, transformInitializedVariable(variable));
+					} else if (variable.initializer) {
+						if (!isBindingPattern(variable.name) && (isArrowFunction(variable.initializer) || isFunctionExpression(variable.initializer) || isClassExpression(variable.initializer))) {
+							const expression = factory2.createAssignment(setTextRange(factory2.createPropertyAccessExpression(factory2.createIdentifier("exports"), variable.name), variable.name), factory2.createIdentifier(getTextOfIdentifierOrLiteral(variable.name)));
+							const updatedVariable = factory2.createVariableDeclaration(variable.name, variable.exclamationToken, variable.type, visitNode(variable.initializer, visitor, isExpression));
+							variables = append(variables, updatedVariable);
+							expressions = append(expressions, expression);
+							removeCommentsOnExpressions = true;
+						} else expressions = append(expressions, transformInitializedVariable(variable));
+					}
 					if (variables) statements = append(statements, factory2.updateVariableStatement(node, modifiers, factory2.updateVariableDeclarationList(node.declarationList, variables)));
 					if (expressions) {
 						const statement = setOriginalNode(setTextRange(factory2.createExpressionStatement(factory2.inlineExpressions(expressions)), node), node);
@@ -94240,9 +94441,7 @@ ${lanes.join("\n")}
 					case 274:
 						statements = appendExportsOfDeclaration(statements, seen, namedBindings);
 						break;
-					case 275:
-						for (const importBinding of namedBindings.elements) statements = appendExportsOfDeclaration(statements, seen, importBinding, true);
-						break;
+					case 275: for (const importBinding of namedBindings.elements) statements = appendExportsOfDeclaration(statements, seen, importBinding, true);
 				}
 				return statements;
 			}
@@ -94589,13 +94788,13 @@ ${lanes.join("\n")}
 								break;
 							case 278:
 								Debug.assert(importVariableName !== void 0);
-								if (entry.exportClause) if (isNamedExports(entry.exportClause)) {
-									const properties = [];
-									for (const e of entry.exportClause.elements) properties.push(factory2.createPropertyAssignment(factory2.createStringLiteral(moduleExportNameTextUnescaped(e.name)), factory2.createElementAccessExpression(parameterName, factory2.createStringLiteral(moduleExportNameTextUnescaped(e.propertyName || e.name)))));
-									statements.push(factory2.createExpressionStatement(factory2.createCallExpression(exportFunction, void 0, [factory2.createObjectLiteralExpression(properties, true)])));
-								} else statements.push(factory2.createExpressionStatement(factory2.createCallExpression(exportFunction, void 0, [factory2.createStringLiteral(moduleExportNameTextUnescaped(entry.exportClause.name)), parameterName])));
-								else statements.push(factory2.createExpressionStatement(factory2.createCallExpression(exportStarFunction, void 0, [parameterName])));
-								break;
+								if (entry.exportClause) {
+									if (isNamedExports(entry.exportClause)) {
+										const properties = [];
+										for (const e of entry.exportClause.elements) properties.push(factory2.createPropertyAssignment(factory2.createStringLiteral(moduleExportNameTextUnescaped(e.name)), factory2.createElementAccessExpression(parameterName, factory2.createStringLiteral(moduleExportNameTextUnescaped(e.propertyName || e.name)))));
+										statements.push(factory2.createExpressionStatement(factory2.createCallExpression(exportFunction, void 0, [factory2.createObjectLiteralExpression(properties, true)])));
+									} else statements.push(factory2.createExpressionStatement(factory2.createCallExpression(exportFunction, void 0, [factory2.createStringLiteral(moduleExportNameTextUnescaped(entry.exportClause.name)), parameterName])));
+								} else statements.push(factory2.createExpressionStatement(factory2.createCallExpression(exportStarFunction, void 0, [parameterName])));
 						}
 					}
 					setters.push(factory2.createFunctionExpression(void 0, void 0, void 0, void 0, [factory2.createParameterDeclaration(void 0, void 0, parameterName)], void 0, factory2.createBlock(statements, true)));
@@ -94694,9 +94893,7 @@ ${lanes.join("\n")}
 					case 274:
 						statements = appendExportsOfDeclaration(statements, namedBindings);
 						break;
-					case 275:
-						for (const importBinding of namedBindings.elements) statements = appendExportsOfDeclaration(statements, importBinding);
-						break;
+					case 275: for (const importBinding of namedBindings.elements) statements = appendExportsOfDeclaration(statements, importBinding);
 				}
 				return statements;
 			}
@@ -95290,9 +95487,11 @@ ${lanes.join("\n")}
 			else return Debug.assertNever(node, `Attempted to set a declaration diagnostic context for unhandled node kind: ${Debug.formatSyntaxKind(node.kind)}`);
 			function getVariableDeclarationTypeVisibilityDiagnosticMessage(symbolAccessibilityResult) {
 				if (node.kind === 260 || node.kind === 208) return symbolAccessibilityResult.errorModuleName ? symbolAccessibilityResult.accessibility === 2 ? Diagnostics.Exported_variable_0_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named : Diagnostics.Exported_variable_0_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Exported_variable_0_has_or_is_using_private_name_1;
-				else if (node.kind === 172 || node.kind === 211 || node.kind === 212 || node.kind === 226 || node.kind === 171 || node.kind === 169 && hasSyntacticModifier(node.parent, 2)) if (isStatic(node)) return symbolAccessibilityResult.errorModuleName ? symbolAccessibilityResult.accessibility === 2 ? Diagnostics.Public_static_property_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named : Diagnostics.Public_static_property_0_of_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Public_static_property_0_of_exported_class_has_or_is_using_private_name_1;
-				else if (node.parent.kind === 263 || node.kind === 169) return symbolAccessibilityResult.errorModuleName ? symbolAccessibilityResult.accessibility === 2 ? Diagnostics.Public_property_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named : Diagnostics.Public_property_0_of_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Public_property_0_of_exported_class_has_or_is_using_private_name_1;
-				else return symbolAccessibilityResult.errorModuleName ? Diagnostics.Property_0_of_exported_interface_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Property_0_of_exported_interface_has_or_is_using_private_name_1;
+				else if (node.kind === 172 || node.kind === 211 || node.kind === 212 || node.kind === 226 || node.kind === 171 || node.kind === 169 && hasSyntacticModifier(node.parent, 2)) {
+					if (isStatic(node)) return symbolAccessibilityResult.errorModuleName ? symbolAccessibilityResult.accessibility === 2 ? Diagnostics.Public_static_property_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named : Diagnostics.Public_static_property_0_of_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Public_static_property_0_of_exported_class_has_or_is_using_private_name_1;
+					else if (node.parent.kind === 263 || node.kind === 169) return symbolAccessibilityResult.errorModuleName ? symbolAccessibilityResult.accessibility === 2 ? Diagnostics.Public_property_0_of_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named : Diagnostics.Public_property_0_of_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Public_property_0_of_exported_class_has_or_is_using_private_name_1;
+					else return symbolAccessibilityResult.errorModuleName ? Diagnostics.Property_0_of_exported_interface_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Property_0_of_exported_interface_has_or_is_using_private_name_1;
+				}
 			}
 			function getVariableDeclarationTypeVisibilityError(symbolAccessibilityResult) {
 				const diagnosticMessage = getVariableDeclarationTypeVisibilityDiagnosticMessage(symbolAccessibilityResult);
@@ -95304,9 +95503,10 @@ ${lanes.join("\n")}
 			}
 			function getAccessorDeclarationTypeVisibilityError(symbolAccessibilityResult) {
 				let diagnosticMessage;
-				if (node.kind === 178) if (isStatic(node)) diagnosticMessage = symbolAccessibilityResult.errorModuleName ? Diagnostics.Parameter_type_of_public_static_setter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Parameter_type_of_public_static_setter_0_from_exported_class_has_or_is_using_private_name_1;
-				else diagnosticMessage = symbolAccessibilityResult.errorModuleName ? Diagnostics.Parameter_type_of_public_setter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Parameter_type_of_public_setter_0_from_exported_class_has_or_is_using_private_name_1;
-				else if (isStatic(node)) diagnosticMessage = symbolAccessibilityResult.errorModuleName ? symbolAccessibilityResult.accessibility === 2 ? Diagnostics.Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named : Diagnostics.Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_private_name_1;
+				if (node.kind === 178) {
+					if (isStatic(node)) diagnosticMessage = symbolAccessibilityResult.errorModuleName ? Diagnostics.Parameter_type_of_public_static_setter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Parameter_type_of_public_static_setter_0_from_exported_class_has_or_is_using_private_name_1;
+					else diagnosticMessage = symbolAccessibilityResult.errorModuleName ? Diagnostics.Parameter_type_of_public_setter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Parameter_type_of_public_setter_0_from_exported_class_has_or_is_using_private_name_1;
+				} else if (isStatic(node)) diagnosticMessage = symbolAccessibilityResult.errorModuleName ? symbolAccessibilityResult.accessibility === 2 ? Diagnostics.Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named : Diagnostics.Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_private_name_1;
 				else diagnosticMessage = symbolAccessibilityResult.errorModuleName ? symbolAccessibilityResult.accessibility === 2 ? Diagnostics.Return_type_of_public_getter_0_from_exported_class_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named : Diagnostics.Return_type_of_public_getter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2 : Diagnostics.Return_type_of_public_getter_0_from_exported_class_has_or_is_using_private_name_1;
 				return {
 					diagnosticMessage,
@@ -95638,8 +95838,10 @@ ${lanes.join("\n")}
 			}
 			function handleSymbolAccessibilityError(symbolAccessibilityResult) {
 				if (symbolAccessibilityResult.accessibility === 0) {
-					if (symbolAccessibilityResult.aliasesToMakeVisible) if (!lateMarkedStatements) lateMarkedStatements = symbolAccessibilityResult.aliasesToMakeVisible;
-					else for (const ref of symbolAccessibilityResult.aliasesToMakeVisible) pushIfUnique(lateMarkedStatements, ref);
+					if (symbolAccessibilityResult.aliasesToMakeVisible) {
+						if (!lateMarkedStatements) lateMarkedStatements = symbolAccessibilityResult.aliasesToMakeVisible;
+						else for (const ref of symbolAccessibilityResult.aliasesToMakeVisible) pushIfUnique(lateMarkedStatements, ref);
+					}
 				} else if (symbolAccessibilityResult.accessibility !== 3) {
 					const errorInfo = getSymbolAccessibilityDiagnostic(symbolAccessibilityResult);
 					if (errorInfo) {
@@ -96234,8 +96436,10 @@ ${lanes.join("\n")}
 							needsScopeFixMarker = false;
 							let lateStatements = transformAndReplaceLatePaintedStatements(visitNodes2(inner.statements, visitDeclarationStatements, isStatement));
 							if (input.flags & 33554432) needsScopeFixMarker = false;
-							if (!isGlobalScopeAugmentation(input) && !hasScopeMarker2(lateStatements) && !resultHasScopeMarker) if (needsScopeFixMarker) lateStatements = factory2.createNodeArray([...lateStatements, createEmptyExports(factory2)]);
-							else lateStatements = visitNodes2(lateStatements, stripExportModifiers, isStatement);
+							if (!isGlobalScopeAugmentation(input) && !hasScopeMarker2(lateStatements) && !resultHasScopeMarker) {
+								if (needsScopeFixMarker) lateStatements = factory2.createNodeArray([...lateStatements, createEmptyExports(factory2)]);
+								else lateStatements = visitNodes2(lateStatements, stripExportModifiers, isStatement);
+							}
 							const body = factory2.updateModuleBlock(inner, lateStatements);
 							needsDeclare = previousNeedsDeclare;
 							needsScopeFixMarker = oldNeedsScopeFix;
@@ -96669,8 +96873,10 @@ ${lanes.join("\n")}
 			}
 			function emitNodeWithNotification(hint, node, emitCallback) {
 				Debug.assert(state < 3, "Cannot invoke TransformationResult callbacks after the result is disposed.");
-				if (node) if (isEmitNotificationEnabled(node)) onEmitNode(hint, node, emitCallback);
-				else emitCallback(hint, node);
+				if (node) {
+					if (isEmitNotificationEnabled(node)) onEmitNode(hint, node, emitCallback);
+					else emitCallback(hint, node);
+				}
 			}
 			function hoistVariableDeclaration(name) {
 				Debug.assert(state > 0, "Cannot modify the lexical environment during initialization.");
@@ -96733,8 +96939,10 @@ ${lanes.join("\n")}
 						if (!statements) statements = [statement];
 						else statements.push(statement);
 					}
-					if (lexicalEnvironmentStatements) if (!statements) statements = [...lexicalEnvironmentStatements];
-					else statements = [...statements, ...lexicalEnvironmentStatements];
+					if (lexicalEnvironmentStatements) {
+						if (!statements) statements = [...lexicalEnvironmentStatements];
+						else statements = [...statements, ...lexicalEnvironmentStatements];
+					}
 				}
 				lexicalEnvironmentStackOffset--;
 				lexicalEnvironmentVariableDeclarations = lexicalEnvironmentVariableDeclarationsStack[lexicalEnvironmentStackOffset];
@@ -96838,15 +97046,17 @@ ${lanes.join("\n")}
 		function forEachEmittedFile(host, action, sourceFilesOrTargetSourceFile, forceDtsEmit = false, onlyBuildInfo, includeBuildInfo) {
 			const sourceFiles = isArray(sourceFilesOrTargetSourceFile) ? sourceFilesOrTargetSourceFile : getSourceFilesToEmit(host, sourceFilesOrTargetSourceFile, forceDtsEmit);
 			const options = host.getCompilerOptions();
-			if (!onlyBuildInfo) if (options.outFile) {
-				if (sourceFiles.length) {
-					const bundle = factory.createBundle(sourceFiles);
-					const result = action(getOutputPathsFor(bundle, host, forceDtsEmit), bundle);
+			if (!onlyBuildInfo) {
+				if (options.outFile) {
+					if (sourceFiles.length) {
+						const bundle = factory.createBundle(sourceFiles);
+						const result = action(getOutputPathsFor(bundle, host, forceDtsEmit), bundle);
+						if (result) return result;
+					}
+				} else for (const sourceFile of sourceFiles) {
+					const result = action(getOutputPathsFor(sourceFile, host, forceDtsEmit), sourceFile);
 					if (result) return result;
 				}
-			} else for (const sourceFile of sourceFiles) {
-				const result = action(getOutputPathsFor(sourceFile, host, forceDtsEmit), sourceFile);
-				if (result) return result;
 			}
 			if (includeBuildInfo) {
 				const buildInfoPath = getTsBuildInfoEmitOutputFilePath(options);
@@ -97339,9 +97549,7 @@ ${lanes.join("\n")}
 					case 2:
 						Debug.assert(isIdentifier(node), "Expected an Identifier node.");
 						break;
-					case 1:
-						Debug.assert(isExpression(node), "Expected an Expression node.");
-						break;
+					case 1: Debug.assert(isExpression(node), "Expected an Expression node.");
 				}
 				switch (node.kind) {
 					case 307: return printFile(node);
@@ -97800,9 +98008,7 @@ ${lanes.join("\n")}
 					case 1:
 						emitPlaceholder(hint, node, snippet);
 						break;
-					case 0:
-						emitTabStop(hint, node, snippet);
-						break;
+					case 0: emitTabStop(hint, node, snippet);
 				}
 			}
 			function emitPlaceholder(hint, node, snippet) {
@@ -98547,8 +98753,10 @@ ${lanes.join("\n")}
 				emitEmbeddedStatement(node, node.statement);
 			}
 			function emitForBinding(node) {
-				if (node !== void 0) if (node.kind === 261) emit(node);
-				else emitExpression(node);
+				if (node !== void 0) {
+					if (node.kind === 261) emit(node);
+					else emitExpression(node);
+				}
 			}
 			function emitContinueStatement(node) {
 				emitTokenWithComment(88, node.pos, writeKeyword, node);
@@ -99164,10 +99372,12 @@ ${lanes.join("\n")}
 						}
 					}
 				}
-				if (node.tags) if (node.tags.length === 1 && node.tags[0].kind === 344 && !node.comment) {
-					writeSpace();
-					emit(node.tags[0]);
-				} else emitList(node, node.tags, 33);
+				if (node.tags) {
+					if (node.tags.length === 1 && node.tags[0].kind === 344 && !node.comment) {
+						writeSpace();
+						emit(node.tags[0]);
+					} else emitList(node, node.tags, 33);
+				}
 				writeSpace();
 				write("*/");
 			}
@@ -99217,16 +99427,18 @@ ${lanes.join("\n")}
 			}
 			function emitJSDocTypedefTag(tag) {
 				emitJSDocTagName(tag.tagName);
-				if (tag.typeExpression) if (tag.typeExpression.kind === 309) emitJSDocTypeExpression(tag.typeExpression);
-				else {
-					writeSpace();
-					writePunctuation("{");
-					write("Object");
-					if (tag.typeExpression.isArrayType) {
-						writePunctuation("[");
-						writePunctuation("]");
+				if (tag.typeExpression) {
+					if (tag.typeExpression.kind === 309) emitJSDocTypeExpression(tag.typeExpression);
+					else {
+						writeSpace();
+						writePunctuation("{");
+						write("Object");
+						if (tag.typeExpression.isArrayType) {
+							writePunctuation("[");
+							writePunctuation("]");
+						}
+						writePunctuation("}");
 					}
-					writePunctuation("}");
 				}
 				if (tag.fullName) {
 					writeSpace();
@@ -99534,7 +99746,6 @@ ${lanes.join("\n")}
 					case 8:
 						writeSpace();
 						writePunctuation("&");
-						break;
 				}
 			}
 			function emitList(parentNode, children, format, parenthesizerRule, start, count) {
@@ -99612,8 +99823,10 @@ ${lanes.join("\n")}
 				const emitFlags = previousSibling ? getEmitFlags(previousSibling) : 0;
 				const skipTrailingComments = commentsDisabled || !!(emitFlags & 2048);
 				const emitTrailingComma = hasTrailingComma && format & 64 && format & 16;
-				if (emitTrailingComma) if (previousSibling && !skipTrailingComments) emitTokenWithComment(28, previousSibling.end, writePunctuation, previousSibling);
-				else writePunctuation(",");
+				if (emitTrailingComma) {
+					if (previousSibling && !skipTrailingComments) emitTokenWithComment(28, previousSibling.end, writePunctuation, previousSibling);
+					else writePunctuation(",");
+				}
 				if (previousSibling && (parentNode ? parentNode.end : -1) !== previousSibling.end && format & 60 && !skipTrailingComments) emitLeadingCommentsOfPosition(emitTrailingComma && (childrenTextRange == null ? void 0 : childrenTextRange.end) ? childrenTextRange.end : previousSibling.end);
 				if (format & 128) decreaseIndent();
 				const closingLineTerminatorCount = getClosingLineTerminatorCount(parentNode, children[start + count - 1], format, childrenTextRange);
@@ -99927,9 +100140,7 @@ ${lanes.join("\n")}
 					case 275:
 						forEach(node.elements, generateNames);
 						break;
-					case 276:
-						generateNameIfNeeded(node.propertyName || node.name);
-						break;
+					case 276: generateNameIfNeeded(node.propertyName || node.name);
 				}
 			}
 			function generateMemberNames(node) {
@@ -99942,9 +100153,7 @@ ${lanes.join("\n")}
 					case 174:
 					case 173:
 					case 177:
-					case 178:
-						generateNameIfNeeded(node.name);
-						break;
+					case 178: generateNameIfNeeded(node.name);
 				}
 			}
 			function generateNameIfNeeded(name) {
@@ -100015,7 +100224,6 @@ ${lanes.join("\n")}
 					default:
 						formattedNameTempFlags ?? (formattedNameTempFlags = /* @__PURE__ */ new Map());
 						formattedNameTempFlags.set(formattedNameKey, flags);
-						break;
 				}
 			}
 			function makeTempVariableName(flags, reservedInNestedScopes, privateName, prefix, suffix) {
@@ -100243,9 +100451,10 @@ ${lanes.join("\n")}
 			}
 			function emitLeadingComments(pos, isEmittedNode) {
 				hasWrittenComment = false;
-				if (isEmittedNode) if (pos === 0 && (currentSourceFile == null ? void 0 : currentSourceFile.isDeclarationFile)) forEachLeadingCommentToEmit(pos, emitNonTripleSlashLeadingComment);
-				else forEachLeadingCommentToEmit(pos, emitLeadingComment);
-				else if (pos === 0) forEachLeadingCommentToEmit(pos, emitTripleSlashLeadingComment);
+				if (isEmittedNode) {
+					if (pos === 0 && (currentSourceFile == null ? void 0 : currentSourceFile.isDeclarationFile)) forEachLeadingCommentToEmit(pos, emitNonTripleSlashLeadingComment);
+					else forEachLeadingCommentToEmit(pos, emitLeadingComment);
+				} else if (pos === 0) forEachLeadingCommentToEmit(pos, emitTripleSlashLeadingComment);
 			}
 			function emitTripleSlashLeadingComment(commentPos, commentEnd, kind, hasTrailingNewLine, rangePos) {
 				if (isTripleSlashComment(commentPos, commentEnd)) emitLeadingComment(commentPos, commentEnd, kind, hasTrailingNewLine, rangePos);
@@ -100306,8 +100515,10 @@ ${lanes.join("\n")}
 				else writer.writeSpace(" ");
 			}
 			function forEachLeadingCommentToEmit(pos, cb) {
-				if (currentSourceFile && (containerPos === -1 || pos !== containerPos)) if (hasDetachedComments(pos)) forEachLeadingCommentWithoutDetachedComments(cb);
-				else forEachLeadingCommentRange(currentSourceFile.text, pos, cb, pos);
+				if (currentSourceFile && (containerPos === -1 || pos !== containerPos)) {
+					if (hasDetachedComments(pos)) forEachLeadingCommentWithoutDetachedComments(cb);
+					else forEachLeadingCommentRange(currentSourceFile.text, pos, cb, pos);
+				}
 			}
 			function forEachTrailingCommentToEmit(end, cb) {
 				if (currentSourceFile && (containerEnd === -1 || end !== containerEnd && end !== declarationListContainerEnd)) forEachTrailingCommentRange(currentSourceFile.text, end, cb);
@@ -100324,8 +100535,10 @@ ${lanes.join("\n")}
 			}
 			function emitDetachedCommentsAndUpdateCommentsInfo(range) {
 				const currentDetachedCommentInfo = currentSourceFile && emitDetachedComments(currentSourceFile.text, getCurrentLineMap(), writer, emitComment, range, newLine, commentsDisabled);
-				if (currentDetachedCommentInfo) if (detachedCommentsInfo) detachedCommentsInfo.push(currentDetachedCommentInfo);
-				else detachedCommentsInfo = [currentDetachedCommentInfo];
+				if (currentDetachedCommentInfo) {
+					if (detachedCommentsInfo) detachedCommentsInfo.push(currentDetachedCommentInfo);
+					else detachedCommentsInfo = [currentDetachedCommentInfo];
+				}
 			}
 			function emitComment(text, lineMap, writer2, commentPos, commentEnd, newLine2) {
 				if (!currentSourceFile || !shouldWriteComment(currentSourceFile.text, commentPos)) return;
@@ -102482,12 +102695,10 @@ ${lanes.join("\n")}
 							case 233:
 							case 285:
 							case 286:
-							case 215:
-								if (nodes === parent2.typeArguments) {
-									diagnostics.push(createDiagnosticForNodeArray2(nodes, Diagnostics.Type_arguments_can_only_be_used_in_TypeScript_files));
-									return "skip";
-								}
-								break;
+							case 215: if (nodes === parent2.typeArguments) {
+								diagnostics.push(createDiagnosticForNodeArray2(nodes, Diagnostics.Type_arguments_can_only_be_used_in_TypeScript_files));
+								return "skip";
+							}
 						}
 					}
 					function checkModifiers(modifiers, isConstValid) {
@@ -102501,13 +102712,7 @@ ${lanes.join("\n")}
 							case 128:
 							case 164:
 							case 103:
-							case 147:
-								diagnostics.push(createDiagnosticForNode2(modifier, Diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, tokenToString(modifier.kind)));
-								break;
-							case 126:
-							case 95:
-							case 90:
-							case 129:
+							case 147: diagnostics.push(createDiagnosticForNode2(modifier, Diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, tokenToString(modifier.kind)));
 						}
 					}
 					function createDiagnosticForNodeArray2(nodes, message, ...args) {
@@ -102655,8 +102860,10 @@ ${lanes.join("\n")}
 				if (hasExtension(fileName)) {
 					const canonicalFileName = host.getCanonicalFileName(fileName);
 					if (!options.allowNonTsExtensions && !forEach(flatten(supportedExtensionsWithJsonIfResolveJsonModule), (extension) => fileExtensionIs(canonicalFileName, extension))) {
-						if (fail) if (hasJSFileExtension(canonicalFileName)) fail(Diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, fileName);
-						else fail(Diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, fileName, "'" + flatten(supportedExtensions).join("', '") + "'");
+						if (fail) {
+							if (hasJSFileExtension(canonicalFileName)) fail(Diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, fileName);
+							else fail(Diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, fileName, "'" + flatten(supportedExtensions).join("', '") + "'");
+						}
 						return;
 					}
 					const sourceFile = getSourceFile2(fileName);
@@ -103250,9 +103457,10 @@ ${lanes.join("\n")}
 				const mustBeRemoved = !(removedInVersion.compareTo(typescriptVersion) === 1);
 				const canBeSilenced = !mustBeRemoved && ignoreDeprecationsVersion.compareTo(deprecatedInVersion) === -1;
 				if (mustBeRemoved || canBeSilenced) fn((name, value, useInstead) => {
-					if (mustBeRemoved) if (value === void 0) createDiagnostic(name, value, useInstead, Diagnostics.Option_0_has_been_removed_Please_remove_it_from_your_configuration, name);
-					else createDiagnostic(name, value, useInstead, Diagnostics.Option_0_1_has_been_removed_Please_remove_it_from_your_configuration, name, value);
-					else if (value === void 0) createDiagnostic(name, value, useInstead, Diagnostics.Option_0_is_deprecated_and_will_stop_functioning_in_TypeScript_1_Specify_compilerOption_ignoreDeprecations_Colon_2_to_silence_this_error, name, removedIn, deprecatedIn);
+					if (mustBeRemoved) {
+						if (value === void 0) createDiagnostic(name, value, useInstead, Diagnostics.Option_0_has_been_removed_Please_remove_it_from_your_configuration, name);
+						else createDiagnostic(name, value, useInstead, Diagnostics.Option_0_1_has_been_removed_Please_remove_it_from_your_configuration, name, value);
+					} else if (value === void 0) createDiagnostic(name, value, useInstead, Diagnostics.Option_0_is_deprecated_and_will_stop_functioning_in_TypeScript_1_Specify_compilerOption_ignoreDeprecations_Colon_2_to_silence_this_error, name, removedIn, deprecatedIn);
 					else createDiagnostic(name, value, useInstead, Diagnostics.Option_0_1_is_deprecated_and_will_stop_functioning_in_TypeScript_2_Specify_compilerOption_ignoreDeprecations_Colon_3_to_silence_this_error, name, value, removedIn, deprecatedIn);
 				});
 			}
@@ -103309,10 +103517,13 @@ ${lanes.join("\n")}
 				if (locationReason && (seenReasons == null ? void 0 : seenReasons.size) === 1) seenReasons = void 0;
 				if (seenReasons && cachedChain) {
 					if (cachedChain.details && !processedExtraReason) chain = chainDiagnosticMessages(cachedChain.details, diagnostic, ...args || emptyArray);
-					else if (cachedChain.fileIncludeReasonDetails) if (!processedExtraReason) if (!cachedFileIncludeDetailsHasProcessedExtraReason()) fileIncludeReasonDetails = cachedChain.fileIncludeReasonDetails;
-					else fileIncludeReasons = cachedChain.fileIncludeReasonDetails.next.slice(0, reasons.length);
-					else if (!cachedFileIncludeDetailsHasProcessedExtraReason()) fileIncludeReasons = [...cachedChain.fileIncludeReasonDetails.next, fileIncludeReasons[0]];
-					else fileIncludeReasons = append(cachedChain.fileIncludeReasonDetails.next.slice(0, reasons.length), fileIncludeReasons[0]);
+					else if (cachedChain.fileIncludeReasonDetails) {
+						if (!processedExtraReason) {
+							if (!cachedFileIncludeDetailsHasProcessedExtraReason()) fileIncludeReasonDetails = cachedChain.fileIncludeReasonDetails;
+							else fileIncludeReasons = cachedChain.fileIncludeReasonDetails.next.slice(0, reasons.length);
+						} else if (!cachedFileIncludeDetailsHasProcessedExtraReason()) fileIncludeReasons = [...cachedChain.fileIncludeReasonDetails.next, fileIncludeReasons[0]];
+						else fileIncludeReasons = append(cachedChain.fileIncludeReasonDetails.next.slice(0, reasons.length), fileIncludeReasons[0]);
+					}
 				}
 				if (!chain) {
 					if (!fileIncludeReasonDetails) fileIncludeReasonDetails = seenReasons && chainDiagnosticMessages(fileIncludeReasons, Diagnostics.The_file_is_in_the_program_because_Colon);
@@ -103507,9 +103718,10 @@ ${lanes.join("\n")}
 			}
 			function createCompilerOptionsDiagnostic(message, ...args) {
 				const compilerOptionsProperty = getCompilerOptionsPropertySyntax();
-				if (compilerOptionsProperty) if ("messageText" in message) programDiagnostics.add(createDiagnosticForNodeFromMessageChain(options.configFile, compilerOptionsProperty.name, message));
-				else programDiagnostics.add(createDiagnosticForNodeInSourceFile(options.configFile, compilerOptionsProperty.name, message, ...args));
-				else if ("messageText" in message) programDiagnostics.add(createCompilerDiagnosticFromMessageChain(message));
+				if (compilerOptionsProperty) {
+					if ("messageText" in message) programDiagnostics.add(createDiagnosticForNodeFromMessageChain(options.configFile, compilerOptionsProperty.name, message));
+					else programDiagnostics.add(createDiagnosticForNodeInSourceFile(options.configFile, compilerOptionsProperty.name, message, ...args));
+				} else if ("messageText" in message) programDiagnostics.add(createCompilerDiagnosticFromMessageChain(message));
 				else programDiagnostics.add(createCompilerDiagnostic(message, ...args));
 			}
 			function getCompilerOptionsObjectLiteralSyntax() {
@@ -104988,10 +105200,11 @@ ${lanes.join("\n")}
 					function handleNewSignature(oldSignatureFormat, newSignature) {
 						const oldSignature = !oldSignatureFormat || isString(oldSignatureFormat) ? oldSignatureFormat : oldSignatureFormat[0];
 						newSignature ?? (newSignature = computeSignature(text, host, data));
-						if (newSignature === oldSignature) if (oldSignatureFormat === oldSignature) return void 0;
-						else if (data) data.differsOnlyInMap = true;
-						else data = { differsOnlyInMap: true };
-						else {
+						if (newSignature === oldSignature) {
+							if (oldSignatureFormat === oldSignature) return void 0;
+							else if (data) data.differsOnlyInMap = true;
+							else data = { differsOnlyInMap: true };
+						} else {
 							state.hasChangedEmitSignature = true;
 							state.latestChangedDtsFile = fileName;
 						}
@@ -105004,25 +105217,27 @@ ${lanes.join("\n")}
 				if (kind === 1) assertSourceFileOkWithoutNextAffectedCall(state, targetSourceFile);
 				const result = handleNoEmitOptions(builderProgram, targetSourceFile, writeFile2, cancellationToken);
 				if (result) return result;
-				if (!targetSourceFile) if (kind === 1) {
-					let sourceMaps = [];
-					let emitSkipped = false;
-					let diagnostics;
-					let emittedFiles = [];
-					let affectedEmitResult;
-					while (affectedEmitResult = emitNextAffectedFile(writeFile2, cancellationToken, emitOnlyDtsFiles, customTransformers)) {
-						emitSkipped = emitSkipped || affectedEmitResult.result.emitSkipped;
-						diagnostics = addRange(diagnostics, affectedEmitResult.result.diagnostics);
-						emittedFiles = addRange(emittedFiles, affectedEmitResult.result.emittedFiles);
-						sourceMaps = addRange(sourceMaps, affectedEmitResult.result.sourceMaps);
-					}
-					return {
-						emitSkipped,
-						diagnostics: diagnostics || emptyArray,
-						emittedFiles,
-						sourceMaps
-					};
-				} else clearAffectedFilesPendingEmit(state, emitOnlyDtsFiles, false);
+				if (!targetSourceFile) {
+					if (kind === 1) {
+						let sourceMaps = [];
+						let emitSkipped = false;
+						let diagnostics;
+						let emittedFiles = [];
+						let affectedEmitResult;
+						while (affectedEmitResult = emitNextAffectedFile(writeFile2, cancellationToken, emitOnlyDtsFiles, customTransformers)) {
+							emitSkipped = emitSkipped || affectedEmitResult.result.emitSkipped;
+							diagnostics = addRange(diagnostics, affectedEmitResult.result.diagnostics);
+							emittedFiles = addRange(emittedFiles, affectedEmitResult.result.emittedFiles);
+							sourceMaps = addRange(sourceMaps, affectedEmitResult.result.sourceMaps);
+						}
+						return {
+							emitSkipped,
+							diagnostics: diagnostics || emptyArray,
+							emittedFiles,
+							sourceMaps
+						};
+					} else clearAffectedFilesPendingEmit(state, emitOnlyDtsFiles, false);
+				}
 				const emitResult = state.program.emit(targetSourceFile, getWriteFileCallback(writeFile2, customTransformers), cancellationToken, emitOnlyDtsFiles, customTransformers);
 				handleNonEmitBuilderWithEmitOrDtsErrors(targetSourceFile, emitOnlyDtsFiles, false, emitResult.diagnostics);
 				return emitResult;
@@ -105369,12 +105584,14 @@ ${lanes.join("\n")}
 			const nodeModulesIndex = failedLookupPathComponents.indexOf("node_modules");
 			if (nodeModulesIndex !== -1 && nodeModulesIndex + 1 <= perceivedOsRootLength + 1) return void 0;
 			const lastNodeModulesIndex = failedLookupPathComponents.lastIndexOf("node_modules");
-			if (isInDirectoryPath(rootPathComponents, failedLookupPathComponents)) if (failedLookupPathComponents.length > rootPathComponents.length + 1) return getDirectoryOfFailedLookupWatch(failedLookupComponents, failedLookupPathComponents, Math.max(rootPathComponents.length + 1, perceivedOsRootLength + 1), lastNodeModulesIndex);
-			else return {
-				dir: rootDir,
-				dirPath: rootPath,
-				nonRecursive: true
-			};
+			if (isInDirectoryPath(rootPathComponents, failedLookupPathComponents)) {
+				if (failedLookupPathComponents.length > rootPathComponents.length + 1) return getDirectoryOfFailedLookupWatch(failedLookupComponents, failedLookupPathComponents, Math.max(rootPathComponents.length + 1, perceivedOsRootLength + 1), lastNodeModulesIndex);
+				else return {
+					dir: rootDir,
+					dirPath: rootPath,
+					nonRecursive: true
+				};
+			}
 			return getDirectoryToWatchFromFailedLookupLocationDirectory(failedLookupComponents, failedLookupPathComponents, failedLookupPathComponents.length - 1, perceivedOsRootLength, nodeModulesIndex, rootPathComponents, lastNodeModulesIndex, preferNonRecursiveWatch);
 		}
 		function getDirectoryToWatchFromFailedLookupLocationDirectory(dirComponents, dirPathComponents, dirPathComponentsLength, perceivedOsRootLength, nodeModulesIndex, rootPathComponents, lastNodeModulesIndex, preferNonRecursiveWatch) {
@@ -106270,10 +106487,8 @@ ${lanes.join("\n")}
 				case 99:
 					if (file.packageJsonScope) (result ?? (result = [])).push(chainDiagnosticMessages(void 0, Diagnostics.File_is_ECMAScript_module_because_0_has_field_type_with_value_module, toFileName(last(file.packageJsonLocations), fileNameConvertor)));
 					break;
-				case 1:
-					if (file.packageJsonScope) (result ?? (result = [])).push(chainDiagnosticMessages(void 0, file.packageJsonScope.contents.packageJsonContent.type ? Diagnostics.File_is_CommonJS_module_because_0_has_field_type_whose_value_is_not_module : Diagnostics.File_is_CommonJS_module_because_0_does_not_have_field_type, toFileName(last(file.packageJsonLocations), fileNameConvertor)));
-					else if ((_a = file.packageJsonLocations) == null ? void 0 : _a.length) (result ?? (result = [])).push(chainDiagnosticMessages(void 0, Diagnostics.File_is_CommonJS_module_because_package_json_was_not_found));
-					break;
+				case 1: if (file.packageJsonScope) (result ?? (result = [])).push(chainDiagnosticMessages(void 0, file.packageJsonScope.contents.packageJsonContent.type ? Diagnostics.File_is_CommonJS_module_because_0_has_field_type_whose_value_is_not_module : Diagnostics.File_is_CommonJS_module_because_0_does_not_have_field_type, toFileName(last(file.packageJsonLocations), fileNameConvertor)));
+				else if ((_a = file.packageJsonLocations) == null ? void 0 : _a.length) (result ?? (result = [])).push(chainDiagnosticMessages(void 0, Diagnostics.File_is_CommonJS_module_because_package_json_was_not_found));
 			}
 			return result;
 		}
@@ -106478,12 +106693,10 @@ ${lanes.join("\n")}
 					switch (ch) {
 						case 10: if (pos && text.charCodeAt(pos - 1) === 13) pos--;
 						case 13: break;
-						default:
-							if (ch < 127 || !isLineBreak(ch)) {
-								lineStart = pos;
-								continue;
-							}
-							break;
+						default: if (ch < 127 || !isLineBreak(ch)) {
+							lineStart = pos;
+							continue;
+						}
 					}
 					const line = text.substring(lineStart, lineEnd);
 					if (line.match(sourceMapCommentRegExp)) {
@@ -106841,15 +107054,16 @@ ${lanes.join("\n")}
 				const impliedNodeFormat = typeof languageVersionOrOptions === "object" ? languageVersionOrOptions.impliedNodeFormat : void 0;
 				if (hostSourceFile === void 0 || shouldCreateNewSourceFile || isFilePresenceUnknownOnHost(hostSourceFile) || hostSourceFile.sourceFile.impliedNodeFormat !== impliedNodeFormat) {
 					const sourceFile = getNewSourceFile(fileName, languageVersionOrOptions, onError);
-					if (hostSourceFile) if (sourceFile) {
-						hostSourceFile.sourceFile = sourceFile;
-						hostSourceFile.version = sourceFile.version;
-						if (!hostSourceFile.fileWatcher) hostSourceFile.fileWatcher = watchFilePath(path, fileName, onSourceFileChange, 250, watchOptions, WatchType.SourceFile);
-					} else {
-						if (hostSourceFile.fileWatcher) hostSourceFile.fileWatcher.close();
-						sourceFilesCache.set(path, false);
-					}
-					else if (sourceFile) {
+					if (hostSourceFile) {
+						if (sourceFile) {
+							hostSourceFile.sourceFile = sourceFile;
+							hostSourceFile.version = sourceFile.version;
+							if (!hostSourceFile.fileWatcher) hostSourceFile.fileWatcher = watchFilePath(path, fileName, onSourceFileChange, 250, watchOptions, WatchType.SourceFile);
+						} else {
+							if (hostSourceFile.fileWatcher) hostSourceFile.fileWatcher.close();
+							sourceFilesCache.set(path, false);
+						}
+					} else if (sourceFile) {
 						const fileWatcher = watchFilePath(path, fileName, onSourceFileChange, 250, watchOptions, WatchType.SourceFile);
 						sourceFilesCache.set(path, {
 							sourceFile,
@@ -106863,8 +107077,10 @@ ${lanes.join("\n")}
 			}
 			function nextSourceFileVersion(path) {
 				const hostSourceFile = sourceFilesCache.get(path);
-				if (hostSourceFile !== void 0) if (isFileMissingOnHost(hostSourceFile)) sourceFilesCache.set(path, { version: false });
-				else hostSourceFile.version = false;
+				if (hostSourceFile !== void 0) {
+					if (isFileMissingOnHost(hostSourceFile)) sourceFilesCache.set(path, { version: false });
+					else hostSourceFile.version = false;
+				}
 			}
 			function getSourceVersion(path, readFileWithCache) {
 				const hostSourceFile = sourceFilesCache.get(path);
@@ -106930,9 +107146,7 @@ ${lanes.join("\n")}
 					case 2:
 						reloadConfigFile();
 						break;
-					default:
-						synchronizeProgram();
-						break;
+					default: synchronizeProgram();
 				}
 				return getCurrentBuilderProgram();
 			}
@@ -107620,8 +107834,6 @@ ${lanes.join("\n")}
 						case 2:
 							queueReferencingProjects(state, project, projectPath, projectIndex, config, buildOrder, Debug.checkDefined(buildResult));
 							step++;
-							break;
-						default:
 					}
 					Debug.assert(step > currentStep);
 				}
@@ -107735,8 +107947,10 @@ ${lanes.join("\n")}
 				if (existing.modifiedTime) return existing.modifiedTime;
 			}
 			const result = getModifiedTime(state.host, fileName);
-			if (state.watch) if (existing) existing.modifiedTime = result;
-			else state.filesWatched.set(path, result);
+			if (state.watch) {
+				if (existing) existing.modifiedTime = result;
+				else state.filesWatched.set(path, result);
+			}
 			return result;
 		}
 		function watchFile(state, file, callback, pollingInterval, options, watchType, project) {
@@ -108071,9 +108285,7 @@ ${lanes.join("\n")}
 								newerProjectName: project
 							});
 							break;
-						case 12:
-							if (toResolvedConfigFilePath(state, resolveProjectName(state, status.upstreamProjectName)) === projectPath) clearProjectStatus(state, nextProjectPath);
-							break;
+						case 12: if (toResolvedConfigFilePath(state, resolveProjectName(state, status.upstreamProjectName)) === projectPath) clearProjectStatus(state, nextProjectPath);
 					}
 					addProjToQueue(state, nextProjectPath, 0);
 					break;
@@ -108133,10 +108345,12 @@ ${lanes.join("\n")}
 				const inputFileNames = new Set(parsed.fileNames.map((f) => toPath2(state, f)));
 				for (const output of outputs) {
 					if (inputFileNames.has(toPath2(state, output))) continue;
-					if (host.fileExists(output)) if (filesToDelete) filesToDelete.push(output);
-					else {
-						host.deleteFile(output);
-						invalidateProject(state, resolvedPath, 0);
+					if (host.fileExists(output)) {
+						if (filesToDelete) filesToDelete.push(output);
+						else {
+							host.deleteFile(output);
+							invalidateProject(state, resolvedPath, 0);
+						}
 					}
 				}
 			}
@@ -108357,9 +108571,6 @@ ${lanes.join("\n")}
 				case 0: return reportStatus(state, Diagnostics.Project_0_is_out_of_date_because_1, relName(state, configFileName), status.reason);
 				case 14: return reportStatus(state, Diagnostics.Project_0_is_out_of_date_because_output_for_it_was_generated_with_version_1_that_differs_with_current_version_2, relName(state, configFileName), status.version, version);
 				case 17: return reportStatus(state, Diagnostics.Project_0_is_being_forcibly_rebuilt, relName(state, configFileName));
-				case 16:
-				case 13: break;
-				default:
 			}
 		}
 		function verboseReportProjectStatus(state, configFileName, status) {
@@ -108945,9 +109156,10 @@ ${lanes.join("\n")}
 			};
 			function addAggregateStatistic(s) {
 				const existing = statistics == null ? void 0 : statistics.get(s.name);
-				if (existing) if (existing.type === 2) existing.value = Math.max(existing.value, s.value);
-				else existing.value += s.value;
-				else (statistics ?? (statistics = /* @__PURE__ */ new Map())).set(s.name, s);
+				if (existing) {
+					if (existing.type === 2) existing.value = Math.max(existing.value, s.value);
+					else existing.value += s.value;
+				} else (statistics ?? (statistics = /* @__PURE__ */ new Map())).set(s.name, s);
 			}
 			function forEachAggreateStatistics(cb) {
 				statistics?.forEach(cb);
@@ -109332,9 +109544,7 @@ ${lanes.join("\n")}
 							canInferObjectLiteral = !!typeFromObjectLiteralPropertyAssignment(prop, name, context, isConstContext) && canInferObjectLiteral;
 							break;
 						case 178:
-						case 177:
-							canInferObjectLiteral = !!typeFromObjectLiteralAccessor(prop, name, context) && canInferObjectLiteral;
-							break;
+						case 177: canInferObjectLiteral = !!typeFromObjectLiteralAccessor(prop, name, context) && canInferObjectLiteral;
 					}
 				}
 				return canInferObjectLiteral;
@@ -110661,14 +110871,16 @@ ${lanes.join("\n")}
 				});
 				if (i >= 0 && children[i]) {
 					const child = children[i];
-					if (position < child.end) if (child.getStart(sourceFile, !excludeJsdoc) >= position || !nodeHasTokens(child, sourceFile) || isWhiteSpaceOnlyJsxText(child)) {
-						const candidate2 = findRightmostChildNodeWithTokens(children, i, sourceFile, n.kind);
-						if (candidate2) {
-							if (!excludeJsdoc && isJSDocCommentContainingNode(candidate2) && candidate2.getChildren(sourceFile).length) return find2(candidate2);
-							return findRightmostToken(candidate2, sourceFile);
-						}
-						return;
-					} else return find2(child);
+					if (position < child.end) {
+						if (child.getStart(sourceFile, !excludeJsdoc) >= position || !nodeHasTokens(child, sourceFile) || isWhiteSpaceOnlyJsxText(child)) {
+							const candidate2 = findRightmostChildNodeWithTokens(children, i, sourceFile, n.kind);
+							if (candidate2) {
+								if (!excludeJsdoc && isJSDocCommentContainingNode(candidate2) && candidate2.getChildren(sourceFile).length) return find2(candidate2);
+								return findRightmostToken(candidate2, sourceFile);
+							}
+							return;
+						} else return find2(child);
+					}
 				}
 				Debug.assert(startNode2 !== void 0 || n.kind === 307 || n.kind === 1 || isJSDocCommentContainingNode(n));
 				const candidate = findRightmostChildNodeWithTokens(children, children.length, sourceFile, n.kind);
@@ -112018,7 +112230,6 @@ ${lanes.join("\n")}
 					case 10:
 						const parsedBigInt = parseBigInt(endsWith(expression.text, "n") ? expression.text.slice(0, -1) : expression.text);
 						if (parsedBigInt) existingBigInts.add(pseudoBigIntToString(parsedBigInt));
-						break;
 				}
 				else {
 					const symbol = checker.getSymbolAtLocation(clause.expression);
@@ -112927,7 +113138,6 @@ ${lanes.join("\n")}
 							processElement(tag.typeExpression);
 							pos = tag.end;
 							commentStart = ((_h = tag.typeExpression) == null ? void 0 : _h.end) || commentStart;
-							break;
 					}
 					if (typeof tag.comment === "object") pushCommentRange(tag.comment.pos, tag.comment.end - tag.comment.pos);
 					else if (typeof tag.comment === "string") pushCommentRange(commentStart, tag.end - commentStart);
@@ -113043,9 +113253,7 @@ ${lanes.join("\n")}
 					case 285:
 						if (token.parent.tagName === token) return 21;
 						break;
-					case 291:
-						if (token.parent.name === token) return 22;
-						break;
+					case 291: if (token.parent.name === token) return 22;
 				}
 			}
 			function classifyTokenType(tokenKind, token) {
@@ -113539,10 +113747,12 @@ ${lanes.join("\n")}
 				const entry = getDocumentRegistryEntry(bucketEntry, scriptKind);
 				entry.languageServiceRefCount--;
 				Debug.assert(entry.languageServiceRefCount >= 0);
-				if (entry.languageServiceRefCount === 0) if (isDocumentRegistryEntry(bucketEntry)) bucket.delete(path);
-				else {
-					bucketEntry.delete(scriptKind);
-					if (bucketEntry.size === 1) bucket.set(path, firstDefinedIterator(bucketEntry.values(), identity));
+				if (entry.languageServiceRefCount === 0) {
+					if (isDocumentRegistryEntry(bucketEntry)) bucket.delete(path);
+					else {
+						bucketEntry.delete(scriptKind);
+						if (bucketEntry.size === 1) bucket.set(path, firstDefinedIterator(bucketEntry.values(), identity));
+					}
 				}
 			}
 			return {
@@ -114189,11 +114399,11 @@ ${lanes.join("\n")}
 								case 19:
 									if (length(stack)) stack.push(token);
 									break;
-								case 20:
-									if (length(stack)) if (lastOrUndefined(stack) === 16) {
+								case 20: if (length(stack)) {
+									if (lastOrUndefined(stack) === 16) {
 										if (scanner.reScanTemplateToken(false) === 18) stack.pop();
 									} else stack.pop();
-									break;
+								}
 							}
 						}
 						nextToken();
@@ -114871,8 +115081,10 @@ interface Symbol {
 					const importClause = node;
 					if (importClause.name) addLeafNode(importClause.name);
 					const { namedBindings } = importClause;
-					if (namedBindings) if (namedBindings.kind === 274) addLeafNode(namedBindings);
-					else for (const element of namedBindings.elements) addLeafNode(element);
+					if (namedBindings) {
+						if (namedBindings.kind === 274) addLeafNode(namedBindings);
+						else for (const element of namedBindings.elements) addLeafNode(element);
+					}
 					break;
 				case 304:
 					addNodeWithRecursiveChild(node, node.name);
@@ -115462,12 +115674,13 @@ interface Symbol {
 			changeImports(program, info, changes, cancellationToken);
 		}
 		function changeExport(exportingSourceFile, { wasDefault, exportNode, exportName }, changes, checker) {
-			if (wasDefault) if (isExportAssignment(exportNode) && !exportNode.isExportEquals) {
-				const exp = exportNode.expression;
-				const spec = makeExportSpecifier(exp.text, exp.text);
-				changes.replaceNode(exportingSourceFile, exportNode, factory.createExportDeclaration(void 0, false, factory.createNamedExports([spec])));
-			} else changes.delete(exportingSourceFile, Debug.checkDefined(findModifier(exportNode, 90), "Should find a default keyword in modifier list"));
-			else {
+			if (wasDefault) {
+				if (isExportAssignment(exportNode) && !exportNode.isExportEquals) {
+					const exp = exportNode.expression;
+					const spec = makeExportSpecifier(exp.text, exp.text);
+					changes.replaceNode(exportingSourceFile, exportNode, factory.createExportDeclaration(void 0, false, factory.createNamedExports([spec])));
+				} else changes.delete(exportingSourceFile, Debug.checkDefined(findModifier(exportNode, 90), "Should find a default keyword in modifier list"));
+			} else {
 				const exportKeyword = Debug.checkDefined(findModifier(exportNode, 95), "Should find an export keyword in modifier list");
 				switch (exportNode.kind) {
 					case 262:
@@ -117392,7 +117605,6 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 							const callOrNewExpression2 = tryCast(elementAccessExpression.parent, isCallOrNewExpression);
 							if (callOrNewExpression2 && callOrNewExpression2.expression === elementAccessExpression) return callOrNewExpression2;
 						}
-						break;
 				}
 			}
 		}
@@ -117408,7 +117620,6 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					case 212:
 						const elementAccessExpression = tryCast(parent2, isElementAccessExpression);
 						if (elementAccessExpression && elementAccessExpression.expression === reference) return elementAccessExpression;
-						break;
 				}
 			}
 		}
@@ -118323,9 +118534,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 						case 296:
 							permittedJumps |= 1;
 							break;
-						default:
-							if (isIterationStatement(node2, false)) permittedJumps |= 3;
-							break;
+						default: if (isIterationStatement(node2, false)) permittedJumps |= 3;
 					}
 					switch (node2.kind) {
 						case 197:
@@ -118358,9 +118567,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 							if (permittedJumps & 4) rangeFacts |= 1;
 							else (errors2 || (errors2 = [])).push(createDiagnosticForNode(node2, Messages.cannotExtractRangeContainingConditionalReturnStatement));
 							break;
-						default:
-							forEachChild(node2, visit);
-							break;
+						default: forEachChild(node2, visit);
 					}
 					permittedJumps = savedPermittedJumps;
 				}
@@ -119013,13 +119220,15 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				const sym = isIdentifier(node) ? getSymbolReferencedByIdentifier(node) : checker.getSymbolAtLocation(node);
 				if (sym) {
 					const decl = find(visibleDeclarationsInExtractedRange, (d) => d.symbol === sym);
-					if (decl) if (isVariableDeclaration(decl)) {
-						const idString = decl.symbol.id.toString();
-						if (!exposedVariableSymbolSet.has(idString)) {
-							exposedVariableDeclarations.push(decl);
-							exposedVariableSymbolSet.set(idString, true);
-						}
-					} else firstExposedNonVariableDeclaration = firstExposedNonVariableDeclaration || decl;
+					if (decl) {
+						if (isVariableDeclaration(decl)) {
+							const idString = decl.symbol.id.toString();
+							if (!exposedVariableSymbolSet.has(idString)) {
+								exposedVariableDeclarations.push(decl);
+								exposedVariableSymbolSet.set(idString, true);
+							}
+						} else firstExposedNonVariableDeclaration = firstExposedNonVariableDeclaration || decl;
+					}
 				}
 				forEachChild(node, checkForUsedDeclarations);
 			}
@@ -119922,15 +120131,19 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 							break;
 						case 278:
 							const exportDeclaration = node;
-							if (exportDeclaration.exportClause) if (isNamedExports(exportDeclaration.exportClause)) forEach(exportDeclaration.exportClause.elements, visit);
-							else visit(exportDeclaration.exportClause.name);
+							if (exportDeclaration.exportClause) {
+								if (isNamedExports(exportDeclaration.exportClause)) forEach(exportDeclaration.exportClause.elements, visit);
+								else visit(exportDeclaration.exportClause.name);
+							}
 							break;
 						case 272:
 							const importClause = node.importClause;
 							if (importClause) {
 								if (importClause.name) addDeclaration(importClause.name);
-								if (importClause.namedBindings) if (importClause.namedBindings.kind === 274) addDeclaration(importClause.namedBindings);
-								else forEach(importClause.namedBindings.elements, visit);
+								if (importClause.namedBindings) {
+									if (importClause.namedBindings.kind === 274) addDeclaration(importClause.namedBindings);
+									else forEach(importClause.namedBindings.elements, visit);
+								}
 							}
 							break;
 						case 226: if (getAssignmentDeclarationKind(node) !== 0) addDeclaration(node);
@@ -120324,10 +120537,12 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					const scriptVersion = host.getScriptVersion(fileName);
 					if (!shouldCreateNewSourceFile) {
 						const oldSourceFile = program && program.getSourceFileByPath(path);
-						if (oldSourceFile) if (scriptKind === oldSourceFile.scriptKind || releasedScriptKinds.has(oldSourceFile.resolvedPath)) return documentRegistry.updateDocumentWithKey(fileName, path, host, documentRegistryBucketKey, scriptSnapshot, scriptVersion, scriptKind, languageVersionOrOptions);
-						else {
-							documentRegistry.releaseDocumentWithKey(oldSourceFile.resolvedPath, documentRegistry.getKeyForCompilationSettings(program.getCompilerOptions()), oldSourceFile.scriptKind, oldSourceFile.impliedNodeFormat);
-							releasedScriptKinds.add(oldSourceFile.resolvedPath);
+						if (oldSourceFile) {
+							if (scriptKind === oldSourceFile.scriptKind || releasedScriptKinds.has(oldSourceFile.resolvedPath)) return documentRegistry.updateDocumentWithKey(fileName, path, host, documentRegistryBucketKey, scriptSnapshot, scriptVersion, scriptKind, languageVersionOrOptions);
+							else {
+								documentRegistry.releaseDocumentWithKey(oldSourceFile.resolvedPath, documentRegistry.getKeyForCompilationSettings(program.getCompilerOptions()), oldSourceFile.scriptKind, oldSourceFile.impliedNodeFormat);
+								releasedScriptKinds.add(oldSourceFile.resolvedPath);
+							}
 						}
 					}
 					return documentRegistry.acquireDocumentWithKey(fileName, path, host, documentRegistryBucketKey, scriptSnapshot, scriptVersion, scriptKind, languageVersionOrOptions);
@@ -120674,9 +120889,10 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				}
 				let nodeForStartPos = node;
 				while (true) if (isRightSideOfPropertyAccess(nodeForStartPos) || isRightSideOfQualifiedName(nodeForStartPos)) nodeForStartPos = nodeForStartPos.parent;
-				else if (isNameOfModuleDeclaration(nodeForStartPos)) if (nodeForStartPos.parent.parent.kind === 267 && nodeForStartPos.parent.parent.body === nodeForStartPos.parent) nodeForStartPos = nodeForStartPos.parent.parent.name;
-				else break;
-				else break;
+				else if (isNameOfModuleDeclaration(nodeForStartPos)) {
+					if (nodeForStartPos.parent.parent.kind === 267 && nodeForStartPos.parent.parent.body === nodeForStartPos.parent) nodeForStartPos = nodeForStartPos.parent.parent.name;
+					else break;
+				} else break;
 				return createTextSpanFromBounds(nodeForStartPos.getStart(), node.getEnd());
 			}
 			function getBreakpointStatementAtPosition(fileName, position) {
@@ -121488,9 +121704,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 								case 226:
 									if (node.parent.operatorToken.kind === 28) return textSpan(node);
 									break;
-								case 219:
-									if (node.parent.body === node) return textSpan(node);
-									break;
+								case 219: if (node.parent.body === node) return textSpan(node);
 							}
 							switch (node.parent.kind) {
 								case 303:
@@ -122763,9 +122977,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 						break;
 					case "array":
 					case "date":
-					case "promise":
-						text = text[0].toUpperCase() + text.slice(1);
-						break;
+					case "promise": text = text[0].toUpperCase() + text.slice(1);
 				}
 				name = factory.createIdentifier(text);
 				if ((text === "Array" || text === "Promise") && !node.typeArguments) args = factory.createNodeArray([factory.createTypeReferenceNode("any", emptyArray)]);
@@ -123003,10 +123215,12 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 		function getExplicitPromisedTypeOfPromiseReturningCallExpression(node, callback, checker) {
 			if (node.expression.name.escapedText === "finally") return;
 			const promiseType = checker.getTypeAtLocation(node.expression.expression);
-			if (isReferenceToType(promiseType, checker.getPromiseType()) || isReferenceToType(promiseType, checker.getPromiseLikeType())) if (node.expression.name.escapedText === "then") {
-				if (callback === elementAt(node.arguments, 0)) return elementAt(node.typeArguments, 0);
-				else if (callback === elementAt(node.arguments, 1)) return elementAt(node.typeArguments, 1);
-			} else return elementAt(node.typeArguments, 0);
+			if (isReferenceToType(promiseType, checker.getPromiseType()) || isReferenceToType(promiseType, checker.getPromiseLikeType())) {
+				if (node.expression.name.escapedText === "then") {
+					if (callback === elementAt(node.arguments, 0)) return elementAt(node.typeArguments, 0);
+					else if (callback === elementAt(node.arguments, 1)) return elementAt(node.typeArguments, 1);
+				} else return elementAt(node.typeArguments, 0);
+			}
 		}
 		function isPromiseTypedExpression(node, checker) {
 			if (!isExpression(node)) return false;
@@ -123355,9 +123569,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					case 271:
 						changes.replaceNode(importingFile, importNode, makeImport(importNode.name, void 0, moduleSpecifier, quotePreference));
 						break;
-					case 213:
-						if (isRequireCall(importNode, false)) changes.replaceNode(importingFile, importNode, factory.createPropertyAccessExpression(getSynthesizedDeepClone(importNode), "default"));
-						break;
+					case 213: if (isRequireCall(importNode, false)) changes.replaceNode(importingFile, importNode, factory.createPropertyAccessExpression(getSynthesizedDeepClone(importNode), "default"));
 				}
 			}
 		}
@@ -123469,18 +123681,19 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 		function convertAssignment(sourceFile, checker, assignment, changes, exports2, useSitesToUnqualify) {
 			const { left, right } = assignment;
 			if (!isPropertyAccessExpression(left)) return false;
-			if (isExportsOrModuleExportsOrAlias(sourceFile, left)) if (isExportsOrModuleExportsOrAlias(sourceFile, right)) changes.delete(sourceFile, assignment.parent);
-			else {
-				const replacement = isObjectLiteralExpression(right) ? tryChangeModuleExportsObject(right, useSitesToUnqualify) : isRequireCall(right, true) ? convertReExportAll(right.arguments[0], checker) : void 0;
-				if (replacement) {
-					changes.replaceNodeWithNodes(sourceFile, assignment.parent, replacement[0]);
-					return replacement[1];
-				} else {
-					changes.replaceRangeWithText(sourceFile, createRange(left.getStart(sourceFile), right.pos), "export default");
-					return true;
+			if (isExportsOrModuleExportsOrAlias(sourceFile, left)) {
+				if (isExportsOrModuleExportsOrAlias(sourceFile, right)) changes.delete(sourceFile, assignment.parent);
+				else {
+					const replacement = isObjectLiteralExpression(right) ? tryChangeModuleExportsObject(right, useSitesToUnqualify) : isRequireCall(right, true) ? convertReExportAll(right.arguments[0], checker) : void 0;
+					if (replacement) {
+						changes.replaceNodeWithNodes(sourceFile, assignment.parent, replacement[0]);
+						return replacement[1];
+					} else {
+						changes.replaceRangeWithText(sourceFile, createRange(left.getStart(sourceFile), right.pos), "export default");
+						return true;
+					}
 				}
-			}
-			else if (isExportsOrModuleExportsOrAlias(sourceFile, left.expression)) convertNamedExport(sourceFile, assignment, changes, exports2);
+			} else if (isExportsOrModuleExportsOrAlias(sourceFile, left.expression)) convertNamedExport(sourceFile, assignment, changes, exports2);
 			return false;
 		}
 		function tryChangeModuleExportsObject(object, useSitesToUnqualify) {
@@ -123809,21 +124022,25 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				pos = findEndOfTextBetween(commentNode, commentNode.getStart(), node.getStart());
 				prefix = `${newLine} */${newLine}`;
 			}
-			if (leftSibling) if (fixAll && isJSDocTypedefTag(leftSibling)) {
-				pos = node.getStart();
-				prefix = "";
-			} else {
-				pos = findEndOfTextBetween(commentNode, leftSibling.getStart(), node.getStart());
-				prefix = `${newLine} */${newLine}`;
+			if (leftSibling) {
+				if (fixAll && isJSDocTypedefTag(leftSibling)) {
+					pos = node.getStart();
+					prefix = "";
+				} else {
+					pos = findEndOfTextBetween(commentNode, leftSibling.getStart(), node.getStart());
+					prefix = `${newLine} */${newLine}`;
+				}
 			}
 			let end = commentNode.getEnd();
 			let suffix = "";
-			if (rightSibling) if (fixAll && isJSDocTypedefTag(rightSibling)) {
-				end = rightSibling.getStart();
-				suffix = `${newLine}${newLine}`;
-			} else {
-				end = rightSibling.getStart();
-				suffix = `${newLine}/**${newLine} * `;
+			if (rightSibling) {
+				if (fixAll && isJSDocTypedefTag(rightSibling)) {
+					end = rightSibling.getStart();
+					suffix = `${newLine}${newLine}`;
+				} else {
+					end = rightSibling.getStart();
+					suffix = `${newLine}/**${newLine} * `;
+				}
 			}
 			changes.replaceRange(sourceFile, {
 				pos,
@@ -124187,7 +124404,6 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 									name: symbolName2,
 									addAsTypeOnly
 								};
-								break;
 						}
 						break;
 					}
@@ -124247,15 +124463,17 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					for (const declaration of namedBindingsToDelete) changeTracker.replaceNode(sourceFile, declaration.importClause, factory.updateImportClause(declaration.importClause, declaration.importClause.isTypeOnly, declaration.importClause.name, void 0));
 					for (const declaration of removeExisting) {
 						const importDeclaration = findAncestor(declaration, isImportDeclaration);
-						if (importDeclaration && emptyImportDeclarations.indexOf(importDeclaration) === -1 && namedBindingsToDelete.indexOf(importDeclaration) === -1) if (declaration.kind === 273) changeTracker.delete(sourceFile, declaration.name);
-						else {
-							Debug.assert(declaration.kind === 276, "NamespaceImport should have been handled earlier");
-							if ((_a = addToExisting.get(importDeclaration.importClause)) == null ? void 0 : _a.namedImports) (importSpecifiersToRemoveWhileAdding ?? (importSpecifiersToRemoveWhileAdding = /* @__PURE__ */ new Set())).add(declaration);
+						if (importDeclaration && emptyImportDeclarations.indexOf(importDeclaration) === -1 && namedBindingsToDelete.indexOf(importDeclaration) === -1) {
+							if (declaration.kind === 273) changeTracker.delete(sourceFile, declaration.name);
+							else {
+								Debug.assert(declaration.kind === 276, "NamespaceImport should have been handled earlier");
+								if ((_a = addToExisting.get(importDeclaration.importClause)) == null ? void 0 : _a.namedImports) (importSpecifiersToRemoveWhileAdding ?? (importSpecifiersToRemoveWhileAdding = /* @__PURE__ */ new Set())).add(declaration);
+								else changeTracker.delete(sourceFile, declaration);
+							}
+						} else if (declaration.kind === 208) {
+							if ((_b = addToExisting.get(declaration.parent)) == null ? void 0 : _b.namedImports) (importSpecifiersToRemoveWhileAdding ?? (importSpecifiersToRemoveWhileAdding = /* @__PURE__ */ new Set())).add(declaration);
 							else changeTracker.delete(sourceFile, declaration);
-						}
-						else if (declaration.kind === 208) if ((_b = addToExisting.get(declaration.parent)) == null ? void 0 : _b.namedImports) (importSpecifiersToRemoveWhileAdding ?? (importSpecifiersToRemoveWhileAdding = /* @__PURE__ */ new Set())).add(declaration);
-						else changeTracker.delete(sourceFile, declaration);
-						else if (declaration.kind === 271) changeTracker.delete(sourceFile, declaration);
+						} else if (declaration.kind === 271) changeTracker.delete(sourceFile, declaration);
 					}
 				}
 				addToExisting.forEach(({ importClauseOrBindingPattern, defaultImport, namedImports }) => {
@@ -125383,8 +125601,10 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 			else createExport(changes, program, moduleSourceFile, [exportName]);
 		}
 		function doChanges(changes, program, sourceFile, moduleExports, node) {
-			if (length(moduleExports)) if (node) updateExport(changes, program, sourceFile, node, moduleExports);
-			else createExport(changes, program, sourceFile, moduleExports);
+			if (length(moduleExports)) {
+				if (node) updateExport(changes, program, sourceFile, node, moduleExports);
+				else createExport(changes, program, sourceFile, moduleExports);
+			}
 		}
 		function tryGetExportDeclaration(sourceFile, isTypeOnly) {
 			const predicate = (node) => isExportDeclaration(node) && (isTypeOnly && node.isTypeOnly || !node.isTypeOnly);
@@ -126877,17 +127097,18 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 			forEach(node.elements, (n) => changes.delete(sourceFile, n));
 		}
 		function deleteDestructuring(context, changes, sourceFile, { parent: parent2 }) {
-			if (isVariableDeclaration(parent2) && parent2.initializer && isCallLikeExpression(parent2.initializer)) if (isVariableDeclarationList(parent2.parent) && length(parent2.parent.declarations) > 1) {
-				const varStatement = parent2.parent.parent;
-				const pos = varStatement.getStart(sourceFile);
-				const end = varStatement.end;
-				changes.delete(sourceFile, parent2);
-				changes.insertNodeAt(sourceFile, end, parent2.initializer, {
-					prefix: getNewLineOrDefaultFromHost(context.host, context.formatContext.options) + sourceFile.text.slice(getPrecedingNonSpaceCharacterPosition(sourceFile.text, pos - 1), pos),
-					suffix: probablyUsesSemicolons(sourceFile) ? ";" : ""
-				});
-			} else changes.replaceNode(sourceFile, parent2.parent, parent2.initializer);
-			else changes.delete(sourceFile, parent2);
+			if (isVariableDeclaration(parent2) && parent2.initializer && isCallLikeExpression(parent2.initializer)) {
+				if (isVariableDeclarationList(parent2.parent) && length(parent2.parent.declarations) > 1) {
+					const varStatement = parent2.parent.parent;
+					const pos = varStatement.getStart(sourceFile);
+					const end = varStatement.end;
+					changes.delete(sourceFile, parent2);
+					changes.insertNodeAt(sourceFile, end, parent2.initializer, {
+						prefix: getNewLineOrDefaultFromHost(context.host, context.formatContext.options) + sourceFile.text.slice(getPrecedingNonSpaceCharacterPosition(sourceFile.text, pos - 1), pos),
+						suffix: probablyUsesSemicolons(sourceFile) ? ";" : ""
+					});
+				} else changes.replaceNode(sourceFile, parent2.parent, parent2.initializer);
+			} else changes.delete(sourceFile, parent2);
 		}
 		function tryPrefixDeclaration(changes, errorCode, sourceFile, token) {
 			if (errorCode === Diagnostics.Property_0_is_declared_but_its_value_is_never_read.code) return;
@@ -127488,18 +127709,19 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 			function addObjectBindingPatterns(bindingPattern, bindingElements, parent2) {
 				for (const bindingElement of bindingPattern.elements) {
 					let name;
-					if (bindingElement.propertyName) if (isComputedPropertyName(bindingElement.propertyName)) {
-						bindingElements.push({
-							element: bindingElement,
-							parent: parent2,
-							expression: {
-								kind: 1,
-								computed: bindingElement.propertyName.expression
-							}
-						});
-						continue;
-					} else name = bindingElement.propertyName.text;
-					else name = bindingElement.name.text;
+					if (bindingElement.propertyName) {
+						if (isComputedPropertyName(bindingElement.propertyName)) {
+							bindingElements.push({
+								element: bindingElement,
+								parent: parent2,
+								expression: {
+									kind: 1,
+									computed: bindingElement.propertyName.expression
+								}
+							});
+							continue;
+						} else name = bindingElement.propertyName.text;
+					} else name = bindingElement.name.text;
 					bindingElements.push({
 						element: bindingElement,
 						parent: parent2,
@@ -128040,9 +128262,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					break;
 				case 262:
 				case 174:
-				case 173:
-					searchToken = containingFunction.name;
-					break;
+				case 173: searchToken = containingFunction.name;
 			}
 			if (!searchToken) return;
 			return getReferences(searchToken, program, cancellationToken);
@@ -128214,9 +128434,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					case 55:
 						usage.isNumber = true;
 						break;
-					case 40:
-						usage.isNumberOrString = true;
-						break;
+					case 40: usage.isNumberOrString = true;
 				}
 			}
 			function inferTypeFromBinaryExpression(node, parent2, usage) {
@@ -128273,12 +128491,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 						if (node === parent2.left) usage.isString = true;
 						break;
 					case 57:
-					case 61:
-						if (node === parent2.left && (node.parent.parent.kind === 260 || isAssignmentExpression(node.parent.parent, true))) addCandidateType(usage, checker.getTypeAtLocation(parent2.right));
-						break;
-					case 56:
-					case 28:
-					case 104: break;
+					case 61: if (node === parent2.left && (node.parent.parent.kind === 260 || isAssignmentExpression(node.parent.parent, true))) addCandidateType(usage, checker.getTypeAtLocation(parent2.right));
 				}
 			}
 			function inferTypeFromSwitchStatementLabel(parent2, usage) {
@@ -128658,12 +128871,13 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 						if (signature.declaration && signature.declaration.flags & 33554432) continue;
 						outputMethod(quotePreference, signature, modifiers, createName(declarationName));
 					}
-					if (!ambient) if (declarations.length > signatures.length) outputMethod(quotePreference, checker.getSignatureFromDeclaration(declarations[declarations.length - 1]), modifiers, createName(declarationName), createBody(body, quotePreference));
-					else {
-						Debug.assert(declarations.length === signatures.length, "Declarations and signatures should match count");
-						addClassElement(createMethodImplementingSignatures(checker, context, enclosingDeclaration, signatures, createName(declarationName), optional && !!(preserveOptional & 1), modifiers, quotePreference, body));
+					if (!ambient) {
+						if (declarations.length > signatures.length) outputMethod(quotePreference, checker.getSignatureFromDeclaration(declarations[declarations.length - 1]), modifiers, createName(declarationName), createBody(body, quotePreference));
+						else {
+							Debug.assert(declarations.length === signatures.length, "Declarations and signatures should match count");
+							addClassElement(createMethodImplementingSignatures(checker, context, enclosingDeclaration, signatures, createName(declarationName), optional && !!(preserveOptional & 1), modifiers, quotePreference, body));
+						}
 					}
-					break;
 			}
 			function outputMethod(quotePreference2, signature, modifiers2, name, body2) {
 				const method = createSignatureDeclarationFromSignature(174, context, quotePreference2, signature, body2, name, modifiers2, optional && !!(preserveOptional & 1), enclosingDeclaration, importAdder);
@@ -130180,9 +130394,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					case "number":
 						elements.push(type.value < 0 ? factory.createPrefixUnaryExpression(41, factory.createNumericLiteral(-type.value)) : factory.createNumericLiteral(type.value));
 						break;
-					case "string":
-						elements.push(factory.createStringLiteral(type.value, quotePreference === 0));
-						break;
+					case "string": elements.push(factory.createStringLiteral(type.value, quotePreference === 0));
 				}
 				if (elements.length === 0) return;
 				const newClauses = map(elements, (element) => factory.createCaseClause(element, []));
@@ -130382,10 +130594,12 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 			if (isJsxIdentifierExpected && !isRightOfOpenTag && preferences.includeCompletionsWithSnippetText && preferences.jsxAttributeCompletionStyle && preferences.jsxAttributeCompletionStyle !== "none" && !(isJsxAttribute(location.parent) && location.parent.initializer)) {
 				let useBraces2 = preferences.jsxAttributeCompletionStyle === "braces";
 				const type = typeChecker.getTypeOfSymbolAtLocation(symbol, location);
-				if (preferences.jsxAttributeCompletionStyle === "auto" && !(type.flags & 528) && !(type.flags & 1048576 && find(type.types, (type2) => !!(type2.flags & 528)))) if (type.flags & 402653316 || type.flags & 1048576 && every(type.types, (type2) => !!(type2.flags & 402686084 || isStringAndEmptyAnonymousObjectIntersection(type2)))) {
-					insertText = `${escapeSnippetText(name)}=${quote(sourceFile, preferences, "$1")}`;
-					isSnippet = true;
-				} else useBraces2 = true;
+				if (preferences.jsxAttributeCompletionStyle === "auto" && !(type.flags & 528) && !(type.flags & 1048576 && find(type.types, (type2) => !!(type2.flags & 528)))) {
+					if (type.flags & 402653316 || type.flags & 1048576 && every(type.types, (type2) => !!(type2.flags & 402686084 || isStringAndEmptyAnonymousObjectIntersection(type2)))) {
+						insertText = `${escapeSnippetText(name)}=${quote(sourceFile, preferences, "$1")}`;
+						isSnippet = true;
+					} else useBraces2 = true;
+				}
 				if (useBraces2) {
 					insertText = `${escapeSnippetText(name)}={$1}`;
 					isSnippet = true;
@@ -131135,10 +131349,12 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 			let insideJsDocImportTag = false;
 			let isInSnippetScope = false;
 			if (insideComment) {
-				if (hasDocComment(sourceFile, position)) if (sourceFile.text.charCodeAt(position - 1) === 64) return { kind: 1 };
-				else {
-					const lineStart = getLineStartPositionForPosition(position, sourceFile);
-					if (!/[^*|\s(/)]/.test(sourceFile.text.substring(lineStart, position))) return { kind: 2 };
+				if (hasDocComment(sourceFile, position)) {
+					if (sourceFile.text.charCodeAt(position - 1) === 64) return { kind: 1 };
+					else {
+						const lineStart = getLineStartPositionForPosition(position, sourceFile);
+						if (!/[^*|\s(/)]/.test(sourceFile.text.substring(lineStart, position))) return { kind: 2 };
+					}
 				}
 				const tag = getJsDocTagAtPosition(currentToken, position);
 				if (tag) {
@@ -131233,9 +131449,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 						case 32:
 							if (currentToken.parent.kind === 284 || currentToken.parent.kind === 286) location = currentToken;
 							break;
-						case 44:
-							if (currentToken.parent.kind === 285) location = currentToken;
-							break;
+						case 44: if (currentToken.parent.kind === 285) location = currentToken;
 					}
 					switch (parent2.kind) {
 						case 287:
@@ -131271,7 +131485,6 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 									isJsxIdentifierExpected = true;
 									if (parent2 !== previousToken.parent && !parent2.initializer && findChildOfKind(parent2, 64, sourceFile)) isJsxInitializer = previousToken;
 							}
-							break;
 					}
 				}
 			}
@@ -131840,9 +132053,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					case "static":
 						classElementModifierFlags = classElementModifierFlags | 256;
 						break;
-					case "override":
-						classElementModifierFlags = classElementModifierFlags | 16;
-						break;
+					case "override": classElementModifierFlags = classElementModifierFlags | 16;
 				}
 				if (isClassStaticBlockDeclaration(classElement)) classElementModifierFlags |= 256;
 				if (!(classElementModifierFlags & 2)) {
@@ -131915,7 +132126,6 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 						case 20:
 							if (parent2 && parent2.kind === 294 && parent2.parent && parent2.parent.kind === 291) return parent2.parent.parent.parent;
 							if (parent2 && parent2.kind === 293) return parent2.parent.parent;
-							break;
 					}
 				}
 			}
@@ -132335,9 +132545,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					break;
 				case 27:
 				case 28:
-				case 80:
-					if (parent2.kind === 171 && isTypeLiteralNode(parent2.parent)) return parent2.parent;
-					break;
+				case 80: if (parent2.kind === 171 && isTypeLiteralNode(parent2.parent)) return parent2.parent;
 			}
 		}
 		function getConstraintOfTypeArgumentProperty(node, checker) {
@@ -132419,10 +132627,12 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				if (couldBeTypeOnlyImportSpecifier(parent2, contextToken) && canCompleteFromNamedBindings(parent2.parent)) return parent2;
 				if (isNamedImports(parent2) || isNamespaceImport(parent2)) {
 					if (!parent2.parent.isTypeOnly && (contextToken.kind === 19 || contextToken.kind === 102 || contextToken.kind === 28)) keywordCompletion = 156;
-					if (canCompleteFromNamedBindings(parent2)) if (contextToken.kind === 20 || contextToken.kind === 80) {
-						isKeywordOnlyCompletion = true;
-						keywordCompletion = 161;
-					} else return parent2.parent.parent;
+					if (canCompleteFromNamedBindings(parent2)) {
+						if (contextToken.kind === 20 || contextToken.kind === 80) {
+							isKeywordOnlyCompletion = true;
+							keywordCompletion = 161;
+						} else return parent2.parent.parent;
+					}
 					return;
 				}
 				if (isExportDeclaration(parent2) && contextToken.kind === 42 || isNamedExports(parent2) && contextToken.kind === 20) {
@@ -133503,18 +133713,20 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				var _a;
 				const { parent: parent2 } = node;
 				const grandparent = parent2.parent;
-				if (symbol.exportSymbol) if (parent2.kind === 211) return ((_a = symbol.declarations) == null ? void 0 : _a.some((d) => d === parent2)) && isBinaryExpression(grandparent) ? getSpecialPropertyExport(grandparent, false) : void 0;
-				else return exportInfo(symbol.exportSymbol, getExportKindForDeclaration(parent2));
-				else {
+				if (symbol.exportSymbol) {
+					if (parent2.kind === 211) return ((_a = symbol.declarations) == null ? void 0 : _a.some((d) => d === parent2)) && isBinaryExpression(grandparent) ? getSpecialPropertyExport(grandparent, false) : void 0;
+					else return exportInfo(symbol.exportSymbol, getExportKindForDeclaration(parent2));
+				} else {
 					const exportNode = getExportNode(parent2, node);
-					if (exportNode && hasSyntacticModifier(exportNode, 32)) if (isImportEqualsDeclaration(exportNode) && exportNode.moduleReference === node) {
-						if (comingFromExport) return;
-						return {
-							kind: 0,
-							symbol: checker.getSymbolAtLocation(exportNode.name)
-						};
-					} else return exportInfo(symbol, getExportKindForDeclaration(exportNode));
-					else if (isNamespaceExport(parent2)) return exportInfo(symbol, 0);
+					if (exportNode && hasSyntacticModifier(exportNode, 32)) {
+						if (isImportEqualsDeclaration(exportNode) && exportNode.moduleReference === node) {
+							if (comingFromExport) return;
+							return {
+								kind: 0,
+								symbol: checker.getSymbolAtLocation(exportNode.name)
+							};
+						} else return exportInfo(symbol, getExportKindForDeclaration(exportNode));
+					} else if (isNamespaceExport(parent2)) return exportInfo(symbol, 0);
 					else if (isExportAssignment(parent2)) return getExportAssignmentExport(parent2);
 					else if (isExportAssignment(grandparent)) return getExportAssignmentExport(grandparent);
 					else if (isBinaryExpression(parent2)) return getSpecialPropertyExport(parent2, true);
@@ -134435,10 +134647,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 						case 0:
 							indirectSearch = state.createSearch(exportLocation, exportSymbol, 1);
 							break;
-						case 1:
-							indirectSearch = state.options.use === 2 ? void 0 : state.createSearch(exportLocation, exportSymbol, 1, { text: "default" });
-							break;
-						case 2: break;
+						case 1: indirectSearch = state.options.use === 2 ? void 0 : state.createSearch(exportLocation, exportSymbol, 1, { text: "default" });
 					}
 					if (indirectSearch) for (const indirectUser of indirectUsers) searchForName(indirectUser, indirectSearch, state);
 				}
@@ -134964,10 +135173,12 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				const references = flatMap(sourceFiles, (sourceFile) => {
 					cancellationToken.throwIfCancellationRequested();
 					return mapDefined(getPossibleSymbolReferenceNodes(sourceFile, node.text), (ref) => {
-						if (isStringLiteralLike(ref) && ref.text === node.text) if (type) {
-							const refType = getContextualTypeFromParentOrAncestorTypeNode(ref, checker);
-							if (type !== checker.getStringType() && (type === refType || isStringLiteralPropertyReference(ref, checker))) return nodeEntry(ref, 2);
-						} else return isNoSubstitutionTemplateLiteral(ref) && !rangeIsOnSingleLine(ref, sourceFile) ? void 0 : nodeEntry(ref, 2);
+						if (isStringLiteralLike(ref) && ref.text === node.text) {
+							if (type) {
+								const refType = getContextualTypeFromParentOrAncestorTypeNode(ref, checker);
+								if (type !== checker.getStringType() && (type === refType || isStringLiteralPropertyReference(ref, checker))) return nodeEntry(ref, 2);
+							} else return isNoSubstitutionTemplateLiteral(ref) && !rangeIsOnSingleLine(ref, sourceFile) ? void 0 : nodeEntry(ref, 2);
+						}
 					});
 				});
 				return [{
@@ -135148,7 +135359,6 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				case 84:
 					const switchStatement = findAncestor(node.parent, isSwitchStatement);
 					if (switchStatement) return [createDefinitionInfoFromSwitch(switchStatement, sourceFile)];
-					break;
 			}
 			if (node.kind === 135) {
 				const functionDeclaration = findAncestor(node, (n) => isFunctionLikeDeclaration(n));
@@ -136336,13 +136546,14 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				return addComment(node.getText());
 			}
 			function addComment(s) {
-				if (comment) if (s.match(/^https?$/)) return [textPart(s), ...getDisplayPartsFromComment(comment, checker)];
-				else return [
-					namePart(s),
-					spacePart(),
-					...getDisplayPartsFromComment(comment, checker)
-				];
-				else return [textPart(s)];
+				if (comment) {
+					if (s.match(/^https?$/)) return [textPart(s), ...getDisplayPartsFromComment(comment, checker)];
+					else return [
+						namePart(s),
+						spacePart(),
+						...getDisplayPartsFromComment(comment, checker)
+					];
+				} else return [textPart(s)];
 			}
 		}
 		function getTagNameDisplayPart(kind) {
@@ -136790,15 +137001,19 @@ ${content}
 				}
 				let { name, namedBindings } = importClause;
 				if (name && !isDeclarationUsed(name)) name = void 0;
-				if (namedBindings) if (isNamespaceImport(namedBindings)) {
-					if (!isDeclarationUsed(namedBindings.name)) namedBindings = void 0;
-				} else {
-					const newElements = namedBindings.elements.filter((e) => isDeclarationUsed(e.name));
-					if (newElements.length < namedBindings.elements.length) namedBindings = newElements.length ? factory.updateNamedImports(namedBindings, newElements) : void 0;
+				if (namedBindings) {
+					if (isNamespaceImport(namedBindings)) {
+						if (!isDeclarationUsed(namedBindings.name)) namedBindings = void 0;
+					} else {
+						const newElements = namedBindings.elements.filter((e) => isDeclarationUsed(e.name));
+						if (newElements.length < namedBindings.elements.length) namedBindings = newElements.length ? factory.updateNamedImports(namedBindings, newElements) : void 0;
+					}
 				}
 				if (name || namedBindings) usedImports.push(updateImportDeclarationAndClause(importDecl, name, namedBindings));
-				else if (hasModuleDeclarationMatchingSpecifier(sourceFile, moduleSpecifier)) if (sourceFile.isDeclarationFile) usedImports.push(factory.createImportDeclaration(importDecl.modifiers, void 0, moduleSpecifier, void 0));
-				else usedImports.push(importDecl);
+				else if (hasModuleDeclarationMatchingSpecifier(sourceFile, moduleSpecifier)) {
+					if (sourceFile.isDeclarationFile) usedImports.push(factory.createImportDeclaration(importDecl.modifiers, void 0, moduleSpecifier, void 0));
+					else usedImports.push(importDecl);
+				}
 			}
 			return usedImports;
 			function isDeclarationUsed(identifier) {
@@ -136828,8 +137043,10 @@ ${content}
 				const group2 = importDeclaration.importClause.isTypeOnly ? typeOnlyImports : regularImports;
 				const { name, namedBindings } = importDeclaration.importClause;
 				if (name) group2.defaultImports.push(importDeclaration);
-				if (namedBindings) if (isNamespaceImport(namedBindings)) group2.namespaceImports.push(importDeclaration);
-				else group2.namedImports.push(importDeclaration);
+				if (namedBindings) {
+					if (isNamespaceImport(namedBindings)) group2.namespaceImports.push(importDeclaration);
+					else group2.namedImports.push(importDeclaration);
+				}
 			}
 			return {
 				importWithoutClause,
@@ -137437,8 +137654,10 @@ ${content}
 			const { declarations } = symbol;
 			if (!declarations) return;
 			const originalPackage = getPackagePathComponents(originalFile.path);
-			if (originalPackage === void 0) if (some(declarations, (declaration) => isInsideNodeModules(declaration.getSourceFile().path))) return Diagnostics.You_cannot_rename_elements_that_are_defined_in_a_node_modules_folder;
-			else return;
+			if (originalPackage === void 0) {
+				if (some(declarations, (declaration) => isInsideNodeModules(declaration.getSourceFile().path))) return Diagnostics.You_cannot_rename_elements_that_are_defined_in_a_node_modules_folder;
+				else return;
+			}
 			for (const declaration of declarations) {
 				const declPackage = getPackagePathComponents(declaration.getSourceFile().path);
 				if (declPackage) {
@@ -138513,37 +138732,39 @@ ${content}
 					}
 				});
 			}
-			if (!hasAddedSymbolInfo) if (symbolKind !== "") {
-				if (type) {
-					if (isThisExpression) {
-						prefixNextMeaning();
-						displayParts.push(keywordPart(110));
-					} else addPrefixForAnyFunctionOrVar(symbol, symbolKind);
-					if (symbolKind === "property" || symbolKind === "accessor" || symbolKind === "getter" || symbolKind === "setter" || symbolKind === "JSX attribute" || symbolFlags & 3 || symbolKind === "local var" || symbolKind === "index" || symbolKind === "using" || symbolKind === "await using" || isThisExpression) {
-						displayParts.push(punctuationPart(59));
-						displayParts.push(spacePart());
-						if (type.symbol && type.symbol.flags & 262144 && symbolKind !== "index") addRange(displayParts, mapToDisplayParts((writer) => {
-							const param = typeChecker.typeParameterToDeclaration(type, enclosingDeclaration, symbolDisplayNodeBuilderFlags);
-							getPrinter().writeNode(4, param, getSourceFileOfNode(getParseTreeNode(enclosingDeclaration)), writer);
-						}));
-						else addRange(displayParts, typeToDisplayParts(typeChecker, type, enclosingDeclaration));
-						if (isTransientSymbol(symbol) && symbol.links.target && isTransientSymbol(symbol.links.target) && symbol.links.target.links.tupleLabelDeclaration) {
-							const labelDecl = symbol.links.target.links.tupleLabelDeclaration;
-							Debug.assertNode(labelDecl.name, isIdentifier);
+			if (!hasAddedSymbolInfo) {
+				if (symbolKind !== "") {
+					if (type) {
+						if (isThisExpression) {
+							prefixNextMeaning();
+							displayParts.push(keywordPart(110));
+						} else addPrefixForAnyFunctionOrVar(symbol, symbolKind);
+						if (symbolKind === "property" || symbolKind === "accessor" || symbolKind === "getter" || symbolKind === "setter" || symbolKind === "JSX attribute" || symbolFlags & 3 || symbolKind === "local var" || symbolKind === "index" || symbolKind === "using" || symbolKind === "await using" || isThisExpression) {
+							displayParts.push(punctuationPart(59));
 							displayParts.push(spacePart());
-							displayParts.push(punctuationPart(21));
-							displayParts.push(textPart(idText(labelDecl.name)));
-							displayParts.push(punctuationPart(22));
-						}
-					} else if (symbolFlags & 16 || symbolFlags & 8192 || symbolFlags & 16384 || symbolFlags & 131072 || symbolFlags & 98304 || symbolKind === "method") {
-						const allSignatures = type.getNonNullableType().getCallSignatures();
-						if (allSignatures.length) {
-							addSignatureDisplayParts(allSignatures[0], allSignatures);
-							hasMultipleSignatures = allSignatures.length > 1;
+							if (type.symbol && type.symbol.flags & 262144 && symbolKind !== "index") addRange(displayParts, mapToDisplayParts((writer) => {
+								const param = typeChecker.typeParameterToDeclaration(type, enclosingDeclaration, symbolDisplayNodeBuilderFlags);
+								getPrinter().writeNode(4, param, getSourceFileOfNode(getParseTreeNode(enclosingDeclaration)), writer);
+							}));
+							else addRange(displayParts, typeToDisplayParts(typeChecker, type, enclosingDeclaration));
+							if (isTransientSymbol(symbol) && symbol.links.target && isTransientSymbol(symbol.links.target) && symbol.links.target.links.tupleLabelDeclaration) {
+								const labelDecl = symbol.links.target.links.tupleLabelDeclaration;
+								Debug.assertNode(labelDecl.name, isIdentifier);
+								displayParts.push(spacePart());
+								displayParts.push(punctuationPart(21));
+								displayParts.push(textPart(idText(labelDecl.name)));
+								displayParts.push(punctuationPart(22));
+							}
+						} else if (symbolFlags & 16 || symbolFlags & 8192 || symbolFlags & 16384 || symbolFlags & 131072 || symbolFlags & 98304 || symbolKind === "method") {
+							const allSignatures = type.getNonNullableType().getCallSignatures();
+							if (allSignatures.length) {
+								addSignatureDisplayParts(allSignatures[0], allSignatures);
+								hasMultipleSignatures = allSignatures.length > 1;
+							}
 						}
 					}
-				}
-			} else symbolKind = getSymbolKind(typeChecker, symbol, location);
+				} else symbolKind = getSymbolKind(typeChecker, symbol, location);
+			}
 			if (documentation.length === 0 && !hasMultipleSignatures) documentation = symbol.getContextualDocumentationComment(enclosingDeclaration, typeChecker);
 			if (documentation.length === 0 && symbolFlags & 4) {
 				if (symbol.parent && symbol.declarations && forEach(symbol.parent.declarations, (declaration) => declaration.kind === 307)) for (const declaration of symbol.declarations) {
@@ -139285,8 +139506,10 @@ ${options.prefix}` : "\n" : options.prefix
 			}
 			finishDeleteDeclarations() {
 				const deletedNodesInLists = /* @__PURE__ */ new Set();
-				for (const { sourceFile, node } of this.deletedNodes) if (!this.deletedNodes.some((d) => d.sourceFile === sourceFile && rangeContainsRangeExclusive(d.node, node))) if (isArray(node)) this.deleteRange(sourceFile, rangeOfTypeParameters(sourceFile, node));
-				else deleteDeclaration.deleteDeclaration(this, deletedNodesInLists, sourceFile, node);
+				for (const { sourceFile, node } of this.deletedNodes) if (!this.deletedNodes.some((d) => d.sourceFile === sourceFile && rangeContainsRangeExclusive(d.node, node))) {
+					if (isArray(node)) this.deleteRange(sourceFile, rangeOfTypeParameters(sourceFile, node));
+					else deleteDeclaration.deleteDeclaration(this, deletedNodesInLists, sourceFile, node);
+				}
 				deletedNodesInLists.forEach((node) => {
 					const sourceFile = node.getSourceFile();
 					const list = ts_formatting_exports.SmartIndenter.getContainingList(node, sourceFile);
@@ -141150,19 +141373,20 @@ ${options.prefix}` : "\n" : options.prefix
 					indentation: startLine === lastIndentedLine ? indentationOnLastIndentedLine : parentDynamicIndentation.getIndentation(),
 					delta: Math.min(options.indentSize, parentDynamicIndentation.getDelta(node) + delta2)
 				};
-				else if (inheritedIndentation === -1) if (node.kind === 21 && startLine === lastIndentedLine) return {
-					indentation: indentationOnLastIndentedLine,
-					delta: parentDynamicIndentation.getDelta(node)
-				};
-				else if (SmartIndenter.childStartsOnTheSameLineWithElseInIfStatement(parent2, node, startLine, sourceFile) || SmartIndenter.childIsUnindentedBranchOfConditionalExpression(parent2, node, startLine, sourceFile) || SmartIndenter.argumentStartsOnSameLineAsPreviousArgument(parent2, node, startLine, sourceFile)) return {
-					indentation: parentDynamicIndentation.getIndentation(),
-					delta: delta2
-				};
-				else return {
-					indentation: parentDynamicIndentation.getIndentation() + parentDynamicIndentation.getDelta(node),
-					delta: delta2
-				};
-				else return {
+				else if (inheritedIndentation === -1) {
+					if (node.kind === 21 && startLine === lastIndentedLine) return {
+						indentation: indentationOnLastIndentedLine,
+						delta: parentDynamicIndentation.getDelta(node)
+					};
+					else if (SmartIndenter.childStartsOnTheSameLineWithElseInIfStatement(parent2, node, startLine, sourceFile) || SmartIndenter.childIsUnindentedBranchOfConditionalExpression(parent2, node, startLine, sourceFile) || SmartIndenter.argumentStartsOnSameLineAsPreviousArgument(parent2, node, startLine, sourceFile)) return {
+						indentation: parentDynamicIndentation.getIndentation(),
+						delta: delta2
+					};
+					else return {
+						indentation: parentDynamicIndentation.getIndentation() + parentDynamicIndentation.getDelta(node),
+						delta: delta2
+					};
+				} else return {
 					indentation: inheritedIndentation,
 					delta: delta2
 				};
@@ -141223,9 +141447,7 @@ ${options.prefix}` : "\n" : options.prefix
 							}
 							break;
 						case 23:
-						case 24:
-							if (container.kind !== 200) return false;
-							break;
+						case 24: if (container.kind !== 200) return false;
 					}
 					return nodeStartLine !== line && !(hasDecorators(node) && kind === getFirstNonDecoratorTokenOfNode(node));
 				}
@@ -141341,10 +141563,12 @@ ${options.prefix}` : "\n" : options.prefix
 						const rangeHasError = rangeContainsError(currentTokenInfo.token);
 						const savePreviousRange = previousRange;
 						lineAction = processRange(currentTokenInfo.token, tokenStart, parent2, childContextNode, dynamicIndentation);
-						if (!rangeHasError) if (lineAction === 0) {
-							const prevEndLine = savePreviousRange && sourceFile.getLineAndCharacterOfPosition(savePreviousRange.end).line;
-							indentToken = lastTriviaWasNewLine && tokenStart.line !== prevEndLine;
-						} else indentToken = lineAction === 1;
+						if (!rangeHasError) {
+							if (lineAction === 0) {
+								const prevEndLine = savePreviousRange && sourceFile.getLineAndCharacterOfPosition(savePreviousRange.end).line;
+								indentToken = lastTriviaWasNewLine && tokenStart.line !== prevEndLine;
+							} else indentToken = lineAction === 1;
+						}
 					}
 					if (currentTokenInfo.trailingTrivia) {
 						previousRangeTriviaEnd = last(currentTokenInfo.trailingTrivia).end;
@@ -141379,9 +141603,7 @@ ${options.prefix}` : "\n" : options.prefix
 							if (indentNextTokenOrTrivia && triviaInRange) indentSingleLine(triviaItem);
 							indentNextTokenOrTrivia = false;
 							break;
-						case 4:
-							indentNextTokenOrTrivia = true;
-							break;
+						case 4: indentNextTokenOrTrivia = true;
 					}
 				}
 				return indentNextTokenOrTrivia;
@@ -141392,8 +141614,10 @@ ${options.prefix}` : "\n" : options.prefix
 			function processRange(range, rangeStart, parent2, contextNode, dynamicIndentation) {
 				const rangeHasError = rangeContainsError(range);
 				let lineAction = 0;
-				if (!rangeHasError) if (!previousRange) trimTrailingWhitespacesForLines(sourceFile.getLineAndCharacterOfPosition(originalRange.pos).line, rangeStart.line);
-				else lineAction = processPair(range, rangeStart.line, parent2, previousRange, previousRangeStartLine, previousParent, contextNode, dynamicIndentation);
+				if (!rangeHasError) {
+					if (!previousRange) trimTrailingWhitespacesForLines(sourceFile.getLineAndCharacterOfPosition(originalRange.pos).line, rangeStart.line);
+					else lineAction = processPair(range, rangeStart.line, parent2, previousRange, previousRangeStartLine, previousParent, contextNode, dynamicIndentation);
+				}
 				previousRange = range;
 				previousRangeTriviaEnd = range.end;
 				previousParent = parent2;
@@ -141983,9 +142207,7 @@ ${options.prefix}` : "\n" : options.prefix
 					case 288: return childKind !== 290;
 					case 193:
 					case 192:
-					case 238:
-						if (childKind === 187 || childKind === 189 || childKind === 200) return false;
-						break;
+					case 238: if (childKind === 187 || childKind === 189 || childKind === 200) return false;
 				}
 				return indentByDefault;
 			}
@@ -145503,9 +145725,7 @@ ${options.prefix}` : "\n" : options.prefix
 							this.containingProjects.pop();
 						}
 						break;
-					default:
-						if (orderedRemoveItem(this.containingProjects, project)) project.onFileAddedOrRemoved(this.isSymlink());
-						break;
+					default: if (orderedRemoveItem(this.containingProjects, project)) project.onFileAddedOrRemoved(this.isSymlink());
 				}
 			}
 			detachAllProjects() {
@@ -145547,13 +145767,15 @@ ${options.prefix}` : "\n" : options.prefix
 				for (const p of this.containingProjects) p.registerFileUpdate(this.path);
 			}
 			setOptions(formatSettings, preferences) {
-				if (formatSettings) if (!this.formatSettings) {
-					this.formatSettings = getDefaultFormatCodeSettings(this.host.newLine);
-					assign(this.formatSettings, formatSettings);
-				} else this.formatSettings = {
-					...this.formatSettings,
-					...formatSettings
-				};
+				if (formatSettings) {
+					if (!this.formatSettings) {
+						this.formatSettings = getDefaultFormatCodeSettings(this.host.newLine);
+						assign(this.formatSettings, formatSettings);
+					} else this.formatSettings = {
+						...this.formatSettings,
+						...formatSettings
+					};
+				}
 				if (preferences) {
 					if (!this.preferences) this.preferences = emptyOptions;
 					this.preferences = {
@@ -145682,7 +145904,6 @@ ${options.prefix}` : "\n" : options.prefix
 					case 7:
 						result.deferred += 1;
 						result.deferredSize += fileSize;
-						break;
 				}
 			}
 			return result;
@@ -146604,9 +146825,10 @@ ${options.prefix}` : "\n" : options.prefix
 				const elapsed = timestamp() - start;
 				this.sendPerformanceEvent("UpdateGraph", elapsed);
 				this.writeLog(`Finishing updateGraphWorker: Project: ${this.getProjectName()} projectStateVersion: ${this.projectStateVersion} projectProgramVersion: ${this.projectProgramVersion} structureChanged: ${hasNewProgram}${this.program ? ` structureIsReused:: ${StructureIsReused[this.program.structureIsReused]}` : ""} Elapsed: ${elapsed}ms`);
-				if (this.projectService.logger.isTestLogger) if (this.program !== oldProgram) this.print(true, this.hasAddedorRemovedFiles, true);
-				else this.writeLog(`Same program as before`);
-				else if (this.hasAddedorRemovedFiles) this.print(true, true, false);
+				if (this.projectService.logger.isTestLogger) {
+					if (this.program !== oldProgram) this.print(true, this.hasAddedorRemovedFiles, true);
+					else this.writeLog(`Same program as before`);
+				} else if (this.hasAddedorRemovedFiles) this.print(true, true, false);
 				else if (this.program !== oldProgram) this.writeLog(`Different program with same set of files`);
 				this.projectService.verifyDocumentRegistry();
 				return hasNewProgram;
@@ -147490,8 +147712,8 @@ ${options.prefix}` : "\n" : options.prefix
 		function isProjectDeferredClose(project) {
 			return isConfiguredProject(project) && !!project.deferredClose;
 		}
-		var maxProgramSizeForNonTsFiles = 20 * 1024 * 1024;
-		var maxFileSize = 4 * 1024 * 1024;
+		var maxProgramSizeForNonTsFiles = 20971520;
+		var maxFileSize = 4194304;
 		var ProjectsUpdatedInBackgroundEvent = "projectsUpdatedInBackground";
 		var ProjectLoadingStartEvent = "projectLoadingStart";
 		var ProjectLoadingFinishEvent = "projectLoadingFinish";
@@ -148301,10 +148523,12 @@ ${options.prefix}` : "\n" : options.prefix
 				}
 			}
 			handleSourceMapProjects(info) {
-				if (info.sourceMapFilePath) if (isString(info.sourceMapFilePath)) {
-					const sourceMapFileInfo = this.getScriptInfoForPath(info.sourceMapFilePath);
-					this.delayUpdateSourceInfoProjects(sourceMapFileInfo == null ? void 0 : sourceMapFileInfo.sourceInfos);
-				} else this.delayUpdateSourceInfoProjects(info.sourceMapFilePath.sourceInfos);
+				if (info.sourceMapFilePath) {
+					if (isString(info.sourceMapFilePath)) {
+						const sourceMapFileInfo = this.getScriptInfoForPath(info.sourceMapFilePath);
+						this.delayUpdateSourceInfoProjects(sourceMapFileInfo == null ? void 0 : sourceMapFileInfo.sourceInfos);
+					} else this.delayUpdateSourceInfoProjects(info.sourceMapFilePath.sourceInfos);
+				}
 				this.delayUpdateSourceInfoProjects(info.sourceInfos);
 				if (info.declarationInfoPath) this.delayUpdateProjectsOfScriptInfoPath(info.declarationInfoPath);
 			}
@@ -148384,14 +148608,15 @@ ${options.prefix}` : "\n" : options.prefix
 					}
 					const updateLevel = configuredProjectForConfig === project ? 1 : 0;
 					if (project.pendingUpdateLevel > updateLevel) return;
-					if (this.openFiles.has(fileOrDirectoryPath)) if (Debug.checkDefined(this.getScriptInfoForPath(fileOrDirectoryPath)).isAttached(project)) {
-						const loadLevelToSet = Math.max(updateLevel, project.openFileWatchTriggered.get(fileOrDirectoryPath) || 0);
-						project.openFileWatchTriggered.set(fileOrDirectoryPath, loadLevelToSet);
+					if (this.openFiles.has(fileOrDirectoryPath)) {
+						if (Debug.checkDefined(this.getScriptInfoForPath(fileOrDirectoryPath)).isAttached(project)) {
+							const loadLevelToSet = Math.max(updateLevel, project.openFileWatchTriggered.get(fileOrDirectoryPath) || 0);
+							project.openFileWatchTriggered.set(fileOrDirectoryPath, loadLevelToSet);
+						} else {
+							project.pendingUpdateLevel = updateLevel;
+							this.delayUpdateProjectGraphAndEnsureProjectStructureForOpenFiles(project);
+						}
 					} else {
-						project.pendingUpdateLevel = updateLevel;
-						this.delayUpdateProjectGraphAndEnsureProjectStructureForOpenFiles(project);
-					}
-					else {
 						project.pendingUpdateLevel = updateLevel;
 						this.delayUpdateProjectGraphAndEnsureProjectStructureForOpenFiles(project);
 					}
@@ -148471,9 +148696,7 @@ ${options.prefix}` : "\n" : options.prefix
 						this.configuredProjects.delete(project.canonicalConfigFilePath);
 						this.projectToSizeMap.delete(project.canonicalConfigFilePath);
 						break;
-					case 0:
-						unorderedRemoveItem(this.inferredProjects, project);
-						break;
+					case 0: unorderedRemoveItem(this.inferredProjects, project);
 				}
 			}
 			/** @internal */
@@ -148550,8 +148773,10 @@ ${options.prefix}` : "\n" : options.prefix
 			configFileExists(configFileName, canonicalConfigFilePath, info) {
 				const configFileExistenceInfo = this.configFileExistenceInfoCache.get(canonicalConfigFilePath);
 				let openFilesImpactedByConfigFile;
-				if (this.openFiles.has(info.path) && !isAncestorConfigFileInfo(info)) if (configFileExistenceInfo) (configFileExistenceInfo.openFilesImpactedByConfigFile ?? (configFileExistenceInfo.openFilesImpactedByConfigFile = /* @__PURE__ */ new Set())).add(info.path);
-				else (openFilesImpactedByConfigFile = /* @__PURE__ */ new Set()).add(info.path);
+				if (this.openFiles.has(info.path) && !isAncestorConfigFileInfo(info)) {
+					if (configFileExistenceInfo) (configFileExistenceInfo.openFilesImpactedByConfigFile ?? (configFileExistenceInfo.openFilesImpactedByConfigFile = /* @__PURE__ */ new Set())).add(info.path);
+					else (openFilesImpactedByConfigFile = /* @__PURE__ */ new Set()).add(info.path);
+				}
 				if (configFileExistenceInfo) return configFileExistenceInfo.exists;
 				const exists = this.host.fileExists(configFileName);
 				this.configFileExistenceInfoCache.set(canonicalConfigFilePath, {
@@ -148576,16 +148801,17 @@ ${options.prefix}` : "\n" : options.prefix
 				configFileExistenceInfo.config = void 0;
 				clearSharedExtendedConfigFileWatcher(canonicalConfigFilePath, this.sharedExtendedConfigFileWatchers);
 				Debug.checkDefined(configFileExistenceInfo.watcher);
-				if ((_c = configFileExistenceInfo.openFilesImpactedByConfigFile) == null ? void 0 : _c.size) if (configFileExistenceInfo.inferredProjectRoots) {
-					if (!canWatchDirectoryOrFile(getPathComponents(getDirectoryPath(canonicalConfigFilePath)))) {
+				if ((_c = configFileExistenceInfo.openFilesImpactedByConfigFile) == null ? void 0 : _c.size) {
+					if (configFileExistenceInfo.inferredProjectRoots) {
+						if (!canWatchDirectoryOrFile(getPathComponents(getDirectoryPath(canonicalConfigFilePath)))) {
+							configFileExistenceInfo.watcher.close();
+							configFileExistenceInfo.watcher = noopConfigFileWatcher;
+						}
+					} else {
 						configFileExistenceInfo.watcher.close();
-						configFileExistenceInfo.watcher = noopConfigFileWatcher;
+						configFileExistenceInfo.watcher = void 0;
 					}
 				} else {
-					configFileExistenceInfo.watcher.close();
-					configFileExistenceInfo.watcher = void 0;
-				}
-				else {
 					configFileExistenceInfo.watcher.close();
 					this.configFileExistenceInfoCache.delete(canonicalConfigFilePath);
 				}
@@ -148989,8 +149215,10 @@ ${options.prefix}` : "\n" : options.prefix
 					newRootScriptInfoMap.set(path, true);
 				}
 				if (projectRootFilesMap.size > newRootScriptInfoMap.size) projectRootFilesMap.forEach((value, path) => {
-					if (!newRootScriptInfoMap.has(path)) if (value.info) project.removeFile(value.info, project.fileExists(value.info.fileName), true);
-					else projectRootFilesMap.delete(path);
+					if (!newRootScriptInfoMap.has(path)) {
+						if (value.info) project.removeFile(value.info, project.fileExists(value.info.fileName), true);
+						else projectRootFilesMap.delete(path);
+					}
 				});
 			}
 			updateRootAndOptionsOfNonInferredProject(project, newUncheckedFiles, propertyReader, newOptions, newTypeAcquisition, compileOnSave, watchOptions) {
@@ -149184,12 +149412,14 @@ All files are: ${JSON.stringify(names)}`, "Err");
 						var _a2;
 						(_a2 = project.getModuleSpecifierCache()) == null || _a2.clear();
 					});
-					if (result.refreshScriptInfoRefCount) if (dirPath === fileOrDirectoryPath) this.refreshScriptInfosInDirectory(dirPath);
-					else {
-						const info = this.filenameToScriptInfo.get(fileOrDirectoryPath);
-						if (info) {
-							if (isScriptInfoWatchedFromNodeModules(info)) this.refreshScriptInfo(info);
-						} else if (!hasExtension(fileOrDirectoryPath)) this.refreshScriptInfosInDirectory(fileOrDirectoryPath);
+					if (result.refreshScriptInfoRefCount) {
+						if (dirPath === fileOrDirectoryPath) this.refreshScriptInfosInDirectory(dirPath);
+						else {
+							const info = this.filenameToScriptInfo.get(fileOrDirectoryPath);
+							if (info) {
+								if (isScriptInfoWatchedFromNodeModules(info)) this.refreshScriptInfo(info);
+							} else if (!hasExtension(fileOrDirectoryPath)) this.refreshScriptInfosInDirectory(fileOrDirectoryPath);
+						}
 					}
 				}, 1, this.hostConfiguration.watchOptions, WatchType.NodeModules);
 				const result = {
@@ -149354,16 +149584,17 @@ Dynamic files must always be opened with service's current directory or service 
 					getSourceFileLike: (f) => this.getSourceFileLike(f, projectName, declarationInfo)
 				}, declarationInfo.fileName, declarationInfo.textStorage.getLineInfo(), readMapFile);
 				readMapFile = void 0;
-				if (sourceMapFileInfo) if (!isString(sourceMapFileInfo)) {
-					declarationInfo.sourceMapFilePath = sourceMapFileInfo.path;
-					sourceMapFileInfo.declarationInfoPath = declarationInfo.path;
-					if (!sourceMapFileInfo.deferredDelete) sourceMapFileInfo.documentPositionMapper = documentPositionMapper || false;
-					sourceMapFileInfo.sourceInfos = this.addSourceInfoToSourceMap(sourceFileName, project, sourceMapFileInfo.sourceInfos);
-				} else declarationInfo.sourceMapFilePath = {
-					watcher: this.addMissingSourceMapFile(project.currentDirectory === this.currentDirectory ? sourceMapFileInfo : getNormalizedAbsolutePath(sourceMapFileInfo, project.currentDirectory), declarationInfo.path),
-					sourceInfos: this.addSourceInfoToSourceMap(sourceFileName, project)
-				};
-				else declarationInfo.sourceMapFilePath = false;
+				if (sourceMapFileInfo) {
+					if (!isString(sourceMapFileInfo)) {
+						declarationInfo.sourceMapFilePath = sourceMapFileInfo.path;
+						sourceMapFileInfo.declarationInfoPath = declarationInfo.path;
+						if (!sourceMapFileInfo.deferredDelete) sourceMapFileInfo.documentPositionMapper = documentPositionMapper || false;
+						sourceMapFileInfo.sourceInfos = this.addSourceInfoToSourceMap(sourceFileName, project, sourceMapFileInfo.sourceInfos);
+					} else declarationInfo.sourceMapFilePath = {
+						watcher: this.addMissingSourceMapFile(project.currentDirectory === this.currentDirectory ? sourceMapFileInfo : getNormalizedAbsolutePath(sourceMapFileInfo, project.currentDirectory), declarationInfo.path),
+						sourceInfos: this.addSourceInfoToSourceMap(sourceFileName, project)
+					};
+				} else declarationInfo.sourceMapFilePath = false;
 				return documentPositionMapper;
 			}
 			addSourceInfoToSourceMap(sourceFileName, project, sourceInfos) {
@@ -151319,9 +151550,7 @@ ${json}${newLine}`;
 					case "UpdateGraph":
 						this.addPerformanceData("updateGraphDurationMs", event.durationMs);
 						break;
-					case "CreatePackageJsonAutoImportProvider":
-						this.addPerformanceData("createAutoImportProviderProgramDurationMs", event.durationMs);
-						break;
+					case "CreatePackageJsonAutoImportProvider": this.addPerformanceData("createAutoImportProviderProgramDurationMs", event.durationMs);
 				}
 			}
 			defaultEventHandler(event) {
@@ -151357,12 +151586,10 @@ ${json}${newLine}`;
 							languageServiceEnabled: event.data.languageServiceEnabled
 						}, event.eventName);
 						break;
-					case ProjectInfoTelemetryEvent:
-						this.event({
-							telemetryEventName: event.eventName,
-							payload: event.data
-						}, "telemetry");
-						break;
+					case ProjectInfoTelemetryEvent: this.event({
+						telemetryEventName: event.eventName,
+						payload: event.data
+					}, "telemetry");
 				}
 			}
 			projectsUpdatedInBackgroundEvent(openFiles) {
@@ -151451,12 +151678,13 @@ Project '${project.projectName}' (${ProjectKind[project.projectKind]}) ${counter
 						res.body = info;
 						metadata = info.metadata;
 						delete info.metadata;
-					} else if (typeof info === "object") if (info.metadata) {
-						const { metadata: infoMetadata, ...body } = info;
-						res.body = body;
-						metadata = infoMetadata;
+					} else if (typeof info === "object") {
+						if (info.metadata) {
+							const { metadata: infoMetadata, ...body } = info;
+							res.body = body;
+							metadata = infoMetadata;
+						} else res.body = info;
 					} else res.body = info;
-					else res.body = info;
 					if (metadata) res.metadata = metadata;
 				} else Debug.assert(info === void 0);
 				if (message) res.message = message;
@@ -152818,9 +153046,10 @@ ${e.message}`;
 				const normalizedFileName = toNormalizedPath(fileName);
 				const project = this.projectService.ensureDefaultProjectForFile(normalizedFileName);
 				for (const fileNameInProject of fileNamesInProject) if (this.getCanonicalFileName(fileNameInProject) === this.getCanonicalFileName(fileName)) highPriorityFiles.push(fileNameInProject);
-				else if (!this.projectService.getScriptInfo(fileNameInProject).isScriptOpen()) if (isDeclarationFileName(fileNameInProject)) veryLowPriorityFiles.push(fileNameInProject);
-				else lowPriorityFiles.push(fileNameInProject);
-				else mediumPriorityFiles.push(fileNameInProject);
+				else if (!this.projectService.getScriptInfo(fileNameInProject).isScriptOpen()) {
+					if (isDeclarationFileName(fileNameInProject)) veryLowPriorityFiles.push(fileNameInProject);
+					else lowPriorityFiles.push(fileNameInProject);
+				} else mediumPriorityFiles.push(fileNameInProject);
 				const checkList = [
 					...highPriorityFiles,
 					...mediumPriorityFiles,
@@ -153313,7 +153542,6 @@ ${e.message}`;
 					case 5:
 						this.goSubtree = false;
 						if (this.state !== 1) currentNode.add(lineCollection);
-						break;
 				}
 				if (this.goSubtree) this.stack.push(child);
 			}
@@ -153387,15 +153615,16 @@ ${e.message}`;
 				return createTextSpan(absolutePosition, lineText !== void 0 ? lineText.length : index.absolutePositionOfStartOfLine(line + 2) - absolutePosition);
 			}
 			getTextChangesBetweenVersions(oldVersion, newVersion) {
-				if (oldVersion < newVersion) if (oldVersion >= this.minVersion) {
-					const textChangeRanges = [];
-					for (let i = oldVersion + 1; i <= newVersion; i++) {
-						const snap = this.versions[this.versionToIndex(i)];
-						for (const textChange of snap.changesSincePreviousVersion) textChangeRanges.push(textChange.getTextChangeRange());
-					}
-					return collapseTextChangeRangesAcrossMultipleVersions(textChangeRanges);
-				} else return;
-				else return unchangedTextChangeRange;
+				if (oldVersion < newVersion) {
+					if (oldVersion >= this.minVersion) {
+						const textChangeRanges = [];
+						for (let i = oldVersion + 1; i <= newVersion; i++) {
+							const snap = this.versions[this.versionToIndex(i)];
+							for (const textChange of snap.changesSincePreviousVersion) textChangeRanges.push(textChange.getTextChangeRange());
+						}
+						return collapseTextChangeRangesAcrossMultipleVersions(textChangeRanges);
+					} else return;
+				} else return unchangedTextChangeRange;
 			}
 			getLineCount() {
 				return this._getSnapshot().index.getLineCount();
@@ -153427,8 +153656,10 @@ ${e.message}`;
 				return this.index.getLength();
 			}
 			getChangeRange(oldSnapshot) {
-				if (oldSnapshot instanceof _LineIndexSnapshot && this.cache === oldSnapshot.cache) if (this.version <= oldSnapshot.version) return unchangedTextChangeRange;
-				else return this.cache.getTextChangesBetweenVersions(oldSnapshot.version, this.version);
+				if (oldSnapshot instanceof _LineIndexSnapshot && this.cache === oldSnapshot.cache) {
+					if (this.version <= oldSnapshot.version) return unchangedTextChangeRange;
+					else return this.cache.getTextChangesBetweenVersions(oldSnapshot.version, this.version);
+				}
 			}
 		};
 		var LineIndex = class _LineIndex {
@@ -153638,13 +153869,14 @@ ${e.message}`;
 					zeroBasedColumn: relativePosition,
 					lineText: void 0
 				};
-				for (const child of this.children) if (child.charCount() > relativePosition) if (child.isLeaf()) return {
-					oneBasedLine: lineNumberAccumulator,
-					zeroBasedColumn: relativePosition,
-					lineText: child.text
-				};
-				else return child.charOffsetToLineInfo(lineNumberAccumulator, relativePosition);
-				else {
+				for (const child of this.children) if (child.charCount() > relativePosition) {
+					if (child.isLeaf()) return {
+						oneBasedLine: lineNumberAccumulator,
+						zeroBasedColumn: relativePosition,
+						lineText: child.text
+					};
+					else return child.charOffsetToLineInfo(lineNumberAccumulator, relativePosition);
+				} else {
 					relativePosition -= child.charCount();
 					lineNumberAccumulator += child.lineCount();
 				}
@@ -153906,10 +154138,7 @@ ${e.message}`;
 						this.projectService.updateTypingsForProject(response);
 						this.event(response, "setTypings");
 						break;
-					case ActionWatchTypingLocations:
-						this.projectService.watchTypingLocations(response);
-						break;
-					default:
+					case ActionWatchTypingLocations: this.projectService.watchTypingLocations(response);
 				}
 			}
 			scheduleRequest(request) {
@@ -156268,8 +156497,7 @@ ${e.message}`;
 	var ScriptKind = ts.ScriptKind;
 	ts.ScriptTarget;
 	ts.TokenClass;
-	//#endregion
-	//#region src/services/typescript/lib/lib.ts
+	// src/services/typescript/lib/lib.ts
 	/** Contains all the lib files */
 	var libFileMap = {};
 	libFileMap["lib.d.ts"] = "/*! *****************************************************************************\nCopyright (c) Microsoft Corporation. All rights reserved.\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use\nthis file except in compliance with the License. You may obtain a copy of the\nLicense at http://www.apache.org/licenses/LICENSE-2.0\n\nTHIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\nKIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED\nWARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,\nMERCHANTABLITY OR NON-INFRINGEMENT.\n\nSee the Apache Version 2.0 License for specific language governing permissions\nand limitations under the License.\n***************************************************************************** */\n\n\n/// <reference no-default-lib=\"true\"/>\n\n/// <reference lib=\"es5\" />\n/// <reference lib=\"dom\" />\n/// <reference lib=\"webworker.importscripts\" />\n/// <reference lib=\"scripthost\" />\n";
@@ -156363,16 +156591,14 @@ ${e.message}`;
 	libFileMap["lib.webworker.d.ts"] = "/*! *****************************************************************************\nCopyright (c) Microsoft Corporation. All rights reserved.\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use\nthis file except in compliance with the License. You may obtain a copy of the\nLicense at http://www.apache.org/licenses/LICENSE-2.0\n\nTHIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\nKIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED\nWARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,\nMERCHANTABLITY OR NON-INFRINGEMENT.\n\nSee the Apache Version 2.0 License for specific language governing permissions\nand limitations under the License.\n***************************************************************************** */\n\n\n/// <reference no-default-lib=\"true\"/>\n\n/////////////////////////////\n/// Worker APIs\n/////////////////////////////\n\ninterface AddEventListenerOptions extends EventListenerOptions {\n    once?: boolean;\n    passive?: boolean;\n    signal?: AbortSignal;\n}\n\ninterface AesCbcParams extends Algorithm {\n    iv: BufferSource;\n}\n\ninterface AesCtrParams extends Algorithm {\n    counter: BufferSource;\n    length: number;\n}\n\ninterface AesDerivedKeyParams extends Algorithm {\n    length: number;\n}\n\ninterface AesGcmParams extends Algorithm {\n    additionalData?: BufferSource;\n    iv: BufferSource;\n    tagLength?: number;\n}\n\ninterface AesKeyAlgorithm extends KeyAlgorithm {\n    length: number;\n}\n\ninterface AesKeyGenParams extends Algorithm {\n    length: number;\n}\n\ninterface Algorithm {\n    name: string;\n}\n\ninterface AudioConfiguration {\n    bitrate?: number;\n    channels?: string;\n    contentType: string;\n    samplerate?: number;\n    spatialRendering?: boolean;\n}\n\ninterface AvcEncoderConfig {\n    format?: AvcBitstreamFormat;\n}\n\ninterface BlobPropertyBag {\n    endings?: EndingType;\n    type?: string;\n}\n\ninterface CSSMatrixComponentOptions {\n    is2D?: boolean;\n}\n\ninterface CSSNumericType {\n    angle?: number;\n    flex?: number;\n    frequency?: number;\n    length?: number;\n    percent?: number;\n    percentHint?: CSSNumericBaseType;\n    resolution?: number;\n    time?: number;\n}\n\ninterface CacheQueryOptions {\n    ignoreMethod?: boolean;\n    ignoreSearch?: boolean;\n    ignoreVary?: boolean;\n}\n\ninterface ClientQueryOptions {\n    includeUncontrolled?: boolean;\n    type?: ClientTypes;\n}\n\ninterface CloseEventInit extends EventInit {\n    code?: number;\n    reason?: string;\n    wasClean?: boolean;\n}\n\ninterface CryptoKeyPair {\n    privateKey: CryptoKey;\n    publicKey: CryptoKey;\n}\n\ninterface CustomEventInit<T = any> extends EventInit {\n    detail?: T;\n}\n\ninterface DOMMatrix2DInit {\n    a?: number;\n    b?: number;\n    c?: number;\n    d?: number;\n    e?: number;\n    f?: number;\n    m11?: number;\n    m12?: number;\n    m21?: number;\n    m22?: number;\n    m41?: number;\n    m42?: number;\n}\n\ninterface DOMMatrixInit extends DOMMatrix2DInit {\n    is2D?: boolean;\n    m13?: number;\n    m14?: number;\n    m23?: number;\n    m24?: number;\n    m31?: number;\n    m32?: number;\n    m33?: number;\n    m34?: number;\n    m43?: number;\n    m44?: number;\n}\n\ninterface DOMPointInit {\n    w?: number;\n    x?: number;\n    y?: number;\n    z?: number;\n}\n\ninterface DOMQuadInit {\n    p1?: DOMPointInit;\n    p2?: DOMPointInit;\n    p3?: DOMPointInit;\n    p4?: DOMPointInit;\n}\n\ninterface DOMRectInit {\n    height?: number;\n    width?: number;\n    x?: number;\n    y?: number;\n}\n\ninterface EcKeyGenParams extends Algorithm {\n    namedCurve: NamedCurve;\n}\n\ninterface EcKeyImportParams extends Algorithm {\n    namedCurve: NamedCurve;\n}\n\ninterface EcdhKeyDeriveParams extends Algorithm {\n    public: CryptoKey;\n}\n\ninterface EcdsaParams extends Algorithm {\n    hash: HashAlgorithmIdentifier;\n}\n\ninterface EncodedVideoChunkInit {\n    data: AllowSharedBufferSource;\n    duration?: number;\n    timestamp: number;\n    type: EncodedVideoChunkType;\n}\n\ninterface EncodedVideoChunkMetadata {\n    decoderConfig?: VideoDecoderConfig;\n}\n\ninterface ErrorEventInit extends EventInit {\n    colno?: number;\n    error?: any;\n    filename?: string;\n    lineno?: number;\n    message?: string;\n}\n\ninterface EventInit {\n    bubbles?: boolean;\n    cancelable?: boolean;\n    composed?: boolean;\n}\n\ninterface EventListenerOptions {\n    capture?: boolean;\n}\n\ninterface EventSourceInit {\n    withCredentials?: boolean;\n}\n\ninterface ExtendableEventInit extends EventInit {\n}\n\ninterface ExtendableMessageEventInit extends ExtendableEventInit {\n    data?: any;\n    lastEventId?: string;\n    origin?: string;\n    ports?: MessagePort[];\n    source?: Client | ServiceWorker | MessagePort | null;\n}\n\ninterface FetchEventInit extends ExtendableEventInit {\n    clientId?: string;\n    handled?: Promise<undefined>;\n    preloadResponse?: Promise<any>;\n    replacesClientId?: string;\n    request: Request;\n    resultingClientId?: string;\n}\n\ninterface FilePropertyBag extends BlobPropertyBag {\n    lastModified?: number;\n}\n\ninterface FileSystemCreateWritableOptions {\n    keepExistingData?: boolean;\n}\n\ninterface FileSystemGetDirectoryOptions {\n    create?: boolean;\n}\n\ninterface FileSystemGetFileOptions {\n    create?: boolean;\n}\n\ninterface FileSystemReadWriteOptions {\n    at?: number;\n}\n\ninterface FileSystemRemoveOptions {\n    recursive?: boolean;\n}\n\ninterface FontFaceDescriptors {\n    ascentOverride?: string;\n    descentOverride?: string;\n    display?: FontDisplay;\n    featureSettings?: string;\n    lineGapOverride?: string;\n    stretch?: string;\n    style?: string;\n    unicodeRange?: string;\n    weight?: string;\n}\n\ninterface FontFaceSetLoadEventInit extends EventInit {\n    fontfaces?: FontFace[];\n}\n\ninterface GetNotificationOptions {\n    tag?: string;\n}\n\ninterface HkdfParams extends Algorithm {\n    hash: HashAlgorithmIdentifier;\n    info: BufferSource;\n    salt: BufferSource;\n}\n\ninterface HmacImportParams extends Algorithm {\n    hash: HashAlgorithmIdentifier;\n    length?: number;\n}\n\ninterface HmacKeyGenParams extends Algorithm {\n    hash: HashAlgorithmIdentifier;\n    length?: number;\n}\n\ninterface IDBDatabaseInfo {\n    name?: string;\n    version?: number;\n}\n\ninterface IDBIndexParameters {\n    multiEntry?: boolean;\n    unique?: boolean;\n}\n\ninterface IDBObjectStoreParameters {\n    autoIncrement?: boolean;\n    keyPath?: string | string[] | null;\n}\n\ninterface IDBTransactionOptions {\n    durability?: IDBTransactionDurability;\n}\n\ninterface IDBVersionChangeEventInit extends EventInit {\n    newVersion?: number | null;\n    oldVersion?: number;\n}\n\ninterface ImageBitmapOptions {\n    colorSpaceConversion?: ColorSpaceConversion;\n    imageOrientation?: ImageOrientation;\n    premultiplyAlpha?: PremultiplyAlpha;\n    resizeHeight?: number;\n    resizeQuality?: ResizeQuality;\n    resizeWidth?: number;\n}\n\ninterface ImageBitmapRenderingContextSettings {\n    alpha?: boolean;\n}\n\ninterface ImageDataSettings {\n    colorSpace?: PredefinedColorSpace;\n}\n\ninterface ImageEncodeOptions {\n    quality?: number;\n    type?: string;\n}\n\ninterface JsonWebKey {\n    alg?: string;\n    crv?: string;\n    d?: string;\n    dp?: string;\n    dq?: string;\n    e?: string;\n    ext?: boolean;\n    k?: string;\n    key_ops?: string[];\n    kty?: string;\n    n?: string;\n    oth?: RsaOtherPrimesInfo[];\n    p?: string;\n    q?: string;\n    qi?: string;\n    use?: string;\n    x?: string;\n    y?: string;\n}\n\ninterface KeyAlgorithm {\n    name: string;\n}\n\ninterface LockInfo {\n    clientId?: string;\n    mode?: LockMode;\n    name?: string;\n}\n\ninterface LockManagerSnapshot {\n    held?: LockInfo[];\n    pending?: LockInfo[];\n}\n\ninterface LockOptions {\n    ifAvailable?: boolean;\n    mode?: LockMode;\n    signal?: AbortSignal;\n    steal?: boolean;\n}\n\ninterface MediaCapabilitiesDecodingInfo extends MediaCapabilitiesInfo {\n    configuration?: MediaDecodingConfiguration;\n}\n\ninterface MediaCapabilitiesEncodingInfo extends MediaCapabilitiesInfo {\n    configuration?: MediaEncodingConfiguration;\n}\n\ninterface MediaCapabilitiesInfo {\n    powerEfficient: boolean;\n    smooth: boolean;\n    supported: boolean;\n}\n\ninterface MediaConfiguration {\n    audio?: AudioConfiguration;\n    video?: VideoConfiguration;\n}\n\ninterface MediaDecodingConfiguration extends MediaConfiguration {\n    type: MediaDecodingType;\n}\n\ninterface MediaEncodingConfiguration extends MediaConfiguration {\n    type: MediaEncodingType;\n}\n\ninterface MediaStreamTrackProcessorInit {\n    maxBufferSize?: number;\n}\n\ninterface MessageEventInit<T = any> extends EventInit {\n    data?: T;\n    lastEventId?: string;\n    origin?: string;\n    ports?: MessagePort[];\n    source?: MessageEventSource | null;\n}\n\ninterface MultiCacheQueryOptions extends CacheQueryOptions {\n    cacheName?: string;\n}\n\ninterface NavigationPreloadState {\n    enabled?: boolean;\n    headerValue?: string;\n}\n\ninterface NotificationEventInit extends ExtendableEventInit {\n    action?: string;\n    notification: Notification;\n}\n\ninterface NotificationOptions {\n    badge?: string;\n    body?: string;\n    data?: any;\n    dir?: NotificationDirection;\n    icon?: string;\n    lang?: string;\n    requireInteraction?: boolean;\n    silent?: boolean | null;\n    tag?: string;\n}\n\ninterface Pbkdf2Params extends Algorithm {\n    hash: HashAlgorithmIdentifier;\n    iterations: number;\n    salt: BufferSource;\n}\n\ninterface PerformanceMarkOptions {\n    detail?: any;\n    startTime?: DOMHighResTimeStamp;\n}\n\ninterface PerformanceMeasureOptions {\n    detail?: any;\n    duration?: DOMHighResTimeStamp;\n    end?: string | DOMHighResTimeStamp;\n    start?: string | DOMHighResTimeStamp;\n}\n\ninterface PerformanceObserverInit {\n    buffered?: boolean;\n    entryTypes?: string[];\n    type?: string;\n}\n\ninterface PermissionDescriptor {\n    name: PermissionName;\n}\n\ninterface PlaneLayout {\n    offset: number;\n    stride: number;\n}\n\ninterface ProgressEventInit extends EventInit {\n    lengthComputable?: boolean;\n    loaded?: number;\n    total?: number;\n}\n\ninterface PromiseRejectionEventInit extends EventInit {\n    promise: Promise<any>;\n    reason?: any;\n}\n\ninterface PushEventInit extends ExtendableEventInit {\n    data?: PushMessageDataInit;\n}\n\ninterface PushSubscriptionJSON {\n    endpoint?: string;\n    expirationTime?: EpochTimeStamp | null;\n    keys?: Record<string, string>;\n}\n\ninterface PushSubscriptionOptionsInit {\n    applicationServerKey?: BufferSource | string | null;\n    userVisibleOnly?: boolean;\n}\n\ninterface QueuingStrategy<T = any> {\n    highWaterMark?: number;\n    size?: QueuingStrategySize<T>;\n}\n\ninterface QueuingStrategyInit {\n    /**\n     * Creates a new ByteLengthQueuingStrategy with the provided high water mark.\n     *\n     * Note that the provided high water mark will not be validated ahead of time. Instead, if it is negative, NaN, or not a number, the resulting ByteLengthQueuingStrategy will cause the corresponding stream constructor to throw.\n     */\n    highWaterMark: number;\n}\n\ninterface RTCEncodedAudioFrameMetadata {\n    contributingSources?: number[];\n    payloadType?: number;\n    sequenceNumber?: number;\n    synchronizationSource?: number;\n}\n\ninterface RTCEncodedVideoFrameMetadata {\n    contributingSources?: number[];\n    dependencies?: number[];\n    frameId?: number;\n    height?: number;\n    payloadType?: number;\n    spatialIndex?: number;\n    synchronizationSource?: number;\n    temporalIndex?: number;\n    timestamp?: number;\n    width?: number;\n}\n\ninterface ReadableStreamGetReaderOptions {\n    /**\n     * Creates a ReadableStreamBYOBReader and locks the stream to the new reader.\n     *\n     * This call behaves the same way as the no-argument variant, except that it only works on readable byte streams, i.e. streams which were constructed specifically with the ability to handle \"bring your own buffer\" reading. The returned BYOB reader provides the ability to directly read individual chunks from the stream via its read() method, into developer-supplied buffers, allowing more precise control over allocation.\n     */\n    mode?: ReadableStreamReaderMode;\n}\n\ninterface ReadableStreamIteratorOptions {\n    /**\n     * Asynchronously iterates over the chunks in the stream's internal queue.\n     *\n     * Asynchronously iterating over the stream will lock it, preventing any other consumer from acquiring a reader. The lock will be released if the async iterator's return() method is called, e.g. by breaking out of the loop.\n     *\n     * By default, calling the async iterator's return() method will also cancel the stream. To prevent this, use the stream's values() method, passing true for the preventCancel option.\n     */\n    preventCancel?: boolean;\n}\n\ninterface ReadableStreamReadDoneResult<T> {\n    done: true;\n    value?: T;\n}\n\ninterface ReadableStreamReadValueResult<T> {\n    done: false;\n    value: T;\n}\n\ninterface ReadableWritablePair<R = any, W = any> {\n    readable: ReadableStream<R>;\n    /**\n     * Provides a convenient, chainable way of piping this readable stream through a transform stream (or any other { writable, readable } pair). It simply pipes the stream into the writable side of the supplied pair, and returns the readable side for further use.\n     *\n     * Piping a stream will lock it for the duration of the pipe, preventing any other consumer from acquiring a reader.\n     */\n    writable: WritableStream<W>;\n}\n\ninterface RegistrationOptions {\n    scope?: string;\n    type?: WorkerType;\n    updateViaCache?: ServiceWorkerUpdateViaCache;\n}\n\ninterface ReportingObserverOptions {\n    buffered?: boolean;\n    types?: string[];\n}\n\ninterface RequestInit {\n    /** A BodyInit object or null to set request's body. */\n    body?: BodyInit | null;\n    /** A string indicating how the request will interact with the browser's cache to set request's cache. */\n    cache?: RequestCache;\n    /** A string indicating whether credentials will be sent with the request always, never, or only when sent to a same-origin URL. Sets request's credentials. */\n    credentials?: RequestCredentials;\n    /** A Headers object, an object literal, or an array of two-item arrays to set request's headers. */\n    headers?: HeadersInit;\n    /** A cryptographic hash of the resource to be fetched by request. Sets request's integrity. */\n    integrity?: string;\n    /** A boolean to set request's keepalive. */\n    keepalive?: boolean;\n    /** A string to set request's method. */\n    method?: string;\n    /** A string to indicate whether the request will use CORS, or will be restricted to same-origin URLs. Sets request's mode. */\n    mode?: RequestMode;\n    priority?: RequestPriority;\n    /** A string indicating whether request follows redirects, results in an error upon encountering a redirect, or returns the redirect (in an opaque fashion). Sets request's redirect. */\n    redirect?: RequestRedirect;\n    /** A string whose value is a same-origin URL, \"about:client\", or the empty string, to set request's referrer. */\n    referrer?: string;\n    /** A referrer policy to set request's referrerPolicy. */\n    referrerPolicy?: ReferrerPolicy;\n    /** An AbortSignal to set request's signal. */\n    signal?: AbortSignal | null;\n    /** Can only be null. Used to disassociate request from any Window. */\n    window?: null;\n}\n\ninterface ResponseInit {\n    headers?: HeadersInit;\n    status?: number;\n    statusText?: string;\n}\n\ninterface RsaHashedImportParams extends Algorithm {\n    hash: HashAlgorithmIdentifier;\n}\n\ninterface RsaHashedKeyGenParams extends RsaKeyGenParams {\n    hash: HashAlgorithmIdentifier;\n}\n\ninterface RsaKeyGenParams extends Algorithm {\n    modulusLength: number;\n    publicExponent: BigInteger;\n}\n\ninterface RsaOaepParams extends Algorithm {\n    label?: BufferSource;\n}\n\ninterface RsaOtherPrimesInfo {\n    d?: string;\n    r?: string;\n    t?: string;\n}\n\ninterface RsaPssParams extends Algorithm {\n    saltLength: number;\n}\n\ninterface SecurityPolicyViolationEventInit extends EventInit {\n    blockedURI?: string;\n    columnNumber?: number;\n    disposition?: SecurityPolicyViolationEventDisposition;\n    documentURI?: string;\n    effectiveDirective?: string;\n    lineNumber?: number;\n    originalPolicy?: string;\n    referrer?: string;\n    sample?: string;\n    sourceFile?: string;\n    statusCode?: number;\n    violatedDirective?: string;\n}\n\ninterface StorageEstimate {\n    quota?: number;\n    usage?: number;\n}\n\ninterface StreamPipeOptions {\n    preventAbort?: boolean;\n    preventCancel?: boolean;\n    /**\n     * Pipes this readable stream to a given writable stream destination. The way in which the piping process behaves under various error conditions can be customized with a number of passed options. It returns a promise that fulfills when the piping process completes successfully, or rejects if any errors were encountered.\n     *\n     * Piping a stream will lock it for the duration of the pipe, preventing any other consumer from acquiring a reader.\n     *\n     * Errors and closures of the source and destination streams propagate as follows:\n     *\n     * An error in this source readable stream will abort destination, unless preventAbort is truthy. The returned promise will be rejected with the source's error, or with any error that occurs during aborting the destination.\n     *\n     * An error in destination will cancel this source readable stream, unless preventCancel is truthy. The returned promise will be rejected with the destination's error, or with any error that occurs during canceling the source.\n     *\n     * When this source readable stream closes, destination will be closed, unless preventClose is truthy. The returned promise will be fulfilled once this process completes, unless an error is encountered while closing the destination, in which case it will be rejected with that error.\n     *\n     * If destination starts out closed or closing, this source readable stream will be canceled, unless preventCancel is true. The returned promise will be rejected with an error indicating piping to a closed stream failed, or with any error that occurs during canceling the source.\n     *\n     * The signal option can be set to an AbortSignal to allow aborting an ongoing pipe operation via the corresponding AbortController. In this case, this source readable stream will be canceled, and destination aborted, unless the respective options preventCancel or preventAbort are set.\n     */\n    preventClose?: boolean;\n    signal?: AbortSignal;\n}\n\ninterface StructuredSerializeOptions {\n    transfer?: Transferable[];\n}\n\ninterface TextDecodeOptions {\n    stream?: boolean;\n}\n\ninterface TextDecoderOptions {\n    fatal?: boolean;\n    ignoreBOM?: boolean;\n}\n\ninterface TextEncoderEncodeIntoResult {\n    read: number;\n    written: number;\n}\n\ninterface Transformer<I = any, O = any> {\n    flush?: TransformerFlushCallback<O>;\n    readableType?: undefined;\n    start?: TransformerStartCallback<O>;\n    transform?: TransformerTransformCallback<I, O>;\n    writableType?: undefined;\n}\n\ninterface UnderlyingByteSource {\n    autoAllocateChunkSize?: number;\n    cancel?: UnderlyingSourceCancelCallback;\n    pull?: (controller: ReadableByteStreamController) => void | PromiseLike<void>;\n    start?: (controller: ReadableByteStreamController) => any;\n    type: \"bytes\";\n}\n\ninterface UnderlyingDefaultSource<R = any> {\n    cancel?: UnderlyingSourceCancelCallback;\n    pull?: (controller: ReadableStreamDefaultController<R>) => void | PromiseLike<void>;\n    start?: (controller: ReadableStreamDefaultController<R>) => any;\n    type?: undefined;\n}\n\ninterface UnderlyingSink<W = any> {\n    abort?: UnderlyingSinkAbortCallback;\n    close?: UnderlyingSinkCloseCallback;\n    start?: UnderlyingSinkStartCallback;\n    type?: undefined;\n    write?: UnderlyingSinkWriteCallback<W>;\n}\n\ninterface UnderlyingSource<R = any> {\n    autoAllocateChunkSize?: number;\n    cancel?: UnderlyingSourceCancelCallback;\n    pull?: UnderlyingSourcePullCallback<R>;\n    start?: UnderlyingSourceStartCallback<R>;\n    type?: ReadableStreamType;\n}\n\ninterface VideoColorSpaceInit {\n    fullRange?: boolean | null;\n    matrix?: VideoMatrixCoefficients | null;\n    primaries?: VideoColorPrimaries | null;\n    transfer?: VideoTransferCharacteristics | null;\n}\n\ninterface VideoConfiguration {\n    bitrate: number;\n    colorGamut?: ColorGamut;\n    contentType: string;\n    framerate: number;\n    hdrMetadataType?: HdrMetadataType;\n    height: number;\n    scalabilityMode?: string;\n    transferFunction?: TransferFunction;\n    width: number;\n}\n\ninterface VideoDecoderConfig {\n    codec: string;\n    codedHeight?: number;\n    codedWidth?: number;\n    colorSpace?: VideoColorSpaceInit;\n    description?: AllowSharedBufferSource;\n    displayAspectHeight?: number;\n    displayAspectWidth?: number;\n    hardwareAcceleration?: HardwareAcceleration;\n    optimizeForLatency?: boolean;\n}\n\ninterface VideoDecoderInit {\n    error: WebCodecsErrorCallback;\n    output: VideoFrameOutputCallback;\n}\n\ninterface VideoDecoderSupport {\n    config?: VideoDecoderConfig;\n    supported?: boolean;\n}\n\ninterface VideoEncoderConfig {\n    alpha?: AlphaOption;\n    avc?: AvcEncoderConfig;\n    bitrate?: number;\n    bitrateMode?: VideoEncoderBitrateMode;\n    codec: string;\n    displayHeight?: number;\n    displayWidth?: number;\n    framerate?: number;\n    hardwareAcceleration?: HardwareAcceleration;\n    height: number;\n    latencyMode?: LatencyMode;\n    scalabilityMode?: string;\n    width: number;\n}\n\ninterface VideoEncoderEncodeOptions {\n    keyFrame?: boolean;\n}\n\ninterface VideoEncoderInit {\n    error: WebCodecsErrorCallback;\n    output: EncodedVideoChunkOutputCallback;\n}\n\ninterface VideoEncoderSupport {\n    config?: VideoEncoderConfig;\n    supported?: boolean;\n}\n\ninterface VideoFrameBufferInit {\n    codedHeight: number;\n    codedWidth: number;\n    colorSpace?: VideoColorSpaceInit;\n    displayHeight?: number;\n    displayWidth?: number;\n    duration?: number;\n    format: VideoPixelFormat;\n    layout?: PlaneLayout[];\n    timestamp: number;\n    visibleRect?: DOMRectInit;\n}\n\ninterface VideoFrameCopyToOptions {\n    layout?: PlaneLayout[];\n    rect?: DOMRectInit;\n}\n\ninterface VideoFrameInit {\n    alpha?: AlphaOption;\n    displayHeight?: number;\n    displayWidth?: number;\n    duration?: number;\n    timestamp?: number;\n    visibleRect?: DOMRectInit;\n}\n\ninterface WebGLContextAttributes {\n    alpha?: boolean;\n    antialias?: boolean;\n    depth?: boolean;\n    desynchronized?: boolean;\n    failIfMajorPerformanceCaveat?: boolean;\n    powerPreference?: WebGLPowerPreference;\n    premultipliedAlpha?: boolean;\n    preserveDrawingBuffer?: boolean;\n    stencil?: boolean;\n}\n\ninterface WebGLContextEventInit extends EventInit {\n    statusMessage?: string;\n}\n\ninterface WebTransportCloseInfo {\n    closeCode?: number;\n    reason?: string;\n}\n\ninterface WebTransportErrorOptions {\n    source?: WebTransportErrorSource;\n    streamErrorCode?: number | null;\n}\n\ninterface WebTransportHash {\n    algorithm?: string;\n    value?: BufferSource;\n}\n\ninterface WebTransportOptions {\n    allowPooling?: boolean;\n    congestionControl?: WebTransportCongestionControl;\n    requireUnreliable?: boolean;\n    serverCertificateHashes?: WebTransportHash[];\n}\n\ninterface WebTransportSendStreamOptions {\n    sendOrder?: number;\n}\n\ninterface WorkerOptions {\n    credentials?: RequestCredentials;\n    name?: string;\n    type?: WorkerType;\n}\n\ninterface WriteParams {\n    data?: BufferSource | Blob | string | null;\n    position?: number | null;\n    size?: number | null;\n    type: WriteCommandType;\n}\n\n/**\n * The ANGLE_instanced_arrays extension is part of the WebGL API and allows to draw the same object, or groups of similar objects multiple times, if they share the same vertex data, primitive count and type.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ANGLE_instanced_arrays)\n */\ninterface ANGLE_instanced_arrays {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ANGLE_instanced_arrays/drawArraysInstancedANGLE) */\n    drawArraysInstancedANGLE(mode: GLenum, first: GLint, count: GLsizei, primcount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ANGLE_instanced_arrays/drawElementsInstancedANGLE) */\n    drawElementsInstancedANGLE(mode: GLenum, count: GLsizei, type: GLenum, offset: GLintptr, primcount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ANGLE_instanced_arrays/vertexAttribDivisorANGLE) */\n    vertexAttribDivisorANGLE(index: GLuint, divisor: GLuint): void;\n    readonly VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE: 0x88FE;\n}\n\n/**\n * A controller object that allows you to abort one or more DOM requests as and when desired.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortController)\n */\ninterface AbortController {\n    /**\n     * Returns the AbortSignal object associated with this object.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortController/signal)\n     */\n    readonly signal: AbortSignal;\n    /**\n     * Invoking this method will set this object's AbortSignal's aborted flag and signal to any observers that the associated activity is to be aborted.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortController/abort)\n     */\n    abort(reason?: any): void;\n}\n\ndeclare var AbortController: {\n    prototype: AbortController;\n    new(): AbortController;\n};\n\ninterface AbortSignalEventMap {\n    \"abort\": Event;\n}\n\n/**\n * A signal object that allows you to communicate with a DOM request (such as a Fetch) and abort it if required via an AbortController object.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal)\n */\ninterface AbortSignal extends EventTarget {\n    /**\n     * Returns true if this AbortSignal's AbortController has signaled to abort, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal/aborted)\n     */\n    readonly aborted: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal/abort_event) */\n    onabort: ((this: AbortSignal, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal/reason) */\n    readonly reason: any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal/throwIfAborted) */\n    throwIfAborted(): void;\n    addEventListener<K extends keyof AbortSignalEventMap>(type: K, listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof AbortSignalEventMap>(type: K, listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var AbortSignal: {\n    prototype: AbortSignal;\n    new(): AbortSignal;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal/abort_static) */\n    abort(reason?: any): AbortSignal;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal/any_static) */\n    any(signals: AbortSignal[]): AbortSignal;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal/timeout_static) */\n    timeout(milliseconds: number): AbortSignal;\n};\n\ninterface AbstractWorkerEventMap {\n    \"error\": ErrorEvent;\n}\n\ninterface AbstractWorker {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorker/error_event) */\n    onerror: ((this: AbstractWorker, ev: ErrorEvent) => any) | null;\n    addEventListener<K extends keyof AbstractWorkerEventMap>(type: K, listener: (this: AbstractWorker, ev: AbstractWorkerEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof AbstractWorkerEventMap>(type: K, listener: (this: AbstractWorker, ev: AbstractWorkerEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ninterface AnimationFrameProvider {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/cancelAnimationFrame) */\n    cancelAnimationFrame(handle: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/requestAnimationFrame) */\n    requestAnimationFrame(callback: FrameRequestCallback): number;\n}\n\n/**\n * A file-like object of immutable, raw data. Blobs represent data that isn't necessarily in a JavaScript-native format. The File interface is based on Blob, inheriting blob functionality and expanding it to support files on the user's system.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob)\n */\ninterface Blob {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/size) */\n    readonly size: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/type) */\n    readonly type: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/arrayBuffer) */\n    arrayBuffer(): Promise<ArrayBuffer>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/slice) */\n    slice(start?: number, end?: number, contentType?: string): Blob;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/stream) */\n    stream(): ReadableStream<Uint8Array>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/text) */\n    text(): Promise<string>;\n}\n\ndeclare var Blob: {\n    prototype: Blob;\n    new(blobParts?: BlobPart[], options?: BlobPropertyBag): Blob;\n};\n\ninterface Body {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/body) */\n    readonly body: ReadableStream<Uint8Array> | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/bodyUsed) */\n    readonly bodyUsed: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/arrayBuffer) */\n    arrayBuffer(): Promise<ArrayBuffer>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/blob) */\n    blob(): Promise<Blob>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/formData) */\n    formData(): Promise<FormData>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/json) */\n    json(): Promise<any>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/text) */\n    text(): Promise<string>;\n}\n\ninterface BroadcastChannelEventMap {\n    \"message\": MessageEvent;\n    \"messageerror\": MessageEvent;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/BroadcastChannel) */\ninterface BroadcastChannel extends EventTarget {\n    /**\n     * Returns the channel name (as passed to the constructor).\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/BroadcastChannel/name)\n     */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/BroadcastChannel/message_event) */\n    onmessage: ((this: BroadcastChannel, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/BroadcastChannel/messageerror_event) */\n    onmessageerror: ((this: BroadcastChannel, ev: MessageEvent) => any) | null;\n    /**\n     * Closes the BroadcastChannel object, opening it up to garbage collection.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/BroadcastChannel/close)\n     */\n    close(): void;\n    /**\n     * Sends the given message to other BroadcastChannel objects set up for this channel. Messages can be structured objects, e.g. nested objects and arrays.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/BroadcastChannel/postMessage)\n     */\n    postMessage(message: any): void;\n    addEventListener<K extends keyof BroadcastChannelEventMap>(type: K, listener: (this: BroadcastChannel, ev: BroadcastChannelEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof BroadcastChannelEventMap>(type: K, listener: (this: BroadcastChannel, ev: BroadcastChannelEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var BroadcastChannel: {\n    prototype: BroadcastChannel;\n    new(name: string): BroadcastChannel;\n};\n\n/**\n * This Streams API interface provides\xA0a built-in byte length queuing strategy that can be used when constructing streams.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ByteLengthQueuingStrategy)\n */\ninterface ByteLengthQueuingStrategy extends QueuingStrategy<ArrayBufferView> {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ByteLengthQueuingStrategy/highWaterMark) */\n    readonly highWaterMark: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ByteLengthQueuingStrategy/size) */\n    readonly size: QueuingStrategySize<ArrayBufferView>;\n}\n\ndeclare var ByteLengthQueuingStrategy: {\n    prototype: ByteLengthQueuingStrategy;\n    new(init: QueuingStrategyInit): ByteLengthQueuingStrategy;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSImageValue) */\ninterface CSSImageValue extends CSSStyleValue {\n}\n\ndeclare var CSSImageValue: {\n    prototype: CSSImageValue;\n    new(): CSSImageValue;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSKeywordValue) */\ninterface CSSKeywordValue extends CSSStyleValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSKeywordValue/value) */\n    value: string;\n}\n\ndeclare var CSSKeywordValue: {\n    prototype: CSSKeywordValue;\n    new(value: string): CSSKeywordValue;\n};\n\ninterface CSSMathClamp extends CSSMathValue {\n    readonly lower: CSSNumericValue;\n    readonly upper: CSSNumericValue;\n    readonly value: CSSNumericValue;\n}\n\ndeclare var CSSMathClamp: {\n    prototype: CSSMathClamp;\n    new(lower: CSSNumberish, value: CSSNumberish, upper: CSSNumberish): CSSMathClamp;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathInvert) */\ninterface CSSMathInvert extends CSSMathValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathInvert/value) */\n    readonly value: CSSNumericValue;\n}\n\ndeclare var CSSMathInvert: {\n    prototype: CSSMathInvert;\n    new(arg: CSSNumberish): CSSMathInvert;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathMax) */\ninterface CSSMathMax extends CSSMathValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathMax/values) */\n    readonly values: CSSNumericArray;\n}\n\ndeclare var CSSMathMax: {\n    prototype: CSSMathMax;\n    new(...args: CSSNumberish[]): CSSMathMax;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathMin) */\ninterface CSSMathMin extends CSSMathValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathMin/values) */\n    readonly values: CSSNumericArray;\n}\n\ndeclare var CSSMathMin: {\n    prototype: CSSMathMin;\n    new(...args: CSSNumberish[]): CSSMathMin;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathNegate) */\ninterface CSSMathNegate extends CSSMathValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathNegate/value) */\n    readonly value: CSSNumericValue;\n}\n\ndeclare var CSSMathNegate: {\n    prototype: CSSMathNegate;\n    new(arg: CSSNumberish): CSSMathNegate;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathProduct) */\ninterface CSSMathProduct extends CSSMathValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathProduct/values) */\n    readonly values: CSSNumericArray;\n}\n\ndeclare var CSSMathProduct: {\n    prototype: CSSMathProduct;\n    new(...args: CSSNumberish[]): CSSMathProduct;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathSum) */\ninterface CSSMathSum extends CSSMathValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathSum/values) */\n    readonly values: CSSNumericArray;\n}\n\ndeclare var CSSMathSum: {\n    prototype: CSSMathSum;\n    new(...args: CSSNumberish[]): CSSMathSum;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathValue) */\ninterface CSSMathValue extends CSSNumericValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMathValue/operator) */\n    readonly operator: CSSMathOperator;\n}\n\ndeclare var CSSMathValue: {\n    prototype: CSSMathValue;\n    new(): CSSMathValue;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMatrixComponent) */\ninterface CSSMatrixComponent extends CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSMatrixComponent/matrix) */\n    matrix: DOMMatrix;\n}\n\ndeclare var CSSMatrixComponent: {\n    prototype: CSSMatrixComponent;\n    new(matrix: DOMMatrixReadOnly, options?: CSSMatrixComponentOptions): CSSMatrixComponent;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericArray) */\ninterface CSSNumericArray {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericArray/length) */\n    readonly length: number;\n    forEach(callbackfn: (value: CSSNumericValue, key: number, parent: CSSNumericArray) => void, thisArg?: any): void;\n    [index: number]: CSSNumericValue;\n}\n\ndeclare var CSSNumericArray: {\n    prototype: CSSNumericArray;\n    new(): CSSNumericArray;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue) */\ninterface CSSNumericValue extends CSSStyleValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/add) */\n    add(...values: CSSNumberish[]): CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/div) */\n    div(...values: CSSNumberish[]): CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/equals) */\n    equals(...value: CSSNumberish[]): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/max) */\n    max(...values: CSSNumberish[]): CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/min) */\n    min(...values: CSSNumberish[]): CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/mul) */\n    mul(...values: CSSNumberish[]): CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/sub) */\n    sub(...values: CSSNumberish[]): CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/to) */\n    to(unit: string): CSSUnitValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/toSum) */\n    toSum(...units: string[]): CSSMathSum;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSNumericValue/type) */\n    type(): CSSNumericType;\n}\n\ndeclare var CSSNumericValue: {\n    prototype: CSSNumericValue;\n    new(): CSSNumericValue;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSPerspective) */\ninterface CSSPerspective extends CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSPerspective/length) */\n    length: CSSPerspectiveValue;\n}\n\ndeclare var CSSPerspective: {\n    prototype: CSSPerspective;\n    new(length: CSSPerspectiveValue): CSSPerspective;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSRotate) */\ninterface CSSRotate extends CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSRotate/angle) */\n    angle: CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSRotate/x) */\n    x: CSSNumberish;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSRotate/y) */\n    y: CSSNumberish;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSRotate/z) */\n    z: CSSNumberish;\n}\n\ndeclare var CSSRotate: {\n    prototype: CSSRotate;\n    new(angle: CSSNumericValue): CSSRotate;\n    new(x: CSSNumberish, y: CSSNumberish, z: CSSNumberish, angle: CSSNumericValue): CSSRotate;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSScale) */\ninterface CSSScale extends CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSScale/x) */\n    x: CSSNumberish;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSScale/y) */\n    y: CSSNumberish;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSScale/z) */\n    z: CSSNumberish;\n}\n\ndeclare var CSSScale: {\n    prototype: CSSScale;\n    new(x: CSSNumberish, y: CSSNumberish, z?: CSSNumberish): CSSScale;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSSkew) */\ninterface CSSSkew extends CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSSkew/ax) */\n    ax: CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSSkew/ay) */\n    ay: CSSNumericValue;\n}\n\ndeclare var CSSSkew: {\n    prototype: CSSSkew;\n    new(ax: CSSNumericValue, ay: CSSNumericValue): CSSSkew;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSSkewX) */\ninterface CSSSkewX extends CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSSkewX/ax) */\n    ax: CSSNumericValue;\n}\n\ndeclare var CSSSkewX: {\n    prototype: CSSSkewX;\n    new(ax: CSSNumericValue): CSSSkewX;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSSkewY) */\ninterface CSSSkewY extends CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSSkewY/ay) */\n    ay: CSSNumericValue;\n}\n\ndeclare var CSSSkewY: {\n    prototype: CSSSkewY;\n    new(ay: CSSNumericValue): CSSSkewY;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSStyleValue) */\ninterface CSSStyleValue {\n    toString(): string;\n}\n\ndeclare var CSSStyleValue: {\n    prototype: CSSStyleValue;\n    new(): CSSStyleValue;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTransformComponent) */\ninterface CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTransformComponent/is2D) */\n    is2D: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTransformComponent/toMatrix) */\n    toMatrix(): DOMMatrix;\n    toString(): string;\n}\n\ndeclare var CSSTransformComponent: {\n    prototype: CSSTransformComponent;\n    new(): CSSTransformComponent;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTransformValue) */\ninterface CSSTransformValue extends CSSStyleValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTransformValue/is2D) */\n    readonly is2D: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTransformValue/length) */\n    readonly length: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTransformValue/toMatrix) */\n    toMatrix(): DOMMatrix;\n    forEach(callbackfn: (value: CSSTransformComponent, key: number, parent: CSSTransformValue) => void, thisArg?: any): void;\n    [index: number]: CSSTransformComponent;\n}\n\ndeclare var CSSTransformValue: {\n    prototype: CSSTransformValue;\n    new(transforms: CSSTransformComponent[]): CSSTransformValue;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTranslate) */\ninterface CSSTranslate extends CSSTransformComponent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTranslate/x) */\n    x: CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTranslate/y) */\n    y: CSSNumericValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSTranslate/z) */\n    z: CSSNumericValue;\n}\n\ndeclare var CSSTranslate: {\n    prototype: CSSTranslate;\n    new(x: CSSNumericValue, y: CSSNumericValue, z?: CSSNumericValue): CSSTranslate;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSUnitValue) */\ninterface CSSUnitValue extends CSSNumericValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSUnitValue/unit) */\n    readonly unit: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSUnitValue/value) */\n    value: number;\n}\n\ndeclare var CSSUnitValue: {\n    prototype: CSSUnitValue;\n    new(value: number, unit: string): CSSUnitValue;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSUnparsedValue) */\ninterface CSSUnparsedValue extends CSSStyleValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSUnparsedValue/length) */\n    readonly length: number;\n    forEach(callbackfn: (value: CSSUnparsedSegment, key: number, parent: CSSUnparsedValue) => void, thisArg?: any): void;\n    [index: number]: CSSUnparsedSegment;\n}\n\ndeclare var CSSUnparsedValue: {\n    prototype: CSSUnparsedValue;\n    new(members: CSSUnparsedSegment[]): CSSUnparsedValue;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSVariableReferenceValue) */\ninterface CSSVariableReferenceValue {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSVariableReferenceValue/fallback) */\n    readonly fallback: CSSUnparsedValue | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSVariableReferenceValue/variable) */\n    variable: string;\n}\n\ndeclare var CSSVariableReferenceValue: {\n    prototype: CSSVariableReferenceValue;\n    new(variable: string, fallback?: CSSUnparsedValue | null): CSSVariableReferenceValue;\n};\n\n/**\n * Provides a storage mechanism for Request / Response object pairs that are cached, for example as part of the ServiceWorker life cycle. Note that the Cache interface is exposed to windowed scopes as well as workers. You don't have to use it in conjunction with service workers, even though it is defined in the service worker spec.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache)\n */\ninterface Cache {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache/add) */\n    add(request: RequestInfo | URL): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache/addAll) */\n    addAll(requests: RequestInfo[]): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache/delete) */\n    delete(request: RequestInfo | URL, options?: CacheQueryOptions): Promise<boolean>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache/keys) */\n    keys(request?: RequestInfo | URL, options?: CacheQueryOptions): Promise<ReadonlyArray<Request>>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache/match) */\n    match(request: RequestInfo | URL, options?: CacheQueryOptions): Promise<Response | undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache/matchAll) */\n    matchAll(request?: RequestInfo | URL, options?: CacheQueryOptions): Promise<ReadonlyArray<Response>>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache/put) */\n    put(request: RequestInfo | URL, response: Response): Promise<void>;\n}\n\ndeclare var Cache: {\n    prototype: Cache;\n    new(): Cache;\n};\n\n/**\n * The storage for Cache objects.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CacheStorage)\n */\ninterface CacheStorage {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CacheStorage/delete) */\n    delete(cacheName: string): Promise<boolean>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CacheStorage/has) */\n    has(cacheName: string): Promise<boolean>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CacheStorage/keys) */\n    keys(): Promise<string[]>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CacheStorage/match) */\n    match(request: RequestInfo | URL, options?: MultiCacheQueryOptions): Promise<Response | undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CacheStorage/open) */\n    open(cacheName: string): Promise<Cache>;\n}\n\ndeclare var CacheStorage: {\n    prototype: CacheStorage;\n    new(): CacheStorage;\n};\n\ninterface CanvasCompositing {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/globalAlpha) */\n    globalAlpha: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation) */\n    globalCompositeOperation: GlobalCompositeOperation;\n}\n\ninterface CanvasDrawImage {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/drawImage) */\n    drawImage(image: CanvasImageSource, dx: number, dy: number): void;\n    drawImage(image: CanvasImageSource, dx: number, dy: number, dw: number, dh: number): void;\n    drawImage(image: CanvasImageSource, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number): void;\n}\n\ninterface CanvasDrawPath {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/beginPath) */\n    beginPath(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/clip) */\n    clip(fillRule?: CanvasFillRule): void;\n    clip(path: Path2D, fillRule?: CanvasFillRule): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/fill) */\n    fill(fillRule?: CanvasFillRule): void;\n    fill(path: Path2D, fillRule?: CanvasFillRule): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/isPointInPath) */\n    isPointInPath(x: number, y: number, fillRule?: CanvasFillRule): boolean;\n    isPointInPath(path: Path2D, x: number, y: number, fillRule?: CanvasFillRule): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/isPointInStroke) */\n    isPointInStroke(x: number, y: number): boolean;\n    isPointInStroke(path: Path2D, x: number, y: number): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/stroke) */\n    stroke(): void;\n    stroke(path: Path2D): void;\n}\n\ninterface CanvasFillStrokeStyles {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/fillStyle) */\n    fillStyle: string | CanvasGradient | CanvasPattern;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/strokeStyle) */\n    strokeStyle: string | CanvasGradient | CanvasPattern;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/createConicGradient) */\n    createConicGradient(startAngle: number, x: number, y: number): CanvasGradient;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/createLinearGradient) */\n    createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/createPattern) */\n    createPattern(image: CanvasImageSource, repetition: string | null): CanvasPattern | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/createRadialGradient) */\n    createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient;\n}\n\ninterface CanvasFilters {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/filter) */\n    filter: string;\n}\n\n/**\n * An opaque object describing a gradient. It is returned by the methods CanvasRenderingContext2D.createLinearGradient() or CanvasRenderingContext2D.createRadialGradient().\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasGradient)\n */\ninterface CanvasGradient {\n    /**\n     * Adds a color stop with the given color to the gradient at the given offset. 0.0 is the offset at one end of the gradient, 1.0 is the offset at the other end.\n     *\n     * Throws an \"IndexSizeError\" DOMException if the offset is out of range. Throws a \"SyntaxError\" DOMException if the color cannot be parsed.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasGradient/addColorStop)\n     */\n    addColorStop(offset: number, color: string): void;\n}\n\ndeclare var CanvasGradient: {\n    prototype: CanvasGradient;\n    new(): CanvasGradient;\n};\n\ninterface CanvasImageData {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/createImageData) */\n    createImageData(sw: number, sh: number, settings?: ImageDataSettings): ImageData;\n    createImageData(imagedata: ImageData): ImageData;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/getImageData) */\n    getImageData(sx: number, sy: number, sw: number, sh: number, settings?: ImageDataSettings): ImageData;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/putImageData) */\n    putImageData(imagedata: ImageData, dx: number, dy: number): void;\n    putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): void;\n}\n\ninterface CanvasImageSmoothing {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled) */\n    imageSmoothingEnabled: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/imageSmoothingQuality) */\n    imageSmoothingQuality: ImageSmoothingQuality;\n}\n\ninterface CanvasPath {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/arc) */\n    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, counterclockwise?: boolean): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/arcTo) */\n    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo) */\n    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/closePath) */\n    closePath(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/ellipse) */\n    ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, counterclockwise?: boolean): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/lineTo) */\n    lineTo(x: number, y: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/moveTo) */\n    moveTo(x: number, y: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/quadraticCurveTo) */\n    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/rect) */\n    rect(x: number, y: number, w: number, h: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/roundRect) */\n    roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[]): void;\n}\n\ninterface CanvasPathDrawingStyles {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/lineCap) */\n    lineCap: CanvasLineCap;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/lineDashOffset) */\n    lineDashOffset: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/lineJoin) */\n    lineJoin: CanvasLineJoin;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/lineWidth) */\n    lineWidth: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/miterLimit) */\n    miterLimit: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/getLineDash) */\n    getLineDash(): number[];\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/setLineDash) */\n    setLineDash(segments: number[]): void;\n}\n\n/**\n * An opaque object describing a pattern, based on an image, a canvas, or a video, created by the CanvasRenderingContext2D.createPattern() method.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasPattern)\n */\ninterface CanvasPattern {\n    /**\n     * Sets the transformation matrix that will be used when rendering the pattern during a fill or stroke painting operation.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasPattern/setTransform)\n     */\n    setTransform(transform?: DOMMatrix2DInit): void;\n}\n\ndeclare var CanvasPattern: {\n    prototype: CanvasPattern;\n    new(): CanvasPattern;\n};\n\ninterface CanvasRect {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/clearRect) */\n    clearRect(x: number, y: number, w: number, h: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/fillRect) */\n    fillRect(x: number, y: number, w: number, h: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/strokeRect) */\n    strokeRect(x: number, y: number, w: number, h: number): void;\n}\n\ninterface CanvasShadowStyles {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/shadowBlur) */\n    shadowBlur: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/shadowColor) */\n    shadowColor: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/shadowOffsetX) */\n    shadowOffsetX: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/shadowOffsetY) */\n    shadowOffsetY: number;\n}\n\ninterface CanvasState {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/isContextLost) */\n    isContextLost(): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/reset) */\n    reset(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/restore) */\n    restore(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/save) */\n    save(): void;\n}\n\ninterface CanvasText {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/fillText) */\n    fillText(text: string, x: number, y: number, maxWidth?: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/measureText) */\n    measureText(text: string): TextMetrics;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/strokeText) */\n    strokeText(text: string, x: number, y: number, maxWidth?: number): void;\n}\n\ninterface CanvasTextDrawingStyles {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/direction) */\n    direction: CanvasDirection;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/font) */\n    font: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/fontKerning) */\n    fontKerning: CanvasFontKerning;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/fontStretch) */\n    fontStretch: CanvasFontStretch;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/fontVariantCaps) */\n    fontVariantCaps: CanvasFontVariantCaps;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/letterSpacing) */\n    letterSpacing: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/textAlign) */\n    textAlign: CanvasTextAlign;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/textBaseline) */\n    textBaseline: CanvasTextBaseline;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/textRendering) */\n    textRendering: CanvasTextRendering;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/wordSpacing) */\n    wordSpacing: string;\n}\n\ninterface CanvasTransform {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/getTransform) */\n    getTransform(): DOMMatrix;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/resetTransform) */\n    resetTransform(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/rotate) */\n    rotate(angle: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/scale) */\n    scale(x: number, y: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/setTransform) */\n    setTransform(a: number, b: number, c: number, d: number, e: number, f: number): void;\n    setTransform(transform?: DOMMatrix2DInit): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/transform) */\n    transform(a: number, b: number, c: number, d: number, e: number, f: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/translate) */\n    translate(x: number, y: number): void;\n}\n\n/**\n * The Client\xA0interface represents an executable context such as a Worker, or a SharedWorker. Window clients are represented by the more-specific\xA0WindowClient. You can get\xA0Client/WindowClient\xA0objects from methods such as Clients.matchAll() and\xA0Clients.get().\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Client)\n */\ninterface Client {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Client/frameType) */\n    readonly frameType: FrameType;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Client/id) */\n    readonly id: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Client/type) */\n    readonly type: ClientTypes;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Client/url) */\n    readonly url: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Client/postMessage) */\n    postMessage(message: any, transfer: Transferable[]): void;\n    postMessage(message: any, options?: StructuredSerializeOptions): void;\n}\n\ndeclare var Client: {\n    prototype: Client;\n    new(): Client;\n};\n\n/**\n * Provides access to\xA0Client\xA0objects. Access it\xA0via self.clients\xA0within a\xA0service worker.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Clients)\n */\ninterface Clients {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Clients/claim) */\n    claim(): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Clients/get) */\n    get(id: string): Promise<Client | undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Clients/matchAll) */\n    matchAll<T extends ClientQueryOptions>(options?: T): Promise<ReadonlyArray<T[\"type\"] extends \"window\" ? WindowClient : Client>>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Clients/openWindow) */\n    openWindow(url: string | URL): Promise<WindowClient | null>;\n}\n\ndeclare var Clients: {\n    prototype: Clients;\n    new(): Clients;\n};\n\n/**\n * A CloseEvent is sent to clients using WebSockets when the connection is closed. This is delivered to the listener indicated by the WebSocket object's onclose attribute.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CloseEvent)\n */\ninterface CloseEvent extends Event {\n    /**\n     * Returns the WebSocket connection close code provided by the server.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CloseEvent/code)\n     */\n    readonly code: number;\n    /**\n     * Returns the WebSocket connection close reason provided by the server.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CloseEvent/reason)\n     */\n    readonly reason: string;\n    /**\n     * Returns true if the connection closed cleanly; false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CloseEvent/wasClean)\n     */\n    readonly wasClean: boolean;\n}\n\ndeclare var CloseEvent: {\n    prototype: CloseEvent;\n    new(type: string, eventInitDict?: CloseEventInit): CloseEvent;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CompressionStream) */\ninterface CompressionStream extends GenericTransformStream {\n}\n\ndeclare var CompressionStream: {\n    prototype: CompressionStream;\n    new(format: CompressionFormat): CompressionStream;\n};\n\n/**\n * This Streams API interface provides\xA0a built-in byte length queuing strategy that can be used when constructing streams.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CountQueuingStrategy)\n */\ninterface CountQueuingStrategy extends QueuingStrategy {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CountQueuingStrategy/highWaterMark) */\n    readonly highWaterMark: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CountQueuingStrategy/size) */\n    readonly size: QueuingStrategySize;\n}\n\ndeclare var CountQueuingStrategy: {\n    prototype: CountQueuingStrategy;\n    new(init: QueuingStrategyInit): CountQueuingStrategy;\n};\n\n/**\n * Basic cryptography features available in the current context. It allows access to a cryptographically strong random number generator and to cryptographic primitives.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Crypto)\n */\ninterface Crypto {\n    /**\n     * Available only in secure contexts.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Crypto/subtle)\n     */\n    readonly subtle: SubtleCrypto;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Crypto/getRandomValues) */\n    getRandomValues<T extends ArrayBufferView | null>(array: T): T;\n    /**\n     * Available only in secure contexts.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Crypto/randomUUID)\n     */\n    randomUUID(): `${string}-${string}-${string}-${string}-${string}`;\n}\n\ndeclare var Crypto: {\n    prototype: Crypto;\n    new(): Crypto;\n};\n\n/**\n * The CryptoKey dictionary of the Web Crypto API represents a cryptographic key.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CryptoKey)\n */\ninterface CryptoKey {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CryptoKey/algorithm) */\n    readonly algorithm: KeyAlgorithm;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CryptoKey/extractable) */\n    readonly extractable: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CryptoKey/type) */\n    readonly type: KeyType;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CryptoKey/usages) */\n    readonly usages: KeyUsage[];\n}\n\ndeclare var CryptoKey: {\n    prototype: CryptoKey;\n    new(): CryptoKey;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CustomEvent) */\ninterface CustomEvent<T = any> extends Event {\n    /**\n     * Returns any custom data event was created with. Typically used for synthetic events.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CustomEvent/detail)\n     */\n    readonly detail: T;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CustomEvent/initCustomEvent)\n     */\n    initCustomEvent(type: string, bubbles?: boolean, cancelable?: boolean, detail?: T): void;\n}\n\ndeclare var CustomEvent: {\n    prototype: CustomEvent;\n    new<T>(type: string, eventInitDict?: CustomEventInit<T>): CustomEvent<T>;\n};\n\n/**\n * An abnormal event (called an exception) which occurs as a result of calling a method or accessing a property of a web API.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException)\n */\ninterface DOMException extends Error {\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/code)\n     */\n    readonly code: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/message) */\n    readonly message: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/name) */\n    readonly name: string;\n    readonly INDEX_SIZE_ERR: 1;\n    readonly DOMSTRING_SIZE_ERR: 2;\n    readonly HIERARCHY_REQUEST_ERR: 3;\n    readonly WRONG_DOCUMENT_ERR: 4;\n    readonly INVALID_CHARACTER_ERR: 5;\n    readonly NO_DATA_ALLOWED_ERR: 6;\n    readonly NO_MODIFICATION_ALLOWED_ERR: 7;\n    readonly NOT_FOUND_ERR: 8;\n    readonly NOT_SUPPORTED_ERR: 9;\n    readonly INUSE_ATTRIBUTE_ERR: 10;\n    readonly INVALID_STATE_ERR: 11;\n    readonly SYNTAX_ERR: 12;\n    readonly INVALID_MODIFICATION_ERR: 13;\n    readonly NAMESPACE_ERR: 14;\n    readonly INVALID_ACCESS_ERR: 15;\n    readonly VALIDATION_ERR: 16;\n    readonly TYPE_MISMATCH_ERR: 17;\n    readonly SECURITY_ERR: 18;\n    readonly NETWORK_ERR: 19;\n    readonly ABORT_ERR: 20;\n    readonly URL_MISMATCH_ERR: 21;\n    readonly QUOTA_EXCEEDED_ERR: 22;\n    readonly TIMEOUT_ERR: 23;\n    readonly INVALID_NODE_TYPE_ERR: 24;\n    readonly DATA_CLONE_ERR: 25;\n}\n\ndeclare var DOMException: {\n    prototype: DOMException;\n    new(message?: string, name?: string): DOMException;\n    readonly INDEX_SIZE_ERR: 1;\n    readonly DOMSTRING_SIZE_ERR: 2;\n    readonly HIERARCHY_REQUEST_ERR: 3;\n    readonly WRONG_DOCUMENT_ERR: 4;\n    readonly INVALID_CHARACTER_ERR: 5;\n    readonly NO_DATA_ALLOWED_ERR: 6;\n    readonly NO_MODIFICATION_ALLOWED_ERR: 7;\n    readonly NOT_FOUND_ERR: 8;\n    readonly NOT_SUPPORTED_ERR: 9;\n    readonly INUSE_ATTRIBUTE_ERR: 10;\n    readonly INVALID_STATE_ERR: 11;\n    readonly SYNTAX_ERR: 12;\n    readonly INVALID_MODIFICATION_ERR: 13;\n    readonly NAMESPACE_ERR: 14;\n    readonly INVALID_ACCESS_ERR: 15;\n    readonly VALIDATION_ERR: 16;\n    readonly TYPE_MISMATCH_ERR: 17;\n    readonly SECURITY_ERR: 18;\n    readonly NETWORK_ERR: 19;\n    readonly ABORT_ERR: 20;\n    readonly URL_MISMATCH_ERR: 21;\n    readonly QUOTA_EXCEEDED_ERR: 22;\n    readonly TIMEOUT_ERR: 23;\n    readonly INVALID_NODE_TYPE_ERR: 24;\n    readonly DATA_CLONE_ERR: 25;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMMatrix) */\ninterface DOMMatrix extends DOMMatrixReadOnly {\n    a: number;\n    b: number;\n    c: number;\n    d: number;\n    e: number;\n    f: number;\n    m11: number;\n    m12: number;\n    m13: number;\n    m14: number;\n    m21: number;\n    m22: number;\n    m23: number;\n    m24: number;\n    m31: number;\n    m32: number;\n    m33: number;\n    m34: number;\n    m41: number;\n    m42: number;\n    m43: number;\n    m44: number;\n    invertSelf(): DOMMatrix;\n    multiplySelf(other?: DOMMatrixInit): DOMMatrix;\n    preMultiplySelf(other?: DOMMatrixInit): DOMMatrix;\n    rotateAxisAngleSelf(x?: number, y?: number, z?: number, angle?: number): DOMMatrix;\n    rotateFromVectorSelf(x?: number, y?: number): DOMMatrix;\n    rotateSelf(rotX?: number, rotY?: number, rotZ?: number): DOMMatrix;\n    scale3dSelf(scale?: number, originX?: number, originY?: number, originZ?: number): DOMMatrix;\n    scaleSelf(scaleX?: number, scaleY?: number, scaleZ?: number, originX?: number, originY?: number, originZ?: number): DOMMatrix;\n    skewXSelf(sx?: number): DOMMatrix;\n    skewYSelf(sy?: number): DOMMatrix;\n    translateSelf(tx?: number, ty?: number, tz?: number): DOMMatrix;\n}\n\ndeclare var DOMMatrix: {\n    prototype: DOMMatrix;\n    new(init?: string | number[]): DOMMatrix;\n    fromFloat32Array(array32: Float32Array): DOMMatrix;\n    fromFloat64Array(array64: Float64Array): DOMMatrix;\n    fromMatrix(other?: DOMMatrixInit): DOMMatrix;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMMatrixReadOnly) */\ninterface DOMMatrixReadOnly {\n    readonly a: number;\n    readonly b: number;\n    readonly c: number;\n    readonly d: number;\n    readonly e: number;\n    readonly f: number;\n    readonly is2D: boolean;\n    readonly isIdentity: boolean;\n    readonly m11: number;\n    readonly m12: number;\n    readonly m13: number;\n    readonly m14: number;\n    readonly m21: number;\n    readonly m22: number;\n    readonly m23: number;\n    readonly m24: number;\n    readonly m31: number;\n    readonly m32: number;\n    readonly m33: number;\n    readonly m34: number;\n    readonly m41: number;\n    readonly m42: number;\n    readonly m43: number;\n    readonly m44: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMMatrixReadOnly/flipX) */\n    flipX(): DOMMatrix;\n    flipY(): DOMMatrix;\n    inverse(): DOMMatrix;\n    multiply(other?: DOMMatrixInit): DOMMatrix;\n    rotate(rotX?: number, rotY?: number, rotZ?: number): DOMMatrix;\n    rotateAxisAngle(x?: number, y?: number, z?: number, angle?: number): DOMMatrix;\n    rotateFromVector(x?: number, y?: number): DOMMatrix;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMMatrixReadOnly/scale) */\n    scale(scaleX?: number, scaleY?: number, scaleZ?: number, originX?: number, originY?: number, originZ?: number): DOMMatrix;\n    scale3d(scale?: number, originX?: number, originY?: number, originZ?: number): DOMMatrix;\n    /** @deprecated */\n    scaleNonUniform(scaleX?: number, scaleY?: number): DOMMatrix;\n    skewX(sx?: number): DOMMatrix;\n    skewY(sy?: number): DOMMatrix;\n    toFloat32Array(): Float32Array;\n    toFloat64Array(): Float64Array;\n    toJSON(): any;\n    transformPoint(point?: DOMPointInit): DOMPoint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMMatrixReadOnly/translate) */\n    translate(tx?: number, ty?: number, tz?: number): DOMMatrix;\n}\n\ndeclare var DOMMatrixReadOnly: {\n    prototype: DOMMatrixReadOnly;\n    new(init?: string | number[]): DOMMatrixReadOnly;\n    fromFloat32Array(array32: Float32Array): DOMMatrixReadOnly;\n    fromFloat64Array(array64: Float64Array): DOMMatrixReadOnly;\n    fromMatrix(other?: DOMMatrixInit): DOMMatrixReadOnly;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPoint) */\ninterface DOMPoint extends DOMPointReadOnly {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPoint/w) */\n    w: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPoint/x) */\n    x: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPoint/y) */\n    y: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPoint/z) */\n    z: number;\n}\n\ndeclare var DOMPoint: {\n    prototype: DOMPoint;\n    new(x?: number, y?: number, z?: number, w?: number): DOMPoint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPoint/fromPoint_static) */\n    fromPoint(other?: DOMPointInit): DOMPoint;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPointReadOnly) */\ninterface DOMPointReadOnly {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPointReadOnly/w) */\n    readonly w: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPointReadOnly/x) */\n    readonly x: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPointReadOnly/y) */\n    readonly y: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPointReadOnly/z) */\n    readonly z: number;\n    matrixTransform(matrix?: DOMMatrixInit): DOMPoint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPointReadOnly/toJSON) */\n    toJSON(): any;\n}\n\ndeclare var DOMPointReadOnly: {\n    prototype: DOMPointReadOnly;\n    new(x?: number, y?: number, z?: number, w?: number): DOMPointReadOnly;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMPointReadOnly/fromPoint_static) */\n    fromPoint(other?: DOMPointInit): DOMPointReadOnly;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMQuad) */\ninterface DOMQuad {\n    readonly p1: DOMPoint;\n    readonly p2: DOMPoint;\n    readonly p3: DOMPoint;\n    readonly p4: DOMPoint;\n    getBounds(): DOMRect;\n    toJSON(): any;\n}\n\ndeclare var DOMQuad: {\n    prototype: DOMQuad;\n    new(p1?: DOMPointInit, p2?: DOMPointInit, p3?: DOMPointInit, p4?: DOMPointInit): DOMQuad;\n    fromQuad(other?: DOMQuadInit): DOMQuad;\n    fromRect(other?: DOMRectInit): DOMQuad;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRect) */\ninterface DOMRect extends DOMRectReadOnly {\n    height: number;\n    width: number;\n    x: number;\n    y: number;\n}\n\ndeclare var DOMRect: {\n    prototype: DOMRect;\n    new(x?: number, y?: number, width?: number, height?: number): DOMRect;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRect/fromRect_static) */\n    fromRect(other?: DOMRectInit): DOMRect;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly) */\ninterface DOMRectReadOnly {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/bottom) */\n    readonly bottom: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/height) */\n    readonly height: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/left) */\n    readonly left: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/right) */\n    readonly right: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/top) */\n    readonly top: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/width) */\n    readonly width: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/x) */\n    readonly x: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/y) */\n    readonly y: number;\n    toJSON(): any;\n}\n\ndeclare var DOMRectReadOnly: {\n    prototype: DOMRectReadOnly;\n    new(x?: number, y?: number, width?: number, height?: number): DOMRectReadOnly;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMRectReadOnly/fromRect_static) */\n    fromRect(other?: DOMRectInit): DOMRectReadOnly;\n};\n\n/**\n * A type returned by some APIs which contains a list of DOMString (strings).\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMStringList)\n */\ninterface DOMStringList {\n    /**\n     * Returns the number of strings in strings.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMStringList/length)\n     */\n    readonly length: number;\n    /**\n     * Returns true if strings contains string, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMStringList/contains)\n     */\n    contains(string: string): boolean;\n    /**\n     * Returns the string with index index from strings.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMStringList/item)\n     */\n    item(index: number): string | null;\n    [index: number]: string;\n}\n\ndeclare var DOMStringList: {\n    prototype: DOMStringList;\n    new(): DOMStringList;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DecompressionStream) */\ninterface DecompressionStream extends GenericTransformStream {\n}\n\ndeclare var DecompressionStream: {\n    prototype: DecompressionStream;\n    new(format: CompressionFormat): DecompressionStream;\n};\n\ninterface DedicatedWorkerGlobalScopeEventMap extends WorkerGlobalScopeEventMap {\n    \"message\": MessageEvent;\n    \"messageerror\": MessageEvent;\n    \"rtctransform\": Event;\n}\n\n/**\n * (the Worker global scope) is accessible through the self keyword. Some additional global functions, namespaces objects, and constructors, not typically associated with the worker global scope, but available on it, are listed in the JavaScript Reference. See also: Functions available to workers.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope)\n */\ninterface DedicatedWorkerGlobalScope extends WorkerGlobalScope, AnimationFrameProvider {\n    /**\n     * Returns dedicatedWorkerGlobal's name, i.e. the value given to the Worker constructor. Primarily useful for debugging.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/name)\n     */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/message_event) */\n    onmessage: ((this: DedicatedWorkerGlobalScope, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/messageerror_event) */\n    onmessageerror: ((this: DedicatedWorkerGlobalScope, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/rtctransform_event) */\n    onrtctransform: ((this: DedicatedWorkerGlobalScope, ev: Event) => any) | null;\n    /**\n     * Aborts dedicatedWorkerGlobal.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/close)\n     */\n    close(): void;\n    /**\n     * Clones message and transmits it to the Worker object associated with dedicatedWorkerGlobal. transfer can be passed as a list of objects that are to be transferred rather than cloned.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/postMessage)\n     */\n    postMessage(message: any, transfer: Transferable[]): void;\n    postMessage(message: any, options?: StructuredSerializeOptions): void;\n    addEventListener<K extends keyof DedicatedWorkerGlobalScopeEventMap>(type: K, listener: (this: DedicatedWorkerGlobalScope, ev: DedicatedWorkerGlobalScopeEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof DedicatedWorkerGlobalScopeEventMap>(type: K, listener: (this: DedicatedWorkerGlobalScope, ev: DedicatedWorkerGlobalScopeEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var DedicatedWorkerGlobalScope: {\n    prototype: DedicatedWorkerGlobalScope;\n    new(): DedicatedWorkerGlobalScope;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_blend_minmax) */\ninterface EXT_blend_minmax {\n    readonly MIN_EXT: 0x8007;\n    readonly MAX_EXT: 0x8008;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_color_buffer_float) */\ninterface EXT_color_buffer_float {\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_color_buffer_half_float) */\ninterface EXT_color_buffer_half_float {\n    readonly RGBA16F_EXT: 0x881A;\n    readonly RGB16F_EXT: 0x881B;\n    readonly FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT: 0x8211;\n    readonly UNSIGNED_NORMALIZED_EXT: 0x8C17;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_float_blend) */\ninterface EXT_float_blend {\n}\n\n/**\n * The EXT_frag_depth extension is part of the WebGL API and enables to set a depth value of a fragment from within the fragment shader.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_frag_depth)\n */\ninterface EXT_frag_depth {\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_sRGB) */\ninterface EXT_sRGB {\n    readonly SRGB_EXT: 0x8C40;\n    readonly SRGB_ALPHA_EXT: 0x8C42;\n    readonly SRGB8_ALPHA8_EXT: 0x8C43;\n    readonly FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: 0x8210;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_shader_texture_lod) */\ninterface EXT_shader_texture_lod {\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_texture_compression_bptc) */\ninterface EXT_texture_compression_bptc {\n    readonly COMPRESSED_RGBA_BPTC_UNORM_EXT: 0x8E8C;\n    readonly COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT: 0x8E8D;\n    readonly COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT: 0x8E8E;\n    readonly COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT: 0x8E8F;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_texture_compression_rgtc) */\ninterface EXT_texture_compression_rgtc {\n    readonly COMPRESSED_RED_RGTC1_EXT: 0x8DBB;\n    readonly COMPRESSED_SIGNED_RED_RGTC1_EXT: 0x8DBC;\n    readonly COMPRESSED_RED_GREEN_RGTC2_EXT: 0x8DBD;\n    readonly COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT: 0x8DBE;\n}\n\n/**\n * The EXT_texture_filter_anisotropic extension is part of the WebGL API and exposes two constants for anisotropic filtering (AF).\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_texture_filter_anisotropic)\n */\ninterface EXT_texture_filter_anisotropic {\n    readonly TEXTURE_MAX_ANISOTROPY_EXT: 0x84FE;\n    readonly MAX_TEXTURE_MAX_ANISOTROPY_EXT: 0x84FF;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EXT_texture_norm16) */\ninterface EXT_texture_norm16 {\n    readonly R16_EXT: 0x822A;\n    readonly RG16_EXT: 0x822C;\n    readonly RGB16_EXT: 0x8054;\n    readonly RGBA16_EXT: 0x805B;\n    readonly R16_SNORM_EXT: 0x8F98;\n    readonly RG16_SNORM_EXT: 0x8F99;\n    readonly RGB16_SNORM_EXT: 0x8F9A;\n    readonly RGBA16_SNORM_EXT: 0x8F9B;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EncodedVideoChunk) */\ninterface EncodedVideoChunk {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EncodedVideoChunk/byteLength) */\n    readonly byteLength: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EncodedVideoChunk/duration) */\n    readonly duration: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EncodedVideoChunk/timestamp) */\n    readonly timestamp: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EncodedVideoChunk/type) */\n    readonly type: EncodedVideoChunkType;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EncodedVideoChunk/copyTo) */\n    copyTo(destination: AllowSharedBufferSource): void;\n}\n\ndeclare var EncodedVideoChunk: {\n    prototype: EncodedVideoChunk;\n    new(init: EncodedVideoChunkInit): EncodedVideoChunk;\n};\n\n/**\n * Events providing information related to errors in scripts or in files.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ErrorEvent)\n */\ninterface ErrorEvent extends Event {\n    readonly colno: number;\n    readonly error: any;\n    readonly filename: string;\n    readonly lineno: number;\n    readonly message: string;\n}\n\ndeclare var ErrorEvent: {\n    prototype: ErrorEvent;\n    new(type: string, eventInitDict?: ErrorEventInit): ErrorEvent;\n};\n\n/**\n * An event which takes place in the DOM.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event)\n */\ninterface Event {\n    /**\n     * Returns true or false depending on how event was initialized. True if event goes through its target's ancestors in reverse tree order, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/bubbles)\n     */\n    readonly bubbles: boolean;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/cancelBubble)\n     */\n    cancelBubble: boolean;\n    /**\n     * Returns true or false depending on how event was initialized. Its return value does not always carry meaning, but true can indicate that part of the operation during which event was dispatched, can be canceled by invoking the preventDefault() method.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/cancelable)\n     */\n    readonly cancelable: boolean;\n    /**\n     * Returns true or false depending on how event was initialized. True if event invokes listeners past a ShadowRoot node that is the root of its target, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/composed)\n     */\n    readonly composed: boolean;\n    /**\n     * Returns the object whose event listener's callback is currently being invoked.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/currentTarget)\n     */\n    readonly currentTarget: EventTarget | null;\n    /**\n     * Returns true if preventDefault() was invoked successfully to indicate cancelation, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/defaultPrevented)\n     */\n    readonly defaultPrevented: boolean;\n    /**\n     * Returns the event's phase, which is one of NONE, CAPTURING_PHASE, AT_TARGET, and BUBBLING_PHASE.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/eventPhase)\n     */\n    readonly eventPhase: number;\n    /**\n     * Returns true if event was dispatched by the user agent, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/isTrusted)\n     */\n    readonly isTrusted: boolean;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/returnValue)\n     */\n    returnValue: boolean;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/srcElement)\n     */\n    readonly srcElement: EventTarget | null;\n    /**\n     * Returns the object to which event is dispatched (its target).\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/target)\n     */\n    readonly target: EventTarget | null;\n    /**\n     * Returns the event's timestamp as the number of milliseconds measured relative to the time origin.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/timeStamp)\n     */\n    readonly timeStamp: DOMHighResTimeStamp;\n    /**\n     * Returns the type of event, e.g. \"click\", \"hashchange\", or \"submit\".\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/type)\n     */\n    readonly type: string;\n    /**\n     * Returns the invocation target objects of event's path (objects on which listeners will be invoked), except for any nodes in shadow trees of which the shadow root's mode is \"closed\" that are not reachable from event's currentTarget.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/composedPath)\n     */\n    composedPath(): EventTarget[];\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/initEvent)\n     */\n    initEvent(type: string, bubbles?: boolean, cancelable?: boolean): void;\n    /**\n     * If invoked when the cancelable attribute value is true, and while executing a listener for the event with passive set to false, signals to the operation that caused event to be dispatched that it needs to be canceled.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/preventDefault)\n     */\n    preventDefault(): void;\n    /**\n     * Invoking this method prevents event from reaching any registered event listeners after the current one finishes running and, when dispatched in a tree, also prevents event from reaching any other objects.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/stopImmediatePropagation)\n     */\n    stopImmediatePropagation(): void;\n    /**\n     * When dispatched in a tree, invoking this method prevents event from reaching any objects other than the current object.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Event/stopPropagation)\n     */\n    stopPropagation(): void;\n    readonly NONE: 0;\n    readonly CAPTURING_PHASE: 1;\n    readonly AT_TARGET: 2;\n    readonly BUBBLING_PHASE: 3;\n}\n\ndeclare var Event: {\n    prototype: Event;\n    new(type: string, eventInitDict?: EventInit): Event;\n    readonly NONE: 0;\n    readonly CAPTURING_PHASE: 1;\n    readonly AT_TARGET: 2;\n    readonly BUBBLING_PHASE: 3;\n};\n\ninterface EventListener {\n    (evt: Event): void;\n}\n\ninterface EventListenerObject {\n    handleEvent(object: Event): void;\n}\n\ninterface EventSourceEventMap {\n    \"error\": Event;\n    \"message\": MessageEvent;\n    \"open\": Event;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource) */\ninterface EventSource extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/error_event) */\n    onerror: ((this: EventSource, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/message_event) */\n    onmessage: ((this: EventSource, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/open_event) */\n    onopen: ((this: EventSource, ev: Event) => any) | null;\n    /**\n     * Returns the state of this EventSource object's connection. It can have the values described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/readyState)\n     */\n    readonly readyState: number;\n    /**\n     * Returns the URL providing the event stream.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/url)\n     */\n    readonly url: string;\n    /**\n     * Returns true if the credentials mode for connection requests to the URL providing the event stream is set to \"include\", and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/withCredentials)\n     */\n    readonly withCredentials: boolean;\n    /**\n     * Aborts any instances of the fetch algorithm started for this EventSource object, and sets the readyState attribute to CLOSED.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/close)\n     */\n    close(): void;\n    readonly CONNECTING: 0;\n    readonly OPEN: 1;\n    readonly CLOSED: 2;\n    addEventListener<K extends keyof EventSourceEventMap>(type: K, listener: (this: EventSource, ev: EventSourceEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: (this: EventSource, event: MessageEvent) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof EventSourceEventMap>(type: K, listener: (this: EventSource, ev: EventSourceEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: (this: EventSource, event: MessageEvent) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var EventSource: {\n    prototype: EventSource;\n    new(url: string | URL, eventSourceInitDict?: EventSourceInit): EventSource;\n    readonly CONNECTING: 0;\n    readonly OPEN: 1;\n    readonly CLOSED: 2;\n};\n\n/**\n * EventTarget is a DOM interface implemented by objects that can receive events and may have listeners for them.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventTarget)\n */\ninterface EventTarget {\n    /**\n     * Appends an event listener for events whose type attribute value is type. The callback argument sets the callback that will be invoked when the event is dispatched.\n     *\n     * The options argument sets listener-specific options. For compatibility this can be a boolean, in which case the method behaves exactly as if the value was specified as options's capture.\n     *\n     * When set to true, options's capture prevents callback from being invoked when the event's eventPhase attribute value is BUBBLING_PHASE. When false (or not present), callback will not be invoked when event's eventPhase attribute value is CAPTURING_PHASE. Either way, callback will be invoked if event's eventPhase attribute value is AT_TARGET.\n     *\n     * When set to true, options's passive indicates that the callback will not cancel the event by invoking preventDefault(). This is used to enable performance optimizations described in § 2.8 Observing event listeners.\n     *\n     * When set to true, options's once indicates that the callback will only be invoked once after which the event listener will be removed.\n     *\n     * If an AbortSignal is passed for options's signal, then the event listener will be removed when signal is aborted.\n     *\n     * The event listener is appended to target's event listener list and is not appended if it has the same type, callback, and capture.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventTarget/addEventListener)\n     */\n    addEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions | boolean): void;\n    /**\n     * Dispatches a synthetic event event to target and returns true if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventTarget/dispatchEvent)\n     */\n    dispatchEvent(event: Event): boolean;\n    /**\n     * Removes the event listener in target's event listener list with the same type, callback, and options.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventTarget/removeEventListener)\n     */\n    removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;\n}\n\ndeclare var EventTarget: {\n    prototype: EventTarget;\n    new(): EventTarget;\n};\n\n/**\n * Extends the lifetime of the install and activate events dispatched on the global scope as part of the service worker lifecycle. This ensures that any functional events (like FetchEvent) are not dispatched until it upgrades database schemas and deletes the outdated cache entries.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ExtendableEvent)\n */\ninterface ExtendableEvent extends Event {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ExtendableEvent/waitUntil) */\n    waitUntil(f: Promise<any>): void;\n}\n\ndeclare var ExtendableEvent: {\n    prototype: ExtendableEvent;\n    new(type: string, eventInitDict?: ExtendableEventInit): ExtendableEvent;\n};\n\n/**\n * This ServiceWorker API interface represents the event object of a message event fired on a service worker (when a channel message is received on the ServiceWorkerGlobalScope from another context) — extends the lifetime of such events.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ExtendableMessageEvent)\n */\ninterface ExtendableMessageEvent extends ExtendableEvent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ExtendableMessageEvent/data) */\n    readonly data: any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ExtendableMessageEvent/lastEventId) */\n    readonly lastEventId: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ExtendableMessageEvent/origin) */\n    readonly origin: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ExtendableMessageEvent/ports) */\n    readonly ports: ReadonlyArray<MessagePort>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ExtendableMessageEvent/source) */\n    readonly source: Client | ServiceWorker | MessagePort | null;\n}\n\ndeclare var ExtendableMessageEvent: {\n    prototype: ExtendableMessageEvent;\n    new(type: string, eventInitDict?: ExtendableMessageEventInit): ExtendableMessageEvent;\n};\n\n/**\n * This is the event type for fetch\xA0events dispatched on the\xA0service worker global scope. It contains information about the fetch, including the\xA0request and how the receiver will treat the response. It provides the event.respondWith() method, which allows us to provide a response to this fetch.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FetchEvent)\n */\ninterface FetchEvent extends ExtendableEvent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FetchEvent/clientId) */\n    readonly clientId: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FetchEvent/handled) */\n    readonly handled: Promise<undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FetchEvent/preloadResponse) */\n    readonly preloadResponse: Promise<any>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FetchEvent/request) */\n    readonly request: Request;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FetchEvent/resultingClientId) */\n    readonly resultingClientId: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FetchEvent/respondWith) */\n    respondWith(r: Response | PromiseLike<Response>): void;\n}\n\ndeclare var FetchEvent: {\n    prototype: FetchEvent;\n    new(type: string, eventInitDict: FetchEventInit): FetchEvent;\n};\n\n/**\n * Provides information about files and allows JavaScript in a web page to access their content.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/File)\n */\ninterface File extends Blob {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/File/lastModified) */\n    readonly lastModified: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/File/name) */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/File/webkitRelativePath) */\n    readonly webkitRelativePath: string;\n}\n\ndeclare var File: {\n    prototype: File;\n    new(fileBits: BlobPart[], fileName: string, options?: FilePropertyBag): File;\n};\n\n/**\n * An object of this type is returned by the files property of the HTML <input> element; this lets you access the list of files selected with the <input type=\"file\"> element. It's also used for a list of files dropped into web content when using the drag and drop API; see the DataTransfer object for details on this usage.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileList)\n */\ninterface FileList {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileList/length) */\n    readonly length: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileList/item) */\n    item(index: number): File | null;\n    [index: number]: File;\n}\n\ndeclare var FileList: {\n    prototype: FileList;\n    new(): FileList;\n};\n\ninterface FileReaderEventMap {\n    \"abort\": ProgressEvent<FileReader>;\n    \"error\": ProgressEvent<FileReader>;\n    \"load\": ProgressEvent<FileReader>;\n    \"loadend\": ProgressEvent<FileReader>;\n    \"loadstart\": ProgressEvent<FileReader>;\n    \"progress\": ProgressEvent<FileReader>;\n}\n\n/**\n * Lets web applications asynchronously read the contents of files (or raw data buffers) stored on the user's computer, using File or Blob objects to specify the file or data to read.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader)\n */\ninterface FileReader extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/error) */\n    readonly error: DOMException | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/abort_event) */\n    onabort: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/error_event) */\n    onerror: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/load_event) */\n    onload: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/loadend_event) */\n    onloadend: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/loadstart_event) */\n    onloadstart: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/progress_event) */\n    onprogress: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/readyState) */\n    readonly readyState: typeof FileReader.EMPTY | typeof FileReader.LOADING | typeof FileReader.DONE;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/result) */\n    readonly result: string | ArrayBuffer | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/abort) */\n    abort(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/readAsArrayBuffer) */\n    readAsArrayBuffer(blob: Blob): void;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/readAsBinaryString)\n     */\n    readAsBinaryString(blob: Blob): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/readAsDataURL) */\n    readAsDataURL(blob: Blob): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReader/readAsText) */\n    readAsText(blob: Blob, encoding?: string): void;\n    readonly EMPTY: 0;\n    readonly LOADING: 1;\n    readonly DONE: 2;\n    addEventListener<K extends keyof FileReaderEventMap>(type: K, listener: (this: FileReader, ev: FileReaderEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof FileReaderEventMap>(type: K, listener: (this: FileReader, ev: FileReaderEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var FileReader: {\n    prototype: FileReader;\n    new(): FileReader;\n    readonly EMPTY: 0;\n    readonly LOADING: 1;\n    readonly DONE: 2;\n};\n\n/**\n * Allows to read File or Blob objects in a synchronous way.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReaderSync)\n */\ninterface FileReaderSync {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReaderSync/readAsArrayBuffer) */\n    readAsArrayBuffer(blob: Blob): ArrayBuffer;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReaderSync/readAsBinaryString)\n     */\n    readAsBinaryString(blob: Blob): string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReaderSync/readAsDataURL) */\n    readAsDataURL(blob: Blob): string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileReaderSync/readAsText) */\n    readAsText(blob: Blob, encoding?: string): string;\n}\n\ndeclare var FileReaderSync: {\n    prototype: FileReaderSync;\n    new(): FileReaderSync;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemDirectoryHandle)\n */\ninterface FileSystemDirectoryHandle extends FileSystemHandle {\n    readonly kind: \"directory\";\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemDirectoryHandle/getDirectoryHandle) */\n    getDirectoryHandle(name: string, options?: FileSystemGetDirectoryOptions): Promise<FileSystemDirectoryHandle>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemDirectoryHandle/getFileHandle) */\n    getFileHandle(name: string, options?: FileSystemGetFileOptions): Promise<FileSystemFileHandle>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemDirectoryHandle/removeEntry) */\n    removeEntry(name: string, options?: FileSystemRemoveOptions): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemDirectoryHandle/resolve) */\n    resolve(possibleDescendant: FileSystemHandle): Promise<string[] | null>;\n}\n\ndeclare var FileSystemDirectoryHandle: {\n    prototype: FileSystemDirectoryHandle;\n    new(): FileSystemDirectoryHandle;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemFileHandle)\n */\ninterface FileSystemFileHandle extends FileSystemHandle {\n    readonly kind: \"file\";\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemFileHandle/createSyncAccessHandle) */\n    createSyncAccessHandle(): Promise<FileSystemSyncAccessHandle>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemFileHandle/createWritable) */\n    createWritable(options?: FileSystemCreateWritableOptions): Promise<FileSystemWritableFileStream>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemFileHandle/getFile) */\n    getFile(): Promise<File>;\n}\n\ndeclare var FileSystemFileHandle: {\n    prototype: FileSystemFileHandle;\n    new(): FileSystemFileHandle;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemHandle)\n */\ninterface FileSystemHandle {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemHandle/kind) */\n    readonly kind: FileSystemHandleKind;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemHandle/name) */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemHandle/isSameEntry) */\n    isSameEntry(other: FileSystemHandle): Promise<boolean>;\n}\n\ndeclare var FileSystemHandle: {\n    prototype: FileSystemHandle;\n    new(): FileSystemHandle;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemSyncAccessHandle)\n */\ninterface FileSystemSyncAccessHandle {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemSyncAccessHandle/close) */\n    close(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemSyncAccessHandle/flush) */\n    flush(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemSyncAccessHandle/getSize) */\n    getSize(): number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemSyncAccessHandle/read) */\n    read(buffer: AllowSharedBufferSource, options?: FileSystemReadWriteOptions): number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemSyncAccessHandle/truncate) */\n    truncate(newSize: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemSyncAccessHandle/write) */\n    write(buffer: AllowSharedBufferSource, options?: FileSystemReadWriteOptions): number;\n}\n\ndeclare var FileSystemSyncAccessHandle: {\n    prototype: FileSystemSyncAccessHandle;\n    new(): FileSystemSyncAccessHandle;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemWritableFileStream)\n */\ninterface FileSystemWritableFileStream extends WritableStream {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemWritableFileStream/seek) */\n    seek(position: number): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemWritableFileStream/truncate) */\n    truncate(size: number): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FileSystemWritableFileStream/write) */\n    write(data: FileSystemWriteChunkType): Promise<void>;\n}\n\ndeclare var FileSystemWritableFileStream: {\n    prototype: FileSystemWritableFileStream;\n    new(): FileSystemWritableFileStream;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace) */\ninterface FontFace {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/ascentOverride) */\n    ascentOverride: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/descentOverride) */\n    descentOverride: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/display) */\n    display: FontDisplay;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/family) */\n    family: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/featureSettings) */\n    featureSettings: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/lineGapOverride) */\n    lineGapOverride: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/loaded) */\n    readonly loaded: Promise<FontFace>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/status) */\n    readonly status: FontFaceLoadStatus;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/stretch) */\n    stretch: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/style) */\n    style: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/unicodeRange) */\n    unicodeRange: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/weight) */\n    weight: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFace/load) */\n    load(): Promise<FontFace>;\n}\n\ndeclare var FontFace: {\n    prototype: FontFace;\n    new(family: string, source: string | BinaryData, descriptors?: FontFaceDescriptors): FontFace;\n};\n\ninterface FontFaceSetEventMap {\n    \"loading\": Event;\n    \"loadingdone\": Event;\n    \"loadingerror\": Event;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSet) */\ninterface FontFaceSet extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSet/loading_event) */\n    onloading: ((this: FontFaceSet, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSet/loadingdone_event) */\n    onloadingdone: ((this: FontFaceSet, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSet/loadingerror_event) */\n    onloadingerror: ((this: FontFaceSet, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSet/ready) */\n    readonly ready: Promise<FontFaceSet>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSet/status) */\n    readonly status: FontFaceSetLoadStatus;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSet/check) */\n    check(font: string, text?: string): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSet/load) */\n    load(font: string, text?: string): Promise<FontFace[]>;\n    forEach(callbackfn: (value: FontFace, key: FontFace, parent: FontFaceSet) => void, thisArg?: any): void;\n    addEventListener<K extends keyof FontFaceSetEventMap>(type: K, listener: (this: FontFaceSet, ev: FontFaceSetEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof FontFaceSetEventMap>(type: K, listener: (this: FontFaceSet, ev: FontFaceSetEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var FontFaceSet: {\n    prototype: FontFaceSet;\n    new(initialFaces: FontFace[]): FontFaceSet;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSetLoadEvent) */\ninterface FontFaceSetLoadEvent extends Event {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FontFaceSetLoadEvent/fontfaces) */\n    readonly fontfaces: ReadonlyArray<FontFace>;\n}\n\ndeclare var FontFaceSetLoadEvent: {\n    prototype: FontFaceSetLoadEvent;\n    new(type: string, eventInitDict?: FontFaceSetLoadEventInit): FontFaceSetLoadEvent;\n};\n\ninterface FontFaceSource {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/fonts) */\n    readonly fonts: FontFaceSet;\n}\n\n/**\n * Provides a way to easily construct a set of key/value pairs representing form fields and their values, which can then be easily sent using the XMLHttpRequest.send() method. It uses the same format a form would use if the encoding type were set to \"multipart/form-data\".\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FormData)\n */\ninterface FormData {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FormData/append) */\n    append(name: string, value: string | Blob): void;\n    append(name: string, value: string): void;\n    append(name: string, blobValue: Blob, filename?: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FormData/delete) */\n    delete(name: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FormData/get) */\n    get(name: string): FormDataEntryValue | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FormData/getAll) */\n    getAll(name: string): FormDataEntryValue[];\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FormData/has) */\n    has(name: string): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/FormData/set) */\n    set(name: string, value: string | Blob): void;\n    set(name: string, value: string): void;\n    set(name: string, blobValue: Blob, filename?: string): void;\n    forEach(callbackfn: (value: FormDataEntryValue, key: string, parent: FormData) => void, thisArg?: any): void;\n}\n\ndeclare var FormData: {\n    prototype: FormData;\n    new(): FormData;\n};\n\ninterface GenericTransformStream {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CompressionStream/readable) */\n    readonly readable: ReadableStream;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CompressionStream/writable) */\n    readonly writable: WritableStream;\n}\n\n/**\n * This Fetch API interface allows you to perform various actions on HTTP request and response headers. These actions include retrieving, setting, adding to, and removing. A Headers object has an associated header list, which is initially empty and consists\xA0of zero or more name and value pairs. \xA0You can add to this using methods like append() (see Examples.)\xA0In all methods of this interface, header names are matched by case-insensitive byte sequence.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Headers)\n */\ninterface Headers {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Headers/append) */\n    append(name: string, value: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Headers/delete) */\n    delete(name: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Headers/get) */\n    get(name: string): string | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Headers/getSetCookie) */\n    getSetCookie(): string[];\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Headers/has) */\n    has(name: string): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Headers/set) */\n    set(name: string, value: string): void;\n    forEach(callbackfn: (value: string, key: string, parent: Headers) => void, thisArg?: any): void;\n}\n\ndeclare var Headers: {\n    prototype: Headers;\n    new(init?: HeadersInit): Headers;\n};\n\n/**\n * This IndexedDB API interface represents a cursor for traversing or iterating over multiple records in a database.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor)\n */\ninterface IDBCursor {\n    /**\n     * Returns the direction (\"next\", \"nextunique\", \"prev\" or \"prevunique\") of the cursor.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/direction)\n     */\n    readonly direction: IDBCursorDirection;\n    /**\n     * Returns the key of the cursor. Throws a \"InvalidStateError\" DOMException if the cursor is advancing or is finished.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/key)\n     */\n    readonly key: IDBValidKey;\n    /**\n     * Returns the effective key of the cursor. Throws a \"InvalidStateError\" DOMException if the cursor is advancing or is finished.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/primaryKey)\n     */\n    readonly primaryKey: IDBValidKey;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/request) */\n    readonly request: IDBRequest;\n    /**\n     * Returns the IDBObjectStore or IDBIndex the cursor was opened from.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/source)\n     */\n    readonly source: IDBObjectStore | IDBIndex;\n    /**\n     * Advances the cursor through the next count records in range.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/advance)\n     */\n    advance(count: number): void;\n    /**\n     * Advances the cursor to the next record in range.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/continue)\n     */\n    continue(key?: IDBValidKey): void;\n    /**\n     * Advances the cursor to the next record in range matching or after key and primaryKey. Throws an \"InvalidAccessError\" DOMException if the source is not an index.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/continuePrimaryKey)\n     */\n    continuePrimaryKey(key: IDBValidKey, primaryKey: IDBValidKey): void;\n    /**\n     * Delete the record pointed at by the cursor with a new value.\n     *\n     * If successful, request's result will be undefined.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/delete)\n     */\n    delete(): IDBRequest<undefined>;\n    /**\n     * Updated the record pointed at by the cursor with a new value.\n     *\n     * Throws a \"DataError\" DOMException if the effective object store uses in-line keys and the key would have changed.\n     *\n     * If successful, request's result will be the record's key.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursor/update)\n     */\n    update(value: any): IDBRequest<IDBValidKey>;\n}\n\ndeclare var IDBCursor: {\n    prototype: IDBCursor;\n    new(): IDBCursor;\n};\n\n/**\n * This IndexedDB API interface represents a cursor for traversing or iterating over multiple records in a database. It is the same as the IDBCursor, except that it includes the value property.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursorWithValue)\n */\ninterface IDBCursorWithValue extends IDBCursor {\n    /**\n     * Returns the cursor's current value.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBCursorWithValue/value)\n     */\n    readonly value: any;\n}\n\ndeclare var IDBCursorWithValue: {\n    prototype: IDBCursorWithValue;\n    new(): IDBCursorWithValue;\n};\n\ninterface IDBDatabaseEventMap {\n    \"abort\": Event;\n    \"close\": Event;\n    \"error\": Event;\n    \"versionchange\": IDBVersionChangeEvent;\n}\n\n/**\n * This IndexedDB API interface provides a connection to a database; you can use an IDBDatabase object to open a transaction on your database then create, manipulate, and delete objects (data) in that database. The interface provides the only way to get and manage versions of the database.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase)\n */\ninterface IDBDatabase extends EventTarget {\n    /**\n     * Returns the name of the database.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/name)\n     */\n    readonly name: string;\n    /**\n     * Returns a list of the names of object stores in the database.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/objectStoreNames)\n     */\n    readonly objectStoreNames: DOMStringList;\n    onabort: ((this: IDBDatabase, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/close_event) */\n    onclose: ((this: IDBDatabase, ev: Event) => any) | null;\n    onerror: ((this: IDBDatabase, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/versionchange_event) */\n    onversionchange: ((this: IDBDatabase, ev: IDBVersionChangeEvent) => any) | null;\n    /**\n     * Returns the version of the database.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/version)\n     */\n    readonly version: number;\n    /**\n     * Closes the connection once all running transactions have finished.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/close)\n     */\n    close(): void;\n    /**\n     * Creates a new object store with the given name and options and returns a new IDBObjectStore.\n     *\n     * Throws a \"InvalidStateError\" DOMException if not called within an upgrade transaction.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/createObjectStore)\n     */\n    createObjectStore(name: string, options?: IDBObjectStoreParameters): IDBObjectStore;\n    /**\n     * Deletes the object store with the given name.\n     *\n     * Throws a \"InvalidStateError\" DOMException if not called within an upgrade transaction.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/deleteObjectStore)\n     */\n    deleteObjectStore(name: string): void;\n    /**\n     * Returns a new transaction with the given mode (\"readonly\" or \"readwrite\") and scope which can be a single object store name or an array of names.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/transaction)\n     */\n    transaction(storeNames: string | string[], mode?: IDBTransactionMode, options?: IDBTransactionOptions): IDBTransaction;\n    addEventListener<K extends keyof IDBDatabaseEventMap>(type: K, listener: (this: IDBDatabase, ev: IDBDatabaseEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof IDBDatabaseEventMap>(type: K, listener: (this: IDBDatabase, ev: IDBDatabaseEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var IDBDatabase: {\n    prototype: IDBDatabase;\n    new(): IDBDatabase;\n};\n\n/**\n * In the following code snippet, we make a request to open a database, and include handlers for the success and error cases. For a full working example, see our To-do Notifications app (view example live.)\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBFactory)\n */\ninterface IDBFactory {\n    /**\n     * Compares two values as keys. Returns -1 if key1 precedes key2, 1 if key2 precedes key1, and 0 if the keys are equal.\n     *\n     * Throws a \"DataError\" DOMException if either input is not a valid key.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBFactory/cmp)\n     */\n    cmp(first: any, second: any): number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBFactory/databases) */\n    databases(): Promise<IDBDatabaseInfo[]>;\n    /**\n     * Attempts to delete the named database. If the database already exists and there are open connections that don't close in response to a versionchange event, the request will be blocked until all they close. If the request is successful request's result will be null.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBFactory/deleteDatabase)\n     */\n    deleteDatabase(name: string): IDBOpenDBRequest;\n    /**\n     * Attempts to open a connection to the named database with the current version, or 1 if it does not already exist. If the request is successful request's result will be the connection.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBFactory/open)\n     */\n    open(name: string, version?: number): IDBOpenDBRequest;\n}\n\ndeclare var IDBFactory: {\n    prototype: IDBFactory;\n    new(): IDBFactory;\n};\n\n/**\n * IDBIndex interface of the IndexedDB API provides asynchronous access to an index in a database. An index is a kind of object store for looking up records in another object store, called the referenced object store. You use this interface to retrieve data.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex)\n */\ninterface IDBIndex {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/keyPath) */\n    readonly keyPath: string | string[];\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/multiEntry) */\n    readonly multiEntry: boolean;\n    /**\n     * Returns the name of the index.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/name)\n     */\n    name: string;\n    /**\n     * Returns the IDBObjectStore the index belongs to.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/objectStore)\n     */\n    readonly objectStore: IDBObjectStore;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/unique) */\n    readonly unique: boolean;\n    /**\n     * Retrieves the number of records matching the given key or key range in query.\n     *\n     * If successful, request's result will be the count.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/count)\n     */\n    count(query?: IDBValidKey | IDBKeyRange): IDBRequest<number>;\n    /**\n     * Retrieves the value of the first record matching the given key or key range in query.\n     *\n     * If successful, request's result will be the value, or undefined if there was no matching record.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/get)\n     */\n    get(query: IDBValidKey | IDBKeyRange): IDBRequest<any>;\n    /**\n     * Retrieves the values of the records matching the given key or key range in query (up to count if given).\n     *\n     * If successful, request's result will be an Array of the values.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/getAll)\n     */\n    getAll(query?: IDBValidKey | IDBKeyRange | null, count?: number): IDBRequest<any[]>;\n    /**\n     * Retrieves the keys of records matching the given key or key range in query (up to count if given).\n     *\n     * If successful, request's result will be an Array of the keys.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/getAllKeys)\n     */\n    getAllKeys(query?: IDBValidKey | IDBKeyRange | null, count?: number): IDBRequest<IDBValidKey[]>;\n    /**\n     * Retrieves the key of the first record matching the given key or key range in query.\n     *\n     * If successful, request's result will be the key, or undefined if there was no matching record.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/getKey)\n     */\n    getKey(query: IDBValidKey | IDBKeyRange): IDBRequest<IDBValidKey | undefined>;\n    /**\n     * Opens a cursor over the records matching query, ordered by direction. If query is null, all records in index are matched.\n     *\n     * If successful, request's result will be an IDBCursorWithValue, or null if there were no matching records.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/openCursor)\n     */\n    openCursor(query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): IDBRequest<IDBCursorWithValue | null>;\n    /**\n     * Opens a cursor with key only flag set over the records matching query, ordered by direction. If query is null, all records in index are matched.\n     *\n     * If successful, request's result will be an IDBCursor, or null if there were no matching records.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBIndex/openKeyCursor)\n     */\n    openKeyCursor(query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): IDBRequest<IDBCursor | null>;\n}\n\ndeclare var IDBIndex: {\n    prototype: IDBIndex;\n    new(): IDBIndex;\n};\n\n/**\n * A key range can be a single value or a range with upper and lower bounds or endpoints. If the key range has both upper and lower bounds, then it is bounded; if it has no bounds, it is unbounded. A bounded key range can either be open (the endpoints are excluded) or closed (the endpoints are included). To retrieve all keys within a certain range, you can use the following code constructs:\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange)\n */\ninterface IDBKeyRange {\n    /**\n     * Returns lower bound, or undefined if none.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/lower)\n     */\n    readonly lower: any;\n    /**\n     * Returns true if the lower open flag is set, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/lowerOpen)\n     */\n    readonly lowerOpen: boolean;\n    /**\n     * Returns upper bound, or undefined if none.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/upper)\n     */\n    readonly upper: any;\n    /**\n     * Returns true if the upper open flag is set, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/upperOpen)\n     */\n    readonly upperOpen: boolean;\n    /**\n     * Returns true if key is included in the range, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/includes)\n     */\n    includes(key: any): boolean;\n}\n\ndeclare var IDBKeyRange: {\n    prototype: IDBKeyRange;\n    new(): IDBKeyRange;\n    /**\n     * Returns a new IDBKeyRange spanning from lower to upper. If lowerOpen is true, lower is not included in the range. If upperOpen is true, upper is not included in the range.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/bound_static)\n     */\n    bound(lower: any, upper: any, lowerOpen?: boolean, upperOpen?: boolean): IDBKeyRange;\n    /**\n     * Returns a new IDBKeyRange starting at key with no upper bound. If open is true, key is not included in the range.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/lowerBound_static)\n     */\n    lowerBound(lower: any, open?: boolean): IDBKeyRange;\n    /**\n     * Returns a new IDBKeyRange spanning only key.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/only_static)\n     */\n    only(value: any): IDBKeyRange;\n    /**\n     * Returns a new IDBKeyRange with no lower bound and ending at key. If open is true, key is not included in the range.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBKeyRange/upperBound_static)\n     */\n    upperBound(upper: any, open?: boolean): IDBKeyRange;\n};\n\n/**\n * This example shows a variety of different uses of object stores, from updating the data structure with IDBObjectStore.createIndex\xA0inside an onupgradeneeded function, to adding a new item to our object store with IDBObjectStore.add. For a full working example, see our\xA0To-do Notifications\xA0app (view example live.)\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore)\n */\ninterface IDBObjectStore {\n    /**\n     * Returns true if the store has a key generator, and false otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/autoIncrement)\n     */\n    readonly autoIncrement: boolean;\n    /**\n     * Returns a list of the names of indexes in the store.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/indexNames)\n     */\n    readonly indexNames: DOMStringList;\n    /**\n     * Returns the key path of the store, or null if none.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/keyPath)\n     */\n    readonly keyPath: string | string[];\n    /**\n     * Returns the name of the store.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/name)\n     */\n    name: string;\n    /**\n     * Returns the associated transaction.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/transaction)\n     */\n    readonly transaction: IDBTransaction;\n    /**\n     * Adds or updates a record in store with the given value and key.\n     *\n     * If the store uses in-line keys and key is specified a \"DataError\" DOMException will be thrown.\n     *\n     * If put() is used, any existing record with the key will be replaced. If add() is used, and if a record with the key already exists the request will fail, with request's error set to a \"ConstraintError\" DOMException.\n     *\n     * If successful, request's result will be the record's key.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/add)\n     */\n    add(value: any, key?: IDBValidKey): IDBRequest<IDBValidKey>;\n    /**\n     * Deletes all records in store.\n     *\n     * If successful, request's result will be undefined.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/clear)\n     */\n    clear(): IDBRequest<undefined>;\n    /**\n     * Retrieves the number of records matching the given key or key range in query.\n     *\n     * If successful, request's result will be the count.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/count)\n     */\n    count(query?: IDBValidKey | IDBKeyRange): IDBRequest<number>;\n    /**\n     * Creates a new index in store with the given name, keyPath and options and returns a new IDBIndex. If the keyPath and options define constraints that cannot be satisfied with the data already in store the upgrade transaction will abort with a \"ConstraintError\" DOMException.\n     *\n     * Throws an \"InvalidStateError\" DOMException if not called within an upgrade transaction.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/createIndex)\n     */\n    createIndex(name: string, keyPath: string | string[], options?: IDBIndexParameters): IDBIndex;\n    /**\n     * Deletes records in store with the given key or in the given key range in query.\n     *\n     * If successful, request's result will be undefined.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/delete)\n     */\n    delete(query: IDBValidKey | IDBKeyRange): IDBRequest<undefined>;\n    /**\n     * Deletes the index in store with the given name.\n     *\n     * Throws an \"InvalidStateError\" DOMException if not called within an upgrade transaction.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/deleteIndex)\n     */\n    deleteIndex(name: string): void;\n    /**\n     * Retrieves the value of the first record matching the given key or key range in query.\n     *\n     * If successful, request's result will be the value, or undefined if there was no matching record.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/get)\n     */\n    get(query: IDBValidKey | IDBKeyRange): IDBRequest<any>;\n    /**\n     * Retrieves the values of the records matching the given key or key range in query (up to count if given).\n     *\n     * If successful, request's result will be an Array of the values.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/getAll)\n     */\n    getAll(query?: IDBValidKey | IDBKeyRange | null, count?: number): IDBRequest<any[]>;\n    /**\n     * Retrieves the keys of records matching the given key or key range in query (up to count if given).\n     *\n     * If successful, request's result will be an Array of the keys.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/getAllKeys)\n     */\n    getAllKeys(query?: IDBValidKey | IDBKeyRange | null, count?: number): IDBRequest<IDBValidKey[]>;\n    /**\n     * Retrieves the key of the first record matching the given key or key range in query.\n     *\n     * If successful, request's result will be the key, or undefined if there was no matching record.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/getKey)\n     */\n    getKey(query: IDBValidKey | IDBKeyRange): IDBRequest<IDBValidKey | undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/index) */\n    index(name: string): IDBIndex;\n    /**\n     * Opens a cursor over the records matching query, ordered by direction. If query is null, all records in store are matched.\n     *\n     * If successful, request's result will be an IDBCursorWithValue pointing at the first matching record, or null if there were no matching records.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/openCursor)\n     */\n    openCursor(query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): IDBRequest<IDBCursorWithValue | null>;\n    /**\n     * Opens a cursor with key only flag set over the records matching query, ordered by direction. If query is null, all records in store are matched.\n     *\n     * If successful, request's result will be an IDBCursor pointing at the first matching record, or null if there were no matching records.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/openKeyCursor)\n     */\n    openKeyCursor(query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): IDBRequest<IDBCursor | null>;\n    /**\n     * Adds or updates a record in store with the given value and key.\n     *\n     * If the store uses in-line keys and key is specified a \"DataError\" DOMException will be thrown.\n     *\n     * If put() is used, any existing record with the key will be replaced. If add() is used, and if a record with the key already exists the request will fail, with request's error set to a \"ConstraintError\" DOMException.\n     *\n     * If successful, request's result will be the record's key.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/put)\n     */\n    put(value: any, key?: IDBValidKey): IDBRequest<IDBValidKey>;\n}\n\ndeclare var IDBObjectStore: {\n    prototype: IDBObjectStore;\n    new(): IDBObjectStore;\n};\n\ninterface IDBOpenDBRequestEventMap extends IDBRequestEventMap {\n    \"blocked\": IDBVersionChangeEvent;\n    \"upgradeneeded\": IDBVersionChangeEvent;\n}\n\n/**\n * Also inherits methods from its parents IDBRequest and EventTarget.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBOpenDBRequest)\n */\ninterface IDBOpenDBRequest extends IDBRequest<IDBDatabase> {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBOpenDBRequest/blocked_event) */\n    onblocked: ((this: IDBOpenDBRequest, ev: IDBVersionChangeEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBOpenDBRequest/upgradeneeded_event) */\n    onupgradeneeded: ((this: IDBOpenDBRequest, ev: IDBVersionChangeEvent) => any) | null;\n    addEventListener<K extends keyof IDBOpenDBRequestEventMap>(type: K, listener: (this: IDBOpenDBRequest, ev: IDBOpenDBRequestEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof IDBOpenDBRequestEventMap>(type: K, listener: (this: IDBOpenDBRequest, ev: IDBOpenDBRequestEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var IDBOpenDBRequest: {\n    prototype: IDBOpenDBRequest;\n    new(): IDBOpenDBRequest;\n};\n\ninterface IDBRequestEventMap {\n    \"error\": Event;\n    \"success\": Event;\n}\n\n/**\n * The request object does not initially contain any information about the result of the operation, but once information becomes available, an event is fired on the request, and the information becomes available through the properties of the IDBRequest instance.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBRequest)\n */\ninterface IDBRequest<T = any> extends EventTarget {\n    /**\n     * When a request is completed, returns the error (a DOMException), or null if the request succeeded. Throws a \"InvalidStateError\" DOMException if the request is still pending.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBRequest/error)\n     */\n    readonly error: DOMException | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBRequest/error_event) */\n    onerror: ((this: IDBRequest<T>, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBRequest/success_event) */\n    onsuccess: ((this: IDBRequest<T>, ev: Event) => any) | null;\n    /**\n     * Returns \"pending\" until a request is complete, then returns \"done\".\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBRequest/readyState)\n     */\n    readonly readyState: IDBRequestReadyState;\n    /**\n     * When a request is completed, returns the result, or undefined if the request failed. Throws a \"InvalidStateError\" DOMException if the request is still pending.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBRequest/result)\n     */\n    readonly result: T;\n    /**\n     * Returns the IDBObjectStore, IDBIndex, or IDBCursor the request was made against, or null if is was an open request.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBRequest/source)\n     */\n    readonly source: IDBObjectStore | IDBIndex | IDBCursor;\n    /**\n     * Returns the IDBTransaction the request was made within. If this as an open request, then it returns an upgrade transaction while it is running, or null otherwise.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBRequest/transaction)\n     */\n    readonly transaction: IDBTransaction | null;\n    addEventListener<K extends keyof IDBRequestEventMap>(type: K, listener: (this: IDBRequest<T>, ev: IDBRequestEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof IDBRequestEventMap>(type: K, listener: (this: IDBRequest<T>, ev: IDBRequestEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var IDBRequest: {\n    prototype: IDBRequest;\n    new(): IDBRequest;\n};\n\ninterface IDBTransactionEventMap {\n    \"abort\": Event;\n    \"complete\": Event;\n    \"error\": Event;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction) */\ninterface IDBTransaction extends EventTarget {\n    /**\n     * Returns the transaction's connection.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/db)\n     */\n    readonly db: IDBDatabase;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/durability) */\n    readonly durability: IDBTransactionDurability;\n    /**\n     * If the transaction was aborted, returns the error (a DOMException) providing the reason.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/error)\n     */\n    readonly error: DOMException | null;\n    /**\n     * Returns the mode the transaction was created with (\"readonly\" or \"readwrite\"), or \"versionchange\" for an upgrade transaction.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/mode)\n     */\n    readonly mode: IDBTransactionMode;\n    /**\n     * Returns a list of the names of object stores in the transaction's scope. For an upgrade transaction this is all object stores in the database.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/ObjectStoreNames)\n     */\n    readonly objectStoreNames: DOMStringList;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/abort_event) */\n    onabort: ((this: IDBTransaction, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/complete_event) */\n    oncomplete: ((this: IDBTransaction, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/error_event) */\n    onerror: ((this: IDBTransaction, ev: Event) => any) | null;\n    /**\n     * Aborts the transaction. All pending requests will fail with a \"AbortError\" DOMException and all changes made to the database will be reverted.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/abort)\n     */\n    abort(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/commit) */\n    commit(): void;\n    /**\n     * Returns an IDBObjectStore in the transaction's scope.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBTransaction/objectStore)\n     */\n    objectStore(name: string): IDBObjectStore;\n    addEventListener<K extends keyof IDBTransactionEventMap>(type: K, listener: (this: IDBTransaction, ev: IDBTransactionEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof IDBTransactionEventMap>(type: K, listener: (this: IDBTransaction, ev: IDBTransactionEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var IDBTransaction: {\n    prototype: IDBTransaction;\n    new(): IDBTransaction;\n};\n\n/**\n * This IndexedDB API interface indicates that the version of the database has changed, as the result of an IDBOpenDBRequest.onupgradeneeded event handler function.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBVersionChangeEvent)\n */\ninterface IDBVersionChangeEvent extends Event {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBVersionChangeEvent/newVersion) */\n    readonly newVersion: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBVersionChangeEvent/oldVersion) */\n    readonly oldVersion: number;\n}\n\ndeclare var IDBVersionChangeEvent: {\n    prototype: IDBVersionChangeEvent;\n    new(type: string, eventInitDict?: IDBVersionChangeEventInit): IDBVersionChangeEvent;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageBitmap) */\ninterface ImageBitmap {\n    /**\n     * Returns the intrinsic height of the image, in CSS pixels.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageBitmap/height)\n     */\n    readonly height: number;\n    /**\n     * Returns the intrinsic width of the image, in CSS pixels.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageBitmap/width)\n     */\n    readonly width: number;\n    /**\n     * Releases imageBitmap's underlying bitmap data.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageBitmap/close)\n     */\n    close(): void;\n}\n\ndeclare var ImageBitmap: {\n    prototype: ImageBitmap;\n    new(): ImageBitmap;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageBitmapRenderingContext) */\ninterface ImageBitmapRenderingContext {\n    /**\n     * Transfers the underlying bitmap data from imageBitmap to context, and the bitmap becomes the contents of the canvas element to which context is bound.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageBitmapRenderingContext/transferFromImageBitmap)\n     */\n    transferFromImageBitmap(bitmap: ImageBitmap | null): void;\n}\n\ndeclare var ImageBitmapRenderingContext: {\n    prototype: ImageBitmapRenderingContext;\n    new(): ImageBitmapRenderingContext;\n};\n\n/**\n * The underlying pixel data of an area of a <canvas> element. It is created using the ImageData() constructor or creator methods on the CanvasRenderingContext2D object associated with a canvas: createImageData() and getImageData(). It can also be used to set a part of the canvas by using putImageData().\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageData)\n */\ninterface ImageData {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageData/colorSpace) */\n    readonly colorSpace: PredefinedColorSpace;\n    /**\n     * Returns the one-dimensional array containing the data in RGBA order, as integers in the range 0 to 255.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageData/data)\n     */\n    readonly data: Uint8ClampedArray;\n    /**\n     * Returns the actual dimensions of the data in the ImageData object, in pixels.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageData/height)\n     */\n    readonly height: number;\n    /**\n     * Returns the actual dimensions of the data in the ImageData object, in pixels.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ImageData/width)\n     */\n    readonly width: number;\n}\n\ndeclare var ImageData: {\n    prototype: ImageData;\n    new(sw: number, sh: number, settings?: ImageDataSettings): ImageData;\n    new(data: Uint8ClampedArray, sw: number, sh?: number, settings?: ImageDataSettings): ImageData;\n};\n\ninterface ImportMeta {\n    url: string;\n    resolve(specifier: string): string;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/KHR_parallel_shader_compile) */\ninterface KHR_parallel_shader_compile {\n    readonly COMPLETION_STATUS_KHR: 0x91B1;\n}\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Lock)\n */\ninterface Lock {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Lock/mode) */\n    readonly mode: LockMode;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Lock/name) */\n    readonly name: string;\n}\n\ndeclare var Lock: {\n    prototype: Lock;\n    new(): Lock;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/LockManager)\n */\ninterface LockManager {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/LockManager/query) */\n    query(): Promise<LockManagerSnapshot>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/LockManager/request) */\n    request(name: string, callback: LockGrantedCallback): Promise<any>;\n    request(name: string, options: LockOptions, callback: LockGrantedCallback): Promise<any>;\n}\n\ndeclare var LockManager: {\n    prototype: LockManager;\n    new(): LockManager;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/MediaCapabilities) */\ninterface MediaCapabilities {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/MediaCapabilities/decodingInfo) */\n    decodingInfo(configuration: MediaDecodingConfiguration): Promise<MediaCapabilitiesDecodingInfo>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/MediaCapabilities/encodingInfo) */\n    encodingInfo(configuration: MediaEncodingConfiguration): Promise<MediaCapabilitiesEncodingInfo>;\n}\n\ndeclare var MediaCapabilities: {\n    prototype: MediaCapabilities;\n    new(): MediaCapabilities;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/MediaSourceHandle) */\ninterface MediaSourceHandle {\n}\n\ndeclare var MediaSourceHandle: {\n    prototype: MediaSourceHandle;\n    new(): MediaSourceHandle;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/MediaStreamTrackProcessor) */\ninterface MediaStreamTrackProcessor {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/MediaStreamTrackProcessor/readable) */\n    readonly readable: ReadableStream;\n}\n\ndeclare var MediaStreamTrackProcessor: {\n    prototype: MediaStreamTrackProcessor;\n    new(init: MediaStreamTrackProcessorInit): MediaStreamTrackProcessor;\n};\n\n/**\n * This Channel Messaging API interface allows us to create a new message channel and send data through it via its two MessagePort properties.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageChannel)\n */\ninterface MessageChannel {\n    /**\n     * Returns the first MessagePort object.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageChannel/port1)\n     */\n    readonly port1: MessagePort;\n    /**\n     * Returns the second MessagePort object.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageChannel/port2)\n     */\n    readonly port2: MessagePort;\n}\n\ndeclare var MessageChannel: {\n    prototype: MessageChannel;\n    new(): MessageChannel;\n};\n\n/**\n * A message received by a target object.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent)\n */\ninterface MessageEvent<T = any> extends Event {\n    /**\n     * Returns the data of the message.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/data)\n     */\n    readonly data: T;\n    /**\n     * Returns the last event ID string, for server-sent events.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/lastEventId)\n     */\n    readonly lastEventId: string;\n    /**\n     * Returns the origin of the message, for server-sent events and cross-document messaging.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/origin)\n     */\n    readonly origin: string;\n    /**\n     * Returns the MessagePort array sent with the message, for cross-document messaging and channel messaging.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/ports)\n     */\n    readonly ports: ReadonlyArray<MessagePort>;\n    /**\n     * Returns the WindowProxy of the source window, for cross-document messaging, and the MessagePort being attached, in the connect event fired at SharedWorkerGlobalScope objects.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/source)\n     */\n    readonly source: MessageEventSource | null;\n    /** @deprecated */\n    initMessageEvent(type: string, bubbles?: boolean, cancelable?: boolean, data?: any, origin?: string, lastEventId?: string, source?: MessageEventSource | null, ports?: MessagePort[]): void;\n}\n\ndeclare var MessageEvent: {\n    prototype: MessageEvent;\n    new<T>(type: string, eventInitDict?: MessageEventInit<T>): MessageEvent<T>;\n};\n\ninterface MessagePortEventMap {\n    \"message\": MessageEvent;\n    \"messageerror\": MessageEvent;\n}\n\n/**\n * This Channel Messaging API interface represents one of the two ports of a MessageChannel, allowing messages to be sent from one port and listening out for them arriving at the other.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessagePort)\n */\ninterface MessagePort extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessagePort/message_event) */\n    onmessage: ((this: MessagePort, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessagePort/messageerror_event) */\n    onmessageerror: ((this: MessagePort, ev: MessageEvent) => any) | null;\n    /**\n     * Disconnects the port, so that it is no longer active.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessagePort/close)\n     */\n    close(): void;\n    /**\n     * Posts a message through the channel. Objects listed in transfer are transferred, not just cloned, meaning that they are no longer usable on the sending side.\n     *\n     * Throws a \"DataCloneError\" DOMException if transfer contains duplicate objects or port, or if message could not be cloned.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessagePort/postMessage)\n     */\n    postMessage(message: any, transfer: Transferable[]): void;\n    postMessage(message: any, options?: StructuredSerializeOptions): void;\n    /**\n     * Begins dispatching messages received on the port.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessagePort/start)\n     */\n    start(): void;\n    addEventListener<K extends keyof MessagePortEventMap>(type: K, listener: (this: MessagePort, ev: MessagePortEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof MessagePortEventMap>(type: K, listener: (this: MessagePort, ev: MessagePortEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var MessagePort: {\n    prototype: MessagePort;\n    new(): MessagePort;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/NavigationPreloadManager)\n */\ninterface NavigationPreloadManager {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/NavigationPreloadManager/disable) */\n    disable(): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/NavigationPreloadManager/enable) */\n    enable(): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/NavigationPreloadManager/getState) */\n    getState(): Promise<NavigationPreloadState>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/NavigationPreloadManager/setHeaderValue) */\n    setHeaderValue(value: string): Promise<void>;\n}\n\ndeclare var NavigationPreloadManager: {\n    prototype: NavigationPreloadManager;\n    new(): NavigationPreloadManager;\n};\n\n/** Available only in secure contexts. */\ninterface NavigatorBadge {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/clearAppBadge) */\n    clearAppBadge(): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/setAppBadge) */\n    setAppBadge(contents?: number): Promise<void>;\n}\n\ninterface NavigatorConcurrentHardware {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/hardwareConcurrency) */\n    readonly hardwareConcurrency: number;\n}\n\ninterface NavigatorID {\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/appCodeName)\n     */\n    readonly appCodeName: string;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/appName)\n     */\n    readonly appName: string;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/appVersion)\n     */\n    readonly appVersion: string;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/platform)\n     */\n    readonly platform: string;\n    /**\n     * @deprecated\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/product)\n     */\n    readonly product: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/userAgent) */\n    readonly userAgent: string;\n}\n\ninterface NavigatorLanguage {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/language) */\n    readonly language: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/languages) */\n    readonly languages: ReadonlyArray<string>;\n}\n\n/** Available only in secure contexts. */\ninterface NavigatorLocks {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/locks) */\n    readonly locks: LockManager;\n}\n\ninterface NavigatorOnLine {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/onLine) */\n    readonly onLine: boolean;\n}\n\n/** Available only in secure contexts. */\ninterface NavigatorStorage {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Navigator/storage) */\n    readonly storage: StorageManager;\n}\n\ninterface NotificationEventMap {\n    \"click\": Event;\n    \"close\": Event;\n    \"error\": Event;\n    \"show\": Event;\n}\n\n/**\n * This Notifications API interface is used to configure and display desktop notifications to the user.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification)\n */\ninterface Notification extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/badge) */\n    readonly badge: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/body) */\n    readonly body: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/data) */\n    readonly data: any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/dir) */\n    readonly dir: NotificationDirection;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/icon) */\n    readonly icon: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/lang) */\n    readonly lang: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/click_event) */\n    onclick: ((this: Notification, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/close_event) */\n    onclose: ((this: Notification, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/error_event) */\n    onerror: ((this: Notification, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/show_event) */\n    onshow: ((this: Notification, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/requireInteraction) */\n    readonly requireInteraction: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/silent) */\n    readonly silent: boolean | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/tag) */\n    readonly tag: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/title) */\n    readonly title: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/close) */\n    close(): void;\n    addEventListener<K extends keyof NotificationEventMap>(type: K, listener: (this: Notification, ev: NotificationEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof NotificationEventMap>(type: K, listener: (this: Notification, ev: NotificationEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var Notification: {\n    prototype: Notification;\n    new(title: string, options?: NotificationOptions): Notification;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/permission_static) */\n    readonly permission: NotificationPermission;\n};\n\n/**\n * The parameter passed into the onnotificationclick handler, the NotificationEvent interface represents a notification click event that is dispatched on the ServiceWorkerGlobalScope of a ServiceWorker.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/NotificationEvent)\n */\ninterface NotificationEvent extends ExtendableEvent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/NotificationEvent/action) */\n    readonly action: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/NotificationEvent/notification) */\n    readonly notification: Notification;\n}\n\ndeclare var NotificationEvent: {\n    prototype: NotificationEvent;\n    new(type: string, eventInitDict: NotificationEventInit): NotificationEvent;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_draw_buffers_indexed) */\ninterface OES_draw_buffers_indexed {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_draw_buffers_indexed/blendEquationSeparateiOES) */\n    blendEquationSeparateiOES(buf: GLuint, modeRGB: GLenum, modeAlpha: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_draw_buffers_indexed/blendEquationiOES) */\n    blendEquationiOES(buf: GLuint, mode: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_draw_buffers_indexed/blendFuncSeparateiOES) */\n    blendFuncSeparateiOES(buf: GLuint, srcRGB: GLenum, dstRGB: GLenum, srcAlpha: GLenum, dstAlpha: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_draw_buffers_indexed/blendFunciOES) */\n    blendFunciOES(buf: GLuint, src: GLenum, dst: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_draw_buffers_indexed/colorMaskiOES) */\n    colorMaskiOES(buf: GLuint, r: GLboolean, g: GLboolean, b: GLboolean, a: GLboolean): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_draw_buffers_indexed/disableiOES) */\n    disableiOES(target: GLenum, index: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_draw_buffers_indexed/enableiOES) */\n    enableiOES(target: GLenum, index: GLuint): void;\n}\n\n/**\n * The OES_element_index_uint extension is part of the WebGL API and adds support for gl.UNSIGNED_INT types to WebGLRenderingContext.drawElements().\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_element_index_uint)\n */\ninterface OES_element_index_uint {\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_fbo_render_mipmap) */\ninterface OES_fbo_render_mipmap {\n}\n\n/**\n * The OES_standard_derivatives extension is part of the WebGL API and adds the GLSL derivative functions dFdx, dFdy, and fwidth.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_standard_derivatives)\n */\ninterface OES_standard_derivatives {\n    readonly FRAGMENT_SHADER_DERIVATIVE_HINT_OES: 0x8B8B;\n}\n\n/**\n * The OES_texture_float extension is part of the WebGL API and exposes floating-point pixel types for textures.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_texture_float)\n */\ninterface OES_texture_float {\n}\n\n/**\n * The OES_texture_float_linear extension is part of the WebGL API and allows linear filtering with floating-point pixel types for textures.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_texture_float_linear)\n */\ninterface OES_texture_float_linear {\n}\n\n/**\n * The OES_texture_half_float extension is part of the WebGL API and adds texture formats with 16- (aka half float) and 32-bit floating-point components.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_texture_half_float)\n */\ninterface OES_texture_half_float {\n    readonly HALF_FLOAT_OES: 0x8D61;\n}\n\n/**\n * The OES_texture_half_float_linear extension is part of the WebGL API and allows linear filtering with half floating-point pixel types for textures.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_texture_half_float_linear)\n */\ninterface OES_texture_half_float_linear {\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_vertex_array_object) */\ninterface OES_vertex_array_object {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_vertex_array_object/bindVertexArrayOES) */\n    bindVertexArrayOES(arrayObject: WebGLVertexArrayObjectOES | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_vertex_array_object/createVertexArrayOES) */\n    createVertexArrayOES(): WebGLVertexArrayObjectOES | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_vertex_array_object/deleteVertexArrayOES) */\n    deleteVertexArrayOES(arrayObject: WebGLVertexArrayObjectOES | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OES_vertex_array_object/isVertexArrayOES) */\n    isVertexArrayOES(arrayObject: WebGLVertexArrayObjectOES | null): GLboolean;\n    readonly VERTEX_ARRAY_BINDING_OES: 0x85B5;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OVR_multiview2) */\ninterface OVR_multiview2 {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OVR_multiview2/framebufferTextureMultiviewOVR) */\n    framebufferTextureMultiviewOVR(target: GLenum, attachment: GLenum, texture: WebGLTexture | null, level: GLint, baseViewIndex: GLint, numViews: GLsizei): void;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_NUM_VIEWS_OVR: 0x9630;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_BASE_VIEW_INDEX_OVR: 0x9632;\n    readonly MAX_VIEWS_OVR: 0x9631;\n    readonly FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR: 0x9633;\n}\n\ninterface OffscreenCanvasEventMap {\n    \"contextlost\": Event;\n    \"contextrestored\": Event;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvas) */\ninterface OffscreenCanvas extends EventTarget {\n    /**\n     * These attributes return the dimensions of the OffscreenCanvas object's bitmap.\n     *\n     * They can be set, to replace the bitmap with a new, transparent black bitmap of the specified dimensions (effectively resizing it).\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvas/height)\n     */\n    height: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvas/contextlost_event) */\n    oncontextlost: ((this: OffscreenCanvas, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvas/contextrestored_event) */\n    oncontextrestored: ((this: OffscreenCanvas, ev: Event) => any) | null;\n    /**\n     * These attributes return the dimensions of the OffscreenCanvas object's bitmap.\n     *\n     * They can be set, to replace the bitmap with a new, transparent black bitmap of the specified dimensions (effectively resizing it).\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvas/width)\n     */\n    width: number;\n    /**\n     * Returns a promise that will fulfill with a new Blob object representing a file containing the image in the OffscreenCanvas object.\n     *\n     * The argument, if provided, is a dictionary that controls the encoding options of the image file to be created. The type field specifies the file format and has a default value of \"image/png\"; that type is also used if the requested type isn't supported. If the image format supports variable quality (such as \"image/jpeg\"), then the quality field is a number in the range 0.0 to 1.0 inclusive indicating the desired quality level for the resulting image.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvas/convertToBlob)\n     */\n    convertToBlob(options?: ImageEncodeOptions): Promise<Blob>;\n    /**\n     * Returns an object that exposes an API for drawing on the OffscreenCanvas object. contextId specifies the desired API: \"2d\", \"bitmaprenderer\", \"webgl\", or \"webgl2\". options is handled by that API.\n     *\n     * This specification defines the \"2d\" context below, which is similar but distinct from the \"2d\" context that is created from a canvas element. The WebGL specifications define the \"webgl\" and \"webgl2\" contexts. [WEBGL]\n     *\n     * Returns null if the canvas has already been initialized with another context type (e.g., trying to get a \"2d\" context after getting a \"webgl\" context).\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvas/getContext)\n     */\n    getContext(contextId: \"2d\", options?: any): OffscreenCanvasRenderingContext2D | null;\n    getContext(contextId: \"bitmaprenderer\", options?: any): ImageBitmapRenderingContext | null;\n    getContext(contextId: \"webgl\", options?: any): WebGLRenderingContext | null;\n    getContext(contextId: \"webgl2\", options?: any): WebGL2RenderingContext | null;\n    getContext(contextId: OffscreenRenderingContextId, options?: any): OffscreenRenderingContext | null;\n    /**\n     * Returns a newly created ImageBitmap object with the image in the OffscreenCanvas object. The image in the OffscreenCanvas object is replaced with a new blank image.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvas/transferToImageBitmap)\n     */\n    transferToImageBitmap(): ImageBitmap;\n    addEventListener<K extends keyof OffscreenCanvasEventMap>(type: K, listener: (this: OffscreenCanvas, ev: OffscreenCanvasEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof OffscreenCanvasEventMap>(type: K, listener: (this: OffscreenCanvas, ev: OffscreenCanvasEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var OffscreenCanvas: {\n    prototype: OffscreenCanvas;\n    new(width: number, height: number): OffscreenCanvas;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/OffscreenCanvasRenderingContext2D) */\ninterface OffscreenCanvasRenderingContext2D extends CanvasCompositing, CanvasDrawImage, CanvasDrawPath, CanvasFillStrokeStyles, CanvasFilters, CanvasImageData, CanvasImageSmoothing, CanvasPath, CanvasPathDrawingStyles, CanvasRect, CanvasShadowStyles, CanvasState, CanvasText, CanvasTextDrawingStyles, CanvasTransform {\n    readonly canvas: OffscreenCanvas;\n}\n\ndeclare var OffscreenCanvasRenderingContext2D: {\n    prototype: OffscreenCanvasRenderingContext2D;\n    new(): OffscreenCanvasRenderingContext2D;\n};\n\n/**\n * This Canvas 2D API interface is used to declare a path that can then be used on a CanvasRenderingContext2D object. The path methods of the CanvasRenderingContext2D interface are also present on this interface, which gives you the convenience of being able to retain and replay your path whenever desired.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Path2D)\n */\ninterface Path2D extends CanvasPath {\n    /**\n     * Adds to the path the path given by the argument.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Path2D/addPath)\n     */\n    addPath(path: Path2D, transform?: DOMMatrix2DInit): void;\n}\n\ndeclare var Path2D: {\n    prototype: Path2D;\n    new(path?: Path2D | string): Path2D;\n};\n\ninterface PerformanceEventMap {\n    \"resourcetimingbufferfull\": Event;\n}\n\n/**\n * Provides access to performance-related information for the current page. It's part of the High Resolution Time API, but is enhanced by the Performance Timeline API, the Navigation Timing API, the User Timing API, and the Resource Timing API.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance)\n */\ninterface Performance extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/resourcetimingbufferfull_event) */\n    onresourcetimingbufferfull: ((this: Performance, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/timeOrigin) */\n    readonly timeOrigin: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/clearMarks) */\n    clearMarks(markName?: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/clearMeasures) */\n    clearMeasures(measureName?: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/clearResourceTimings) */\n    clearResourceTimings(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/getEntries) */\n    getEntries(): PerformanceEntryList;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/getEntriesByName) */\n    getEntriesByName(name: string, type?: string): PerformanceEntryList;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/getEntriesByType) */\n    getEntriesByType(type: string): PerformanceEntryList;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/mark) */\n    mark(markName: string, markOptions?: PerformanceMarkOptions): PerformanceMark;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/measure) */\n    measure(measureName: string, startOrMeasureOptions?: string | PerformanceMeasureOptions, endMark?: string): PerformanceMeasure;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/now) */\n    now(): DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/setResourceTimingBufferSize) */\n    setResourceTimingBufferSize(maxSize: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Performance/toJSON) */\n    toJSON(): any;\n    addEventListener<K extends keyof PerformanceEventMap>(type: K, listener: (this: Performance, ev: PerformanceEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof PerformanceEventMap>(type: K, listener: (this: Performance, ev: PerformanceEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var Performance: {\n    prototype: Performance;\n    new(): Performance;\n};\n\n/**\n * Encapsulates a single performance metric that is part of the performance timeline. A performance entry can be directly created by making a performance mark or measure (for example by calling the mark() method) at an explicit point in an application. Performance entries are also created in indirect ways such as loading a resource (such as an image).\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceEntry)\n */\ninterface PerformanceEntry {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceEntry/duration) */\n    readonly duration: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceEntry/entryType) */\n    readonly entryType: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceEntry/name) */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceEntry/startTime) */\n    readonly startTime: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceEntry/toJSON) */\n    toJSON(): any;\n}\n\ndeclare var PerformanceEntry: {\n    prototype: PerformanceEntry;\n    new(): PerformanceEntry;\n};\n\n/**\n * PerformanceMark\xA0is an abstract interface for PerformanceEntry objects with an entryType of \"mark\". Entries of this type are created by calling performance.mark() to add a named DOMHighResTimeStamp (the mark) to the browser's performance timeline.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceMark)\n */\ninterface PerformanceMark extends PerformanceEntry {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceMark/detail) */\n    readonly detail: any;\n}\n\ndeclare var PerformanceMark: {\n    prototype: PerformanceMark;\n    new(markName: string, markOptions?: PerformanceMarkOptions): PerformanceMark;\n};\n\n/**\n * PerformanceMeasure is an abstract interface for PerformanceEntry objects with an entryType of \"measure\". Entries of this type are created by calling performance.measure() to add a named DOMHighResTimeStamp (the measure) between two marks to the browser's performance timeline.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceMeasure)\n */\ninterface PerformanceMeasure extends PerformanceEntry {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceMeasure/detail) */\n    readonly detail: any;\n}\n\ndeclare var PerformanceMeasure: {\n    prototype: PerformanceMeasure;\n    new(): PerformanceMeasure;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserver) */\ninterface PerformanceObserver {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserver/disconnect) */\n    disconnect(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserver/observe) */\n    observe(options?: PerformanceObserverInit): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserver/takeRecords) */\n    takeRecords(): PerformanceEntryList;\n}\n\ndeclare var PerformanceObserver: {\n    prototype: PerformanceObserver;\n    new(callback: PerformanceObserverCallback): PerformanceObserver;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserver/supportedEntryTypes_static) */\n    readonly supportedEntryTypes: ReadonlyArray<string>;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserverEntryList) */\ninterface PerformanceObserverEntryList {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserverEntryList/getEntries) */\n    getEntries(): PerformanceEntryList;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserverEntryList/getEntriesByName) */\n    getEntriesByName(name: string, type?: string): PerformanceEntryList;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceObserverEntryList/getEntriesByType) */\n    getEntriesByType(type: string): PerformanceEntryList;\n}\n\ndeclare var PerformanceObserverEntryList: {\n    prototype: PerformanceObserverEntryList;\n    new(): PerformanceObserverEntryList;\n};\n\n/**\n * Enables retrieval and analysis of detailed network timing data regarding the loading of an application's resources. An application can use the timing metrics to determine, for example, the length of time it takes to fetch a specific resource, such as an XMLHttpRequest, <SVG>, image, or script.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming)\n */\ninterface PerformanceResourceTiming extends PerformanceEntry {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/connectEnd) */\n    readonly connectEnd: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/connectStart) */\n    readonly connectStart: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/decodedBodySize) */\n    readonly decodedBodySize: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/domainLookupEnd) */\n    readonly domainLookupEnd: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/domainLookupStart) */\n    readonly domainLookupStart: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/encodedBodySize) */\n    readonly encodedBodySize: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/fetchStart) */\n    readonly fetchStart: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/initiatorType) */\n    readonly initiatorType: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/nextHopProtocol) */\n    readonly nextHopProtocol: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/redirectEnd) */\n    readonly redirectEnd: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/redirectStart) */\n    readonly redirectStart: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/requestStart) */\n    readonly requestStart: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/responseEnd) */\n    readonly responseEnd: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/responseStart) */\n    readonly responseStart: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/secureConnectionStart) */\n    readonly secureConnectionStart: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/serverTiming) */\n    readonly serverTiming: ReadonlyArray<PerformanceServerTiming>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/transferSize) */\n    readonly transferSize: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/workerStart) */\n    readonly workerStart: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceResourceTiming/toJSON) */\n    toJSON(): any;\n}\n\ndeclare var PerformanceResourceTiming: {\n    prototype: PerformanceResourceTiming;\n    new(): PerformanceResourceTiming;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceServerTiming) */\ninterface PerformanceServerTiming {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceServerTiming/description) */\n    readonly description: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceServerTiming/duration) */\n    readonly duration: DOMHighResTimeStamp;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceServerTiming/name) */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PerformanceServerTiming/toJSON) */\n    toJSON(): any;\n}\n\ndeclare var PerformanceServerTiming: {\n    prototype: PerformanceServerTiming;\n    new(): PerformanceServerTiming;\n};\n\ninterface PermissionStatusEventMap {\n    \"change\": Event;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PermissionStatus) */\ninterface PermissionStatus extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PermissionStatus/name) */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PermissionStatus/change_event) */\n    onchange: ((this: PermissionStatus, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PermissionStatus/state) */\n    readonly state: PermissionState;\n    addEventListener<K extends keyof PermissionStatusEventMap>(type: K, listener: (this: PermissionStatus, ev: PermissionStatusEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof PermissionStatusEventMap>(type: K, listener: (this: PermissionStatus, ev: PermissionStatusEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var PermissionStatus: {\n    prototype: PermissionStatus;\n    new(): PermissionStatus;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Permissions) */\ninterface Permissions {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Permissions/query) */\n    query(permissionDesc: PermissionDescriptor): Promise<PermissionStatus>;\n}\n\ndeclare var Permissions: {\n    prototype: Permissions;\n    new(): Permissions;\n};\n\n/**\n * Events measuring progress of an underlying process, like an HTTP request (for an XMLHttpRequest, or the loading of the underlying resource of an <img>, <audio>, <video>, <style> or <link>).\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ProgressEvent)\n */\ninterface ProgressEvent<T extends EventTarget = EventTarget> extends Event {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ProgressEvent/lengthComputable) */\n    readonly lengthComputable: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ProgressEvent/loaded) */\n    readonly loaded: number;\n    readonly target: T | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ProgressEvent/total) */\n    readonly total: number;\n}\n\ndeclare var ProgressEvent: {\n    prototype: ProgressEvent;\n    new(type: string, eventInitDict?: ProgressEventInit): ProgressEvent;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PromiseRejectionEvent) */\ninterface PromiseRejectionEvent extends Event {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PromiseRejectionEvent/promise) */\n    readonly promise: Promise<any>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PromiseRejectionEvent/reason) */\n    readonly reason: any;\n}\n\ndeclare var PromiseRejectionEvent: {\n    prototype: PromiseRejectionEvent;\n    new(type: string, eventInitDict: PromiseRejectionEventInit): PromiseRejectionEvent;\n};\n\n/**\n * This Push API interface represents a push message that has been received. This event is sent to the global scope of a ServiceWorker. It contains the information sent from an application server to a PushSubscription.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushEvent)\n */\ninterface PushEvent extends ExtendableEvent {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushEvent/data) */\n    readonly data: PushMessageData | null;\n}\n\ndeclare var PushEvent: {\n    prototype: PushEvent;\n    new(type: string, eventInitDict?: PushEventInit): PushEvent;\n};\n\n/**\n * This Push API interface provides a way to receive notifications from third-party servers as well as request URLs for push notifications.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushManager)\n */\ninterface PushManager {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushManager/getSubscription) */\n    getSubscription(): Promise<PushSubscription | null>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushManager/permissionState) */\n    permissionState(options?: PushSubscriptionOptionsInit): Promise<PermissionState>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushManager/subscribe) */\n    subscribe(options?: PushSubscriptionOptionsInit): Promise<PushSubscription>;\n}\n\ndeclare var PushManager: {\n    prototype: PushManager;\n    new(): PushManager;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushManager/supportedContentEncodings_static) */\n    readonly supportedContentEncodings: ReadonlyArray<string>;\n};\n\n/**\n * This Push API interface provides methods which let you retrieve the push data sent by a server in various formats.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushMessageData)\n */\ninterface PushMessageData {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushMessageData/arrayBuffer) */\n    arrayBuffer(): ArrayBuffer;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushMessageData/blob) */\n    blob(): Blob;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushMessageData/json) */\n    json(): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushMessageData/text) */\n    text(): string;\n}\n\ndeclare var PushMessageData: {\n    prototype: PushMessageData;\n    new(): PushMessageData;\n};\n\n/**\n * This Push API interface provides a subcription's URL endpoint and allows unsubscription from a push service.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscription)\n */\ninterface PushSubscription {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscription/endpoint) */\n    readonly endpoint: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscription/expirationTime) */\n    readonly expirationTime: EpochTimeStamp | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscription/options) */\n    readonly options: PushSubscriptionOptions;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscription/getKey) */\n    getKey(name: PushEncryptionKeyName): ArrayBuffer | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscription/toJSON) */\n    toJSON(): PushSubscriptionJSON;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscription/unsubscribe) */\n    unsubscribe(): Promise<boolean>;\n}\n\ndeclare var PushSubscription: {\n    prototype: PushSubscription;\n    new(): PushSubscription;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscriptionOptions)\n */\ninterface PushSubscriptionOptions {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscriptionOptions/applicationServerKey) */\n    readonly applicationServerKey: ArrayBuffer | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/PushSubscriptionOptions/userVisibleOnly) */\n    readonly userVisibleOnly: boolean;\n}\n\ndeclare var PushSubscriptionOptions: {\n    prototype: PushSubscriptionOptions;\n    new(): PushSubscriptionOptions;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedAudioFrame) */\ninterface RTCEncodedAudioFrame {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedAudioFrame/data) */\n    data: ArrayBuffer;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedAudioFrame/timestamp) */\n    readonly timestamp: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedAudioFrame/getMetadata) */\n    getMetadata(): RTCEncodedAudioFrameMetadata;\n}\n\ndeclare var RTCEncodedAudioFrame: {\n    prototype: RTCEncodedAudioFrame;\n    new(): RTCEncodedAudioFrame;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedVideoFrame) */\ninterface RTCEncodedVideoFrame {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedVideoFrame/data) */\n    data: ArrayBuffer;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedVideoFrame/timestamp) */\n    readonly timestamp: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedVideoFrame/type) */\n    readonly type: RTCEncodedVideoFrameType;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCEncodedVideoFrame/getMetadata) */\n    getMetadata(): RTCEncodedVideoFrameMetadata;\n}\n\ndeclare var RTCEncodedVideoFrame: {\n    prototype: RTCEncodedVideoFrame;\n    new(): RTCEncodedVideoFrame;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCRtpScriptTransformer) */\ninterface RTCRtpScriptTransformer extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCRtpScriptTransformer/options) */\n    readonly options: any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCRtpScriptTransformer/readable) */\n    readonly readable: ReadableStream;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCRtpScriptTransformer/writable) */\n    readonly writable: WritableStream;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCRtpScriptTransformer/generateKeyFrame) */\n    generateKeyFrame(rid?: string): Promise<number>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCRtpScriptTransformer/sendKeyFrameRequest) */\n    sendKeyFrameRequest(): Promise<void>;\n}\n\ndeclare var RTCRtpScriptTransformer: {\n    prototype: RTCRtpScriptTransformer;\n    new(): RTCRtpScriptTransformer;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCTransformEvent) */\ninterface RTCTransformEvent extends Event {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/RTCTransformEvent/transformer) */\n    readonly transformer: RTCRtpScriptTransformer;\n}\n\ndeclare var RTCTransformEvent: {\n    prototype: RTCTransformEvent;\n    new(): RTCTransformEvent;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController) */\ninterface ReadableByteStreamController {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController/byobRequest) */\n    readonly byobRequest: ReadableStreamBYOBRequest | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController/desiredSize) */\n    readonly desiredSize: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController/close) */\n    close(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController/enqueue) */\n    enqueue(chunk: ArrayBufferView): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController/error) */\n    error(e?: any): void;\n}\n\ndeclare var ReadableByteStreamController: {\n    prototype: ReadableByteStreamController;\n    new(): ReadableByteStreamController;\n};\n\n/**\n * This Streams API interface represents a readable stream of byte data. The Fetch API offers a concrete instance of a ReadableStream through the body property of a Response object.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream)\n */\ninterface ReadableStream<R = any> {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/locked) */\n    readonly locked: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/cancel) */\n    cancel(reason?: any): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/getReader) */\n    getReader(options: { mode: \"byob\" }): ReadableStreamBYOBReader;\n    getReader(): ReadableStreamDefaultReader<R>;\n    getReader(options?: ReadableStreamGetReaderOptions): ReadableStreamReader<R>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/pipeThrough) */\n    pipeThrough<T>(transform: ReadableWritablePair<T, R>, options?: StreamPipeOptions): ReadableStream<T>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/pipeTo) */\n    pipeTo(destination: WritableStream<R>, options?: StreamPipeOptions): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/tee) */\n    tee(): [ReadableStream<R>, ReadableStream<R>];\n}\n\ndeclare var ReadableStream: {\n    prototype: ReadableStream;\n    new(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number }): ReadableStream<Uint8Array>;\n    new<R = any>(underlyingSource: UnderlyingDefaultSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;\n    new<R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBReader) */\ninterface ReadableStreamBYOBReader extends ReadableStreamGenericReader {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBReader/read) */\n    read<T extends ArrayBufferView>(view: T): Promise<ReadableStreamReadResult<T>>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBReader/releaseLock) */\n    releaseLock(): void;\n}\n\ndeclare var ReadableStreamBYOBReader: {\n    prototype: ReadableStreamBYOBReader;\n    new(stream: ReadableStream): ReadableStreamBYOBReader;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBRequest) */\ninterface ReadableStreamBYOBRequest {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBRequest/view) */\n    readonly view: ArrayBufferView | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBRequest/respond) */\n    respond(bytesWritten: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBRequest/respondWithNewView) */\n    respondWithNewView(view: ArrayBufferView): void;\n}\n\ndeclare var ReadableStreamBYOBRequest: {\n    prototype: ReadableStreamBYOBRequest;\n    new(): ReadableStreamBYOBRequest;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamDefaultController) */\ninterface ReadableStreamDefaultController<R = any> {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamDefaultController/desiredSize) */\n    readonly desiredSize: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamDefaultController/close) */\n    close(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamDefaultController/enqueue) */\n    enqueue(chunk?: R): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamDefaultController/error) */\n    error(e?: any): void;\n}\n\ndeclare var ReadableStreamDefaultController: {\n    prototype: ReadableStreamDefaultController;\n    new(): ReadableStreamDefaultController;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamDefaultReader) */\ninterface ReadableStreamDefaultReader<R = any> extends ReadableStreamGenericReader {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamDefaultReader/read) */\n    read(): Promise<ReadableStreamReadResult<R>>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamDefaultReader/releaseLock) */\n    releaseLock(): void;\n}\n\ndeclare var ReadableStreamDefaultReader: {\n    prototype: ReadableStreamDefaultReader;\n    new<R = any>(stream: ReadableStream<R>): ReadableStreamDefaultReader<R>;\n};\n\ninterface ReadableStreamGenericReader {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBReader/closed) */\n    readonly closed: Promise<undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBReader/cancel) */\n    cancel(reason?: any): Promise<void>;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Report) */\ninterface Report {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Report/body) */\n    readonly body: ReportBody | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Report/type) */\n    readonly type: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Report/url) */\n    readonly url: string;\n    toJSON(): any;\n}\n\ndeclare var Report: {\n    prototype: Report;\n    new(): Report;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReportBody) */\ninterface ReportBody {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReportBody/toJSON) */\n    toJSON(): any;\n}\n\ndeclare var ReportBody: {\n    prototype: ReportBody;\n    new(): ReportBody;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReportingObserver) */\ninterface ReportingObserver {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReportingObserver/disconnect) */\n    disconnect(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReportingObserver/observe) */\n    observe(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReportingObserver/takeRecords) */\n    takeRecords(): ReportList;\n}\n\ndeclare var ReportingObserver: {\n    prototype: ReportingObserver;\n    new(callback: ReportingObserverCallback, options?: ReportingObserverOptions): ReportingObserver;\n};\n\n/**\n * This Fetch API interface represents a resource request.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request)\n */\ninterface Request extends Body {\n    /**\n     * Returns the cache mode associated with request, which is a string indicating how the request will interact with the browser's cache when fetching.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/cache)\n     */\n    readonly cache: RequestCache;\n    /**\n     * Returns the credentials mode associated with request, which is a string indicating whether credentials will be sent with the request always, never, or only when sent to a same-origin URL.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/credentials)\n     */\n    readonly credentials: RequestCredentials;\n    /**\n     * Returns the kind of resource requested by request, e.g., \"document\" or \"script\".\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/destination)\n     */\n    readonly destination: RequestDestination;\n    /**\n     * Returns a Headers object consisting of the headers associated with request. Note that headers added in the network layer by the user agent will not be accounted for in this object, e.g., the \"Host\" header.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/headers)\n     */\n    readonly headers: Headers;\n    /**\n     * Returns request's subresource integrity metadata, which is a cryptographic hash of the resource being fetched. Its value consists of multiple hashes separated by whitespace. [SRI]\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/integrity)\n     */\n    readonly integrity: string;\n    /** Returns a boolean indicating whether or not request can outlive the global in which it was created. */\n    readonly keepalive: boolean;\n    /**\n     * Returns request's HTTP method, which is \"GET\" by default.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/method)\n     */\n    readonly method: string;\n    /**\n     * Returns the mode associated with request, which is a string indicating whether the request will use CORS, or will be restricted to same-origin URLs.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/mode)\n     */\n    readonly mode: RequestMode;\n    /**\n     * Returns the redirect mode associated with request, which is a string indicating how redirects for the request will be handled during fetching. A request will follow redirects by default.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/redirect)\n     */\n    readonly redirect: RequestRedirect;\n    /**\n     * Returns the referrer of request. Its value can be a same-origin URL if explicitly set in init, the empty string to indicate no referrer, and \"about:client\" when defaulting to the global's default. This is used during fetching to determine the value of the `Referer` header of the request being made.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/referrer)\n     */\n    readonly referrer: string;\n    /**\n     * Returns the referrer policy associated with request. This is used during fetching to compute the value of the request's referrer.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/referrerPolicy)\n     */\n    readonly referrerPolicy: ReferrerPolicy;\n    /**\n     * Returns the signal associated with request, which is an AbortSignal object indicating whether or not request has been aborted, and its abort event handler.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/signal)\n     */\n    readonly signal: AbortSignal;\n    /**\n     * Returns the URL of request as a string.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/url)\n     */\n    readonly url: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Request/clone) */\n    clone(): Request;\n}\n\ndeclare var Request: {\n    prototype: Request;\n    new(input: RequestInfo | URL, init?: RequestInit): Request;\n};\n\n/**\n * This Fetch API interface represents the response to a request.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response)\n */\ninterface Response extends Body {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/headers) */\n    readonly headers: Headers;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/ok) */\n    readonly ok: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/redirected) */\n    readonly redirected: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/status) */\n    readonly status: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/statusText) */\n    readonly statusText: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/type) */\n    readonly type: ResponseType;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/url) */\n    readonly url: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/clone) */\n    clone(): Response;\n}\n\ndeclare var Response: {\n    prototype: Response;\n    new(body?: BodyInit | null, init?: ResponseInit): Response;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/error_static) */\n    error(): Response;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/json_static) */\n    json(data: any, init?: ResponseInit): Response;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Response/redirect_static) */\n    redirect(url: string | URL, status?: number): Response;\n};\n\n/**\n * Inherits from Event, and represents the event object of an event sent on a document or worker when its content security policy is violated.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent)\n */\ninterface SecurityPolicyViolationEvent extends Event {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/blockedURI) */\n    readonly blockedURI: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/columnNumber) */\n    readonly columnNumber: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/disposition) */\n    readonly disposition: SecurityPolicyViolationEventDisposition;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/documentURI) */\n    readonly documentURI: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/effectiveDirective) */\n    readonly effectiveDirective: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/lineNumber) */\n    readonly lineNumber: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/originalPolicy) */\n    readonly originalPolicy: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/referrer) */\n    readonly referrer: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/sample) */\n    readonly sample: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/sourceFile) */\n    readonly sourceFile: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/statusCode) */\n    readonly statusCode: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent/violatedDirective) */\n    readonly violatedDirective: string;\n}\n\ndeclare var SecurityPolicyViolationEvent: {\n    prototype: SecurityPolicyViolationEvent;\n    new(type: string, eventInitDict?: SecurityPolicyViolationEventInit): SecurityPolicyViolationEvent;\n};\n\ninterface ServiceWorkerEventMap extends AbstractWorkerEventMap {\n    \"statechange\": Event;\n}\n\n/**\n * This ServiceWorker API interface provides a reference to a service worker. Multiple browsing contexts (e.g. pages, workers, etc.) can be associated with the same service worker, each through a unique ServiceWorker object.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorker)\n */\ninterface ServiceWorker extends EventTarget, AbstractWorker {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorker/statechange_event) */\n    onstatechange: ((this: ServiceWorker, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorker/scriptURL) */\n    readonly scriptURL: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorker/state) */\n    readonly state: ServiceWorkerState;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorker/postMessage) */\n    postMessage(message: any, transfer: Transferable[]): void;\n    postMessage(message: any, options?: StructuredSerializeOptions): void;\n    addEventListener<K extends keyof ServiceWorkerEventMap>(type: K, listener: (this: ServiceWorker, ev: ServiceWorkerEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof ServiceWorkerEventMap>(type: K, listener: (this: ServiceWorker, ev: ServiceWorkerEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var ServiceWorker: {\n    prototype: ServiceWorker;\n    new(): ServiceWorker;\n};\n\ninterface ServiceWorkerContainerEventMap {\n    \"controllerchange\": Event;\n    \"message\": MessageEvent;\n    \"messageerror\": MessageEvent;\n}\n\n/**\n * The\xA0ServiceWorkerContainer\xA0interface of the\xA0ServiceWorker API\xA0provides an object representing the service worker as an overall unit in the network ecosystem, including facilities to register, unregister and update service workers, and access the state of service workers and their registrations.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer)\n */\ninterface ServiceWorkerContainer extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/controller) */\n    readonly controller: ServiceWorker | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/controllerchange_event) */\n    oncontrollerchange: ((this: ServiceWorkerContainer, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/message_event) */\n    onmessage: ((this: ServiceWorkerContainer, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/messageerror_event) */\n    onmessageerror: ((this: ServiceWorkerContainer, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/ready) */\n    readonly ready: Promise<ServiceWorkerRegistration>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/getRegistration) */\n    getRegistration(clientURL?: string | URL): Promise<ServiceWorkerRegistration | undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/getRegistrations) */\n    getRegistrations(): Promise<ReadonlyArray<ServiceWorkerRegistration>>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/register) */\n    register(scriptURL: string | URL, options?: RegistrationOptions): Promise<ServiceWorkerRegistration>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerContainer/startMessages) */\n    startMessages(): void;\n    addEventListener<K extends keyof ServiceWorkerContainerEventMap>(type: K, listener: (this: ServiceWorkerContainer, ev: ServiceWorkerContainerEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof ServiceWorkerContainerEventMap>(type: K, listener: (this: ServiceWorkerContainer, ev: ServiceWorkerContainerEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var ServiceWorkerContainer: {\n    prototype: ServiceWorkerContainer;\n    new(): ServiceWorkerContainer;\n};\n\ninterface ServiceWorkerGlobalScopeEventMap extends WorkerGlobalScopeEventMap {\n    \"activate\": ExtendableEvent;\n    \"fetch\": FetchEvent;\n    \"install\": ExtendableEvent;\n    \"message\": ExtendableMessageEvent;\n    \"messageerror\": MessageEvent;\n    \"notificationclick\": NotificationEvent;\n    \"notificationclose\": NotificationEvent;\n    \"push\": PushEvent;\n    \"pushsubscriptionchange\": Event;\n}\n\n/**\n * This ServiceWorker API interface represents the global execution context of a service worker.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope)\n */\ninterface ServiceWorkerGlobalScope extends WorkerGlobalScope {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/clients) */\n    readonly clients: Clients;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/activate_event) */\n    onactivate: ((this: ServiceWorkerGlobalScope, ev: ExtendableEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/fetch_event) */\n    onfetch: ((this: ServiceWorkerGlobalScope, ev: FetchEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/install_event) */\n    oninstall: ((this: ServiceWorkerGlobalScope, ev: ExtendableEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/message_event) */\n    onmessage: ((this: ServiceWorkerGlobalScope, ev: ExtendableMessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/messageerror_event) */\n    onmessageerror: ((this: ServiceWorkerGlobalScope, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/notificationclick_event) */\n    onnotificationclick: ((this: ServiceWorkerGlobalScope, ev: NotificationEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/notificationclose_event) */\n    onnotificationclose: ((this: ServiceWorkerGlobalScope, ev: NotificationEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/push_event) */\n    onpush: ((this: ServiceWorkerGlobalScope, ev: PushEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/pushsubscriptionchange_event) */\n    onpushsubscriptionchange: ((this: ServiceWorkerGlobalScope, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/registration) */\n    readonly registration: ServiceWorkerRegistration;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/serviceWorker) */\n    readonly serviceWorker: ServiceWorker;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting) */\n    skipWaiting(): Promise<void>;\n    addEventListener<K extends keyof ServiceWorkerGlobalScopeEventMap>(type: K, listener: (this: ServiceWorkerGlobalScope, ev: ServiceWorkerGlobalScopeEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof ServiceWorkerGlobalScopeEventMap>(type: K, listener: (this: ServiceWorkerGlobalScope, ev: ServiceWorkerGlobalScopeEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var ServiceWorkerGlobalScope: {\n    prototype: ServiceWorkerGlobalScope;\n    new(): ServiceWorkerGlobalScope;\n};\n\ninterface ServiceWorkerRegistrationEventMap {\n    \"updatefound\": Event;\n}\n\n/**\n * This ServiceWorker API interface represents the service worker registration. You register a service worker to control one or more pages that share the same origin.\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration)\n */\ninterface ServiceWorkerRegistration extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/active) */\n    readonly active: ServiceWorker | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/installing) */\n    readonly installing: ServiceWorker | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/navigationPreload) */\n    readonly navigationPreload: NavigationPreloadManager;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/updatefound_event) */\n    onupdatefound: ((this: ServiceWorkerRegistration, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/pushManager) */\n    readonly pushManager: PushManager;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/scope) */\n    readonly scope: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/updateViaCache) */\n    readonly updateViaCache: ServiceWorkerUpdateViaCache;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/waiting) */\n    readonly waiting: ServiceWorker | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/getNotifications) */\n    getNotifications(filter?: GetNotificationOptions): Promise<Notification[]>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/showNotification) */\n    showNotification(title: string, options?: NotificationOptions): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/unregister) */\n    unregister(): Promise<boolean>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ServiceWorkerRegistration/update) */\n    update(): Promise<void>;\n    addEventListener<K extends keyof ServiceWorkerRegistrationEventMap>(type: K, listener: (this: ServiceWorkerRegistration, ev: ServiceWorkerRegistrationEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof ServiceWorkerRegistrationEventMap>(type: K, listener: (this: ServiceWorkerRegistration, ev: ServiceWorkerRegistrationEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var ServiceWorkerRegistration: {\n    prototype: ServiceWorkerRegistration;\n    new(): ServiceWorkerRegistration;\n};\n\ninterface SharedWorkerGlobalScopeEventMap extends WorkerGlobalScopeEventMap {\n    \"connect\": MessageEvent;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SharedWorkerGlobalScope) */\ninterface SharedWorkerGlobalScope extends WorkerGlobalScope {\n    /**\n     * Returns sharedWorkerGlobal's name, i.e. the value given to the SharedWorker constructor. Multiple SharedWorker objects can correspond to the same shared worker (and SharedWorkerGlobalScope), by reusing the same name.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/SharedWorkerGlobalScope/name)\n     */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SharedWorkerGlobalScope/connect_event) */\n    onconnect: ((this: SharedWorkerGlobalScope, ev: MessageEvent) => any) | null;\n    /**\n     * Aborts sharedWorkerGlobal.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/SharedWorkerGlobalScope/close)\n     */\n    close(): void;\n    addEventListener<K extends keyof SharedWorkerGlobalScopeEventMap>(type: K, listener: (this: SharedWorkerGlobalScope, ev: SharedWorkerGlobalScopeEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof SharedWorkerGlobalScopeEventMap>(type: K, listener: (this: SharedWorkerGlobalScope, ev: SharedWorkerGlobalScopeEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var SharedWorkerGlobalScope: {\n    prototype: SharedWorkerGlobalScope;\n    new(): SharedWorkerGlobalScope;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/StorageManager)\n */\ninterface StorageManager {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/StorageManager/estimate) */\n    estimate(): Promise<StorageEstimate>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/StorageManager/getDirectory) */\n    getDirectory(): Promise<FileSystemDirectoryHandle>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/StorageManager/persisted) */\n    persisted(): Promise<boolean>;\n}\n\ndeclare var StorageManager: {\n    prototype: StorageManager;\n    new(): StorageManager;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/StylePropertyMapReadOnly) */\ninterface StylePropertyMapReadOnly {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/StylePropertyMapReadOnly/size) */\n    readonly size: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/StylePropertyMapReadOnly/get) */\n    get(property: string): undefined | CSSStyleValue;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/StylePropertyMapReadOnly/getAll) */\n    getAll(property: string): CSSStyleValue[];\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/StylePropertyMapReadOnly/has) */\n    has(property: string): boolean;\n    forEach(callbackfn: (value: CSSStyleValue[], key: string, parent: StylePropertyMapReadOnly) => void, thisArg?: any): void;\n}\n\ndeclare var StylePropertyMapReadOnly: {\n    prototype: StylePropertyMapReadOnly;\n    new(): StylePropertyMapReadOnly;\n};\n\n/**\n * This Web Crypto API interface provides a number of low-level cryptographic functions. It is accessed via the Crypto.subtle properties available in a window context (via Window.crypto).\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto)\n */\ninterface SubtleCrypto {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/decrypt) */\n    decrypt(algorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, key: CryptoKey, data: BufferSource): Promise<ArrayBuffer>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/deriveBits) */\n    deriveBits(algorithm: AlgorithmIdentifier | EcdhKeyDeriveParams | HkdfParams | Pbkdf2Params, baseKey: CryptoKey, length: number): Promise<ArrayBuffer>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/deriveKey) */\n    deriveKey(algorithm: AlgorithmIdentifier | EcdhKeyDeriveParams | HkdfParams | Pbkdf2Params, baseKey: CryptoKey, derivedKeyType: AlgorithmIdentifier | AesDerivedKeyParams | HmacImportParams | HkdfParams | Pbkdf2Params, extractable: boolean, keyUsages: KeyUsage[]): Promise<CryptoKey>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/digest) */\n    digest(algorithm: AlgorithmIdentifier, data: BufferSource): Promise<ArrayBuffer>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/encrypt) */\n    encrypt(algorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, key: CryptoKey, data: BufferSource): Promise<ArrayBuffer>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/exportKey) */\n    exportKey(format: \"jwk\", key: CryptoKey): Promise<JsonWebKey>;\n    exportKey(format: Exclude<KeyFormat, \"jwk\">, key: CryptoKey): Promise<ArrayBuffer>;\n    exportKey(format: KeyFormat, key: CryptoKey): Promise<ArrayBuffer | JsonWebKey>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/generateKey) */\n    generateKey(algorithm: \"Ed25519\", extractable: boolean, keyUsages: ReadonlyArray<\"sign\" | \"verify\">): Promise<CryptoKeyPair>;\n    generateKey(algorithm: RsaHashedKeyGenParams | EcKeyGenParams, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKeyPair>;\n    generateKey(algorithm: AesKeyGenParams | HmacKeyGenParams | Pbkdf2Params, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKey>;\n    generateKey(algorithm: AlgorithmIdentifier, extractable: boolean, keyUsages: KeyUsage[]): Promise<CryptoKeyPair | CryptoKey>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/importKey) */\n    importKey(format: \"jwk\", keyData: JsonWebKey, algorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKey>;\n    importKey(format: Exclude<KeyFormat, \"jwk\">, keyData: BufferSource, algorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: KeyUsage[]): Promise<CryptoKey>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/sign) */\n    sign(algorithm: AlgorithmIdentifier | RsaPssParams | EcdsaParams, key: CryptoKey, data: BufferSource): Promise<ArrayBuffer>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/unwrapKey) */\n    unwrapKey(format: KeyFormat, wrappedKey: BufferSource, unwrappingKey: CryptoKey, unwrapAlgorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, unwrappedKeyAlgorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: KeyUsage[]): Promise<CryptoKey>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/verify) */\n    verify(algorithm: AlgorithmIdentifier | RsaPssParams | EcdsaParams, key: CryptoKey, signature: BufferSource, data: BufferSource): Promise<boolean>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/wrapKey) */\n    wrapKey(format: KeyFormat, key: CryptoKey, wrappingKey: CryptoKey, wrapAlgorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams): Promise<ArrayBuffer>;\n}\n\ndeclare var SubtleCrypto: {\n    prototype: SubtleCrypto;\n    new(): SubtleCrypto;\n};\n\n/**\n * A decoder for a specific method, that is a specific character encoding, like utf-8, iso-8859-2, koi8, cp1261, gbk, etc.\xA0A decoder takes a stream of bytes as input and emits a stream of code points. For a more scalable, non-native library, see StringView – a C-like representation of strings based on typed arrays.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextDecoder)\n */\ninterface TextDecoder extends TextDecoderCommon {\n    /**\n     * Returns the result of running encoding's decoder. The method can be invoked zero or more times with options's stream set to true, and then once without options's stream (or set to false), to process a fragmented input. If the invocation without options's stream (or set to false) has no input, it's clearest to omit both arguments.\n     *\n     * ```\n     * var string = \"\", decoder = new TextDecoder(encoding), buffer;\n     * while(buffer = next_chunk()) {\n     *   string += decoder.decode(buffer, {stream:true});\n     * }\n     * string += decoder.decode(); // end-of-queue\n     * ```\n     *\n     * If the error mode is \"fatal\" and encoding's decoder returns error, throws a TypeError.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextDecoder/decode)\n     */\n    decode(input?: AllowSharedBufferSource, options?: TextDecodeOptions): string;\n}\n\ndeclare var TextDecoder: {\n    prototype: TextDecoder;\n    new(label?: string, options?: TextDecoderOptions): TextDecoder;\n};\n\ninterface TextDecoderCommon {\n    /**\n     * Returns encoding's name, lowercased.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextDecoder/encoding)\n     */\n    readonly encoding: string;\n    /**\n     * Returns true if error mode is \"fatal\", otherwise false.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextDecoder/fatal)\n     */\n    readonly fatal: boolean;\n    /**\n     * Returns the value of ignore BOM.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextDecoder/ignoreBOM)\n     */\n    readonly ignoreBOM: boolean;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextDecoderStream) */\ninterface TextDecoderStream extends GenericTransformStream, TextDecoderCommon {\n    readonly readable: ReadableStream<string>;\n    readonly writable: WritableStream<BufferSource>;\n}\n\ndeclare var TextDecoderStream: {\n    prototype: TextDecoderStream;\n    new(label?: string, options?: TextDecoderOptions): TextDecoderStream;\n};\n\n/**\n * TextEncoder takes a stream of code points as input and emits a stream of bytes. For a more scalable, non-native library, see StringView – a C-like representation of strings based on typed arrays.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextEncoder)\n */\ninterface TextEncoder extends TextEncoderCommon {\n    /**\n     * Returns the result of running UTF-8's encoder.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextEncoder/encode)\n     */\n    encode(input?: string): Uint8Array;\n    /**\n     * Runs the UTF-8 encoder on source, stores the result of that operation into destination, and returns the progress made as an object wherein read is the number of converted code units of source and written is the number of bytes modified in destination.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextEncoder/encodeInto)\n     */\n    encodeInto(source: string, destination: Uint8Array): TextEncoderEncodeIntoResult;\n}\n\ndeclare var TextEncoder: {\n    prototype: TextEncoder;\n    new(): TextEncoder;\n};\n\ninterface TextEncoderCommon {\n    /**\n     * Returns \"utf-8\".\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextEncoder/encoding)\n     */\n    readonly encoding: string;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextEncoderStream) */\ninterface TextEncoderStream extends GenericTransformStream, TextEncoderCommon {\n    readonly readable: ReadableStream<Uint8Array>;\n    readonly writable: WritableStream<string>;\n}\n\ndeclare var TextEncoderStream: {\n    prototype: TextEncoderStream;\n    new(): TextEncoderStream;\n};\n\n/**\n * The dimensions of a piece of text in the canvas, as created by the CanvasRenderingContext2D.measureText() method.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics)\n */\ninterface TextMetrics {\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/actualBoundingBoxAscent)\n     */\n    readonly actualBoundingBoxAscent: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/actualBoundingBoxDescent)\n     */\n    readonly actualBoundingBoxDescent: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/actualBoundingBoxLeft)\n     */\n    readonly actualBoundingBoxLeft: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/actualBoundingBoxRight)\n     */\n    readonly actualBoundingBoxRight: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/alphabeticBaseline)\n     */\n    readonly alphabeticBaseline: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/emHeightAscent)\n     */\n    readonly emHeightAscent: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/emHeightDescent)\n     */\n    readonly emHeightDescent: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/fontBoundingBoxAscent)\n     */\n    readonly fontBoundingBoxAscent: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/fontBoundingBoxDescent)\n     */\n    readonly fontBoundingBoxDescent: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/hangingBaseline)\n     */\n    readonly hangingBaseline: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/ideographicBaseline)\n     */\n    readonly ideographicBaseline: number;\n    /**\n     * Returns the measurement described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextMetrics/width)\n     */\n    readonly width: number;\n}\n\ndeclare var TextMetrics: {\n    prototype: TextMetrics;\n    new(): TextMetrics;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TransformStream) */\ninterface TransformStream<I = any, O = any> {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TransformStream/readable) */\n    readonly readable: ReadableStream<O>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TransformStream/writable) */\n    readonly writable: WritableStream<I>;\n}\n\ndeclare var TransformStream: {\n    prototype: TransformStream;\n    new<I = any, O = any>(transformer?: Transformer<I, O>, writableStrategy?: QueuingStrategy<I>, readableStrategy?: QueuingStrategy<O>): TransformStream<I, O>;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TransformStreamDefaultController) */\ninterface TransformStreamDefaultController<O = any> {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TransformStreamDefaultController/desiredSize) */\n    readonly desiredSize: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TransformStreamDefaultController/enqueue) */\n    enqueue(chunk?: O): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TransformStreamDefaultController/error) */\n    error(reason?: any): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/TransformStreamDefaultController/terminate) */\n    terminate(): void;\n}\n\ndeclare var TransformStreamDefaultController: {\n    prototype: TransformStreamDefaultController;\n    new(): TransformStreamDefaultController;\n};\n\n/**\n * The URL\xA0interface represents an object providing static methods used for creating object URLs.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL)\n */\ninterface URL {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/hash) */\n    hash: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/host) */\n    host: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/hostname) */\n    hostname: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/href) */\n    href: string;\n    toString(): string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/origin) */\n    readonly origin: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/password) */\n    password: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/pathname) */\n    pathname: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/port) */\n    port: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/protocol) */\n    protocol: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/search) */\n    search: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/searchParams) */\n    readonly searchParams: URLSearchParams;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/username) */\n    username: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/toJSON) */\n    toJSON(): string;\n}\n\ndeclare var URL: {\n    prototype: URL;\n    new(url: string | URL, base?: string | URL): URL;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/canParse_static) */\n    canParse(url: string | URL, base?: string | URL): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/createObjectURL_static) */\n    createObjectURL(obj: Blob): string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/parse_static) */\n    parse(url: string | URL, base?: string | URL): URL | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URL/revokeObjectURL_static) */\n    revokeObjectURL(url: string): void;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams) */\ninterface URLSearchParams {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams/size) */\n    readonly size: number;\n    /**\n     * Appends a specified key/value pair as a new search parameter.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams/append)\n     */\n    append(name: string, value: string): void;\n    /**\n     * Deletes the given search parameter, and its associated value, from the list of all search parameters.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams/delete)\n     */\n    delete(name: string, value?: string): void;\n    /**\n     * Returns the first value associated to the given search parameter.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams/get)\n     */\n    get(name: string): string | null;\n    /**\n     * Returns all the values association with a given search parameter.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams/getAll)\n     */\n    getAll(name: string): string[];\n    /**\n     * Returns a Boolean indicating if such a search parameter exists.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams/has)\n     */\n    has(name: string, value?: string): boolean;\n    /**\n     * Sets the value associated to a given search parameter to the given value. If there were several values, delete the others.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams/set)\n     */\n    set(name: string, value: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/URLSearchParams/sort) */\n    sort(): void;\n    /** Returns a string containing a query string suitable for use in a URL. Does not include the question mark. */\n    toString(): string;\n    forEach(callbackfn: (value: string, key: string, parent: URLSearchParams) => void, thisArg?: any): void;\n}\n\ndeclare var URLSearchParams: {\n    prototype: URLSearchParams;\n    new(init?: string[][] | Record<string, string> | string | URLSearchParams): URLSearchParams;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoColorSpace) */\ninterface VideoColorSpace {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoColorSpace/fullRange) */\n    readonly fullRange: boolean | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoColorSpace/matrix) */\n    readonly matrix: VideoMatrixCoefficients | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoColorSpace/primaries) */\n    readonly primaries: VideoColorPrimaries | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoColorSpace/transfer) */\n    readonly transfer: VideoTransferCharacteristics | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoColorSpace/toJSON) */\n    toJSON(): VideoColorSpaceInit;\n}\n\ndeclare var VideoColorSpace: {\n    prototype: VideoColorSpace;\n    new(init?: VideoColorSpaceInit): VideoColorSpace;\n};\n\ninterface VideoDecoderEventMap {\n    \"dequeue\": Event;\n}\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder)\n */\ninterface VideoDecoder extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/decodeQueueSize) */\n    readonly decodeQueueSize: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/dequeue_event) */\n    ondequeue: ((this: VideoDecoder, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/state) */\n    readonly state: CodecState;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/close) */\n    close(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/configure) */\n    configure(config: VideoDecoderConfig): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/decode) */\n    decode(chunk: EncodedVideoChunk): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/flush) */\n    flush(): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/reset) */\n    reset(): void;\n    addEventListener<K extends keyof VideoDecoderEventMap>(type: K, listener: (this: VideoDecoder, ev: VideoDecoderEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof VideoDecoderEventMap>(type: K, listener: (this: VideoDecoder, ev: VideoDecoderEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var VideoDecoder: {\n    prototype: VideoDecoder;\n    new(init: VideoDecoderInit): VideoDecoder;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoDecoder/isConfigSupported_static) */\n    isConfigSupported(config: VideoDecoderConfig): Promise<VideoDecoderSupport>;\n};\n\ninterface VideoEncoderEventMap {\n    \"dequeue\": Event;\n}\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder)\n */\ninterface VideoEncoder extends EventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/encodeQueueSize) */\n    readonly encodeQueueSize: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/dequeue_event) */\n    ondequeue: ((this: VideoEncoder, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/state) */\n    readonly state: CodecState;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/close) */\n    close(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/configure) */\n    configure(config: VideoEncoderConfig): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/encode) */\n    encode(frame: VideoFrame, options?: VideoEncoderEncodeOptions): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/flush) */\n    flush(): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/reset) */\n    reset(): void;\n    addEventListener<K extends keyof VideoEncoderEventMap>(type: K, listener: (this: VideoEncoder, ev: VideoEncoderEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof VideoEncoderEventMap>(type: K, listener: (this: VideoEncoder, ev: VideoEncoderEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var VideoEncoder: {\n    prototype: VideoEncoder;\n    new(init: VideoEncoderInit): VideoEncoder;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoEncoder/isConfigSupported_static) */\n    isConfigSupported(config: VideoEncoderConfig): Promise<VideoEncoderSupport>;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame) */\ninterface VideoFrame {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/codedHeight) */\n    readonly codedHeight: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/codedRect) */\n    readonly codedRect: DOMRectReadOnly | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/codedWidth) */\n    readonly codedWidth: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/colorSpace) */\n    readonly colorSpace: VideoColorSpace;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/displayHeight) */\n    readonly displayHeight: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/displayWidth) */\n    readonly displayWidth: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/duration) */\n    readonly duration: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/format) */\n    readonly format: VideoPixelFormat | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/timestamp) */\n    readonly timestamp: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/visibleRect) */\n    readonly visibleRect: DOMRectReadOnly | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/allocationSize) */\n    allocationSize(options?: VideoFrameCopyToOptions): number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/clone) */\n    clone(): VideoFrame;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/close) */\n    close(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/VideoFrame/copyTo) */\n    copyTo(destination: AllowSharedBufferSource, options?: VideoFrameCopyToOptions): Promise<PlaneLayout[]>;\n}\n\ndeclare var VideoFrame: {\n    prototype: VideoFrame;\n    new(image: CanvasImageSource, init?: VideoFrameInit): VideoFrame;\n    new(data: AllowSharedBufferSource, init: VideoFrameBufferInit): VideoFrame;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_color_buffer_float) */\ninterface WEBGL_color_buffer_float {\n    readonly RGBA32F_EXT: 0x8814;\n    readonly FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT: 0x8211;\n    readonly UNSIGNED_NORMALIZED_EXT: 0x8C17;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_compressed_texture_astc) */\ninterface WEBGL_compressed_texture_astc {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_compressed_texture_astc/getSupportedProfiles) */\n    getSupportedProfiles(): string[];\n    readonly COMPRESSED_RGBA_ASTC_4x4_KHR: 0x93B0;\n    readonly COMPRESSED_RGBA_ASTC_5x4_KHR: 0x93B1;\n    readonly COMPRESSED_RGBA_ASTC_5x5_KHR: 0x93B2;\n    readonly COMPRESSED_RGBA_ASTC_6x5_KHR: 0x93B3;\n    readonly COMPRESSED_RGBA_ASTC_6x6_KHR: 0x93B4;\n    readonly COMPRESSED_RGBA_ASTC_8x5_KHR: 0x93B5;\n    readonly COMPRESSED_RGBA_ASTC_8x6_KHR: 0x93B6;\n    readonly COMPRESSED_RGBA_ASTC_8x8_KHR: 0x93B7;\n    readonly COMPRESSED_RGBA_ASTC_10x5_KHR: 0x93B8;\n    readonly COMPRESSED_RGBA_ASTC_10x6_KHR: 0x93B9;\n    readonly COMPRESSED_RGBA_ASTC_10x8_KHR: 0x93BA;\n    readonly COMPRESSED_RGBA_ASTC_10x10_KHR: 0x93BB;\n    readonly COMPRESSED_RGBA_ASTC_12x10_KHR: 0x93BC;\n    readonly COMPRESSED_RGBA_ASTC_12x12_KHR: 0x93BD;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR: 0x93D0;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR: 0x93D1;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR: 0x93D2;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR: 0x93D3;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR: 0x93D4;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR: 0x93D5;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR: 0x93D6;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR: 0x93D7;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR: 0x93D8;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR: 0x93D9;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR: 0x93DA;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR: 0x93DB;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR: 0x93DC;\n    readonly COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR: 0x93DD;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_compressed_texture_etc) */\ninterface WEBGL_compressed_texture_etc {\n    readonly COMPRESSED_R11_EAC: 0x9270;\n    readonly COMPRESSED_SIGNED_R11_EAC: 0x9271;\n    readonly COMPRESSED_RG11_EAC: 0x9272;\n    readonly COMPRESSED_SIGNED_RG11_EAC: 0x9273;\n    readonly COMPRESSED_RGB8_ETC2: 0x9274;\n    readonly COMPRESSED_SRGB8_ETC2: 0x9275;\n    readonly COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2: 0x9276;\n    readonly COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2: 0x9277;\n    readonly COMPRESSED_RGBA8_ETC2_EAC: 0x9278;\n    readonly COMPRESSED_SRGB8_ALPHA8_ETC2_EAC: 0x9279;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_compressed_texture_etc1) */\ninterface WEBGL_compressed_texture_etc1 {\n    readonly COMPRESSED_RGB_ETC1_WEBGL: 0x8D64;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_compressed_texture_pvrtc) */\ninterface WEBGL_compressed_texture_pvrtc {\n    readonly COMPRESSED_RGB_PVRTC_4BPPV1_IMG: 0x8C00;\n    readonly COMPRESSED_RGB_PVRTC_2BPPV1_IMG: 0x8C01;\n    readonly COMPRESSED_RGBA_PVRTC_4BPPV1_IMG: 0x8C02;\n    readonly COMPRESSED_RGBA_PVRTC_2BPPV1_IMG: 0x8C03;\n}\n\n/**\n * The WEBGL_compressed_texture_s3tc extension is part of the WebGL API and exposes four S3TC compressed texture formats.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_compressed_texture_s3tc)\n */\ninterface WEBGL_compressed_texture_s3tc {\n    readonly COMPRESSED_RGB_S3TC_DXT1_EXT: 0x83F0;\n    readonly COMPRESSED_RGBA_S3TC_DXT1_EXT: 0x83F1;\n    readonly COMPRESSED_RGBA_S3TC_DXT3_EXT: 0x83F2;\n    readonly COMPRESSED_RGBA_S3TC_DXT5_EXT: 0x83F3;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_compressed_texture_s3tc_srgb) */\ninterface WEBGL_compressed_texture_s3tc_srgb {\n    readonly COMPRESSED_SRGB_S3TC_DXT1_EXT: 0x8C4C;\n    readonly COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT: 0x8C4D;\n    readonly COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT: 0x8C4E;\n    readonly COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT: 0x8C4F;\n}\n\n/**\n * The WEBGL_debug_renderer_info extension is part of the WebGL API and exposes two constants with information about the graphics driver for debugging purposes.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_debug_renderer_info)\n */\ninterface WEBGL_debug_renderer_info {\n    readonly UNMASKED_VENDOR_WEBGL: 0x9245;\n    readonly UNMASKED_RENDERER_WEBGL: 0x9246;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_debug_shaders) */\ninterface WEBGL_debug_shaders {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_debug_shaders/getTranslatedShaderSource) */\n    getTranslatedShaderSource(shader: WebGLShader): string;\n}\n\n/**\n * The WEBGL_depth_texture extension is part of the WebGL API and defines 2D depth and depth-stencil textures.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_depth_texture)\n */\ninterface WEBGL_depth_texture {\n    readonly UNSIGNED_INT_24_8_WEBGL: 0x84FA;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_draw_buffers) */\ninterface WEBGL_draw_buffers {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_draw_buffers/drawBuffersWEBGL) */\n    drawBuffersWEBGL(buffers: GLenum[]): void;\n    readonly COLOR_ATTACHMENT0_WEBGL: 0x8CE0;\n    readonly COLOR_ATTACHMENT1_WEBGL: 0x8CE1;\n    readonly COLOR_ATTACHMENT2_WEBGL: 0x8CE2;\n    readonly COLOR_ATTACHMENT3_WEBGL: 0x8CE3;\n    readonly COLOR_ATTACHMENT4_WEBGL: 0x8CE4;\n    readonly COLOR_ATTACHMENT5_WEBGL: 0x8CE5;\n    readonly COLOR_ATTACHMENT6_WEBGL: 0x8CE6;\n    readonly COLOR_ATTACHMENT7_WEBGL: 0x8CE7;\n    readonly COLOR_ATTACHMENT8_WEBGL: 0x8CE8;\n    readonly COLOR_ATTACHMENT9_WEBGL: 0x8CE9;\n    readonly COLOR_ATTACHMENT10_WEBGL: 0x8CEA;\n    readonly COLOR_ATTACHMENT11_WEBGL: 0x8CEB;\n    readonly COLOR_ATTACHMENT12_WEBGL: 0x8CEC;\n    readonly COLOR_ATTACHMENT13_WEBGL: 0x8CED;\n    readonly COLOR_ATTACHMENT14_WEBGL: 0x8CEE;\n    readonly COLOR_ATTACHMENT15_WEBGL: 0x8CEF;\n    readonly DRAW_BUFFER0_WEBGL: 0x8825;\n    readonly DRAW_BUFFER1_WEBGL: 0x8826;\n    readonly DRAW_BUFFER2_WEBGL: 0x8827;\n    readonly DRAW_BUFFER3_WEBGL: 0x8828;\n    readonly DRAW_BUFFER4_WEBGL: 0x8829;\n    readonly DRAW_BUFFER5_WEBGL: 0x882A;\n    readonly DRAW_BUFFER6_WEBGL: 0x882B;\n    readonly DRAW_BUFFER7_WEBGL: 0x882C;\n    readonly DRAW_BUFFER8_WEBGL: 0x882D;\n    readonly DRAW_BUFFER9_WEBGL: 0x882E;\n    readonly DRAW_BUFFER10_WEBGL: 0x882F;\n    readonly DRAW_BUFFER11_WEBGL: 0x8830;\n    readonly DRAW_BUFFER12_WEBGL: 0x8831;\n    readonly DRAW_BUFFER13_WEBGL: 0x8832;\n    readonly DRAW_BUFFER14_WEBGL: 0x8833;\n    readonly DRAW_BUFFER15_WEBGL: 0x8834;\n    readonly MAX_COLOR_ATTACHMENTS_WEBGL: 0x8CDF;\n    readonly MAX_DRAW_BUFFERS_WEBGL: 0x8824;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_lose_context) */\ninterface WEBGL_lose_context {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_lose_context/loseContext) */\n    loseContext(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_lose_context/restoreContext) */\n    restoreContext(): void;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw) */\ninterface WEBGL_multi_draw {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw/multiDrawArraysInstancedWEBGL) */\n    multiDrawArraysInstancedWEBGL(mode: GLenum, firstsList: Int32Array | GLint[], firstsOffset: number, countsList: Int32Array | GLsizei[], countsOffset: number, instanceCountsList: Int32Array | GLsizei[], instanceCountsOffset: number, drawcount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw/multiDrawArraysWEBGL) */\n    multiDrawArraysWEBGL(mode: GLenum, firstsList: Int32Array | GLint[], firstsOffset: number, countsList: Int32Array | GLsizei[], countsOffset: number, drawcount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw/multiDrawElementsInstancedWEBGL) */\n    multiDrawElementsInstancedWEBGL(mode: GLenum, countsList: Int32Array | GLsizei[], countsOffset: number, type: GLenum, offsetsList: Int32Array | GLsizei[], offsetsOffset: number, instanceCountsList: Int32Array | GLsizei[], instanceCountsOffset: number, drawcount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw/multiDrawElementsWEBGL) */\n    multiDrawElementsWEBGL(mode: GLenum, countsList: Int32Array | GLsizei[], countsOffset: number, type: GLenum, offsetsList: Int32Array | GLsizei[], offsetsOffset: number, drawcount: GLsizei): void;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext) */\ninterface WebGL2RenderingContext extends WebGL2RenderingContextBase, WebGL2RenderingContextOverloads, WebGLRenderingContextBase {\n}\n\ndeclare var WebGL2RenderingContext: {\n    prototype: WebGL2RenderingContext;\n    new(): WebGL2RenderingContext;\n    readonly READ_BUFFER: 0x0C02;\n    readonly UNPACK_ROW_LENGTH: 0x0CF2;\n    readonly UNPACK_SKIP_ROWS: 0x0CF3;\n    readonly UNPACK_SKIP_PIXELS: 0x0CF4;\n    readonly PACK_ROW_LENGTH: 0x0D02;\n    readonly PACK_SKIP_ROWS: 0x0D03;\n    readonly PACK_SKIP_PIXELS: 0x0D04;\n    readonly COLOR: 0x1800;\n    readonly DEPTH: 0x1801;\n    readonly STENCIL: 0x1802;\n    readonly RED: 0x1903;\n    readonly RGB8: 0x8051;\n    readonly RGB10_A2: 0x8059;\n    readonly TEXTURE_BINDING_3D: 0x806A;\n    readonly UNPACK_SKIP_IMAGES: 0x806D;\n    readonly UNPACK_IMAGE_HEIGHT: 0x806E;\n    readonly TEXTURE_3D: 0x806F;\n    readonly TEXTURE_WRAP_R: 0x8072;\n    readonly MAX_3D_TEXTURE_SIZE: 0x8073;\n    readonly UNSIGNED_INT_2_10_10_10_REV: 0x8368;\n    readonly MAX_ELEMENTS_VERTICES: 0x80E8;\n    readonly MAX_ELEMENTS_INDICES: 0x80E9;\n    readonly TEXTURE_MIN_LOD: 0x813A;\n    readonly TEXTURE_MAX_LOD: 0x813B;\n    readonly TEXTURE_BASE_LEVEL: 0x813C;\n    readonly TEXTURE_MAX_LEVEL: 0x813D;\n    readonly MIN: 0x8007;\n    readonly MAX: 0x8008;\n    readonly DEPTH_COMPONENT24: 0x81A6;\n    readonly MAX_TEXTURE_LOD_BIAS: 0x84FD;\n    readonly TEXTURE_COMPARE_MODE: 0x884C;\n    readonly TEXTURE_COMPARE_FUNC: 0x884D;\n    readonly CURRENT_QUERY: 0x8865;\n    readonly QUERY_RESULT: 0x8866;\n    readonly QUERY_RESULT_AVAILABLE: 0x8867;\n    readonly STREAM_READ: 0x88E1;\n    readonly STREAM_COPY: 0x88E2;\n    readonly STATIC_READ: 0x88E5;\n    readonly STATIC_COPY: 0x88E6;\n    readonly DYNAMIC_READ: 0x88E9;\n    readonly DYNAMIC_COPY: 0x88EA;\n    readonly MAX_DRAW_BUFFERS: 0x8824;\n    readonly DRAW_BUFFER0: 0x8825;\n    readonly DRAW_BUFFER1: 0x8826;\n    readonly DRAW_BUFFER2: 0x8827;\n    readonly DRAW_BUFFER3: 0x8828;\n    readonly DRAW_BUFFER4: 0x8829;\n    readonly DRAW_BUFFER5: 0x882A;\n    readonly DRAW_BUFFER6: 0x882B;\n    readonly DRAW_BUFFER7: 0x882C;\n    readonly DRAW_BUFFER8: 0x882D;\n    readonly DRAW_BUFFER9: 0x882E;\n    readonly DRAW_BUFFER10: 0x882F;\n    readonly DRAW_BUFFER11: 0x8830;\n    readonly DRAW_BUFFER12: 0x8831;\n    readonly DRAW_BUFFER13: 0x8832;\n    readonly DRAW_BUFFER14: 0x8833;\n    readonly DRAW_BUFFER15: 0x8834;\n    readonly MAX_FRAGMENT_UNIFORM_COMPONENTS: 0x8B49;\n    readonly MAX_VERTEX_UNIFORM_COMPONENTS: 0x8B4A;\n    readonly SAMPLER_3D: 0x8B5F;\n    readonly SAMPLER_2D_SHADOW: 0x8B62;\n    readonly FRAGMENT_SHADER_DERIVATIVE_HINT: 0x8B8B;\n    readonly PIXEL_PACK_BUFFER: 0x88EB;\n    readonly PIXEL_UNPACK_BUFFER: 0x88EC;\n    readonly PIXEL_PACK_BUFFER_BINDING: 0x88ED;\n    readonly PIXEL_UNPACK_BUFFER_BINDING: 0x88EF;\n    readonly FLOAT_MAT2x3: 0x8B65;\n    readonly FLOAT_MAT2x4: 0x8B66;\n    readonly FLOAT_MAT3x2: 0x8B67;\n    readonly FLOAT_MAT3x4: 0x8B68;\n    readonly FLOAT_MAT4x2: 0x8B69;\n    readonly FLOAT_MAT4x3: 0x8B6A;\n    readonly SRGB: 0x8C40;\n    readonly SRGB8: 0x8C41;\n    readonly SRGB8_ALPHA8: 0x8C43;\n    readonly COMPARE_REF_TO_TEXTURE: 0x884E;\n    readonly RGBA32F: 0x8814;\n    readonly RGB32F: 0x8815;\n    readonly RGBA16F: 0x881A;\n    readonly RGB16F: 0x881B;\n    readonly VERTEX_ATTRIB_ARRAY_INTEGER: 0x88FD;\n    readonly MAX_ARRAY_TEXTURE_LAYERS: 0x88FF;\n    readonly MIN_PROGRAM_TEXEL_OFFSET: 0x8904;\n    readonly MAX_PROGRAM_TEXEL_OFFSET: 0x8905;\n    readonly MAX_VARYING_COMPONENTS: 0x8B4B;\n    readonly TEXTURE_2D_ARRAY: 0x8C1A;\n    readonly TEXTURE_BINDING_2D_ARRAY: 0x8C1D;\n    readonly R11F_G11F_B10F: 0x8C3A;\n    readonly UNSIGNED_INT_10F_11F_11F_REV: 0x8C3B;\n    readonly RGB9_E5: 0x8C3D;\n    readonly UNSIGNED_INT_5_9_9_9_REV: 0x8C3E;\n    readonly TRANSFORM_FEEDBACK_BUFFER_MODE: 0x8C7F;\n    readonly MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS: 0x8C80;\n    readonly TRANSFORM_FEEDBACK_VARYINGS: 0x8C83;\n    readonly TRANSFORM_FEEDBACK_BUFFER_START: 0x8C84;\n    readonly TRANSFORM_FEEDBACK_BUFFER_SIZE: 0x8C85;\n    readonly TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN: 0x8C88;\n    readonly RASTERIZER_DISCARD: 0x8C89;\n    readonly MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS: 0x8C8A;\n    readonly MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS: 0x8C8B;\n    readonly INTERLEAVED_ATTRIBS: 0x8C8C;\n    readonly SEPARATE_ATTRIBS: 0x8C8D;\n    readonly TRANSFORM_FEEDBACK_BUFFER: 0x8C8E;\n    readonly TRANSFORM_FEEDBACK_BUFFER_BINDING: 0x8C8F;\n    readonly RGBA32UI: 0x8D70;\n    readonly RGB32UI: 0x8D71;\n    readonly RGBA16UI: 0x8D76;\n    readonly RGB16UI: 0x8D77;\n    readonly RGBA8UI: 0x8D7C;\n    readonly RGB8UI: 0x8D7D;\n    readonly RGBA32I: 0x8D82;\n    readonly RGB32I: 0x8D83;\n    readonly RGBA16I: 0x8D88;\n    readonly RGB16I: 0x8D89;\n    readonly RGBA8I: 0x8D8E;\n    readonly RGB8I: 0x8D8F;\n    readonly RED_INTEGER: 0x8D94;\n    readonly RGB_INTEGER: 0x8D98;\n    readonly RGBA_INTEGER: 0x8D99;\n    readonly SAMPLER_2D_ARRAY: 0x8DC1;\n    readonly SAMPLER_2D_ARRAY_SHADOW: 0x8DC4;\n    readonly SAMPLER_CUBE_SHADOW: 0x8DC5;\n    readonly UNSIGNED_INT_VEC2: 0x8DC6;\n    readonly UNSIGNED_INT_VEC3: 0x8DC7;\n    readonly UNSIGNED_INT_VEC4: 0x8DC8;\n    readonly INT_SAMPLER_2D: 0x8DCA;\n    readonly INT_SAMPLER_3D: 0x8DCB;\n    readonly INT_SAMPLER_CUBE: 0x8DCC;\n    readonly INT_SAMPLER_2D_ARRAY: 0x8DCF;\n    readonly UNSIGNED_INT_SAMPLER_2D: 0x8DD2;\n    readonly UNSIGNED_INT_SAMPLER_3D: 0x8DD3;\n    readonly UNSIGNED_INT_SAMPLER_CUBE: 0x8DD4;\n    readonly UNSIGNED_INT_SAMPLER_2D_ARRAY: 0x8DD7;\n    readonly DEPTH_COMPONENT32F: 0x8CAC;\n    readonly DEPTH32F_STENCIL8: 0x8CAD;\n    readonly FLOAT_32_UNSIGNED_INT_24_8_REV: 0x8DAD;\n    readonly FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING: 0x8210;\n    readonly FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE: 0x8211;\n    readonly FRAMEBUFFER_ATTACHMENT_RED_SIZE: 0x8212;\n    readonly FRAMEBUFFER_ATTACHMENT_GREEN_SIZE: 0x8213;\n    readonly FRAMEBUFFER_ATTACHMENT_BLUE_SIZE: 0x8214;\n    readonly FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE: 0x8215;\n    readonly FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE: 0x8216;\n    readonly FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE: 0x8217;\n    readonly FRAMEBUFFER_DEFAULT: 0x8218;\n    readonly UNSIGNED_INT_24_8: 0x84FA;\n    readonly DEPTH24_STENCIL8: 0x88F0;\n    readonly UNSIGNED_NORMALIZED: 0x8C17;\n    readonly DRAW_FRAMEBUFFER_BINDING: 0x8CA6;\n    readonly READ_FRAMEBUFFER: 0x8CA8;\n    readonly DRAW_FRAMEBUFFER: 0x8CA9;\n    readonly READ_FRAMEBUFFER_BINDING: 0x8CAA;\n    readonly RENDERBUFFER_SAMPLES: 0x8CAB;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER: 0x8CD4;\n    readonly MAX_COLOR_ATTACHMENTS: 0x8CDF;\n    readonly COLOR_ATTACHMENT1: 0x8CE1;\n    readonly COLOR_ATTACHMENT2: 0x8CE2;\n    readonly COLOR_ATTACHMENT3: 0x8CE3;\n    readonly COLOR_ATTACHMENT4: 0x8CE4;\n    readonly COLOR_ATTACHMENT5: 0x8CE5;\n    readonly COLOR_ATTACHMENT6: 0x8CE6;\n    readonly COLOR_ATTACHMENT7: 0x8CE7;\n    readonly COLOR_ATTACHMENT8: 0x8CE8;\n    readonly COLOR_ATTACHMENT9: 0x8CE9;\n    readonly COLOR_ATTACHMENT10: 0x8CEA;\n    readonly COLOR_ATTACHMENT11: 0x8CEB;\n    readonly COLOR_ATTACHMENT12: 0x8CEC;\n    readonly COLOR_ATTACHMENT13: 0x8CED;\n    readonly COLOR_ATTACHMENT14: 0x8CEE;\n    readonly COLOR_ATTACHMENT15: 0x8CEF;\n    readonly FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: 0x8D56;\n    readonly MAX_SAMPLES: 0x8D57;\n    readonly HALF_FLOAT: 0x140B;\n    readonly RG: 0x8227;\n    readonly RG_INTEGER: 0x8228;\n    readonly R8: 0x8229;\n    readonly RG8: 0x822B;\n    readonly R16F: 0x822D;\n    readonly R32F: 0x822E;\n    readonly RG16F: 0x822F;\n    readonly RG32F: 0x8230;\n    readonly R8I: 0x8231;\n    readonly R8UI: 0x8232;\n    readonly R16I: 0x8233;\n    readonly R16UI: 0x8234;\n    readonly R32I: 0x8235;\n    readonly R32UI: 0x8236;\n    readonly RG8I: 0x8237;\n    readonly RG8UI: 0x8238;\n    readonly RG16I: 0x8239;\n    readonly RG16UI: 0x823A;\n    readonly RG32I: 0x823B;\n    readonly RG32UI: 0x823C;\n    readonly VERTEX_ARRAY_BINDING: 0x85B5;\n    readonly R8_SNORM: 0x8F94;\n    readonly RG8_SNORM: 0x8F95;\n    readonly RGB8_SNORM: 0x8F96;\n    readonly RGBA8_SNORM: 0x8F97;\n    readonly SIGNED_NORMALIZED: 0x8F9C;\n    readonly COPY_READ_BUFFER: 0x8F36;\n    readonly COPY_WRITE_BUFFER: 0x8F37;\n    readonly COPY_READ_BUFFER_BINDING: 0x8F36;\n    readonly COPY_WRITE_BUFFER_BINDING: 0x8F37;\n    readonly UNIFORM_BUFFER: 0x8A11;\n    readonly UNIFORM_BUFFER_BINDING: 0x8A28;\n    readonly UNIFORM_BUFFER_START: 0x8A29;\n    readonly UNIFORM_BUFFER_SIZE: 0x8A2A;\n    readonly MAX_VERTEX_UNIFORM_BLOCKS: 0x8A2B;\n    readonly MAX_FRAGMENT_UNIFORM_BLOCKS: 0x8A2D;\n    readonly MAX_COMBINED_UNIFORM_BLOCKS: 0x8A2E;\n    readonly MAX_UNIFORM_BUFFER_BINDINGS: 0x8A2F;\n    readonly MAX_UNIFORM_BLOCK_SIZE: 0x8A30;\n    readonly MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS: 0x8A31;\n    readonly MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS: 0x8A33;\n    readonly UNIFORM_BUFFER_OFFSET_ALIGNMENT: 0x8A34;\n    readonly ACTIVE_UNIFORM_BLOCKS: 0x8A36;\n    readonly UNIFORM_TYPE: 0x8A37;\n    readonly UNIFORM_SIZE: 0x8A38;\n    readonly UNIFORM_BLOCK_INDEX: 0x8A3A;\n    readonly UNIFORM_OFFSET: 0x8A3B;\n    readonly UNIFORM_ARRAY_STRIDE: 0x8A3C;\n    readonly UNIFORM_MATRIX_STRIDE: 0x8A3D;\n    readonly UNIFORM_IS_ROW_MAJOR: 0x8A3E;\n    readonly UNIFORM_BLOCK_BINDING: 0x8A3F;\n    readonly UNIFORM_BLOCK_DATA_SIZE: 0x8A40;\n    readonly UNIFORM_BLOCK_ACTIVE_UNIFORMS: 0x8A42;\n    readonly UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES: 0x8A43;\n    readonly UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER: 0x8A44;\n    readonly UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER: 0x8A46;\n    readonly INVALID_INDEX: 0xFFFFFFFF;\n    readonly MAX_VERTEX_OUTPUT_COMPONENTS: 0x9122;\n    readonly MAX_FRAGMENT_INPUT_COMPONENTS: 0x9125;\n    readonly MAX_SERVER_WAIT_TIMEOUT: 0x9111;\n    readonly OBJECT_TYPE: 0x9112;\n    readonly SYNC_CONDITION: 0x9113;\n    readonly SYNC_STATUS: 0x9114;\n    readonly SYNC_FLAGS: 0x9115;\n    readonly SYNC_FENCE: 0x9116;\n    readonly SYNC_GPU_COMMANDS_COMPLETE: 0x9117;\n    readonly UNSIGNALED: 0x9118;\n    readonly SIGNALED: 0x9119;\n    readonly ALREADY_SIGNALED: 0x911A;\n    readonly TIMEOUT_EXPIRED: 0x911B;\n    readonly CONDITION_SATISFIED: 0x911C;\n    readonly WAIT_FAILED: 0x911D;\n    readonly SYNC_FLUSH_COMMANDS_BIT: 0x00000001;\n    readonly VERTEX_ATTRIB_ARRAY_DIVISOR: 0x88FE;\n    readonly ANY_SAMPLES_PASSED: 0x8C2F;\n    readonly ANY_SAMPLES_PASSED_CONSERVATIVE: 0x8D6A;\n    readonly SAMPLER_BINDING: 0x8919;\n    readonly RGB10_A2UI: 0x906F;\n    readonly INT_2_10_10_10_REV: 0x8D9F;\n    readonly TRANSFORM_FEEDBACK: 0x8E22;\n    readonly TRANSFORM_FEEDBACK_PAUSED: 0x8E23;\n    readonly TRANSFORM_FEEDBACK_ACTIVE: 0x8E24;\n    readonly TRANSFORM_FEEDBACK_BINDING: 0x8E25;\n    readonly TEXTURE_IMMUTABLE_FORMAT: 0x912F;\n    readonly MAX_ELEMENT_INDEX: 0x8D6B;\n    readonly TEXTURE_IMMUTABLE_LEVELS: 0x82DF;\n    readonly TIMEOUT_IGNORED: -1;\n    readonly MAX_CLIENT_WAIT_TIMEOUT_WEBGL: 0x9247;\n    readonly DEPTH_BUFFER_BIT: 0x00000100;\n    readonly STENCIL_BUFFER_BIT: 0x00000400;\n    readonly COLOR_BUFFER_BIT: 0x00004000;\n    readonly POINTS: 0x0000;\n    readonly LINES: 0x0001;\n    readonly LINE_LOOP: 0x0002;\n    readonly LINE_STRIP: 0x0003;\n    readonly TRIANGLES: 0x0004;\n    readonly TRIANGLE_STRIP: 0x0005;\n    readonly TRIANGLE_FAN: 0x0006;\n    readonly ZERO: 0;\n    readonly ONE: 1;\n    readonly SRC_COLOR: 0x0300;\n    readonly ONE_MINUS_SRC_COLOR: 0x0301;\n    readonly SRC_ALPHA: 0x0302;\n    readonly ONE_MINUS_SRC_ALPHA: 0x0303;\n    readonly DST_ALPHA: 0x0304;\n    readonly ONE_MINUS_DST_ALPHA: 0x0305;\n    readonly DST_COLOR: 0x0306;\n    readonly ONE_MINUS_DST_COLOR: 0x0307;\n    readonly SRC_ALPHA_SATURATE: 0x0308;\n    readonly FUNC_ADD: 0x8006;\n    readonly BLEND_EQUATION: 0x8009;\n    readonly BLEND_EQUATION_RGB: 0x8009;\n    readonly BLEND_EQUATION_ALPHA: 0x883D;\n    readonly FUNC_SUBTRACT: 0x800A;\n    readonly FUNC_REVERSE_SUBTRACT: 0x800B;\n    readonly BLEND_DST_RGB: 0x80C8;\n    readonly BLEND_SRC_RGB: 0x80C9;\n    readonly BLEND_DST_ALPHA: 0x80CA;\n    readonly BLEND_SRC_ALPHA: 0x80CB;\n    readonly CONSTANT_COLOR: 0x8001;\n    readonly ONE_MINUS_CONSTANT_COLOR: 0x8002;\n    readonly CONSTANT_ALPHA: 0x8003;\n    readonly ONE_MINUS_CONSTANT_ALPHA: 0x8004;\n    readonly BLEND_COLOR: 0x8005;\n    readonly ARRAY_BUFFER: 0x8892;\n    readonly ELEMENT_ARRAY_BUFFER: 0x8893;\n    readonly ARRAY_BUFFER_BINDING: 0x8894;\n    readonly ELEMENT_ARRAY_BUFFER_BINDING: 0x8895;\n    readonly STREAM_DRAW: 0x88E0;\n    readonly STATIC_DRAW: 0x88E4;\n    readonly DYNAMIC_DRAW: 0x88E8;\n    readonly BUFFER_SIZE: 0x8764;\n    readonly BUFFER_USAGE: 0x8765;\n    readonly CURRENT_VERTEX_ATTRIB: 0x8626;\n    readonly FRONT: 0x0404;\n    readonly BACK: 0x0405;\n    readonly FRONT_AND_BACK: 0x0408;\n    readonly CULL_FACE: 0x0B44;\n    readonly BLEND: 0x0BE2;\n    readonly DITHER: 0x0BD0;\n    readonly STENCIL_TEST: 0x0B90;\n    readonly DEPTH_TEST: 0x0B71;\n    readonly SCISSOR_TEST: 0x0C11;\n    readonly POLYGON_OFFSET_FILL: 0x8037;\n    readonly SAMPLE_ALPHA_TO_COVERAGE: 0x809E;\n    readonly SAMPLE_COVERAGE: 0x80A0;\n    readonly NO_ERROR: 0;\n    readonly INVALID_ENUM: 0x0500;\n    readonly INVALID_VALUE: 0x0501;\n    readonly INVALID_OPERATION: 0x0502;\n    readonly OUT_OF_MEMORY: 0x0505;\n    readonly CW: 0x0900;\n    readonly CCW: 0x0901;\n    readonly LINE_WIDTH: 0x0B21;\n    readonly ALIASED_POINT_SIZE_RANGE: 0x846D;\n    readonly ALIASED_LINE_WIDTH_RANGE: 0x846E;\n    readonly CULL_FACE_MODE: 0x0B45;\n    readonly FRONT_FACE: 0x0B46;\n    readonly DEPTH_RANGE: 0x0B70;\n    readonly DEPTH_WRITEMASK: 0x0B72;\n    readonly DEPTH_CLEAR_VALUE: 0x0B73;\n    readonly DEPTH_FUNC: 0x0B74;\n    readonly STENCIL_CLEAR_VALUE: 0x0B91;\n    readonly STENCIL_FUNC: 0x0B92;\n    readonly STENCIL_FAIL: 0x0B94;\n    readonly STENCIL_PASS_DEPTH_FAIL: 0x0B95;\n    readonly STENCIL_PASS_DEPTH_PASS: 0x0B96;\n    readonly STENCIL_REF: 0x0B97;\n    readonly STENCIL_VALUE_MASK: 0x0B93;\n    readonly STENCIL_WRITEMASK: 0x0B98;\n    readonly STENCIL_BACK_FUNC: 0x8800;\n    readonly STENCIL_BACK_FAIL: 0x8801;\n    readonly STENCIL_BACK_PASS_DEPTH_FAIL: 0x8802;\n    readonly STENCIL_BACK_PASS_DEPTH_PASS: 0x8803;\n    readonly STENCIL_BACK_REF: 0x8CA3;\n    readonly STENCIL_BACK_VALUE_MASK: 0x8CA4;\n    readonly STENCIL_BACK_WRITEMASK: 0x8CA5;\n    readonly VIEWPORT: 0x0BA2;\n    readonly SCISSOR_BOX: 0x0C10;\n    readonly COLOR_CLEAR_VALUE: 0x0C22;\n    readonly COLOR_WRITEMASK: 0x0C23;\n    readonly UNPACK_ALIGNMENT: 0x0CF5;\n    readonly PACK_ALIGNMENT: 0x0D05;\n    readonly MAX_TEXTURE_SIZE: 0x0D33;\n    readonly MAX_VIEWPORT_DIMS: 0x0D3A;\n    readonly SUBPIXEL_BITS: 0x0D50;\n    readonly RED_BITS: 0x0D52;\n    readonly GREEN_BITS: 0x0D53;\n    readonly BLUE_BITS: 0x0D54;\n    readonly ALPHA_BITS: 0x0D55;\n    readonly DEPTH_BITS: 0x0D56;\n    readonly STENCIL_BITS: 0x0D57;\n    readonly POLYGON_OFFSET_UNITS: 0x2A00;\n    readonly POLYGON_OFFSET_FACTOR: 0x8038;\n    readonly TEXTURE_BINDING_2D: 0x8069;\n    readonly SAMPLE_BUFFERS: 0x80A8;\n    readonly SAMPLES: 0x80A9;\n    readonly SAMPLE_COVERAGE_VALUE: 0x80AA;\n    readonly SAMPLE_COVERAGE_INVERT: 0x80AB;\n    readonly COMPRESSED_TEXTURE_FORMATS: 0x86A3;\n    readonly DONT_CARE: 0x1100;\n    readonly FASTEST: 0x1101;\n    readonly NICEST: 0x1102;\n    readonly GENERATE_MIPMAP_HINT: 0x8192;\n    readonly BYTE: 0x1400;\n    readonly UNSIGNED_BYTE: 0x1401;\n    readonly SHORT: 0x1402;\n    readonly UNSIGNED_SHORT: 0x1403;\n    readonly INT: 0x1404;\n    readonly UNSIGNED_INT: 0x1405;\n    readonly FLOAT: 0x1406;\n    readonly DEPTH_COMPONENT: 0x1902;\n    readonly ALPHA: 0x1906;\n    readonly RGB: 0x1907;\n    readonly RGBA: 0x1908;\n    readonly LUMINANCE: 0x1909;\n    readonly LUMINANCE_ALPHA: 0x190A;\n    readonly UNSIGNED_SHORT_4_4_4_4: 0x8033;\n    readonly UNSIGNED_SHORT_5_5_5_1: 0x8034;\n    readonly UNSIGNED_SHORT_5_6_5: 0x8363;\n    readonly FRAGMENT_SHADER: 0x8B30;\n    readonly VERTEX_SHADER: 0x8B31;\n    readonly MAX_VERTEX_ATTRIBS: 0x8869;\n    readonly MAX_VERTEX_UNIFORM_VECTORS: 0x8DFB;\n    readonly MAX_VARYING_VECTORS: 0x8DFC;\n    readonly MAX_COMBINED_TEXTURE_IMAGE_UNITS: 0x8B4D;\n    readonly MAX_VERTEX_TEXTURE_IMAGE_UNITS: 0x8B4C;\n    readonly MAX_TEXTURE_IMAGE_UNITS: 0x8872;\n    readonly MAX_FRAGMENT_UNIFORM_VECTORS: 0x8DFD;\n    readonly SHADER_TYPE: 0x8B4F;\n    readonly DELETE_STATUS: 0x8B80;\n    readonly LINK_STATUS: 0x8B82;\n    readonly VALIDATE_STATUS: 0x8B83;\n    readonly ATTACHED_SHADERS: 0x8B85;\n    readonly ACTIVE_UNIFORMS: 0x8B86;\n    readonly ACTIVE_ATTRIBUTES: 0x8B89;\n    readonly SHADING_LANGUAGE_VERSION: 0x8B8C;\n    readonly CURRENT_PROGRAM: 0x8B8D;\n    readonly NEVER: 0x0200;\n    readonly LESS: 0x0201;\n    readonly EQUAL: 0x0202;\n    readonly LEQUAL: 0x0203;\n    readonly GREATER: 0x0204;\n    readonly NOTEQUAL: 0x0205;\n    readonly GEQUAL: 0x0206;\n    readonly ALWAYS: 0x0207;\n    readonly KEEP: 0x1E00;\n    readonly REPLACE: 0x1E01;\n    readonly INCR: 0x1E02;\n    readonly DECR: 0x1E03;\n    readonly INVERT: 0x150A;\n    readonly INCR_WRAP: 0x8507;\n    readonly DECR_WRAP: 0x8508;\n    readonly VENDOR: 0x1F00;\n    readonly RENDERER: 0x1F01;\n    readonly VERSION: 0x1F02;\n    readonly NEAREST: 0x2600;\n    readonly LINEAR: 0x2601;\n    readonly NEAREST_MIPMAP_NEAREST: 0x2700;\n    readonly LINEAR_MIPMAP_NEAREST: 0x2701;\n    readonly NEAREST_MIPMAP_LINEAR: 0x2702;\n    readonly LINEAR_MIPMAP_LINEAR: 0x2703;\n    readonly TEXTURE_MAG_FILTER: 0x2800;\n    readonly TEXTURE_MIN_FILTER: 0x2801;\n    readonly TEXTURE_WRAP_S: 0x2802;\n    readonly TEXTURE_WRAP_T: 0x2803;\n    readonly TEXTURE_2D: 0x0DE1;\n    readonly TEXTURE: 0x1702;\n    readonly TEXTURE_CUBE_MAP: 0x8513;\n    readonly TEXTURE_BINDING_CUBE_MAP: 0x8514;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_X: 0x8515;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_X: 0x8516;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_Y: 0x8517;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_Y: 0x8518;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_Z: 0x8519;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_Z: 0x851A;\n    readonly MAX_CUBE_MAP_TEXTURE_SIZE: 0x851C;\n    readonly TEXTURE0: 0x84C0;\n    readonly TEXTURE1: 0x84C1;\n    readonly TEXTURE2: 0x84C2;\n    readonly TEXTURE3: 0x84C3;\n    readonly TEXTURE4: 0x84C4;\n    readonly TEXTURE5: 0x84C5;\n    readonly TEXTURE6: 0x84C6;\n    readonly TEXTURE7: 0x84C7;\n    readonly TEXTURE8: 0x84C8;\n    readonly TEXTURE9: 0x84C9;\n    readonly TEXTURE10: 0x84CA;\n    readonly TEXTURE11: 0x84CB;\n    readonly TEXTURE12: 0x84CC;\n    readonly TEXTURE13: 0x84CD;\n    readonly TEXTURE14: 0x84CE;\n    readonly TEXTURE15: 0x84CF;\n    readonly TEXTURE16: 0x84D0;\n    readonly TEXTURE17: 0x84D1;\n    readonly TEXTURE18: 0x84D2;\n    readonly TEXTURE19: 0x84D3;\n    readonly TEXTURE20: 0x84D4;\n    readonly TEXTURE21: 0x84D5;\n    readonly TEXTURE22: 0x84D6;\n    readonly TEXTURE23: 0x84D7;\n    readonly TEXTURE24: 0x84D8;\n    readonly TEXTURE25: 0x84D9;\n    readonly TEXTURE26: 0x84DA;\n    readonly TEXTURE27: 0x84DB;\n    readonly TEXTURE28: 0x84DC;\n    readonly TEXTURE29: 0x84DD;\n    readonly TEXTURE30: 0x84DE;\n    readonly TEXTURE31: 0x84DF;\n    readonly ACTIVE_TEXTURE: 0x84E0;\n    readonly REPEAT: 0x2901;\n    readonly CLAMP_TO_EDGE: 0x812F;\n    readonly MIRRORED_REPEAT: 0x8370;\n    readonly FLOAT_VEC2: 0x8B50;\n    readonly FLOAT_VEC3: 0x8B51;\n    readonly FLOAT_VEC4: 0x8B52;\n    readonly INT_VEC2: 0x8B53;\n    readonly INT_VEC3: 0x8B54;\n    readonly INT_VEC4: 0x8B55;\n    readonly BOOL: 0x8B56;\n    readonly BOOL_VEC2: 0x8B57;\n    readonly BOOL_VEC3: 0x8B58;\n    readonly BOOL_VEC4: 0x8B59;\n    readonly FLOAT_MAT2: 0x8B5A;\n    readonly FLOAT_MAT3: 0x8B5B;\n    readonly FLOAT_MAT4: 0x8B5C;\n    readonly SAMPLER_2D: 0x8B5E;\n    readonly SAMPLER_CUBE: 0x8B60;\n    readonly VERTEX_ATTRIB_ARRAY_ENABLED: 0x8622;\n    readonly VERTEX_ATTRIB_ARRAY_SIZE: 0x8623;\n    readonly VERTEX_ATTRIB_ARRAY_STRIDE: 0x8624;\n    readonly VERTEX_ATTRIB_ARRAY_TYPE: 0x8625;\n    readonly VERTEX_ATTRIB_ARRAY_NORMALIZED: 0x886A;\n    readonly VERTEX_ATTRIB_ARRAY_POINTER: 0x8645;\n    readonly VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: 0x889F;\n    readonly IMPLEMENTATION_COLOR_READ_TYPE: 0x8B9A;\n    readonly IMPLEMENTATION_COLOR_READ_FORMAT: 0x8B9B;\n    readonly COMPILE_STATUS: 0x8B81;\n    readonly LOW_FLOAT: 0x8DF0;\n    readonly MEDIUM_FLOAT: 0x8DF1;\n    readonly HIGH_FLOAT: 0x8DF2;\n    readonly LOW_INT: 0x8DF3;\n    readonly MEDIUM_INT: 0x8DF4;\n    readonly HIGH_INT: 0x8DF5;\n    readonly FRAMEBUFFER: 0x8D40;\n    readonly RENDERBUFFER: 0x8D41;\n    readonly RGBA4: 0x8056;\n    readonly RGB5_A1: 0x8057;\n    readonly RGBA8: 0x8058;\n    readonly RGB565: 0x8D62;\n    readonly DEPTH_COMPONENT16: 0x81A5;\n    readonly STENCIL_INDEX8: 0x8D48;\n    readonly DEPTH_STENCIL: 0x84F9;\n    readonly RENDERBUFFER_WIDTH: 0x8D42;\n    readonly RENDERBUFFER_HEIGHT: 0x8D43;\n    readonly RENDERBUFFER_INTERNAL_FORMAT: 0x8D44;\n    readonly RENDERBUFFER_RED_SIZE: 0x8D50;\n    readonly RENDERBUFFER_GREEN_SIZE: 0x8D51;\n    readonly RENDERBUFFER_BLUE_SIZE: 0x8D52;\n    readonly RENDERBUFFER_ALPHA_SIZE: 0x8D53;\n    readonly RENDERBUFFER_DEPTH_SIZE: 0x8D54;\n    readonly RENDERBUFFER_STENCIL_SIZE: 0x8D55;\n    readonly FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE: 0x8CD0;\n    readonly FRAMEBUFFER_ATTACHMENT_OBJECT_NAME: 0x8CD1;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL: 0x8CD2;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE: 0x8CD3;\n    readonly COLOR_ATTACHMENT0: 0x8CE0;\n    readonly DEPTH_ATTACHMENT: 0x8D00;\n    readonly STENCIL_ATTACHMENT: 0x8D20;\n    readonly DEPTH_STENCIL_ATTACHMENT: 0x821A;\n    readonly NONE: 0;\n    readonly FRAMEBUFFER_COMPLETE: 0x8CD5;\n    readonly FRAMEBUFFER_INCOMPLETE_ATTACHMENT: 0x8CD6;\n    readonly FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: 0x8CD7;\n    readonly FRAMEBUFFER_INCOMPLETE_DIMENSIONS: 0x8CD9;\n    readonly FRAMEBUFFER_UNSUPPORTED: 0x8CDD;\n    readonly FRAMEBUFFER_BINDING: 0x8CA6;\n    readonly RENDERBUFFER_BINDING: 0x8CA7;\n    readonly MAX_RENDERBUFFER_SIZE: 0x84E8;\n    readonly INVALID_FRAMEBUFFER_OPERATION: 0x0506;\n    readonly UNPACK_FLIP_Y_WEBGL: 0x9240;\n    readonly UNPACK_PREMULTIPLY_ALPHA_WEBGL: 0x9241;\n    readonly CONTEXT_LOST_WEBGL: 0x9242;\n    readonly UNPACK_COLORSPACE_CONVERSION_WEBGL: 0x9243;\n    readonly BROWSER_DEFAULT_WEBGL: 0x9244;\n};\n\ninterface WebGL2RenderingContextBase {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/beginQuery) */\n    beginQuery(target: GLenum, query: WebGLQuery): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/beginTransformFeedback) */\n    beginTransformFeedback(primitiveMode: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/bindBufferBase) */\n    bindBufferBase(target: GLenum, index: GLuint, buffer: WebGLBuffer | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/bindBufferRange) */\n    bindBufferRange(target: GLenum, index: GLuint, buffer: WebGLBuffer | null, offset: GLintptr, size: GLsizeiptr): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/bindSampler) */\n    bindSampler(unit: GLuint, sampler: WebGLSampler | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/bindTransformFeedback) */\n    bindTransformFeedback(target: GLenum, tf: WebGLTransformFeedback | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/bindVertexArray) */\n    bindVertexArray(array: WebGLVertexArrayObject | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/blitFramebuffer) */\n    blitFramebuffer(srcX0: GLint, srcY0: GLint, srcX1: GLint, srcY1: GLint, dstX0: GLint, dstY0: GLint, dstX1: GLint, dstY1: GLint, mask: GLbitfield, filter: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/clearBuffer) */\n    clearBufferfi(buffer: GLenum, drawbuffer: GLint, depth: GLfloat, stencil: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/clearBuffer) */\n    clearBufferfv(buffer: GLenum, drawbuffer: GLint, values: Float32List, srcOffset?: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/clearBuffer) */\n    clearBufferiv(buffer: GLenum, drawbuffer: GLint, values: Int32List, srcOffset?: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/clearBuffer) */\n    clearBufferuiv(buffer: GLenum, drawbuffer: GLint, values: Uint32List, srcOffset?: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/clientWaitSync) */\n    clientWaitSync(sync: WebGLSync, flags: GLbitfield, timeout: GLuint64): GLenum;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/compressedTexImage2D) */\n    compressedTexImage3D(target: GLenum, level: GLint, internalformat: GLenum, width: GLsizei, height: GLsizei, depth: GLsizei, border: GLint, imageSize: GLsizei, offset: GLintptr): void;\n    compressedTexImage3D(target: GLenum, level: GLint, internalformat: GLenum, width: GLsizei, height: GLsizei, depth: GLsizei, border: GLint, srcData: ArrayBufferView, srcOffset?: number, srcLengthOverride?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/compressedTexSubImage3D) */\n    compressedTexSubImage3D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, zoffset: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, format: GLenum, imageSize: GLsizei, offset: GLintptr): void;\n    compressedTexSubImage3D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, zoffset: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, format: GLenum, srcData: ArrayBufferView, srcOffset?: number, srcLengthOverride?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/copyBufferSubData) */\n    copyBufferSubData(readTarget: GLenum, writeTarget: GLenum, readOffset: GLintptr, writeOffset: GLintptr, size: GLsizeiptr): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/copyTexSubImage3D) */\n    copyTexSubImage3D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, zoffset: GLint, x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/createQuery) */\n    createQuery(): WebGLQuery | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/createSampler) */\n    createSampler(): WebGLSampler | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/createTransformFeedback) */\n    createTransformFeedback(): WebGLTransformFeedback | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/createVertexArray) */\n    createVertexArray(): WebGLVertexArrayObject | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/deleteQuery) */\n    deleteQuery(query: WebGLQuery | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/deleteSampler) */\n    deleteSampler(sampler: WebGLSampler | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/deleteSync) */\n    deleteSync(sync: WebGLSync | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/deleteTransformFeedback) */\n    deleteTransformFeedback(tf: WebGLTransformFeedback | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/deleteVertexArray) */\n    deleteVertexArray(vertexArray: WebGLVertexArrayObject | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/drawArraysInstanced) */\n    drawArraysInstanced(mode: GLenum, first: GLint, count: GLsizei, instanceCount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/drawBuffers) */\n    drawBuffers(buffers: GLenum[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/drawElementsInstanced) */\n    drawElementsInstanced(mode: GLenum, count: GLsizei, type: GLenum, offset: GLintptr, instanceCount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/drawRangeElements) */\n    drawRangeElements(mode: GLenum, start: GLuint, end: GLuint, count: GLsizei, type: GLenum, offset: GLintptr): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/endQuery) */\n    endQuery(target: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/endTransformFeedback) */\n    endTransformFeedback(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/fenceSync) */\n    fenceSync(condition: GLenum, flags: GLbitfield): WebGLSync | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/framebufferTextureLayer) */\n    framebufferTextureLayer(target: GLenum, attachment: GLenum, texture: WebGLTexture | null, level: GLint, layer: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getActiveUniformBlockName) */\n    getActiveUniformBlockName(program: WebGLProgram, uniformBlockIndex: GLuint): string | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getActiveUniformBlockParameter) */\n    getActiveUniformBlockParameter(program: WebGLProgram, uniformBlockIndex: GLuint, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getActiveUniforms) */\n    getActiveUniforms(program: WebGLProgram, uniformIndices: GLuint[], pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getBufferSubData) */\n    getBufferSubData(target: GLenum, srcByteOffset: GLintptr, dstBuffer: ArrayBufferView, dstOffset?: number, length?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getFragDataLocation) */\n    getFragDataLocation(program: WebGLProgram, name: string): GLint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getIndexedParameter) */\n    getIndexedParameter(target: GLenum, index: GLuint): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getInternalformatParameter) */\n    getInternalformatParameter(target: GLenum, internalformat: GLenum, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getQuery) */\n    getQuery(target: GLenum, pname: GLenum): WebGLQuery | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getQueryParameter) */\n    getQueryParameter(query: WebGLQuery, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getSamplerParameter) */\n    getSamplerParameter(sampler: WebGLSampler, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getSyncParameter) */\n    getSyncParameter(sync: WebGLSync, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getTransformFeedbackVarying) */\n    getTransformFeedbackVarying(program: WebGLProgram, index: GLuint): WebGLActiveInfo | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getUniformBlockIndex) */\n    getUniformBlockIndex(program: WebGLProgram, uniformBlockName: string): GLuint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getUniformIndices) */\n    getUniformIndices(program: WebGLProgram, uniformNames: string[]): GLuint[] | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/invalidateFramebuffer) */\n    invalidateFramebuffer(target: GLenum, attachments: GLenum[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/invalidateSubFramebuffer) */\n    invalidateSubFramebuffer(target: GLenum, attachments: GLenum[], x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/isQuery) */\n    isQuery(query: WebGLQuery | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/isSampler) */\n    isSampler(sampler: WebGLSampler | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/isSync) */\n    isSync(sync: WebGLSync | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/isTransformFeedback) */\n    isTransformFeedback(tf: WebGLTransformFeedback | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/isVertexArray) */\n    isVertexArray(vertexArray: WebGLVertexArrayObject | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/pauseTransformFeedback) */\n    pauseTransformFeedback(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/readBuffer) */\n    readBuffer(src: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/renderbufferStorageMultisample) */\n    renderbufferStorageMultisample(target: GLenum, samples: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/resumeTransformFeedback) */\n    resumeTransformFeedback(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/samplerParameter) */\n    samplerParameterf(sampler: WebGLSampler, pname: GLenum, param: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/samplerParameter) */\n    samplerParameteri(sampler: WebGLSampler, pname: GLenum, param: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/texImage3D) */\n    texImage3D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, border: GLint, format: GLenum, type: GLenum, pboOffset: GLintptr): void;\n    texImage3D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, border: GLint, format: GLenum, type: GLenum, source: TexImageSource): void;\n    texImage3D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, border: GLint, format: GLenum, type: GLenum, srcData: ArrayBufferView | null): void;\n    texImage3D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, border: GLint, format: GLenum, type: GLenum, srcData: ArrayBufferView, srcOffset: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/texStorage2D) */\n    texStorage2D(target: GLenum, levels: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/texStorage3D) */\n    texStorage3D(target: GLenum, levels: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei, depth: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/texSubImage3D) */\n    texSubImage3D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, zoffset: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, format: GLenum, type: GLenum, pboOffset: GLintptr): void;\n    texSubImage3D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, zoffset: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, format: GLenum, type: GLenum, source: TexImageSource): void;\n    texSubImage3D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, zoffset: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, format: GLenum, type: GLenum, srcData: ArrayBufferView | null, srcOffset?: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/transformFeedbackVaryings) */\n    transformFeedbackVaryings(program: WebGLProgram, varyings: string[], bufferMode: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform1ui(location: WebGLUniformLocation | null, v0: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform1uiv(location: WebGLUniformLocation | null, data: Uint32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform2ui(location: WebGLUniformLocation | null, v0: GLuint, v1: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform2uiv(location: WebGLUniformLocation | null, data: Uint32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform3ui(location: WebGLUniformLocation | null, v0: GLuint, v1: GLuint, v2: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform3uiv(location: WebGLUniformLocation | null, data: Uint32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform4ui(location: WebGLUniformLocation | null, v0: GLuint, v1: GLuint, v2: GLuint, v3: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform4uiv(location: WebGLUniformLocation | null, data: Uint32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformBlockBinding) */\n    uniformBlockBinding(program: WebGLProgram, uniformBlockIndex: GLuint, uniformBlockBinding: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix2x3fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix2x4fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix3x2fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix3x4fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix4x2fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix4x3fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/vertexAttribDivisor) */\n    vertexAttribDivisor(index: GLuint, divisor: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/vertexAttribI) */\n    vertexAttribI4i(index: GLuint, x: GLint, y: GLint, z: GLint, w: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/vertexAttribI) */\n    vertexAttribI4iv(index: GLuint, values: Int32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/vertexAttribI) */\n    vertexAttribI4ui(index: GLuint, x: GLuint, y: GLuint, z: GLuint, w: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/vertexAttribI) */\n    vertexAttribI4uiv(index: GLuint, values: Uint32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/vertexAttribIPointer) */\n    vertexAttribIPointer(index: GLuint, size: GLint, type: GLenum, stride: GLsizei, offset: GLintptr): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/waitSync) */\n    waitSync(sync: WebGLSync, flags: GLbitfield, timeout: GLint64): void;\n    readonly READ_BUFFER: 0x0C02;\n    readonly UNPACK_ROW_LENGTH: 0x0CF2;\n    readonly UNPACK_SKIP_ROWS: 0x0CF3;\n    readonly UNPACK_SKIP_PIXELS: 0x0CF4;\n    readonly PACK_ROW_LENGTH: 0x0D02;\n    readonly PACK_SKIP_ROWS: 0x0D03;\n    readonly PACK_SKIP_PIXELS: 0x0D04;\n    readonly COLOR: 0x1800;\n    readonly DEPTH: 0x1801;\n    readonly STENCIL: 0x1802;\n    readonly RED: 0x1903;\n    readonly RGB8: 0x8051;\n    readonly RGB10_A2: 0x8059;\n    readonly TEXTURE_BINDING_3D: 0x806A;\n    readonly UNPACK_SKIP_IMAGES: 0x806D;\n    readonly UNPACK_IMAGE_HEIGHT: 0x806E;\n    readonly TEXTURE_3D: 0x806F;\n    readonly TEXTURE_WRAP_R: 0x8072;\n    readonly MAX_3D_TEXTURE_SIZE: 0x8073;\n    readonly UNSIGNED_INT_2_10_10_10_REV: 0x8368;\n    readonly MAX_ELEMENTS_VERTICES: 0x80E8;\n    readonly MAX_ELEMENTS_INDICES: 0x80E9;\n    readonly TEXTURE_MIN_LOD: 0x813A;\n    readonly TEXTURE_MAX_LOD: 0x813B;\n    readonly TEXTURE_BASE_LEVEL: 0x813C;\n    readonly TEXTURE_MAX_LEVEL: 0x813D;\n    readonly MIN: 0x8007;\n    readonly MAX: 0x8008;\n    readonly DEPTH_COMPONENT24: 0x81A6;\n    readonly MAX_TEXTURE_LOD_BIAS: 0x84FD;\n    readonly TEXTURE_COMPARE_MODE: 0x884C;\n    readonly TEXTURE_COMPARE_FUNC: 0x884D;\n    readonly CURRENT_QUERY: 0x8865;\n    readonly QUERY_RESULT: 0x8866;\n    readonly QUERY_RESULT_AVAILABLE: 0x8867;\n    readonly STREAM_READ: 0x88E1;\n    readonly STREAM_COPY: 0x88E2;\n    readonly STATIC_READ: 0x88E5;\n    readonly STATIC_COPY: 0x88E6;\n    readonly DYNAMIC_READ: 0x88E9;\n    readonly DYNAMIC_COPY: 0x88EA;\n    readonly MAX_DRAW_BUFFERS: 0x8824;\n    readonly DRAW_BUFFER0: 0x8825;\n    readonly DRAW_BUFFER1: 0x8826;\n    readonly DRAW_BUFFER2: 0x8827;\n    readonly DRAW_BUFFER3: 0x8828;\n    readonly DRAW_BUFFER4: 0x8829;\n    readonly DRAW_BUFFER5: 0x882A;\n    readonly DRAW_BUFFER6: 0x882B;\n    readonly DRAW_BUFFER7: 0x882C;\n    readonly DRAW_BUFFER8: 0x882D;\n    readonly DRAW_BUFFER9: 0x882E;\n    readonly DRAW_BUFFER10: 0x882F;\n    readonly DRAW_BUFFER11: 0x8830;\n    readonly DRAW_BUFFER12: 0x8831;\n    readonly DRAW_BUFFER13: 0x8832;\n    readonly DRAW_BUFFER14: 0x8833;\n    readonly DRAW_BUFFER15: 0x8834;\n    readonly MAX_FRAGMENT_UNIFORM_COMPONENTS: 0x8B49;\n    readonly MAX_VERTEX_UNIFORM_COMPONENTS: 0x8B4A;\n    readonly SAMPLER_3D: 0x8B5F;\n    readonly SAMPLER_2D_SHADOW: 0x8B62;\n    readonly FRAGMENT_SHADER_DERIVATIVE_HINT: 0x8B8B;\n    readonly PIXEL_PACK_BUFFER: 0x88EB;\n    readonly PIXEL_UNPACK_BUFFER: 0x88EC;\n    readonly PIXEL_PACK_BUFFER_BINDING: 0x88ED;\n    readonly PIXEL_UNPACK_BUFFER_BINDING: 0x88EF;\n    readonly FLOAT_MAT2x3: 0x8B65;\n    readonly FLOAT_MAT2x4: 0x8B66;\n    readonly FLOAT_MAT3x2: 0x8B67;\n    readonly FLOAT_MAT3x4: 0x8B68;\n    readonly FLOAT_MAT4x2: 0x8B69;\n    readonly FLOAT_MAT4x3: 0x8B6A;\n    readonly SRGB: 0x8C40;\n    readonly SRGB8: 0x8C41;\n    readonly SRGB8_ALPHA8: 0x8C43;\n    readonly COMPARE_REF_TO_TEXTURE: 0x884E;\n    readonly RGBA32F: 0x8814;\n    readonly RGB32F: 0x8815;\n    readonly RGBA16F: 0x881A;\n    readonly RGB16F: 0x881B;\n    readonly VERTEX_ATTRIB_ARRAY_INTEGER: 0x88FD;\n    readonly MAX_ARRAY_TEXTURE_LAYERS: 0x88FF;\n    readonly MIN_PROGRAM_TEXEL_OFFSET: 0x8904;\n    readonly MAX_PROGRAM_TEXEL_OFFSET: 0x8905;\n    readonly MAX_VARYING_COMPONENTS: 0x8B4B;\n    readonly TEXTURE_2D_ARRAY: 0x8C1A;\n    readonly TEXTURE_BINDING_2D_ARRAY: 0x8C1D;\n    readonly R11F_G11F_B10F: 0x8C3A;\n    readonly UNSIGNED_INT_10F_11F_11F_REV: 0x8C3B;\n    readonly RGB9_E5: 0x8C3D;\n    readonly UNSIGNED_INT_5_9_9_9_REV: 0x8C3E;\n    readonly TRANSFORM_FEEDBACK_BUFFER_MODE: 0x8C7F;\n    readonly MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS: 0x8C80;\n    readonly TRANSFORM_FEEDBACK_VARYINGS: 0x8C83;\n    readonly TRANSFORM_FEEDBACK_BUFFER_START: 0x8C84;\n    readonly TRANSFORM_FEEDBACK_BUFFER_SIZE: 0x8C85;\n    readonly TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN: 0x8C88;\n    readonly RASTERIZER_DISCARD: 0x8C89;\n    readonly MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS: 0x8C8A;\n    readonly MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS: 0x8C8B;\n    readonly INTERLEAVED_ATTRIBS: 0x8C8C;\n    readonly SEPARATE_ATTRIBS: 0x8C8D;\n    readonly TRANSFORM_FEEDBACK_BUFFER: 0x8C8E;\n    readonly TRANSFORM_FEEDBACK_BUFFER_BINDING: 0x8C8F;\n    readonly RGBA32UI: 0x8D70;\n    readonly RGB32UI: 0x8D71;\n    readonly RGBA16UI: 0x8D76;\n    readonly RGB16UI: 0x8D77;\n    readonly RGBA8UI: 0x8D7C;\n    readonly RGB8UI: 0x8D7D;\n    readonly RGBA32I: 0x8D82;\n    readonly RGB32I: 0x8D83;\n    readonly RGBA16I: 0x8D88;\n    readonly RGB16I: 0x8D89;\n    readonly RGBA8I: 0x8D8E;\n    readonly RGB8I: 0x8D8F;\n    readonly RED_INTEGER: 0x8D94;\n    readonly RGB_INTEGER: 0x8D98;\n    readonly RGBA_INTEGER: 0x8D99;\n    readonly SAMPLER_2D_ARRAY: 0x8DC1;\n    readonly SAMPLER_2D_ARRAY_SHADOW: 0x8DC4;\n    readonly SAMPLER_CUBE_SHADOW: 0x8DC5;\n    readonly UNSIGNED_INT_VEC2: 0x8DC6;\n    readonly UNSIGNED_INT_VEC3: 0x8DC7;\n    readonly UNSIGNED_INT_VEC4: 0x8DC8;\n    readonly INT_SAMPLER_2D: 0x8DCA;\n    readonly INT_SAMPLER_3D: 0x8DCB;\n    readonly INT_SAMPLER_CUBE: 0x8DCC;\n    readonly INT_SAMPLER_2D_ARRAY: 0x8DCF;\n    readonly UNSIGNED_INT_SAMPLER_2D: 0x8DD2;\n    readonly UNSIGNED_INT_SAMPLER_3D: 0x8DD3;\n    readonly UNSIGNED_INT_SAMPLER_CUBE: 0x8DD4;\n    readonly UNSIGNED_INT_SAMPLER_2D_ARRAY: 0x8DD7;\n    readonly DEPTH_COMPONENT32F: 0x8CAC;\n    readonly DEPTH32F_STENCIL8: 0x8CAD;\n    readonly FLOAT_32_UNSIGNED_INT_24_8_REV: 0x8DAD;\n    readonly FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING: 0x8210;\n    readonly FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE: 0x8211;\n    readonly FRAMEBUFFER_ATTACHMENT_RED_SIZE: 0x8212;\n    readonly FRAMEBUFFER_ATTACHMENT_GREEN_SIZE: 0x8213;\n    readonly FRAMEBUFFER_ATTACHMENT_BLUE_SIZE: 0x8214;\n    readonly FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE: 0x8215;\n    readonly FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE: 0x8216;\n    readonly FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE: 0x8217;\n    readonly FRAMEBUFFER_DEFAULT: 0x8218;\n    readonly UNSIGNED_INT_24_8: 0x84FA;\n    readonly DEPTH24_STENCIL8: 0x88F0;\n    readonly UNSIGNED_NORMALIZED: 0x8C17;\n    readonly DRAW_FRAMEBUFFER_BINDING: 0x8CA6;\n    readonly READ_FRAMEBUFFER: 0x8CA8;\n    readonly DRAW_FRAMEBUFFER: 0x8CA9;\n    readonly READ_FRAMEBUFFER_BINDING: 0x8CAA;\n    readonly RENDERBUFFER_SAMPLES: 0x8CAB;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER: 0x8CD4;\n    readonly MAX_COLOR_ATTACHMENTS: 0x8CDF;\n    readonly COLOR_ATTACHMENT1: 0x8CE1;\n    readonly COLOR_ATTACHMENT2: 0x8CE2;\n    readonly COLOR_ATTACHMENT3: 0x8CE3;\n    readonly COLOR_ATTACHMENT4: 0x8CE4;\n    readonly COLOR_ATTACHMENT5: 0x8CE5;\n    readonly COLOR_ATTACHMENT6: 0x8CE6;\n    readonly COLOR_ATTACHMENT7: 0x8CE7;\n    readonly COLOR_ATTACHMENT8: 0x8CE8;\n    readonly COLOR_ATTACHMENT9: 0x8CE9;\n    readonly COLOR_ATTACHMENT10: 0x8CEA;\n    readonly COLOR_ATTACHMENT11: 0x8CEB;\n    readonly COLOR_ATTACHMENT12: 0x8CEC;\n    readonly COLOR_ATTACHMENT13: 0x8CED;\n    readonly COLOR_ATTACHMENT14: 0x8CEE;\n    readonly COLOR_ATTACHMENT15: 0x8CEF;\n    readonly FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: 0x8D56;\n    readonly MAX_SAMPLES: 0x8D57;\n    readonly HALF_FLOAT: 0x140B;\n    readonly RG: 0x8227;\n    readonly RG_INTEGER: 0x8228;\n    readonly R8: 0x8229;\n    readonly RG8: 0x822B;\n    readonly R16F: 0x822D;\n    readonly R32F: 0x822E;\n    readonly RG16F: 0x822F;\n    readonly RG32F: 0x8230;\n    readonly R8I: 0x8231;\n    readonly R8UI: 0x8232;\n    readonly R16I: 0x8233;\n    readonly R16UI: 0x8234;\n    readonly R32I: 0x8235;\n    readonly R32UI: 0x8236;\n    readonly RG8I: 0x8237;\n    readonly RG8UI: 0x8238;\n    readonly RG16I: 0x8239;\n    readonly RG16UI: 0x823A;\n    readonly RG32I: 0x823B;\n    readonly RG32UI: 0x823C;\n    readonly VERTEX_ARRAY_BINDING: 0x85B5;\n    readonly R8_SNORM: 0x8F94;\n    readonly RG8_SNORM: 0x8F95;\n    readonly RGB8_SNORM: 0x8F96;\n    readonly RGBA8_SNORM: 0x8F97;\n    readonly SIGNED_NORMALIZED: 0x8F9C;\n    readonly COPY_READ_BUFFER: 0x8F36;\n    readonly COPY_WRITE_BUFFER: 0x8F37;\n    readonly COPY_READ_BUFFER_BINDING: 0x8F36;\n    readonly COPY_WRITE_BUFFER_BINDING: 0x8F37;\n    readonly UNIFORM_BUFFER: 0x8A11;\n    readonly UNIFORM_BUFFER_BINDING: 0x8A28;\n    readonly UNIFORM_BUFFER_START: 0x8A29;\n    readonly UNIFORM_BUFFER_SIZE: 0x8A2A;\n    readonly MAX_VERTEX_UNIFORM_BLOCKS: 0x8A2B;\n    readonly MAX_FRAGMENT_UNIFORM_BLOCKS: 0x8A2D;\n    readonly MAX_COMBINED_UNIFORM_BLOCKS: 0x8A2E;\n    readonly MAX_UNIFORM_BUFFER_BINDINGS: 0x8A2F;\n    readonly MAX_UNIFORM_BLOCK_SIZE: 0x8A30;\n    readonly MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS: 0x8A31;\n    readonly MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS: 0x8A33;\n    readonly UNIFORM_BUFFER_OFFSET_ALIGNMENT: 0x8A34;\n    readonly ACTIVE_UNIFORM_BLOCKS: 0x8A36;\n    readonly UNIFORM_TYPE: 0x8A37;\n    readonly UNIFORM_SIZE: 0x8A38;\n    readonly UNIFORM_BLOCK_INDEX: 0x8A3A;\n    readonly UNIFORM_OFFSET: 0x8A3B;\n    readonly UNIFORM_ARRAY_STRIDE: 0x8A3C;\n    readonly UNIFORM_MATRIX_STRIDE: 0x8A3D;\n    readonly UNIFORM_IS_ROW_MAJOR: 0x8A3E;\n    readonly UNIFORM_BLOCK_BINDING: 0x8A3F;\n    readonly UNIFORM_BLOCK_DATA_SIZE: 0x8A40;\n    readonly UNIFORM_BLOCK_ACTIVE_UNIFORMS: 0x8A42;\n    readonly UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES: 0x8A43;\n    readonly UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER: 0x8A44;\n    readonly UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER: 0x8A46;\n    readonly INVALID_INDEX: 0xFFFFFFFF;\n    readonly MAX_VERTEX_OUTPUT_COMPONENTS: 0x9122;\n    readonly MAX_FRAGMENT_INPUT_COMPONENTS: 0x9125;\n    readonly MAX_SERVER_WAIT_TIMEOUT: 0x9111;\n    readonly OBJECT_TYPE: 0x9112;\n    readonly SYNC_CONDITION: 0x9113;\n    readonly SYNC_STATUS: 0x9114;\n    readonly SYNC_FLAGS: 0x9115;\n    readonly SYNC_FENCE: 0x9116;\n    readonly SYNC_GPU_COMMANDS_COMPLETE: 0x9117;\n    readonly UNSIGNALED: 0x9118;\n    readonly SIGNALED: 0x9119;\n    readonly ALREADY_SIGNALED: 0x911A;\n    readonly TIMEOUT_EXPIRED: 0x911B;\n    readonly CONDITION_SATISFIED: 0x911C;\n    readonly WAIT_FAILED: 0x911D;\n    readonly SYNC_FLUSH_COMMANDS_BIT: 0x00000001;\n    readonly VERTEX_ATTRIB_ARRAY_DIVISOR: 0x88FE;\n    readonly ANY_SAMPLES_PASSED: 0x8C2F;\n    readonly ANY_SAMPLES_PASSED_CONSERVATIVE: 0x8D6A;\n    readonly SAMPLER_BINDING: 0x8919;\n    readonly RGB10_A2UI: 0x906F;\n    readonly INT_2_10_10_10_REV: 0x8D9F;\n    readonly TRANSFORM_FEEDBACK: 0x8E22;\n    readonly TRANSFORM_FEEDBACK_PAUSED: 0x8E23;\n    readonly TRANSFORM_FEEDBACK_ACTIVE: 0x8E24;\n    readonly TRANSFORM_FEEDBACK_BINDING: 0x8E25;\n    readonly TEXTURE_IMMUTABLE_FORMAT: 0x912F;\n    readonly MAX_ELEMENT_INDEX: 0x8D6B;\n    readonly TEXTURE_IMMUTABLE_LEVELS: 0x82DF;\n    readonly TIMEOUT_IGNORED: -1;\n    readonly MAX_CLIENT_WAIT_TIMEOUT_WEBGL: 0x9247;\n}\n\ninterface WebGL2RenderingContextOverloads {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bufferData) */\n    bufferData(target: GLenum, size: GLsizeiptr, usage: GLenum): void;\n    bufferData(target: GLenum, srcData: AllowSharedBufferSource | null, usage: GLenum): void;\n    bufferData(target: GLenum, srcData: ArrayBufferView, usage: GLenum, srcOffset: number, length?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bufferSubData) */\n    bufferSubData(target: GLenum, dstByteOffset: GLintptr, srcData: AllowSharedBufferSource): void;\n    bufferSubData(target: GLenum, dstByteOffset: GLintptr, srcData: ArrayBufferView, srcOffset: number, length?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/compressedTexImage2D) */\n    compressedTexImage2D(target: GLenum, level: GLint, internalformat: GLenum, width: GLsizei, height: GLsizei, border: GLint, imageSize: GLsizei, offset: GLintptr): void;\n    compressedTexImage2D(target: GLenum, level: GLint, internalformat: GLenum, width: GLsizei, height: GLsizei, border: GLint, srcData: ArrayBufferView, srcOffset?: number, srcLengthOverride?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/compressedTexSubImage2D) */\n    compressedTexSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, width: GLsizei, height: GLsizei, format: GLenum, imageSize: GLsizei, offset: GLintptr): void;\n    compressedTexSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, width: GLsizei, height: GLsizei, format: GLenum, srcData: ArrayBufferView, srcOffset?: number, srcLengthOverride?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/readPixels) */\n    readPixels(x: GLint, y: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, dstData: ArrayBufferView | null): void;\n    readPixels(x: GLint, y: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, offset: GLintptr): void;\n    readPixels(x: GLint, y: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, dstData: ArrayBufferView, dstOffset: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/texImage2D) */\n    texImage2D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, border: GLint, format: GLenum, type: GLenum, pixels: ArrayBufferView | null): void;\n    texImage2D(target: GLenum, level: GLint, internalformat: GLint, format: GLenum, type: GLenum, source: TexImageSource): void;\n    texImage2D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, border: GLint, format: GLenum, type: GLenum, pboOffset: GLintptr): void;\n    texImage2D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, border: GLint, format: GLenum, type: GLenum, source: TexImageSource): void;\n    texImage2D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, border: GLint, format: GLenum, type: GLenum, srcData: ArrayBufferView, srcOffset: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/texSubImage2D) */\n    texSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, pixels: ArrayBufferView | null): void;\n    texSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, format: GLenum, type: GLenum, source: TexImageSource): void;\n    texSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, pboOffset: GLintptr): void;\n    texSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, source: TexImageSource): void;\n    texSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, srcData: ArrayBufferView, srcOffset: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1fv(location: WebGLUniformLocation | null, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1iv(location: WebGLUniformLocation | null, data: Int32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2fv(location: WebGLUniformLocation | null, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2iv(location: WebGLUniformLocation | null, data: Int32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3fv(location: WebGLUniformLocation | null, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3iv(location: WebGLUniformLocation | null, data: Int32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4fv(location: WebGLUniformLocation | null, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4iv(location: WebGLUniformLocation | null, data: Int32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix2fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix3fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix4fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: number, srcLength?: GLuint): void;\n}\n\n/**\n * Part of the WebGL API and represents the information returned by calling the WebGLRenderingContext.getActiveAttrib() and WebGLRenderingContext.getActiveUniform() methods.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLActiveInfo)\n */\ninterface WebGLActiveInfo {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLActiveInfo/name) */\n    readonly name: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLActiveInfo/size) */\n    readonly size: GLint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLActiveInfo/type) */\n    readonly type: GLenum;\n}\n\ndeclare var WebGLActiveInfo: {\n    prototype: WebGLActiveInfo;\n    new(): WebGLActiveInfo;\n};\n\n/**\n * Part of the WebGL API and represents an opaque buffer object storing data such as vertices or colors.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLBuffer)\n */\ninterface WebGLBuffer {\n}\n\ndeclare var WebGLBuffer: {\n    prototype: WebGLBuffer;\n    new(): WebGLBuffer;\n};\n\n/**\n * The WebContextEvent interface is part of the WebGL API and is an interface for an event that is generated in response to a status change to the WebGL rendering context.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLContextEvent)\n */\ninterface WebGLContextEvent extends Event {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLContextEvent/statusMessage) */\n    readonly statusMessage: string;\n}\n\ndeclare var WebGLContextEvent: {\n    prototype: WebGLContextEvent;\n    new(type: string, eventInit?: WebGLContextEventInit): WebGLContextEvent;\n};\n\n/**\n * Part of the WebGL API and represents a collection of buffers that serve as a rendering destination.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLFramebuffer)\n */\ninterface WebGLFramebuffer {\n}\n\ndeclare var WebGLFramebuffer: {\n    prototype: WebGLFramebuffer;\n    new(): WebGLFramebuffer;\n};\n\n/**\n * The WebGLProgram is part of the WebGL API and is a combination of two compiled WebGLShaders consisting of a vertex shader and a fragment shader (both written in GLSL).\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLProgram)\n */\ninterface WebGLProgram {\n}\n\ndeclare var WebGLProgram: {\n    prototype: WebGLProgram;\n    new(): WebGLProgram;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLQuery) */\ninterface WebGLQuery {\n}\n\ndeclare var WebGLQuery: {\n    prototype: WebGLQuery;\n    new(): WebGLQuery;\n};\n\n/**\n * Part of the WebGL API and represents a buffer that can contain an image, or can be source or target of an rendering operation.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderbuffer)\n */\ninterface WebGLRenderbuffer {\n}\n\ndeclare var WebGLRenderbuffer: {\n    prototype: WebGLRenderbuffer;\n    new(): WebGLRenderbuffer;\n};\n\n/**\n * Provides an interface to the OpenGL ES 2.0 graphics rendering context for the drawing surface of an HTML <canvas> element.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext)\n */\ninterface WebGLRenderingContext extends WebGLRenderingContextBase, WebGLRenderingContextOverloads {\n}\n\ndeclare var WebGLRenderingContext: {\n    prototype: WebGLRenderingContext;\n    new(): WebGLRenderingContext;\n    readonly DEPTH_BUFFER_BIT: 0x00000100;\n    readonly STENCIL_BUFFER_BIT: 0x00000400;\n    readonly COLOR_BUFFER_BIT: 0x00004000;\n    readonly POINTS: 0x0000;\n    readonly LINES: 0x0001;\n    readonly LINE_LOOP: 0x0002;\n    readonly LINE_STRIP: 0x0003;\n    readonly TRIANGLES: 0x0004;\n    readonly TRIANGLE_STRIP: 0x0005;\n    readonly TRIANGLE_FAN: 0x0006;\n    readonly ZERO: 0;\n    readonly ONE: 1;\n    readonly SRC_COLOR: 0x0300;\n    readonly ONE_MINUS_SRC_COLOR: 0x0301;\n    readonly SRC_ALPHA: 0x0302;\n    readonly ONE_MINUS_SRC_ALPHA: 0x0303;\n    readonly DST_ALPHA: 0x0304;\n    readonly ONE_MINUS_DST_ALPHA: 0x0305;\n    readonly DST_COLOR: 0x0306;\n    readonly ONE_MINUS_DST_COLOR: 0x0307;\n    readonly SRC_ALPHA_SATURATE: 0x0308;\n    readonly FUNC_ADD: 0x8006;\n    readonly BLEND_EQUATION: 0x8009;\n    readonly BLEND_EQUATION_RGB: 0x8009;\n    readonly BLEND_EQUATION_ALPHA: 0x883D;\n    readonly FUNC_SUBTRACT: 0x800A;\n    readonly FUNC_REVERSE_SUBTRACT: 0x800B;\n    readonly BLEND_DST_RGB: 0x80C8;\n    readonly BLEND_SRC_RGB: 0x80C9;\n    readonly BLEND_DST_ALPHA: 0x80CA;\n    readonly BLEND_SRC_ALPHA: 0x80CB;\n    readonly CONSTANT_COLOR: 0x8001;\n    readonly ONE_MINUS_CONSTANT_COLOR: 0x8002;\n    readonly CONSTANT_ALPHA: 0x8003;\n    readonly ONE_MINUS_CONSTANT_ALPHA: 0x8004;\n    readonly BLEND_COLOR: 0x8005;\n    readonly ARRAY_BUFFER: 0x8892;\n    readonly ELEMENT_ARRAY_BUFFER: 0x8893;\n    readonly ARRAY_BUFFER_BINDING: 0x8894;\n    readonly ELEMENT_ARRAY_BUFFER_BINDING: 0x8895;\n    readonly STREAM_DRAW: 0x88E0;\n    readonly STATIC_DRAW: 0x88E4;\n    readonly DYNAMIC_DRAW: 0x88E8;\n    readonly BUFFER_SIZE: 0x8764;\n    readonly BUFFER_USAGE: 0x8765;\n    readonly CURRENT_VERTEX_ATTRIB: 0x8626;\n    readonly FRONT: 0x0404;\n    readonly BACK: 0x0405;\n    readonly FRONT_AND_BACK: 0x0408;\n    readonly CULL_FACE: 0x0B44;\n    readonly BLEND: 0x0BE2;\n    readonly DITHER: 0x0BD0;\n    readonly STENCIL_TEST: 0x0B90;\n    readonly DEPTH_TEST: 0x0B71;\n    readonly SCISSOR_TEST: 0x0C11;\n    readonly POLYGON_OFFSET_FILL: 0x8037;\n    readonly SAMPLE_ALPHA_TO_COVERAGE: 0x809E;\n    readonly SAMPLE_COVERAGE: 0x80A0;\n    readonly NO_ERROR: 0;\n    readonly INVALID_ENUM: 0x0500;\n    readonly INVALID_VALUE: 0x0501;\n    readonly INVALID_OPERATION: 0x0502;\n    readonly OUT_OF_MEMORY: 0x0505;\n    readonly CW: 0x0900;\n    readonly CCW: 0x0901;\n    readonly LINE_WIDTH: 0x0B21;\n    readonly ALIASED_POINT_SIZE_RANGE: 0x846D;\n    readonly ALIASED_LINE_WIDTH_RANGE: 0x846E;\n    readonly CULL_FACE_MODE: 0x0B45;\n    readonly FRONT_FACE: 0x0B46;\n    readonly DEPTH_RANGE: 0x0B70;\n    readonly DEPTH_WRITEMASK: 0x0B72;\n    readonly DEPTH_CLEAR_VALUE: 0x0B73;\n    readonly DEPTH_FUNC: 0x0B74;\n    readonly STENCIL_CLEAR_VALUE: 0x0B91;\n    readonly STENCIL_FUNC: 0x0B92;\n    readonly STENCIL_FAIL: 0x0B94;\n    readonly STENCIL_PASS_DEPTH_FAIL: 0x0B95;\n    readonly STENCIL_PASS_DEPTH_PASS: 0x0B96;\n    readonly STENCIL_REF: 0x0B97;\n    readonly STENCIL_VALUE_MASK: 0x0B93;\n    readonly STENCIL_WRITEMASK: 0x0B98;\n    readonly STENCIL_BACK_FUNC: 0x8800;\n    readonly STENCIL_BACK_FAIL: 0x8801;\n    readonly STENCIL_BACK_PASS_DEPTH_FAIL: 0x8802;\n    readonly STENCIL_BACK_PASS_DEPTH_PASS: 0x8803;\n    readonly STENCIL_BACK_REF: 0x8CA3;\n    readonly STENCIL_BACK_VALUE_MASK: 0x8CA4;\n    readonly STENCIL_BACK_WRITEMASK: 0x8CA5;\n    readonly VIEWPORT: 0x0BA2;\n    readonly SCISSOR_BOX: 0x0C10;\n    readonly COLOR_CLEAR_VALUE: 0x0C22;\n    readonly COLOR_WRITEMASK: 0x0C23;\n    readonly UNPACK_ALIGNMENT: 0x0CF5;\n    readonly PACK_ALIGNMENT: 0x0D05;\n    readonly MAX_TEXTURE_SIZE: 0x0D33;\n    readonly MAX_VIEWPORT_DIMS: 0x0D3A;\n    readonly SUBPIXEL_BITS: 0x0D50;\n    readonly RED_BITS: 0x0D52;\n    readonly GREEN_BITS: 0x0D53;\n    readonly BLUE_BITS: 0x0D54;\n    readonly ALPHA_BITS: 0x0D55;\n    readonly DEPTH_BITS: 0x0D56;\n    readonly STENCIL_BITS: 0x0D57;\n    readonly POLYGON_OFFSET_UNITS: 0x2A00;\n    readonly POLYGON_OFFSET_FACTOR: 0x8038;\n    readonly TEXTURE_BINDING_2D: 0x8069;\n    readonly SAMPLE_BUFFERS: 0x80A8;\n    readonly SAMPLES: 0x80A9;\n    readonly SAMPLE_COVERAGE_VALUE: 0x80AA;\n    readonly SAMPLE_COVERAGE_INVERT: 0x80AB;\n    readonly COMPRESSED_TEXTURE_FORMATS: 0x86A3;\n    readonly DONT_CARE: 0x1100;\n    readonly FASTEST: 0x1101;\n    readonly NICEST: 0x1102;\n    readonly GENERATE_MIPMAP_HINT: 0x8192;\n    readonly BYTE: 0x1400;\n    readonly UNSIGNED_BYTE: 0x1401;\n    readonly SHORT: 0x1402;\n    readonly UNSIGNED_SHORT: 0x1403;\n    readonly INT: 0x1404;\n    readonly UNSIGNED_INT: 0x1405;\n    readonly FLOAT: 0x1406;\n    readonly DEPTH_COMPONENT: 0x1902;\n    readonly ALPHA: 0x1906;\n    readonly RGB: 0x1907;\n    readonly RGBA: 0x1908;\n    readonly LUMINANCE: 0x1909;\n    readonly LUMINANCE_ALPHA: 0x190A;\n    readonly UNSIGNED_SHORT_4_4_4_4: 0x8033;\n    readonly UNSIGNED_SHORT_5_5_5_1: 0x8034;\n    readonly UNSIGNED_SHORT_5_6_5: 0x8363;\n    readonly FRAGMENT_SHADER: 0x8B30;\n    readonly VERTEX_SHADER: 0x8B31;\n    readonly MAX_VERTEX_ATTRIBS: 0x8869;\n    readonly MAX_VERTEX_UNIFORM_VECTORS: 0x8DFB;\n    readonly MAX_VARYING_VECTORS: 0x8DFC;\n    readonly MAX_COMBINED_TEXTURE_IMAGE_UNITS: 0x8B4D;\n    readonly MAX_VERTEX_TEXTURE_IMAGE_UNITS: 0x8B4C;\n    readonly MAX_TEXTURE_IMAGE_UNITS: 0x8872;\n    readonly MAX_FRAGMENT_UNIFORM_VECTORS: 0x8DFD;\n    readonly SHADER_TYPE: 0x8B4F;\n    readonly DELETE_STATUS: 0x8B80;\n    readonly LINK_STATUS: 0x8B82;\n    readonly VALIDATE_STATUS: 0x8B83;\n    readonly ATTACHED_SHADERS: 0x8B85;\n    readonly ACTIVE_UNIFORMS: 0x8B86;\n    readonly ACTIVE_ATTRIBUTES: 0x8B89;\n    readonly SHADING_LANGUAGE_VERSION: 0x8B8C;\n    readonly CURRENT_PROGRAM: 0x8B8D;\n    readonly NEVER: 0x0200;\n    readonly LESS: 0x0201;\n    readonly EQUAL: 0x0202;\n    readonly LEQUAL: 0x0203;\n    readonly GREATER: 0x0204;\n    readonly NOTEQUAL: 0x0205;\n    readonly GEQUAL: 0x0206;\n    readonly ALWAYS: 0x0207;\n    readonly KEEP: 0x1E00;\n    readonly REPLACE: 0x1E01;\n    readonly INCR: 0x1E02;\n    readonly DECR: 0x1E03;\n    readonly INVERT: 0x150A;\n    readonly INCR_WRAP: 0x8507;\n    readonly DECR_WRAP: 0x8508;\n    readonly VENDOR: 0x1F00;\n    readonly RENDERER: 0x1F01;\n    readonly VERSION: 0x1F02;\n    readonly NEAREST: 0x2600;\n    readonly LINEAR: 0x2601;\n    readonly NEAREST_MIPMAP_NEAREST: 0x2700;\n    readonly LINEAR_MIPMAP_NEAREST: 0x2701;\n    readonly NEAREST_MIPMAP_LINEAR: 0x2702;\n    readonly LINEAR_MIPMAP_LINEAR: 0x2703;\n    readonly TEXTURE_MAG_FILTER: 0x2800;\n    readonly TEXTURE_MIN_FILTER: 0x2801;\n    readonly TEXTURE_WRAP_S: 0x2802;\n    readonly TEXTURE_WRAP_T: 0x2803;\n    readonly TEXTURE_2D: 0x0DE1;\n    readonly TEXTURE: 0x1702;\n    readonly TEXTURE_CUBE_MAP: 0x8513;\n    readonly TEXTURE_BINDING_CUBE_MAP: 0x8514;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_X: 0x8515;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_X: 0x8516;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_Y: 0x8517;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_Y: 0x8518;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_Z: 0x8519;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_Z: 0x851A;\n    readonly MAX_CUBE_MAP_TEXTURE_SIZE: 0x851C;\n    readonly TEXTURE0: 0x84C0;\n    readonly TEXTURE1: 0x84C1;\n    readonly TEXTURE2: 0x84C2;\n    readonly TEXTURE3: 0x84C3;\n    readonly TEXTURE4: 0x84C4;\n    readonly TEXTURE5: 0x84C5;\n    readonly TEXTURE6: 0x84C6;\n    readonly TEXTURE7: 0x84C7;\n    readonly TEXTURE8: 0x84C8;\n    readonly TEXTURE9: 0x84C9;\n    readonly TEXTURE10: 0x84CA;\n    readonly TEXTURE11: 0x84CB;\n    readonly TEXTURE12: 0x84CC;\n    readonly TEXTURE13: 0x84CD;\n    readonly TEXTURE14: 0x84CE;\n    readonly TEXTURE15: 0x84CF;\n    readonly TEXTURE16: 0x84D0;\n    readonly TEXTURE17: 0x84D1;\n    readonly TEXTURE18: 0x84D2;\n    readonly TEXTURE19: 0x84D3;\n    readonly TEXTURE20: 0x84D4;\n    readonly TEXTURE21: 0x84D5;\n    readonly TEXTURE22: 0x84D6;\n    readonly TEXTURE23: 0x84D7;\n    readonly TEXTURE24: 0x84D8;\n    readonly TEXTURE25: 0x84D9;\n    readonly TEXTURE26: 0x84DA;\n    readonly TEXTURE27: 0x84DB;\n    readonly TEXTURE28: 0x84DC;\n    readonly TEXTURE29: 0x84DD;\n    readonly TEXTURE30: 0x84DE;\n    readonly TEXTURE31: 0x84DF;\n    readonly ACTIVE_TEXTURE: 0x84E0;\n    readonly REPEAT: 0x2901;\n    readonly CLAMP_TO_EDGE: 0x812F;\n    readonly MIRRORED_REPEAT: 0x8370;\n    readonly FLOAT_VEC2: 0x8B50;\n    readonly FLOAT_VEC3: 0x8B51;\n    readonly FLOAT_VEC4: 0x8B52;\n    readonly INT_VEC2: 0x8B53;\n    readonly INT_VEC3: 0x8B54;\n    readonly INT_VEC4: 0x8B55;\n    readonly BOOL: 0x8B56;\n    readonly BOOL_VEC2: 0x8B57;\n    readonly BOOL_VEC3: 0x8B58;\n    readonly BOOL_VEC4: 0x8B59;\n    readonly FLOAT_MAT2: 0x8B5A;\n    readonly FLOAT_MAT3: 0x8B5B;\n    readonly FLOAT_MAT4: 0x8B5C;\n    readonly SAMPLER_2D: 0x8B5E;\n    readonly SAMPLER_CUBE: 0x8B60;\n    readonly VERTEX_ATTRIB_ARRAY_ENABLED: 0x8622;\n    readonly VERTEX_ATTRIB_ARRAY_SIZE: 0x8623;\n    readonly VERTEX_ATTRIB_ARRAY_STRIDE: 0x8624;\n    readonly VERTEX_ATTRIB_ARRAY_TYPE: 0x8625;\n    readonly VERTEX_ATTRIB_ARRAY_NORMALIZED: 0x886A;\n    readonly VERTEX_ATTRIB_ARRAY_POINTER: 0x8645;\n    readonly VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: 0x889F;\n    readonly IMPLEMENTATION_COLOR_READ_TYPE: 0x8B9A;\n    readonly IMPLEMENTATION_COLOR_READ_FORMAT: 0x8B9B;\n    readonly COMPILE_STATUS: 0x8B81;\n    readonly LOW_FLOAT: 0x8DF0;\n    readonly MEDIUM_FLOAT: 0x8DF1;\n    readonly HIGH_FLOAT: 0x8DF2;\n    readonly LOW_INT: 0x8DF3;\n    readonly MEDIUM_INT: 0x8DF4;\n    readonly HIGH_INT: 0x8DF5;\n    readonly FRAMEBUFFER: 0x8D40;\n    readonly RENDERBUFFER: 0x8D41;\n    readonly RGBA4: 0x8056;\n    readonly RGB5_A1: 0x8057;\n    readonly RGBA8: 0x8058;\n    readonly RGB565: 0x8D62;\n    readonly DEPTH_COMPONENT16: 0x81A5;\n    readonly STENCIL_INDEX8: 0x8D48;\n    readonly DEPTH_STENCIL: 0x84F9;\n    readonly RENDERBUFFER_WIDTH: 0x8D42;\n    readonly RENDERBUFFER_HEIGHT: 0x8D43;\n    readonly RENDERBUFFER_INTERNAL_FORMAT: 0x8D44;\n    readonly RENDERBUFFER_RED_SIZE: 0x8D50;\n    readonly RENDERBUFFER_GREEN_SIZE: 0x8D51;\n    readonly RENDERBUFFER_BLUE_SIZE: 0x8D52;\n    readonly RENDERBUFFER_ALPHA_SIZE: 0x8D53;\n    readonly RENDERBUFFER_DEPTH_SIZE: 0x8D54;\n    readonly RENDERBUFFER_STENCIL_SIZE: 0x8D55;\n    readonly FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE: 0x8CD0;\n    readonly FRAMEBUFFER_ATTACHMENT_OBJECT_NAME: 0x8CD1;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL: 0x8CD2;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE: 0x8CD3;\n    readonly COLOR_ATTACHMENT0: 0x8CE0;\n    readonly DEPTH_ATTACHMENT: 0x8D00;\n    readonly STENCIL_ATTACHMENT: 0x8D20;\n    readonly DEPTH_STENCIL_ATTACHMENT: 0x821A;\n    readonly NONE: 0;\n    readonly FRAMEBUFFER_COMPLETE: 0x8CD5;\n    readonly FRAMEBUFFER_INCOMPLETE_ATTACHMENT: 0x8CD6;\n    readonly FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: 0x8CD7;\n    readonly FRAMEBUFFER_INCOMPLETE_DIMENSIONS: 0x8CD9;\n    readonly FRAMEBUFFER_UNSUPPORTED: 0x8CDD;\n    readonly FRAMEBUFFER_BINDING: 0x8CA6;\n    readonly RENDERBUFFER_BINDING: 0x8CA7;\n    readonly MAX_RENDERBUFFER_SIZE: 0x84E8;\n    readonly INVALID_FRAMEBUFFER_OPERATION: 0x0506;\n    readonly UNPACK_FLIP_Y_WEBGL: 0x9240;\n    readonly UNPACK_PREMULTIPLY_ALPHA_WEBGL: 0x9241;\n    readonly CONTEXT_LOST_WEBGL: 0x9242;\n    readonly UNPACK_COLORSPACE_CONVERSION_WEBGL: 0x9243;\n    readonly BROWSER_DEFAULT_WEBGL: 0x9244;\n};\n\ninterface WebGLRenderingContextBase {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/drawingBufferColorSpace) */\n    drawingBufferColorSpace: PredefinedColorSpace;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/drawingBufferHeight) */\n    readonly drawingBufferHeight: GLsizei;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/drawingBufferWidth) */\n    readonly drawingBufferWidth: GLsizei;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/activeTexture) */\n    activeTexture(texture: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/attachShader) */\n    attachShader(program: WebGLProgram, shader: WebGLShader): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bindAttribLocation) */\n    bindAttribLocation(program: WebGLProgram, index: GLuint, name: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bindBuffer) */\n    bindBuffer(target: GLenum, buffer: WebGLBuffer | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bindFramebuffer) */\n    bindFramebuffer(target: GLenum, framebuffer: WebGLFramebuffer | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bindRenderbuffer) */\n    bindRenderbuffer(target: GLenum, renderbuffer: WebGLRenderbuffer | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bindTexture) */\n    bindTexture(target: GLenum, texture: WebGLTexture | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/blendColor) */\n    blendColor(red: GLclampf, green: GLclampf, blue: GLclampf, alpha: GLclampf): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/blendEquation) */\n    blendEquation(mode: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/blendEquationSeparate) */\n    blendEquationSeparate(modeRGB: GLenum, modeAlpha: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/blendFunc) */\n    blendFunc(sfactor: GLenum, dfactor: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/blendFuncSeparate) */\n    blendFuncSeparate(srcRGB: GLenum, dstRGB: GLenum, srcAlpha: GLenum, dstAlpha: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/checkFramebufferStatus) */\n    checkFramebufferStatus(target: GLenum): GLenum;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/clear) */\n    clear(mask: GLbitfield): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/clearColor) */\n    clearColor(red: GLclampf, green: GLclampf, blue: GLclampf, alpha: GLclampf): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/clearDepth) */\n    clearDepth(depth: GLclampf): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/clearStencil) */\n    clearStencil(s: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/colorMask) */\n    colorMask(red: GLboolean, green: GLboolean, blue: GLboolean, alpha: GLboolean): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/compileShader) */\n    compileShader(shader: WebGLShader): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/copyTexImage2D) */\n    copyTexImage2D(target: GLenum, level: GLint, internalformat: GLenum, x: GLint, y: GLint, width: GLsizei, height: GLsizei, border: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/copyTexSubImage2D) */\n    copyTexSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/createBuffer) */\n    createBuffer(): WebGLBuffer | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/createFramebuffer) */\n    createFramebuffer(): WebGLFramebuffer | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/createProgram) */\n    createProgram(): WebGLProgram | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/createRenderbuffer) */\n    createRenderbuffer(): WebGLRenderbuffer | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/createShader) */\n    createShader(type: GLenum): WebGLShader | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/createTexture) */\n    createTexture(): WebGLTexture | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/cullFace) */\n    cullFace(mode: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/deleteBuffer) */\n    deleteBuffer(buffer: WebGLBuffer | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/deleteFramebuffer) */\n    deleteFramebuffer(framebuffer: WebGLFramebuffer | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/deleteProgram) */\n    deleteProgram(program: WebGLProgram | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/deleteRenderbuffer) */\n    deleteRenderbuffer(renderbuffer: WebGLRenderbuffer | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/deleteShader) */\n    deleteShader(shader: WebGLShader | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/deleteTexture) */\n    deleteTexture(texture: WebGLTexture | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/depthFunc) */\n    depthFunc(func: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/depthMask) */\n    depthMask(flag: GLboolean): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/depthRange) */\n    depthRange(zNear: GLclampf, zFar: GLclampf): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/detachShader) */\n    detachShader(program: WebGLProgram, shader: WebGLShader): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/disable) */\n    disable(cap: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/disableVertexAttribArray) */\n    disableVertexAttribArray(index: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/drawArrays) */\n    drawArrays(mode: GLenum, first: GLint, count: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/drawElements) */\n    drawElements(mode: GLenum, count: GLsizei, type: GLenum, offset: GLintptr): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/enable) */\n    enable(cap: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/enableVertexAttribArray) */\n    enableVertexAttribArray(index: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/finish) */\n    finish(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/flush) */\n    flush(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/framebufferRenderbuffer) */\n    framebufferRenderbuffer(target: GLenum, attachment: GLenum, renderbuffertarget: GLenum, renderbuffer: WebGLRenderbuffer | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/framebufferTexture2D) */\n    framebufferTexture2D(target: GLenum, attachment: GLenum, textarget: GLenum, texture: WebGLTexture | null, level: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/frontFace) */\n    frontFace(mode: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/generateMipmap) */\n    generateMipmap(target: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getActiveAttrib) */\n    getActiveAttrib(program: WebGLProgram, index: GLuint): WebGLActiveInfo | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getActiveUniform) */\n    getActiveUniform(program: WebGLProgram, index: GLuint): WebGLActiveInfo | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getAttachedShaders) */\n    getAttachedShaders(program: WebGLProgram): WebGLShader[] | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getAttribLocation) */\n    getAttribLocation(program: WebGLProgram, name: string): GLint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getBufferParameter) */\n    getBufferParameter(target: GLenum, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getContextAttributes) */\n    getContextAttributes(): WebGLContextAttributes | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getError) */\n    getError(): GLenum;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getExtension) */\n    getExtension(extensionName: \"ANGLE_instanced_arrays\"): ANGLE_instanced_arrays | null;\n    getExtension(extensionName: \"EXT_blend_minmax\"): EXT_blend_minmax | null;\n    getExtension(extensionName: \"EXT_color_buffer_float\"): EXT_color_buffer_float | null;\n    getExtension(extensionName: \"EXT_color_buffer_half_float\"): EXT_color_buffer_half_float | null;\n    getExtension(extensionName: \"EXT_float_blend\"): EXT_float_blend | null;\n    getExtension(extensionName: \"EXT_frag_depth\"): EXT_frag_depth | null;\n    getExtension(extensionName: \"EXT_sRGB\"): EXT_sRGB | null;\n    getExtension(extensionName: \"EXT_shader_texture_lod\"): EXT_shader_texture_lod | null;\n    getExtension(extensionName: \"EXT_texture_compression_bptc\"): EXT_texture_compression_bptc | null;\n    getExtension(extensionName: \"EXT_texture_compression_rgtc\"): EXT_texture_compression_rgtc | null;\n    getExtension(extensionName: \"EXT_texture_filter_anisotropic\"): EXT_texture_filter_anisotropic | null;\n    getExtension(extensionName: \"KHR_parallel_shader_compile\"): KHR_parallel_shader_compile | null;\n    getExtension(extensionName: \"OES_element_index_uint\"): OES_element_index_uint | null;\n    getExtension(extensionName: \"OES_fbo_render_mipmap\"): OES_fbo_render_mipmap | null;\n    getExtension(extensionName: \"OES_standard_derivatives\"): OES_standard_derivatives | null;\n    getExtension(extensionName: \"OES_texture_float\"): OES_texture_float | null;\n    getExtension(extensionName: \"OES_texture_float_linear\"): OES_texture_float_linear | null;\n    getExtension(extensionName: \"OES_texture_half_float\"): OES_texture_half_float | null;\n    getExtension(extensionName: \"OES_texture_half_float_linear\"): OES_texture_half_float_linear | null;\n    getExtension(extensionName: \"OES_vertex_array_object\"): OES_vertex_array_object | null;\n    getExtension(extensionName: \"OVR_multiview2\"): OVR_multiview2 | null;\n    getExtension(extensionName: \"WEBGL_color_buffer_float\"): WEBGL_color_buffer_float | null;\n    getExtension(extensionName: \"WEBGL_compressed_texture_astc\"): WEBGL_compressed_texture_astc | null;\n    getExtension(extensionName: \"WEBGL_compressed_texture_etc\"): WEBGL_compressed_texture_etc | null;\n    getExtension(extensionName: \"WEBGL_compressed_texture_etc1\"): WEBGL_compressed_texture_etc1 | null;\n    getExtension(extensionName: \"WEBGL_compressed_texture_pvrtc\"): WEBGL_compressed_texture_pvrtc | null;\n    getExtension(extensionName: \"WEBGL_compressed_texture_s3tc\"): WEBGL_compressed_texture_s3tc | null;\n    getExtension(extensionName: \"WEBGL_compressed_texture_s3tc_srgb\"): WEBGL_compressed_texture_s3tc_srgb | null;\n    getExtension(extensionName: \"WEBGL_debug_renderer_info\"): WEBGL_debug_renderer_info | null;\n    getExtension(extensionName: \"WEBGL_debug_shaders\"): WEBGL_debug_shaders | null;\n    getExtension(extensionName: \"WEBGL_depth_texture\"): WEBGL_depth_texture | null;\n    getExtension(extensionName: \"WEBGL_draw_buffers\"): WEBGL_draw_buffers | null;\n    getExtension(extensionName: \"WEBGL_lose_context\"): WEBGL_lose_context | null;\n    getExtension(extensionName: \"WEBGL_multi_draw\"): WEBGL_multi_draw | null;\n    getExtension(name: string): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getFramebufferAttachmentParameter) */\n    getFramebufferAttachmentParameter(target: GLenum, attachment: GLenum, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getParameter) */\n    getParameter(pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getProgramInfoLog) */\n    getProgramInfoLog(program: WebGLProgram): string | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getProgramParameter) */\n    getProgramParameter(program: WebGLProgram, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getRenderbufferParameter) */\n    getRenderbufferParameter(target: GLenum, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getShaderInfoLog) */\n    getShaderInfoLog(shader: WebGLShader): string | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getShaderParameter) */\n    getShaderParameter(shader: WebGLShader, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getShaderPrecisionFormat) */\n    getShaderPrecisionFormat(shadertype: GLenum, precisiontype: GLenum): WebGLShaderPrecisionFormat | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getShaderSource) */\n    getShaderSource(shader: WebGLShader): string | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getSupportedExtensions) */\n    getSupportedExtensions(): string[] | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getTexParameter) */\n    getTexParameter(target: GLenum, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getUniform) */\n    getUniform(program: WebGLProgram, location: WebGLUniformLocation): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getUniformLocation) */\n    getUniformLocation(program: WebGLProgram, name: string): WebGLUniformLocation | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getVertexAttrib) */\n    getVertexAttrib(index: GLuint, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/getVertexAttribOffset) */\n    getVertexAttribOffset(index: GLuint, pname: GLenum): GLintptr;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/hint) */\n    hint(target: GLenum, mode: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/isBuffer) */\n    isBuffer(buffer: WebGLBuffer | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/isContextLost) */\n    isContextLost(): boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/isEnabled) */\n    isEnabled(cap: GLenum): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/isFramebuffer) */\n    isFramebuffer(framebuffer: WebGLFramebuffer | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/isProgram) */\n    isProgram(program: WebGLProgram | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/isRenderbuffer) */\n    isRenderbuffer(renderbuffer: WebGLRenderbuffer | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/isShader) */\n    isShader(shader: WebGLShader | null): GLboolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/isTexture) */\n    isTexture(texture: WebGLTexture | null): GLboolean;\n    lineWidth(width: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/linkProgram) */\n    linkProgram(program: WebGLProgram): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/pixelStorei) */\n    pixelStorei(pname: GLenum, param: GLint | GLboolean): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/polygonOffset) */\n    polygonOffset(factor: GLfloat, units: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/renderbufferStorage) */\n    renderbufferStorage(target: GLenum, internalformat: GLenum, width: GLsizei, height: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/sampleCoverage) */\n    sampleCoverage(value: GLclampf, invert: GLboolean): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/scissor) */\n    scissor(x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/shaderSource) */\n    shaderSource(shader: WebGLShader, source: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/stencilFunc) */\n    stencilFunc(func: GLenum, ref: GLint, mask: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/stencilFuncSeparate) */\n    stencilFuncSeparate(face: GLenum, func: GLenum, ref: GLint, mask: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/stencilMask) */\n    stencilMask(mask: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/stencilMaskSeparate) */\n    stencilMaskSeparate(face: GLenum, mask: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/stencilOp) */\n    stencilOp(fail: GLenum, zfail: GLenum, zpass: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/stencilOpSeparate) */\n    stencilOpSeparate(face: GLenum, fail: GLenum, zfail: GLenum, zpass: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/texParameter) */\n    texParameterf(target: GLenum, pname: GLenum, param: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/texParameter) */\n    texParameteri(target: GLenum, pname: GLenum, param: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1f(location: WebGLUniformLocation | null, x: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1i(location: WebGLUniformLocation | null, x: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2f(location: WebGLUniformLocation | null, x: GLfloat, y: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2i(location: WebGLUniformLocation | null, x: GLint, y: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3f(location: WebGLUniformLocation | null, x: GLfloat, y: GLfloat, z: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3i(location: WebGLUniformLocation | null, x: GLint, y: GLint, z: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4f(location: WebGLUniformLocation | null, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4i(location: WebGLUniformLocation | null, x: GLint, y: GLint, z: GLint, w: GLint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/useProgram) */\n    useProgram(program: WebGLProgram | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/validateProgram) */\n    validateProgram(program: WebGLProgram): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib1f(index: GLuint, x: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib1fv(index: GLuint, values: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib2f(index: GLuint, x: GLfloat, y: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib2fv(index: GLuint, values: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib3f(index: GLuint, x: GLfloat, y: GLfloat, z: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib3fv(index: GLuint, values: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib4f(index: GLuint, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib4fv(index: GLuint, values: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttribPointer) */\n    vertexAttribPointer(index: GLuint, size: GLint, type: GLenum, normalized: GLboolean, stride: GLsizei, offset: GLintptr): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/viewport) */\n    viewport(x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;\n    readonly DEPTH_BUFFER_BIT: 0x00000100;\n    readonly STENCIL_BUFFER_BIT: 0x00000400;\n    readonly COLOR_BUFFER_BIT: 0x00004000;\n    readonly POINTS: 0x0000;\n    readonly LINES: 0x0001;\n    readonly LINE_LOOP: 0x0002;\n    readonly LINE_STRIP: 0x0003;\n    readonly TRIANGLES: 0x0004;\n    readonly TRIANGLE_STRIP: 0x0005;\n    readonly TRIANGLE_FAN: 0x0006;\n    readonly ZERO: 0;\n    readonly ONE: 1;\n    readonly SRC_COLOR: 0x0300;\n    readonly ONE_MINUS_SRC_COLOR: 0x0301;\n    readonly SRC_ALPHA: 0x0302;\n    readonly ONE_MINUS_SRC_ALPHA: 0x0303;\n    readonly DST_ALPHA: 0x0304;\n    readonly ONE_MINUS_DST_ALPHA: 0x0305;\n    readonly DST_COLOR: 0x0306;\n    readonly ONE_MINUS_DST_COLOR: 0x0307;\n    readonly SRC_ALPHA_SATURATE: 0x0308;\n    readonly FUNC_ADD: 0x8006;\n    readonly BLEND_EQUATION: 0x8009;\n    readonly BLEND_EQUATION_RGB: 0x8009;\n    readonly BLEND_EQUATION_ALPHA: 0x883D;\n    readonly FUNC_SUBTRACT: 0x800A;\n    readonly FUNC_REVERSE_SUBTRACT: 0x800B;\n    readonly BLEND_DST_RGB: 0x80C8;\n    readonly BLEND_SRC_RGB: 0x80C9;\n    readonly BLEND_DST_ALPHA: 0x80CA;\n    readonly BLEND_SRC_ALPHA: 0x80CB;\n    readonly CONSTANT_COLOR: 0x8001;\n    readonly ONE_MINUS_CONSTANT_COLOR: 0x8002;\n    readonly CONSTANT_ALPHA: 0x8003;\n    readonly ONE_MINUS_CONSTANT_ALPHA: 0x8004;\n    readonly BLEND_COLOR: 0x8005;\n    readonly ARRAY_BUFFER: 0x8892;\n    readonly ELEMENT_ARRAY_BUFFER: 0x8893;\n    readonly ARRAY_BUFFER_BINDING: 0x8894;\n    readonly ELEMENT_ARRAY_BUFFER_BINDING: 0x8895;\n    readonly STREAM_DRAW: 0x88E0;\n    readonly STATIC_DRAW: 0x88E4;\n    readonly DYNAMIC_DRAW: 0x88E8;\n    readonly BUFFER_SIZE: 0x8764;\n    readonly BUFFER_USAGE: 0x8765;\n    readonly CURRENT_VERTEX_ATTRIB: 0x8626;\n    readonly FRONT: 0x0404;\n    readonly BACK: 0x0405;\n    readonly FRONT_AND_BACK: 0x0408;\n    readonly CULL_FACE: 0x0B44;\n    readonly BLEND: 0x0BE2;\n    readonly DITHER: 0x0BD0;\n    readonly STENCIL_TEST: 0x0B90;\n    readonly DEPTH_TEST: 0x0B71;\n    readonly SCISSOR_TEST: 0x0C11;\n    readonly POLYGON_OFFSET_FILL: 0x8037;\n    readonly SAMPLE_ALPHA_TO_COVERAGE: 0x809E;\n    readonly SAMPLE_COVERAGE: 0x80A0;\n    readonly NO_ERROR: 0;\n    readonly INVALID_ENUM: 0x0500;\n    readonly INVALID_VALUE: 0x0501;\n    readonly INVALID_OPERATION: 0x0502;\n    readonly OUT_OF_MEMORY: 0x0505;\n    readonly CW: 0x0900;\n    readonly CCW: 0x0901;\n    readonly LINE_WIDTH: 0x0B21;\n    readonly ALIASED_POINT_SIZE_RANGE: 0x846D;\n    readonly ALIASED_LINE_WIDTH_RANGE: 0x846E;\n    readonly CULL_FACE_MODE: 0x0B45;\n    readonly FRONT_FACE: 0x0B46;\n    readonly DEPTH_RANGE: 0x0B70;\n    readonly DEPTH_WRITEMASK: 0x0B72;\n    readonly DEPTH_CLEAR_VALUE: 0x0B73;\n    readonly DEPTH_FUNC: 0x0B74;\n    readonly STENCIL_CLEAR_VALUE: 0x0B91;\n    readonly STENCIL_FUNC: 0x0B92;\n    readonly STENCIL_FAIL: 0x0B94;\n    readonly STENCIL_PASS_DEPTH_FAIL: 0x0B95;\n    readonly STENCIL_PASS_DEPTH_PASS: 0x0B96;\n    readonly STENCIL_REF: 0x0B97;\n    readonly STENCIL_VALUE_MASK: 0x0B93;\n    readonly STENCIL_WRITEMASK: 0x0B98;\n    readonly STENCIL_BACK_FUNC: 0x8800;\n    readonly STENCIL_BACK_FAIL: 0x8801;\n    readonly STENCIL_BACK_PASS_DEPTH_FAIL: 0x8802;\n    readonly STENCIL_BACK_PASS_DEPTH_PASS: 0x8803;\n    readonly STENCIL_BACK_REF: 0x8CA3;\n    readonly STENCIL_BACK_VALUE_MASK: 0x8CA4;\n    readonly STENCIL_BACK_WRITEMASK: 0x8CA5;\n    readonly VIEWPORT: 0x0BA2;\n    readonly SCISSOR_BOX: 0x0C10;\n    readonly COLOR_CLEAR_VALUE: 0x0C22;\n    readonly COLOR_WRITEMASK: 0x0C23;\n    readonly UNPACK_ALIGNMENT: 0x0CF5;\n    readonly PACK_ALIGNMENT: 0x0D05;\n    readonly MAX_TEXTURE_SIZE: 0x0D33;\n    readonly MAX_VIEWPORT_DIMS: 0x0D3A;\n    readonly SUBPIXEL_BITS: 0x0D50;\n    readonly RED_BITS: 0x0D52;\n    readonly GREEN_BITS: 0x0D53;\n    readonly BLUE_BITS: 0x0D54;\n    readonly ALPHA_BITS: 0x0D55;\n    readonly DEPTH_BITS: 0x0D56;\n    readonly STENCIL_BITS: 0x0D57;\n    readonly POLYGON_OFFSET_UNITS: 0x2A00;\n    readonly POLYGON_OFFSET_FACTOR: 0x8038;\n    readonly TEXTURE_BINDING_2D: 0x8069;\n    readonly SAMPLE_BUFFERS: 0x80A8;\n    readonly SAMPLES: 0x80A9;\n    readonly SAMPLE_COVERAGE_VALUE: 0x80AA;\n    readonly SAMPLE_COVERAGE_INVERT: 0x80AB;\n    readonly COMPRESSED_TEXTURE_FORMATS: 0x86A3;\n    readonly DONT_CARE: 0x1100;\n    readonly FASTEST: 0x1101;\n    readonly NICEST: 0x1102;\n    readonly GENERATE_MIPMAP_HINT: 0x8192;\n    readonly BYTE: 0x1400;\n    readonly UNSIGNED_BYTE: 0x1401;\n    readonly SHORT: 0x1402;\n    readonly UNSIGNED_SHORT: 0x1403;\n    readonly INT: 0x1404;\n    readonly UNSIGNED_INT: 0x1405;\n    readonly FLOAT: 0x1406;\n    readonly DEPTH_COMPONENT: 0x1902;\n    readonly ALPHA: 0x1906;\n    readonly RGB: 0x1907;\n    readonly RGBA: 0x1908;\n    readonly LUMINANCE: 0x1909;\n    readonly LUMINANCE_ALPHA: 0x190A;\n    readonly UNSIGNED_SHORT_4_4_4_4: 0x8033;\n    readonly UNSIGNED_SHORT_5_5_5_1: 0x8034;\n    readonly UNSIGNED_SHORT_5_6_5: 0x8363;\n    readonly FRAGMENT_SHADER: 0x8B30;\n    readonly VERTEX_SHADER: 0x8B31;\n    readonly MAX_VERTEX_ATTRIBS: 0x8869;\n    readonly MAX_VERTEX_UNIFORM_VECTORS: 0x8DFB;\n    readonly MAX_VARYING_VECTORS: 0x8DFC;\n    readonly MAX_COMBINED_TEXTURE_IMAGE_UNITS: 0x8B4D;\n    readonly MAX_VERTEX_TEXTURE_IMAGE_UNITS: 0x8B4C;\n    readonly MAX_TEXTURE_IMAGE_UNITS: 0x8872;\n    readonly MAX_FRAGMENT_UNIFORM_VECTORS: 0x8DFD;\n    readonly SHADER_TYPE: 0x8B4F;\n    readonly DELETE_STATUS: 0x8B80;\n    readonly LINK_STATUS: 0x8B82;\n    readonly VALIDATE_STATUS: 0x8B83;\n    readonly ATTACHED_SHADERS: 0x8B85;\n    readonly ACTIVE_UNIFORMS: 0x8B86;\n    readonly ACTIVE_ATTRIBUTES: 0x8B89;\n    readonly SHADING_LANGUAGE_VERSION: 0x8B8C;\n    readonly CURRENT_PROGRAM: 0x8B8D;\n    readonly NEVER: 0x0200;\n    readonly LESS: 0x0201;\n    readonly EQUAL: 0x0202;\n    readonly LEQUAL: 0x0203;\n    readonly GREATER: 0x0204;\n    readonly NOTEQUAL: 0x0205;\n    readonly GEQUAL: 0x0206;\n    readonly ALWAYS: 0x0207;\n    readonly KEEP: 0x1E00;\n    readonly REPLACE: 0x1E01;\n    readonly INCR: 0x1E02;\n    readonly DECR: 0x1E03;\n    readonly INVERT: 0x150A;\n    readonly INCR_WRAP: 0x8507;\n    readonly DECR_WRAP: 0x8508;\n    readonly VENDOR: 0x1F00;\n    readonly RENDERER: 0x1F01;\n    readonly VERSION: 0x1F02;\n    readonly NEAREST: 0x2600;\n    readonly LINEAR: 0x2601;\n    readonly NEAREST_MIPMAP_NEAREST: 0x2700;\n    readonly LINEAR_MIPMAP_NEAREST: 0x2701;\n    readonly NEAREST_MIPMAP_LINEAR: 0x2702;\n    readonly LINEAR_MIPMAP_LINEAR: 0x2703;\n    readonly TEXTURE_MAG_FILTER: 0x2800;\n    readonly TEXTURE_MIN_FILTER: 0x2801;\n    readonly TEXTURE_WRAP_S: 0x2802;\n    readonly TEXTURE_WRAP_T: 0x2803;\n    readonly TEXTURE_2D: 0x0DE1;\n    readonly TEXTURE: 0x1702;\n    readonly TEXTURE_CUBE_MAP: 0x8513;\n    readonly TEXTURE_BINDING_CUBE_MAP: 0x8514;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_X: 0x8515;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_X: 0x8516;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_Y: 0x8517;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_Y: 0x8518;\n    readonly TEXTURE_CUBE_MAP_POSITIVE_Z: 0x8519;\n    readonly TEXTURE_CUBE_MAP_NEGATIVE_Z: 0x851A;\n    readonly MAX_CUBE_MAP_TEXTURE_SIZE: 0x851C;\n    readonly TEXTURE0: 0x84C0;\n    readonly TEXTURE1: 0x84C1;\n    readonly TEXTURE2: 0x84C2;\n    readonly TEXTURE3: 0x84C3;\n    readonly TEXTURE4: 0x84C4;\n    readonly TEXTURE5: 0x84C5;\n    readonly TEXTURE6: 0x84C6;\n    readonly TEXTURE7: 0x84C7;\n    readonly TEXTURE8: 0x84C8;\n    readonly TEXTURE9: 0x84C9;\n    readonly TEXTURE10: 0x84CA;\n    readonly TEXTURE11: 0x84CB;\n    readonly TEXTURE12: 0x84CC;\n    readonly TEXTURE13: 0x84CD;\n    readonly TEXTURE14: 0x84CE;\n    readonly TEXTURE15: 0x84CF;\n    readonly TEXTURE16: 0x84D0;\n    readonly TEXTURE17: 0x84D1;\n    readonly TEXTURE18: 0x84D2;\n    readonly TEXTURE19: 0x84D3;\n    readonly TEXTURE20: 0x84D4;\n    readonly TEXTURE21: 0x84D5;\n    readonly TEXTURE22: 0x84D6;\n    readonly TEXTURE23: 0x84D7;\n    readonly TEXTURE24: 0x84D8;\n    readonly TEXTURE25: 0x84D9;\n    readonly TEXTURE26: 0x84DA;\n    readonly TEXTURE27: 0x84DB;\n    readonly TEXTURE28: 0x84DC;\n    readonly TEXTURE29: 0x84DD;\n    readonly TEXTURE30: 0x84DE;\n    readonly TEXTURE31: 0x84DF;\n    readonly ACTIVE_TEXTURE: 0x84E0;\n    readonly REPEAT: 0x2901;\n    readonly CLAMP_TO_EDGE: 0x812F;\n    readonly MIRRORED_REPEAT: 0x8370;\n    readonly FLOAT_VEC2: 0x8B50;\n    readonly FLOAT_VEC3: 0x8B51;\n    readonly FLOAT_VEC4: 0x8B52;\n    readonly INT_VEC2: 0x8B53;\n    readonly INT_VEC3: 0x8B54;\n    readonly INT_VEC4: 0x8B55;\n    readonly BOOL: 0x8B56;\n    readonly BOOL_VEC2: 0x8B57;\n    readonly BOOL_VEC3: 0x8B58;\n    readonly BOOL_VEC4: 0x8B59;\n    readonly FLOAT_MAT2: 0x8B5A;\n    readonly FLOAT_MAT3: 0x8B5B;\n    readonly FLOAT_MAT4: 0x8B5C;\n    readonly SAMPLER_2D: 0x8B5E;\n    readonly SAMPLER_CUBE: 0x8B60;\n    readonly VERTEX_ATTRIB_ARRAY_ENABLED: 0x8622;\n    readonly VERTEX_ATTRIB_ARRAY_SIZE: 0x8623;\n    readonly VERTEX_ATTRIB_ARRAY_STRIDE: 0x8624;\n    readonly VERTEX_ATTRIB_ARRAY_TYPE: 0x8625;\n    readonly VERTEX_ATTRIB_ARRAY_NORMALIZED: 0x886A;\n    readonly VERTEX_ATTRIB_ARRAY_POINTER: 0x8645;\n    readonly VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: 0x889F;\n    readonly IMPLEMENTATION_COLOR_READ_TYPE: 0x8B9A;\n    readonly IMPLEMENTATION_COLOR_READ_FORMAT: 0x8B9B;\n    readonly COMPILE_STATUS: 0x8B81;\n    readonly LOW_FLOAT: 0x8DF0;\n    readonly MEDIUM_FLOAT: 0x8DF1;\n    readonly HIGH_FLOAT: 0x8DF2;\n    readonly LOW_INT: 0x8DF3;\n    readonly MEDIUM_INT: 0x8DF4;\n    readonly HIGH_INT: 0x8DF5;\n    readonly FRAMEBUFFER: 0x8D40;\n    readonly RENDERBUFFER: 0x8D41;\n    readonly RGBA4: 0x8056;\n    readonly RGB5_A1: 0x8057;\n    readonly RGBA8: 0x8058;\n    readonly RGB565: 0x8D62;\n    readonly DEPTH_COMPONENT16: 0x81A5;\n    readonly STENCIL_INDEX8: 0x8D48;\n    readonly DEPTH_STENCIL: 0x84F9;\n    readonly RENDERBUFFER_WIDTH: 0x8D42;\n    readonly RENDERBUFFER_HEIGHT: 0x8D43;\n    readonly RENDERBUFFER_INTERNAL_FORMAT: 0x8D44;\n    readonly RENDERBUFFER_RED_SIZE: 0x8D50;\n    readonly RENDERBUFFER_GREEN_SIZE: 0x8D51;\n    readonly RENDERBUFFER_BLUE_SIZE: 0x8D52;\n    readonly RENDERBUFFER_ALPHA_SIZE: 0x8D53;\n    readonly RENDERBUFFER_DEPTH_SIZE: 0x8D54;\n    readonly RENDERBUFFER_STENCIL_SIZE: 0x8D55;\n    readonly FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE: 0x8CD0;\n    readonly FRAMEBUFFER_ATTACHMENT_OBJECT_NAME: 0x8CD1;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL: 0x8CD2;\n    readonly FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE: 0x8CD3;\n    readonly COLOR_ATTACHMENT0: 0x8CE0;\n    readonly DEPTH_ATTACHMENT: 0x8D00;\n    readonly STENCIL_ATTACHMENT: 0x8D20;\n    readonly DEPTH_STENCIL_ATTACHMENT: 0x821A;\n    readonly NONE: 0;\n    readonly FRAMEBUFFER_COMPLETE: 0x8CD5;\n    readonly FRAMEBUFFER_INCOMPLETE_ATTACHMENT: 0x8CD6;\n    readonly FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: 0x8CD7;\n    readonly FRAMEBUFFER_INCOMPLETE_DIMENSIONS: 0x8CD9;\n    readonly FRAMEBUFFER_UNSUPPORTED: 0x8CDD;\n    readonly FRAMEBUFFER_BINDING: 0x8CA6;\n    readonly RENDERBUFFER_BINDING: 0x8CA7;\n    readonly MAX_RENDERBUFFER_SIZE: 0x84E8;\n    readonly INVALID_FRAMEBUFFER_OPERATION: 0x0506;\n    readonly UNPACK_FLIP_Y_WEBGL: 0x9240;\n    readonly UNPACK_PREMULTIPLY_ALPHA_WEBGL: 0x9241;\n    readonly CONTEXT_LOST_WEBGL: 0x9242;\n    readonly UNPACK_COLORSPACE_CONVERSION_WEBGL: 0x9243;\n    readonly BROWSER_DEFAULT_WEBGL: 0x9244;\n}\n\ninterface WebGLRenderingContextOverloads {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bufferData) */\n    bufferData(target: GLenum, size: GLsizeiptr, usage: GLenum): void;\n    bufferData(target: GLenum, data: AllowSharedBufferSource | null, usage: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/bufferSubData) */\n    bufferSubData(target: GLenum, offset: GLintptr, data: AllowSharedBufferSource): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/compressedTexImage2D) */\n    compressedTexImage2D(target: GLenum, level: GLint, internalformat: GLenum, width: GLsizei, height: GLsizei, border: GLint, data: ArrayBufferView): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/compressedTexSubImage2D) */\n    compressedTexSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, width: GLsizei, height: GLsizei, format: GLenum, data: ArrayBufferView): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/readPixels) */\n    readPixels(x: GLint, y: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, pixels: ArrayBufferView | null): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/texImage2D) */\n    texImage2D(target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, border: GLint, format: GLenum, type: GLenum, pixels: ArrayBufferView | null): void;\n    texImage2D(target: GLenum, level: GLint, internalformat: GLint, format: GLenum, type: GLenum, source: TexImageSource): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/texSubImage2D) */\n    texSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, pixels: ArrayBufferView | null): void;\n    texSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, format: GLenum, type: GLenum, source: TexImageSource): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1fv(location: WebGLUniformLocation | null, v: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1iv(location: WebGLUniformLocation | null, v: Int32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2fv(location: WebGLUniformLocation | null, v: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2iv(location: WebGLUniformLocation | null, v: Int32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3fv(location: WebGLUniformLocation | null, v: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3iv(location: WebGLUniformLocation | null, v: Int32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4fv(location: WebGLUniformLocation | null, v: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4iv(location: WebGLUniformLocation | null, v: Int32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix2fv(location: WebGLUniformLocation | null, transpose: GLboolean, value: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix3fv(location: WebGLUniformLocation | null, transpose: GLboolean, value: Float32List): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix4fv(location: WebGLUniformLocation | null, transpose: GLboolean, value: Float32List): void;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLSampler) */\ninterface WebGLSampler {\n}\n\ndeclare var WebGLSampler: {\n    prototype: WebGLSampler;\n    new(): WebGLSampler;\n};\n\n/**\n * The WebGLShader is part of the WebGL API and can either be a vertex or a fragment shader. A WebGLProgram requires both types of shaders.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLShader)\n */\ninterface WebGLShader {\n}\n\ndeclare var WebGLShader: {\n    prototype: WebGLShader;\n    new(): WebGLShader;\n};\n\n/**\n * Part of the WebGL API and represents the information returned by calling the WebGLRenderingContext.getShaderPrecisionFormat() method.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLShaderPrecisionFormat)\n */\ninterface WebGLShaderPrecisionFormat {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLShaderPrecisionFormat/precision) */\n    readonly precision: GLint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLShaderPrecisionFormat/rangeMax) */\n    readonly rangeMax: GLint;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLShaderPrecisionFormat/rangeMin) */\n    readonly rangeMin: GLint;\n}\n\ndeclare var WebGLShaderPrecisionFormat: {\n    prototype: WebGLShaderPrecisionFormat;\n    new(): WebGLShaderPrecisionFormat;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLSync) */\ninterface WebGLSync {\n}\n\ndeclare var WebGLSync: {\n    prototype: WebGLSync;\n    new(): WebGLSync;\n};\n\n/**\n * Part of the WebGL API and represents an opaque texture object providing storage and state for texturing operations.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLTexture)\n */\ninterface WebGLTexture {\n}\n\ndeclare var WebGLTexture: {\n    prototype: WebGLTexture;\n    new(): WebGLTexture;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLTransformFeedback) */\ninterface WebGLTransformFeedback {\n}\n\ndeclare var WebGLTransformFeedback: {\n    prototype: WebGLTransformFeedback;\n    new(): WebGLTransformFeedback;\n};\n\n/**\n * Part of the WebGL API and represents the location of a uniform variable in a shader program.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLUniformLocation)\n */\ninterface WebGLUniformLocation {\n}\n\ndeclare var WebGLUniformLocation: {\n    prototype: WebGLUniformLocation;\n    new(): WebGLUniformLocation;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLVertexArrayObject) */\ninterface WebGLVertexArrayObject {\n}\n\ndeclare var WebGLVertexArrayObject: {\n    prototype: WebGLVertexArrayObject;\n    new(): WebGLVertexArrayObject;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLVertexArrayObject) */\ninterface WebGLVertexArrayObjectOES {\n}\n\ninterface WebSocketEventMap {\n    \"close\": CloseEvent;\n    \"error\": Event;\n    \"message\": MessageEvent;\n    \"open\": Event;\n}\n\n/**\n * Provides the API for creating and managing a WebSocket connection to a server, as well as for sending and receiving data on the connection.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket)\n */\ninterface WebSocket extends EventTarget {\n    /**\n     * Returns a string that indicates how binary data from the WebSocket object is exposed to scripts:\n     *\n     * Can be set, to change how binary data is returned. The default is \"blob\".\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/binaryType)\n     */\n    binaryType: BinaryType;\n    /**\n     * Returns the number of bytes of application data (UTF-8 text and binary data) that have been queued using send() but not yet been transmitted to the network.\n     *\n     * If the WebSocket connection is closed, this attribute's value will only increase with each call to the send() method. (The number does not reset to zero once the connection closes.)\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/bufferedAmount)\n     */\n    readonly bufferedAmount: number;\n    /**\n     * Returns the extensions selected by the server, if any.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/extensions)\n     */\n    readonly extensions: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/close_event) */\n    onclose: ((this: WebSocket, ev: CloseEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/error_event) */\n    onerror: ((this: WebSocket, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/message_event) */\n    onmessage: ((this: WebSocket, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/open_event) */\n    onopen: ((this: WebSocket, ev: Event) => any) | null;\n    /**\n     * Returns the subprotocol selected by the server, if any. It can be used in conjunction with the array form of the constructor's second argument to perform subprotocol negotiation.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/protocol)\n     */\n    readonly protocol: string;\n    /**\n     * Returns the state of the WebSocket object's connection. It can have the values described below.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/readyState)\n     */\n    readonly readyState: number;\n    /**\n     * Returns the URL that was used to establish the WebSocket connection.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/url)\n     */\n    readonly url: string;\n    /**\n     * Closes the WebSocket connection, optionally using code as the the WebSocket connection close code and reason as the the WebSocket connection close reason.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/close)\n     */\n    close(code?: number, reason?: string): void;\n    /**\n     * Transmits data using the WebSocket connection. data can be a string, a Blob, an ArrayBuffer, or an ArrayBufferView.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/send)\n     */\n    send(data: string | ArrayBufferLike | Blob | ArrayBufferView): void;\n    readonly CONNECTING: 0;\n    readonly OPEN: 1;\n    readonly CLOSING: 2;\n    readonly CLOSED: 3;\n    addEventListener<K extends keyof WebSocketEventMap>(type: K, listener: (this: WebSocket, ev: WebSocketEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof WebSocketEventMap>(type: K, listener: (this: WebSocket, ev: WebSocketEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var WebSocket: {\n    prototype: WebSocket;\n    new(url: string | URL, protocols?: string | string[]): WebSocket;\n    readonly CONNECTING: 0;\n    readonly OPEN: 1;\n    readonly CLOSING: 2;\n    readonly CLOSED: 3;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport)\n */\ninterface WebTransport {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport/closed) */\n    readonly closed: Promise<WebTransportCloseInfo>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport/datagrams) */\n    readonly datagrams: WebTransportDatagramDuplexStream;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport/incomingBidirectionalStreams) */\n    readonly incomingBidirectionalStreams: ReadableStream;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport/incomingUnidirectionalStreams) */\n    readonly incomingUnidirectionalStreams: ReadableStream;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport/ready) */\n    readonly ready: Promise<undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport/close) */\n    close(closeInfo?: WebTransportCloseInfo): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport/createBidirectionalStream) */\n    createBidirectionalStream(options?: WebTransportSendStreamOptions): Promise<WebTransportBidirectionalStream>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransport/createUnidirectionalStream) */\n    createUnidirectionalStream(options?: WebTransportSendStreamOptions): Promise<WritableStream>;\n}\n\ndeclare var WebTransport: {\n    prototype: WebTransport;\n    new(url: string | URL, options?: WebTransportOptions): WebTransport;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportBidirectionalStream)\n */\ninterface WebTransportBidirectionalStream {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportBidirectionalStream/readable) */\n    readonly readable: ReadableStream;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportBidirectionalStream/writable) */\n    readonly writable: WritableStream;\n}\n\ndeclare var WebTransportBidirectionalStream: {\n    prototype: WebTransportBidirectionalStream;\n    new(): WebTransportBidirectionalStream;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportDatagramDuplexStream)\n */\ninterface WebTransportDatagramDuplexStream {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportDatagramDuplexStream/incomingHighWaterMark) */\n    incomingHighWaterMark: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportDatagramDuplexStream/incomingMaxAge) */\n    incomingMaxAge: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportDatagramDuplexStream/maxDatagramSize) */\n    readonly maxDatagramSize: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportDatagramDuplexStream/outgoingHighWaterMark) */\n    outgoingHighWaterMark: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportDatagramDuplexStream/outgoingMaxAge) */\n    outgoingMaxAge: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportDatagramDuplexStream/readable) */\n    readonly readable: ReadableStream;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportDatagramDuplexStream/writable) */\n    readonly writable: WritableStream;\n}\n\ndeclare var WebTransportDatagramDuplexStream: {\n    prototype: WebTransportDatagramDuplexStream;\n    new(): WebTransportDatagramDuplexStream;\n};\n\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportError)\n */\ninterface WebTransportError extends DOMException {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportError/source) */\n    readonly source: WebTransportErrorSource;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebTransportError/streamErrorCode) */\n    readonly streamErrorCode: number | null;\n}\n\ndeclare var WebTransportError: {\n    prototype: WebTransportError;\n    new(message?: string, options?: WebTransportErrorOptions): WebTransportError;\n};\n\n/**\n * This ServiceWorker API interface represents the scope of a service worker client that is a document in a browser context, controlled by an active worker. The service worker client independently selects and uses a service worker for its own loading and sub-resources.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WindowClient)\n */\ninterface WindowClient extends Client {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WindowClient/focused) */\n    readonly focused: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WindowClient/visibilityState) */\n    readonly visibilityState: DocumentVisibilityState;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WindowClient/focus) */\n    focus(): Promise<WindowClient>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WindowClient/navigate) */\n    navigate(url: string | URL): Promise<WindowClient | null>;\n}\n\ndeclare var WindowClient: {\n    prototype: WindowClient;\n    new(): WindowClient;\n};\n\ninterface WindowOrWorkerGlobalScope {\n    /**\n     * Available only in secure contexts.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/caches)\n     */\n    readonly caches: CacheStorage;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/crossOriginIsolated) */\n    readonly crossOriginIsolated: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/crypto) */\n    readonly crypto: Crypto;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/indexedDB) */\n    readonly indexedDB: IDBFactory;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/isSecureContext) */\n    readonly isSecureContext: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/origin) */\n    readonly origin: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/performance) */\n    readonly performance: Performance;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/atob) */\n    atob(data: string): string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/btoa) */\n    btoa(data: string): string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/clearInterval) */\n    clearInterval(id: number | undefined): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/clearTimeout) */\n    clearTimeout(id: number | undefined): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/createImageBitmap) */\n    createImageBitmap(image: ImageBitmapSource, options?: ImageBitmapOptions): Promise<ImageBitmap>;\n    createImageBitmap(image: ImageBitmapSource, sx: number, sy: number, sw: number, sh: number, options?: ImageBitmapOptions): Promise<ImageBitmap>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/fetch) */\n    fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/queueMicrotask) */\n    queueMicrotask(callback: VoidFunction): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/reportError) */\n    reportError(e: any): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/setInterval) */\n    setInterval(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/setTimeout) */\n    setTimeout(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/structuredClone) */\n    structuredClone<T = any>(value: T, options?: StructuredSerializeOptions): T;\n}\n\ninterface WorkerEventMap extends AbstractWorkerEventMap {\n    \"message\": MessageEvent;\n    \"messageerror\": MessageEvent;\n}\n\n/**\n * This Web Workers API interface represents a background task that can be easily created and can send messages back to its creator. Creating a worker is as simple as calling the Worker() constructor and specifying a script to be run in the worker thread.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Worker)\n */\ninterface Worker extends EventTarget, AbstractWorker {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Worker/message_event) */\n    onmessage: ((this: Worker, ev: MessageEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Worker/messageerror_event) */\n    onmessageerror: ((this: Worker, ev: MessageEvent) => any) | null;\n    /**\n     * Clones message and transmits it to worker's global environment. transfer can be passed as a list of objects that are to be transferred rather than cloned.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Worker/postMessage)\n     */\n    postMessage(message: any, transfer: Transferable[]): void;\n    postMessage(message: any, options?: StructuredSerializeOptions): void;\n    /**\n     * Aborts worker's associated global environment.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Worker/terminate)\n     */\n    terminate(): void;\n    addEventListener<K extends keyof WorkerEventMap>(type: K, listener: (this: Worker, ev: WorkerEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof WorkerEventMap>(type: K, listener: (this: Worker, ev: WorkerEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var Worker: {\n    prototype: Worker;\n    new(scriptURL: string | URL, options?: WorkerOptions): Worker;\n};\n\ninterface WorkerGlobalScopeEventMap {\n    \"error\": ErrorEvent;\n    \"languagechange\": Event;\n    \"offline\": Event;\n    \"online\": Event;\n    \"rejectionhandled\": PromiseRejectionEvent;\n    \"unhandledrejection\": PromiseRejectionEvent;\n}\n\n/**\n * This Web Workers API interface is an interface representing the scope of any worker. Workers have no browsing context; this scope contains the information usually conveyed by Window objects — in this case event handlers, the console or the associated WorkerNavigator object. Each WorkerGlobalScope has its own event loop.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope)\n */\ninterface WorkerGlobalScope extends EventTarget, FontFaceSource, WindowOrWorkerGlobalScope {\n    /**\n     * Returns workerGlobal's WorkerLocation object.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/location)\n     */\n    readonly location: WorkerLocation;\n    /**\n     * Returns workerGlobal's WorkerNavigator object.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/navigator)\n     */\n    readonly navigator: WorkerNavigator;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/error_event) */\n    onerror: ((this: WorkerGlobalScope, ev: ErrorEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/languagechange_event) */\n    onlanguagechange: ((this: WorkerGlobalScope, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/offline_event) */\n    onoffline: ((this: WorkerGlobalScope, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/online_event) */\n    ononline: ((this: WorkerGlobalScope, ev: Event) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/rejectionhandled_event) */\n    onrejectionhandled: ((this: WorkerGlobalScope, ev: PromiseRejectionEvent) => any) | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/unhandledrejection_event) */\n    onunhandledrejection: ((this: WorkerGlobalScope, ev: PromiseRejectionEvent) => any) | null;\n    /**\n     * Returns workerGlobal.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/self)\n     */\n    readonly self: WorkerGlobalScope & typeof globalThis;\n    /**\n     * Fetches each URL in urls, executes them one-by-one in the order they are passed, and then returns (or throws if something went amiss).\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/importScripts)\n     */\n    importScripts(...urls: (string | URL)[]): void;\n    addEventListener<K extends keyof WorkerGlobalScopeEventMap>(type: K, listener: (this: WorkerGlobalScope, ev: WorkerGlobalScopeEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof WorkerGlobalScopeEventMap>(type: K, listener: (this: WorkerGlobalScope, ev: WorkerGlobalScopeEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var WorkerGlobalScope: {\n    prototype: WorkerGlobalScope;\n    new(): WorkerGlobalScope;\n};\n\n/**\n * The absolute location of the script executed by the Worker. Such an object is initialized for each worker and is available via the WorkerGlobalScope.location property obtained by calling self.location.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation)\n */\ninterface WorkerLocation {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/hash) */\n    readonly hash: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/host) */\n    readonly host: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/hostname) */\n    readonly hostname: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/href) */\n    readonly href: string;\n    toString(): string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/origin) */\n    readonly origin: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/pathname) */\n    readonly pathname: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/port) */\n    readonly port: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/protocol) */\n    readonly protocol: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerLocation/search) */\n    readonly search: string;\n}\n\ndeclare var WorkerLocation: {\n    prototype: WorkerLocation;\n    new(): WorkerLocation;\n};\n\n/**\n * A subset of the Navigator interface allowed to be accessed from a Worker. Such an object is initialized for each worker and is available via the WorkerGlobalScope.navigator property obtained by calling window.self.navigator.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerNavigator)\n */\ninterface WorkerNavigator extends NavigatorBadge, NavigatorConcurrentHardware, NavigatorID, NavigatorLanguage, NavigatorLocks, NavigatorOnLine, NavigatorStorage {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerNavigator/mediaCapabilities) */\n    readonly mediaCapabilities: MediaCapabilities;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerNavigator/permissions) */\n    readonly permissions: Permissions;\n}\n\ndeclare var WorkerNavigator: {\n    prototype: WorkerNavigator;\n    new(): WorkerNavigator;\n};\n\n/**\n * This Streams API interface provides\xA0a standard abstraction for writing streaming data to a destination, known as a sink. This object comes with built-in backpressure and queuing.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStream)\n */\ninterface WritableStream<W = any> {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStream/locked) */\n    readonly locked: boolean;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStream/abort) */\n    abort(reason?: any): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStream/close) */\n    close(): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStream/getWriter) */\n    getWriter(): WritableStreamDefaultWriter<W>;\n}\n\ndeclare var WritableStream: {\n    prototype: WritableStream;\n    new<W = any>(underlyingSink?: UnderlyingSink<W>, strategy?: QueuingStrategy<W>): WritableStream<W>;\n};\n\n/**\n * This Streams API interface represents a controller allowing control of a\xA0WritableStream's state. When constructing a WritableStream, the underlying sink is given a corresponding WritableStreamDefaultController instance to manipulate.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultController)\n */\ninterface WritableStreamDefaultController {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultController/signal) */\n    readonly signal: AbortSignal;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultController/error) */\n    error(e?: any): void;\n}\n\ndeclare var WritableStreamDefaultController: {\n    prototype: WritableStreamDefaultController;\n    new(): WritableStreamDefaultController;\n};\n\n/**\n * This Streams API interface is the object returned by WritableStream.getWriter() and once created locks the < writer to the WritableStream ensuring that no other streams can write to the underlying sink.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter)\n */\ninterface WritableStreamDefaultWriter<W = any> {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/closed) */\n    readonly closed: Promise<undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/desiredSize) */\n    readonly desiredSize: number | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/ready) */\n    readonly ready: Promise<undefined>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/abort) */\n    abort(reason?: any): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/close) */\n    close(): Promise<void>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/releaseLock) */\n    releaseLock(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/write) */\n    write(chunk?: W): Promise<void>;\n}\n\ndeclare var WritableStreamDefaultWriter: {\n    prototype: WritableStreamDefaultWriter;\n    new<W = any>(stream: WritableStream<W>): WritableStreamDefaultWriter<W>;\n};\n\ninterface XMLHttpRequestEventMap extends XMLHttpRequestEventTargetEventMap {\n    \"readystatechange\": Event;\n}\n\n/**\n * Use XMLHttpRequest (XHR) objects to interact with servers. You can retrieve data from a URL without having to do a full page refresh. This enables a Web page to update just part of a page without disrupting what the user is doing.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest)\n */\ninterface XMLHttpRequest extends XMLHttpRequestEventTarget {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/readystatechange_event) */\n    onreadystatechange: ((this: XMLHttpRequest, ev: Event) => any) | null;\n    /**\n     * Returns client's state.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/readyState)\n     */\n    readonly readyState: number;\n    /**\n     * Returns the response body.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/response)\n     */\n    readonly response: any;\n    /**\n     * Returns response as text.\n     *\n     * Throws an \"InvalidStateError\" DOMException if responseType is not the empty string or \"text\".\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/responseText)\n     */\n    readonly responseText: string;\n    /**\n     * Returns the response type.\n     *\n     * Can be set to change the response type. Values are: the empty string (default), \"arraybuffer\", \"blob\", \"document\", \"json\", and \"text\".\n     *\n     * When set: setting to \"document\" is ignored if current global object is not a Window object.\n     *\n     * When set: throws an \"InvalidStateError\" DOMException if state is loading or done.\n     *\n     * When set: throws an \"InvalidAccessError\" DOMException if the synchronous flag is set and current global object is a Window object.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/responseType)\n     */\n    responseType: XMLHttpRequestResponseType;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/responseURL) */\n    readonly responseURL: string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/status) */\n    readonly status: number;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/statusText) */\n    readonly statusText: string;\n    /**\n     * Can be set to a time in milliseconds. When set to a non-zero value will cause fetching to terminate after the given time has passed. When the time has passed, the request has not yet completed, and this's synchronous flag is unset, a timeout event will then be dispatched, or a \"TimeoutError\" DOMException will be thrown otherwise (for the send() method).\n     *\n     * When set: throws an \"InvalidAccessError\" DOMException if the synchronous flag is set and current global object is a Window object.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/timeout)\n     */\n    timeout: number;\n    /**\n     * Returns the associated XMLHttpRequestUpload object. It can be used to gather transmission information when data is transferred to a server.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/upload)\n     */\n    readonly upload: XMLHttpRequestUpload;\n    /**\n     * True when credentials are to be included in a cross-origin request. False when they are to be excluded in a cross-origin request and when cookies are to be ignored in its response. Initially false.\n     *\n     * When set: throws an \"InvalidStateError\" DOMException if state is not unsent or opened, or if the send() flag is set.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/withCredentials)\n     */\n    withCredentials: boolean;\n    /**\n     * Cancels any network activity.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/abort)\n     */\n    abort(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/getAllResponseHeaders) */\n    getAllResponseHeaders(): string;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/getResponseHeader) */\n    getResponseHeader(name: string): string | null;\n    /**\n     * Sets the request method, request URL, and synchronous flag.\n     *\n     * Throws a \"SyntaxError\" DOMException if either method is not a valid method or url cannot be parsed.\n     *\n     * Throws a \"SecurityError\" DOMException if method is a case-insensitive match for `CONNECT`, `TRACE`, or `TRACK`.\n     *\n     * Throws an \"InvalidAccessError\" DOMException if async is false, current global object is a Window object, and the timeout attribute is not zero or the responseType attribute is not the empty string.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/open)\n     */\n    open(method: string, url: string | URL): void;\n    open(method: string, url: string | URL, async: boolean, username?: string | null, password?: string | null): void;\n    /**\n     * Acts as if the `Content-Type` header value for a response is mime. (It does not change the header.)\n     *\n     * Throws an \"InvalidStateError\" DOMException if state is loading or done.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/overrideMimeType)\n     */\n    overrideMimeType(mime: string): void;\n    /**\n     * Initiates the request. The body argument provides the request body, if any, and is ignored if the request method is GET or HEAD.\n     *\n     * Throws an \"InvalidStateError\" DOMException if either state is not opened or the send() flag is set.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/send)\n     */\n    send(body?: XMLHttpRequestBodyInit | null): void;\n    /**\n     * Combines a header in author request headers.\n     *\n     * Throws an \"InvalidStateError\" DOMException if either state is not opened or the send() flag is set.\n     *\n     * Throws a \"SyntaxError\" DOMException if name is not a header name or if value is not a header value.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/setRequestHeader)\n     */\n    setRequestHeader(name: string, value: string): void;\n    readonly UNSENT: 0;\n    readonly OPENED: 1;\n    readonly HEADERS_RECEIVED: 2;\n    readonly LOADING: 3;\n    readonly DONE: 4;\n    addEventListener<K extends keyof XMLHttpRequestEventMap>(type: K, listener: (this: XMLHttpRequest, ev: XMLHttpRequestEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof XMLHttpRequestEventMap>(type: K, listener: (this: XMLHttpRequest, ev: XMLHttpRequestEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var XMLHttpRequest: {\n    prototype: XMLHttpRequest;\n    new(): XMLHttpRequest;\n    readonly UNSENT: 0;\n    readonly OPENED: 1;\n    readonly HEADERS_RECEIVED: 2;\n    readonly LOADING: 3;\n    readonly DONE: 4;\n};\n\ninterface XMLHttpRequestEventTargetEventMap {\n    \"abort\": ProgressEvent<XMLHttpRequestEventTarget>;\n    \"error\": ProgressEvent<XMLHttpRequestEventTarget>;\n    \"load\": ProgressEvent<XMLHttpRequestEventTarget>;\n    \"loadend\": ProgressEvent<XMLHttpRequestEventTarget>;\n    \"loadstart\": ProgressEvent<XMLHttpRequestEventTarget>;\n    \"progress\": ProgressEvent<XMLHttpRequestEventTarget>;\n    \"timeout\": ProgressEvent<XMLHttpRequestEventTarget>;\n}\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequestEventTarget) */\ninterface XMLHttpRequestEventTarget extends EventTarget {\n    onabort: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null;\n    onerror: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null;\n    onload: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null;\n    onloadend: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null;\n    onloadstart: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null;\n    onprogress: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null;\n    ontimeout: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null;\n    addEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(type: K, listener: (this: XMLHttpRequestEventTarget, ev: XMLHttpRequestEventTargetEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(type: K, listener: (this: XMLHttpRequestEventTarget, ev: XMLHttpRequestEventTargetEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var XMLHttpRequestEventTarget: {\n    prototype: XMLHttpRequestEventTarget;\n    new(): XMLHttpRequestEventTarget;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequestUpload) */\ninterface XMLHttpRequestUpload extends XMLHttpRequestEventTarget {\n    addEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(type: K, listener: (this: XMLHttpRequestUpload, ev: XMLHttpRequestEventTargetEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\n    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\n    removeEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(type: K, listener: (this: XMLHttpRequestUpload, ev: XMLHttpRequestEventTargetEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\n    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\n}\n\ndeclare var XMLHttpRequestUpload: {\n    prototype: XMLHttpRequestUpload;\n    new(): XMLHttpRequestUpload;\n};\n\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console) */\ninterface Console {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/assert_static) */\n    assert(condition?: boolean, ...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/clear_static) */\n    clear(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/count_static) */\n    count(label?: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/countreset_static) */\n    countReset(label?: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/debug_static) */\n    debug(...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/dir_static) */\n    dir(item?: any, options?: any): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/dirxml_static) */\n    dirxml(...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/error_static) */\n    error(...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/group_static) */\n    group(...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/groupcollapsed_static) */\n    groupCollapsed(...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/groupend_static) */\n    groupEnd(): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/info_static) */\n    info(...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log_static) */\n    log(...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/table_static) */\n    table(tabularData?: any, properties?: string[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/time_static) */\n    time(label?: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/timeend_static) */\n    timeEnd(label?: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/timelog_static) */\n    timeLog(label?: string, ...data: any[]): void;\n    timeStamp(label?: string): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/trace_static) */\n    trace(...data: any[]): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/warn_static) */\n    warn(...data: any[]): void;\n}\n\ndeclare var console: Console;\n\ndeclare namespace WebAssembly {\n    interface CompileError extends Error {\n    }\n\n    var CompileError: {\n        prototype: CompileError;\n        new(message?: string): CompileError;\n        (message?: string): CompileError;\n    };\n\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Global) */\n    interface Global<T extends ValueType = ValueType> {\n        value: ValueTypeMap[T];\n        valueOf(): ValueTypeMap[T];\n    }\n\n    var Global: {\n        prototype: Global;\n        new<T extends ValueType = ValueType>(descriptor: GlobalDescriptor<T>, v?: ValueTypeMap[T]): Global<T>;\n    };\n\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Instance) */\n    interface Instance {\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Instance/exports) */\n        readonly exports: Exports;\n    }\n\n    var Instance: {\n        prototype: Instance;\n        new(module: Module, importObject?: Imports): Instance;\n    };\n\n    interface LinkError extends Error {\n    }\n\n    var LinkError: {\n        prototype: LinkError;\n        new(message?: string): LinkError;\n        (message?: string): LinkError;\n    };\n\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Memory) */\n    interface Memory {\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Memory/buffer) */\n        readonly buffer: ArrayBuffer;\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Memory/grow) */\n        grow(delta: number): number;\n    }\n\n    var Memory: {\n        prototype: Memory;\n        new(descriptor: MemoryDescriptor): Memory;\n    };\n\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Module) */\n    interface Module {\n    }\n\n    var Module: {\n        prototype: Module;\n        new(bytes: BufferSource): Module;\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Module/customSections_static) */\n        customSections(moduleObject: Module, sectionName: string): ArrayBuffer[];\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Module/exports_static) */\n        exports(moduleObject: Module): ModuleExportDescriptor[];\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Module/imports_static) */\n        imports(moduleObject: Module): ModuleImportDescriptor[];\n    };\n\n    interface RuntimeError extends Error {\n    }\n\n    var RuntimeError: {\n        prototype: RuntimeError;\n        new(message?: string): RuntimeError;\n        (message?: string): RuntimeError;\n    };\n\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Table) */\n    interface Table {\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Table/length) */\n        readonly length: number;\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Table/get) */\n        get(index: number): any;\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Table/grow) */\n        grow(delta: number, value?: any): number;\n        /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/Table/set) */\n        set(index: number, value?: any): void;\n    }\n\n    var Table: {\n        prototype: Table;\n        new(descriptor: TableDescriptor, value?: any): Table;\n    };\n\n    interface GlobalDescriptor<T extends ValueType = ValueType> {\n        mutable?: boolean;\n        value: T;\n    }\n\n    interface MemoryDescriptor {\n        initial: number;\n        maximum?: number;\n        shared?: boolean;\n    }\n\n    interface ModuleExportDescriptor {\n        kind: ImportExportKind;\n        name: string;\n    }\n\n    interface ModuleImportDescriptor {\n        kind: ImportExportKind;\n        module: string;\n        name: string;\n    }\n\n    interface TableDescriptor {\n        element: TableKind;\n        initial: number;\n        maximum?: number;\n    }\n\n    interface ValueTypeMap {\n        anyfunc: Function;\n        externref: any;\n        f32: number;\n        f64: number;\n        i32: number;\n        i64: bigint;\n        v128: never;\n    }\n\n    interface WebAssemblyInstantiatedSource {\n        instance: Instance;\n        module: Module;\n    }\n\n    type ImportExportKind = \"function\" | \"global\" | \"memory\" | \"table\";\n    type TableKind = \"anyfunc\" | \"externref\";\n    type ExportValue = Function | Global | Memory | Table;\n    type Exports = Record<string, ExportValue>;\n    type ImportValue = ExportValue | number;\n    type Imports = Record<string, ModuleImports>;\n    type ModuleImports = Record<string, ImportValue>;\n    type ValueType = keyof ValueTypeMap;\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/compile_static) */\n    function compile(bytes: BufferSource): Promise<Module>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/compileStreaming_static) */\n    function compileStreaming(source: Response | PromiseLike<Response>): Promise<Module>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/instantiate_static) */\n    function instantiate(bytes: BufferSource, importObject?: Imports): Promise<WebAssemblyInstantiatedSource>;\n    function instantiate(moduleObject: Module, importObject?: Imports): Promise<Instance>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/instantiateStreaming_static) */\n    function instantiateStreaming(source: Response | PromiseLike<Response>, importObject?: Imports): Promise<WebAssemblyInstantiatedSource>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/WebAssembly/JavaScript_interface/validate_static) */\n    function validate(bytes: BufferSource): boolean;\n}\n\ninterface EncodedVideoChunkOutputCallback {\n    (chunk: EncodedVideoChunk, metadata?: EncodedVideoChunkMetadata): void;\n}\n\ninterface FrameRequestCallback {\n    (time: DOMHighResTimeStamp): void;\n}\n\ninterface LockGrantedCallback {\n    (lock: Lock | null): any;\n}\n\ninterface OnErrorEventHandlerNonNull {\n    (event: Event | string, source?: string, lineno?: number, colno?: number, error?: Error): any;\n}\n\ninterface PerformanceObserverCallback {\n    (entries: PerformanceObserverEntryList, observer: PerformanceObserver): void;\n}\n\ninterface QueuingStrategySize<T = any> {\n    (chunk: T): number;\n}\n\ninterface ReportingObserverCallback {\n    (reports: Report[], observer: ReportingObserver): void;\n}\n\ninterface TransformerFlushCallback<O> {\n    (controller: TransformStreamDefaultController<O>): void | PromiseLike<void>;\n}\n\ninterface TransformerStartCallback<O> {\n    (controller: TransformStreamDefaultController<O>): any;\n}\n\ninterface TransformerTransformCallback<I, O> {\n    (chunk: I, controller: TransformStreamDefaultController<O>): void | PromiseLike<void>;\n}\n\ninterface UnderlyingSinkAbortCallback {\n    (reason?: any): void | PromiseLike<void>;\n}\n\ninterface UnderlyingSinkCloseCallback {\n    (): void | PromiseLike<void>;\n}\n\ninterface UnderlyingSinkStartCallback {\n    (controller: WritableStreamDefaultController): any;\n}\n\ninterface UnderlyingSinkWriteCallback<W> {\n    (chunk: W, controller: WritableStreamDefaultController): void | PromiseLike<void>;\n}\n\ninterface UnderlyingSourceCancelCallback {\n    (reason?: any): void | PromiseLike<void>;\n}\n\ninterface UnderlyingSourcePullCallback<R> {\n    (controller: ReadableStreamController<R>): void | PromiseLike<void>;\n}\n\ninterface UnderlyingSourceStartCallback<R> {\n    (controller: ReadableStreamController<R>): any;\n}\n\ninterface VideoFrameOutputCallback {\n    (output: VideoFrame): void;\n}\n\ninterface VoidFunction {\n    (): void;\n}\n\ninterface WebCodecsErrorCallback {\n    (error: DOMException): void;\n}\n\n/**\n * Returns dedicatedWorkerGlobal's name, i.e. the value given to the Worker constructor. Primarily useful for debugging.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/name)\n */\ndeclare var name: string;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/message_event) */\ndeclare var onmessage: ((this: DedicatedWorkerGlobalScope, ev: MessageEvent) => any) | null;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/messageerror_event) */\ndeclare var onmessageerror: ((this: DedicatedWorkerGlobalScope, ev: MessageEvent) => any) | null;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/rtctransform_event) */\ndeclare var onrtctransform: ((this: DedicatedWorkerGlobalScope, ev: Event) => any) | null;\n/**\n * Aborts dedicatedWorkerGlobal.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/close)\n */\ndeclare function close(): void;\n/**\n * Clones message and transmits it to the Worker object associated with dedicatedWorkerGlobal. transfer can be passed as a list of objects that are to be transferred rather than cloned.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/postMessage)\n */\ndeclare function postMessage(message: any, transfer: Transferable[]): void;\ndeclare function postMessage(message: any, options?: StructuredSerializeOptions): void;\n/**\n * Dispatches a synthetic event event to target and returns true if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventTarget/dispatchEvent)\n */\ndeclare function dispatchEvent(event: Event): boolean;\n/**\n * Returns workerGlobal's WorkerLocation object.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/location)\n */\ndeclare var location: WorkerLocation;\n/**\n * Returns workerGlobal's WorkerNavigator object.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/navigator)\n */\ndeclare var navigator: WorkerNavigator;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/error_event) */\ndeclare var onerror: ((this: DedicatedWorkerGlobalScope, ev: ErrorEvent) => any) | null;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/languagechange_event) */\ndeclare var onlanguagechange: ((this: DedicatedWorkerGlobalScope, ev: Event) => any) | null;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/offline_event) */\ndeclare var onoffline: ((this: DedicatedWorkerGlobalScope, ev: Event) => any) | null;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/online_event) */\ndeclare var ononline: ((this: DedicatedWorkerGlobalScope, ev: Event) => any) | null;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/rejectionhandled_event) */\ndeclare var onrejectionhandled: ((this: DedicatedWorkerGlobalScope, ev: PromiseRejectionEvent) => any) | null;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/unhandledrejection_event) */\ndeclare var onunhandledrejection: ((this: DedicatedWorkerGlobalScope, ev: PromiseRejectionEvent) => any) | null;\n/**\n * Returns workerGlobal.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/self)\n */\ndeclare var self: WorkerGlobalScope & typeof globalThis;\n/**\n * Fetches each URL in urls, executes them one-by-one in the order they are passed, and then returns (or throws if something went amiss).\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WorkerGlobalScope/importScripts)\n */\ndeclare function importScripts(...urls: (string | URL)[]): void;\n/**\n * Dispatches a synthetic event event to target and returns true if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventTarget/dispatchEvent)\n */\ndeclare function dispatchEvent(event: Event): boolean;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/fonts) */\ndeclare var fonts: FontFaceSet;\n/**\n * Available only in secure contexts.\n *\n * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/caches)\n */\ndeclare var caches: CacheStorage;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/crossOriginIsolated) */\ndeclare var crossOriginIsolated: boolean;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/crypto) */\ndeclare var crypto: Crypto;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/indexedDB) */\ndeclare var indexedDB: IDBFactory;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/isSecureContext) */\ndeclare var isSecureContext: boolean;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/origin) */\ndeclare var origin: string;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/performance) */\ndeclare var performance: Performance;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/atob) */\ndeclare function atob(data: string): string;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/btoa) */\ndeclare function btoa(data: string): string;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/clearInterval) */\ndeclare function clearInterval(id: number | undefined): void;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/clearTimeout) */\ndeclare function clearTimeout(id: number | undefined): void;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/createImageBitmap) */\ndeclare function createImageBitmap(image: ImageBitmapSource, options?: ImageBitmapOptions): Promise<ImageBitmap>;\ndeclare function createImageBitmap(image: ImageBitmapSource, sx: number, sy: number, sw: number, sh: number, options?: ImageBitmapOptions): Promise<ImageBitmap>;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/fetch) */\ndeclare function fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/queueMicrotask) */\ndeclare function queueMicrotask(callback: VoidFunction): void;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/reportError) */\ndeclare function reportError(e: any): void;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/setInterval) */\ndeclare function setInterval(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/setTimeout) */\ndeclare function setTimeout(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/structuredClone) */\ndeclare function structuredClone<T = any>(value: T, options?: StructuredSerializeOptions): T;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/cancelAnimationFrame) */\ndeclare function cancelAnimationFrame(handle: number): void;\n/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/DedicatedWorkerGlobalScope/requestAnimationFrame) */\ndeclare function requestAnimationFrame(callback: FrameRequestCallback): number;\ndeclare function addEventListener<K extends keyof DedicatedWorkerGlobalScopeEventMap>(type: K, listener: (this: DedicatedWorkerGlobalScope, ev: DedicatedWorkerGlobalScopeEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;\ndeclare function addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;\ndeclare function removeEventListener<K extends keyof DedicatedWorkerGlobalScopeEventMap>(type: K, listener: (this: DedicatedWorkerGlobalScope, ev: DedicatedWorkerGlobalScopeEventMap[K]) => any, options?: boolean | EventListenerOptions): void;\ndeclare function removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;\ntype AlgorithmIdentifier = Algorithm | string;\ntype AllowSharedBufferSource = ArrayBuffer | ArrayBufferView;\ntype BigInteger = Uint8Array;\ntype BinaryData = ArrayBuffer | ArrayBufferView;\ntype BlobPart = BufferSource | Blob | string;\ntype BodyInit = ReadableStream | XMLHttpRequestBodyInit;\ntype BufferSource = ArrayBufferView | ArrayBuffer;\ntype CSSKeywordish = string | CSSKeywordValue;\ntype CSSNumberish = number | CSSNumericValue;\ntype CSSPerspectiveValue = CSSNumericValue | CSSKeywordish;\ntype CSSUnparsedSegment = string | CSSVariableReferenceValue;\ntype CanvasImageSource = ImageBitmap | OffscreenCanvas | VideoFrame;\ntype DOMHighResTimeStamp = number;\ntype EpochTimeStamp = number;\ntype EventListenerOrEventListenerObject = EventListener | EventListenerObject;\ntype FileSystemWriteChunkType = BufferSource | Blob | string | WriteParams;\ntype Float32List = Float32Array | GLfloat[];\ntype FormDataEntryValue = File | string;\ntype GLbitfield = number;\ntype GLboolean = boolean;\ntype GLclampf = number;\ntype GLenum = number;\ntype GLfloat = number;\ntype GLint = number;\ntype GLint64 = number;\ntype GLintptr = number;\ntype GLsizei = number;\ntype GLsizeiptr = number;\ntype GLuint = number;\ntype GLuint64 = number;\ntype HashAlgorithmIdentifier = AlgorithmIdentifier;\ntype HeadersInit = [string, string][] | Record<string, string> | Headers;\ntype IDBValidKey = number | string | Date | BufferSource | IDBValidKey[];\ntype ImageBitmapSource = CanvasImageSource | Blob | ImageData;\ntype Int32List = Int32Array | GLint[];\ntype MessageEventSource = MessagePort | ServiceWorker;\ntype NamedCurve = string;\ntype OffscreenRenderingContext = OffscreenCanvasRenderingContext2D | ImageBitmapRenderingContext | WebGLRenderingContext | WebGL2RenderingContext;\ntype OnErrorEventHandler = OnErrorEventHandlerNonNull | null;\ntype PerformanceEntryList = PerformanceEntry[];\ntype PushMessageDataInit = BufferSource | string;\ntype ReadableStreamController<T> = ReadableStreamDefaultController<T> | ReadableByteStreamController;\ntype ReadableStreamReadResult<T> = ReadableStreamReadValueResult<T> | ReadableStreamReadDoneResult<T>;\ntype ReadableStreamReader<T> = ReadableStreamDefaultReader<T> | ReadableStreamBYOBReader;\ntype ReportList = Report[];\ntype RequestInfo = Request | string;\ntype TexImageSource = ImageBitmap | ImageData | OffscreenCanvas | VideoFrame;\ntype TimerHandler = string | Function;\ntype Transferable = OffscreenCanvas | ImageBitmap | MessagePort | MediaSourceHandle | ReadableStream | WritableStream | TransformStream | VideoFrame | ArrayBuffer;\ntype Uint32List = Uint32Array | GLuint[];\ntype XMLHttpRequestBodyInit = Blob | BufferSource | FormData | URLSearchParams | string;\ntype AlphaOption = \"discard\" | \"keep\";\ntype AvcBitstreamFormat = \"annexb\" | \"avc\";\ntype BinaryType = \"arraybuffer\" | \"blob\";\ntype CSSMathOperator = \"clamp\" | \"invert\" | \"max\" | \"min\" | \"negate\" | \"product\" | \"sum\";\ntype CSSNumericBaseType = \"angle\" | \"flex\" | \"frequency\" | \"length\" | \"percent\" | \"resolution\" | \"time\";\ntype CanvasDirection = \"inherit\" | \"ltr\" | \"rtl\";\ntype CanvasFillRule = \"evenodd\" | \"nonzero\";\ntype CanvasFontKerning = \"auto\" | \"none\" | \"normal\";\ntype CanvasFontStretch = \"condensed\" | \"expanded\" | \"extra-condensed\" | \"extra-expanded\" | \"normal\" | \"semi-condensed\" | \"semi-expanded\" | \"ultra-condensed\" | \"ultra-expanded\";\ntype CanvasFontVariantCaps = \"all-petite-caps\" | \"all-small-caps\" | \"normal\" | \"petite-caps\" | \"small-caps\" | \"titling-caps\" | \"unicase\";\ntype CanvasLineCap = \"butt\" | \"round\" | \"square\";\ntype CanvasLineJoin = \"bevel\" | \"miter\" | \"round\";\ntype CanvasTextAlign = \"center\" | \"end\" | \"left\" | \"right\" | \"start\";\ntype CanvasTextBaseline = \"alphabetic\" | \"bottom\" | \"hanging\" | \"ideographic\" | \"middle\" | \"top\";\ntype CanvasTextRendering = \"auto\" | \"geometricPrecision\" | \"optimizeLegibility\" | \"optimizeSpeed\";\ntype ClientTypes = \"all\" | \"sharedworker\" | \"window\" | \"worker\";\ntype CodecState = \"closed\" | \"configured\" | \"unconfigured\";\ntype ColorGamut = \"p3\" | \"rec2020\" | \"srgb\";\ntype ColorSpaceConversion = \"default\" | \"none\";\ntype CompressionFormat = \"deflate\" | \"deflate-raw\" | \"gzip\";\ntype DocumentVisibilityState = \"hidden\" | \"visible\";\ntype EncodedVideoChunkType = \"delta\" | \"key\";\ntype EndingType = \"native\" | \"transparent\";\ntype FileSystemHandleKind = \"directory\" | \"file\";\ntype FontDisplay = \"auto\" | \"block\" | \"fallback\" | \"optional\" | \"swap\";\ntype FontFaceLoadStatus = \"error\" | \"loaded\" | \"loading\" | \"unloaded\";\ntype FontFaceSetLoadStatus = \"loaded\" | \"loading\";\ntype FrameType = \"auxiliary\" | \"nested\" | \"none\" | \"top-level\";\ntype GlobalCompositeOperation = \"color\" | \"color-burn\" | \"color-dodge\" | \"copy\" | \"darken\" | \"destination-atop\" | \"destination-in\" | \"destination-out\" | \"destination-over\" | \"difference\" | \"exclusion\" | \"hard-light\" | \"hue\" | \"lighten\" | \"lighter\" | \"luminosity\" | \"multiply\" | \"overlay\" | \"saturation\" | \"screen\" | \"soft-light\" | \"source-atop\" | \"source-in\" | \"source-out\" | \"source-over\" | \"xor\";\ntype HardwareAcceleration = \"no-preference\" | \"prefer-hardware\" | \"prefer-software\";\ntype HdrMetadataType = \"smpteSt2086\" | \"smpteSt2094-10\" | \"smpteSt2094-40\";\ntype IDBCursorDirection = \"next\" | \"nextunique\" | \"prev\" | \"prevunique\";\ntype IDBRequestReadyState = \"done\" | \"pending\";\ntype IDBTransactionDurability = \"default\" | \"relaxed\" | \"strict\";\ntype IDBTransactionMode = \"readonly\" | \"readwrite\" | \"versionchange\";\ntype ImageOrientation = \"flipY\" | \"from-image\" | \"none\";\ntype ImageSmoothingQuality = \"high\" | \"low\" | \"medium\";\ntype KeyFormat = \"jwk\" | \"pkcs8\" | \"raw\" | \"spki\";\ntype KeyType = \"private\" | \"public\" | \"secret\";\ntype KeyUsage = \"decrypt\" | \"deriveBits\" | \"deriveKey\" | \"encrypt\" | \"sign\" | \"unwrapKey\" | \"verify\" | \"wrapKey\";\ntype LatencyMode = \"quality\" | \"realtime\";\ntype LockMode = \"exclusive\" | \"shared\";\ntype MediaDecodingType = \"file\" | \"media-source\" | \"webrtc\";\ntype MediaEncodingType = \"record\" | \"webrtc\";\ntype NotificationDirection = \"auto\" | \"ltr\" | \"rtl\";\ntype NotificationPermission = \"default\" | \"denied\" | \"granted\";\ntype OffscreenRenderingContextId = \"2d\" | \"bitmaprenderer\" | \"webgl\" | \"webgl2\" | \"webgpu\";\ntype PermissionName = \"geolocation\" | \"notifications\" | \"persistent-storage\" | \"push\" | \"screen-wake-lock\" | \"xr-spatial-tracking\";\ntype PermissionState = \"denied\" | \"granted\" | \"prompt\";\ntype PredefinedColorSpace = \"display-p3\" | \"srgb\";\ntype PremultiplyAlpha = \"default\" | \"none\" | \"premultiply\";\ntype PushEncryptionKeyName = \"auth\" | \"p256dh\";\ntype RTCEncodedVideoFrameType = \"delta\" | \"empty\" | \"key\";\ntype ReadableStreamReaderMode = \"byob\";\ntype ReadableStreamType = \"bytes\";\ntype ReferrerPolicy = \"\" | \"no-referrer\" | \"no-referrer-when-downgrade\" | \"origin\" | \"origin-when-cross-origin\" | \"same-origin\" | \"strict-origin\" | \"strict-origin-when-cross-origin\" | \"unsafe-url\";\ntype RequestCache = \"default\" | \"force-cache\" | \"no-cache\" | \"no-store\" | \"only-if-cached\" | \"reload\";\ntype RequestCredentials = \"include\" | \"omit\" | \"same-origin\";\ntype RequestDestination = \"\" | \"audio\" | \"audioworklet\" | \"document\" | \"embed\" | \"font\" | \"frame\" | \"iframe\" | \"image\" | \"manifest\" | \"object\" | \"paintworklet\" | \"report\" | \"script\" | \"sharedworker\" | \"style\" | \"track\" | \"video\" | \"worker\" | \"xslt\";\ntype RequestMode = \"cors\" | \"navigate\" | \"no-cors\" | \"same-origin\";\ntype RequestPriority = \"auto\" | \"high\" | \"low\";\ntype RequestRedirect = \"error\" | \"follow\" | \"manual\";\ntype ResizeQuality = \"high\" | \"low\" | \"medium\" | \"pixelated\";\ntype ResponseType = \"basic\" | \"cors\" | \"default\" | \"error\" | \"opaque\" | \"opaqueredirect\";\ntype SecurityPolicyViolationEventDisposition = \"enforce\" | \"report\";\ntype ServiceWorkerState = \"activated\" | \"activating\" | \"installed\" | \"installing\" | \"parsed\" | \"redundant\";\ntype ServiceWorkerUpdateViaCache = \"all\" | \"imports\" | \"none\";\ntype TransferFunction = \"hlg\" | \"pq\" | \"srgb\";\ntype VideoColorPrimaries = \"bt470bg\" | \"bt709\" | \"smpte170m\";\ntype VideoEncoderBitrateMode = \"constant\" | \"quantizer\" | \"variable\";\ntype VideoMatrixCoefficients = \"bt470bg\" | \"bt709\" | \"rgb\" | \"smpte170m\";\ntype VideoPixelFormat = \"BGRA\" | \"BGRX\" | \"I420\" | \"I420A\" | \"I422\" | \"I444\" | \"NV12\" | \"RGBA\" | \"RGBX\";\ntype VideoTransferCharacteristics = \"bt709\" | \"iec61966-2-1\" | \"smpte170m\";\ntype WebGLPowerPreference = \"default\" | \"high-performance\" | \"low-power\";\ntype WebTransportCongestionControl = \"default\" | \"low-latency\" | \"throughput\";\ntype WebTransportErrorSource = \"session\" | \"stream\";\ntype WorkerType = \"classic\" | \"module\";\ntype WriteCommandType = \"seek\" | \"truncate\" | \"write\";\ntype XMLHttpRequestResponseType = \"\" | \"arraybuffer\" | \"blob\" | \"document\" | \"json\" | \"text\";\n";
 	libFileMap["lib.webworker.importscripts.d.ts"] = "/*! *****************************************************************************\nCopyright (c) Microsoft Corporation. All rights reserved.\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use\nthis file except in compliance with the License. You may obtain a copy of the\nLicense at http://www.apache.org/licenses/LICENSE-2.0\n\nTHIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\nKIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED\nWARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,\nMERCHANTABLITY OR NON-INFRINGEMENT.\n\nSee the Apache Version 2.0 License for specific language governing permissions\nand limitations under the License.\n***************************************************************************** */\n\n\n/// <reference no-default-lib=\"true\"/>\n\n/////////////////////////////\n/// WorkerGlobalScope APIs\n/////////////////////////////\n// These are only available in a Web Worker\ndeclare function importScripts(...urls: string[]): void;\n";
 	libFileMap["lib.webworker.iterable.d.ts"] = "/*! *****************************************************************************\nCopyright (c) Microsoft Corporation. All rights reserved.\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use\nthis file except in compliance with the License. You may obtain a copy of the\nLicense at http://www.apache.org/licenses/LICENSE-2.0\n\nTHIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\nKIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED\nWARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,\nMERCHANTABLITY OR NON-INFRINGEMENT.\n\nSee the Apache Version 2.0 License for specific language governing permissions\nand limitations under the License.\n***************************************************************************** */\n\n\n/// <reference no-default-lib=\"true\"/>\n\n/////////////////////////////\n/// Worker Iterable APIs\n/////////////////////////////\n\ninterface AbortSignal {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AbortSignal/any_static) */\n    any(signals: Iterable<AbortSignal>): AbortSignal;\n}\n\ninterface CSSNumericArray {\n    [Symbol.iterator](): ArrayIterator<CSSNumericValue>;\n    entries(): ArrayIterator<[number, CSSNumericValue]>;\n    keys(): ArrayIterator<number>;\n    values(): ArrayIterator<CSSNumericValue>;\n}\n\ninterface CSSTransformValue {\n    [Symbol.iterator](): ArrayIterator<CSSTransformComponent>;\n    entries(): ArrayIterator<[number, CSSTransformComponent]>;\n    keys(): ArrayIterator<number>;\n    values(): ArrayIterator<CSSTransformComponent>;\n}\n\ninterface CSSUnparsedValue {\n    [Symbol.iterator](): ArrayIterator<CSSUnparsedSegment>;\n    entries(): ArrayIterator<[number, CSSUnparsedSegment]>;\n    keys(): ArrayIterator<number>;\n    values(): ArrayIterator<CSSUnparsedSegment>;\n}\n\ninterface Cache {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Cache/addAll) */\n    addAll(requests: Iterable<RequestInfo>): Promise<void>;\n}\n\ninterface CanvasPath {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/roundRect) */\n    roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | Iterable<number | DOMPointInit>): void;\n}\n\ninterface CanvasPathDrawingStyles {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/setLineDash) */\n    setLineDash(segments: Iterable<number>): void;\n}\n\ninterface DOMStringList {\n    [Symbol.iterator](): ArrayIterator<string>;\n}\n\ninterface FileList {\n    [Symbol.iterator](): ArrayIterator<File>;\n}\n\ninterface FontFaceSet extends Set<FontFace> {\n}\n\ninterface FormDataIterator<T> extends IteratorObject<T, BuiltinIteratorReturn, unknown> {\n    [Symbol.iterator](): FormDataIterator<T>;\n}\n\ninterface FormData {\n    [Symbol.iterator](): FormDataIterator<[string, FormDataEntryValue]>;\n    /** Returns an array of key, value pairs for every entry in the list. */\n    entries(): FormDataIterator<[string, FormDataEntryValue]>;\n    /** Returns a list of keys in the list. */\n    keys(): FormDataIterator<string>;\n    /** Returns a list of values in the list. */\n    values(): FormDataIterator<FormDataEntryValue>;\n}\n\ninterface HeadersIterator<T> extends IteratorObject<T, BuiltinIteratorReturn, unknown> {\n    [Symbol.iterator](): HeadersIterator<T>;\n}\n\ninterface Headers {\n    [Symbol.iterator](): HeadersIterator<[string, string]>;\n    /** Returns an iterator allowing to go through all key/value pairs contained in this object. */\n    entries(): HeadersIterator<[string, string]>;\n    /** Returns an iterator allowing to go through all keys of the key/value pairs contained in this object. */\n    keys(): HeadersIterator<string>;\n    /** Returns an iterator allowing to go through all values of the key/value pairs contained in this object. */\n    values(): HeadersIterator<string>;\n}\n\ninterface IDBDatabase {\n    /**\n     * Returns a new transaction with the given mode (\"readonly\" or \"readwrite\") and scope which can be a single object store name or an array of names.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBDatabase/transaction)\n     */\n    transaction(storeNames: string | Iterable<string>, mode?: IDBTransactionMode, options?: IDBTransactionOptions): IDBTransaction;\n}\n\ninterface IDBObjectStore {\n    /**\n     * Creates a new index in store with the given name, keyPath and options and returns a new IDBIndex. If the keyPath and options define constraints that cannot be satisfied with the data already in store the upgrade transaction will abort with a \"ConstraintError\" DOMException.\n     *\n     * Throws an \"InvalidStateError\" DOMException if not called within an upgrade transaction.\n     *\n     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/createIndex)\n     */\n    createIndex(name: string, keyPath: string | Iterable<string>, options?: IDBIndexParameters): IDBIndex;\n}\n\ninterface MessageEvent<T = any> {\n    /** @deprecated */\n    initMessageEvent(type: string, bubbles?: boolean, cancelable?: boolean, data?: any, origin?: string, lastEventId?: string, source?: MessageEventSource | null, ports?: Iterable<MessagePort>): void;\n}\n\ninterface StylePropertyMapReadOnlyIterator<T> extends IteratorObject<T, BuiltinIteratorReturn, unknown> {\n    [Symbol.iterator](): StylePropertyMapReadOnlyIterator<T>;\n}\n\ninterface StylePropertyMapReadOnly {\n    [Symbol.iterator](): StylePropertyMapReadOnlyIterator<[string, Iterable<CSSStyleValue>]>;\n    entries(): StylePropertyMapReadOnlyIterator<[string, Iterable<CSSStyleValue>]>;\n    keys(): StylePropertyMapReadOnlyIterator<string>;\n    values(): StylePropertyMapReadOnlyIterator<Iterable<CSSStyleValue>>;\n}\n\ninterface SubtleCrypto {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/deriveKey) */\n    deriveKey(algorithm: AlgorithmIdentifier | EcdhKeyDeriveParams | HkdfParams | Pbkdf2Params, baseKey: CryptoKey, derivedKeyType: AlgorithmIdentifier | AesDerivedKeyParams | HmacImportParams | HkdfParams | Pbkdf2Params, extractable: boolean, keyUsages: Iterable<KeyUsage>): Promise<CryptoKey>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/generateKey) */\n    generateKey(algorithm: \"Ed25519\", extractable: boolean, keyUsages: ReadonlyArray<\"sign\" | \"verify\">): Promise<CryptoKeyPair>;\n    generateKey(algorithm: RsaHashedKeyGenParams | EcKeyGenParams, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKeyPair>;\n    generateKey(algorithm: AesKeyGenParams | HmacKeyGenParams | Pbkdf2Params, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKey>;\n    generateKey(algorithm: AlgorithmIdentifier, extractable: boolean, keyUsages: Iterable<KeyUsage>): Promise<CryptoKeyPair | CryptoKey>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/importKey) */\n    importKey(format: \"jwk\", keyData: JsonWebKey, algorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: ReadonlyArray<KeyUsage>): Promise<CryptoKey>;\n    importKey(format: Exclude<KeyFormat, \"jwk\">, keyData: BufferSource, algorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: Iterable<KeyUsage>): Promise<CryptoKey>;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SubtleCrypto/unwrapKey) */\n    unwrapKey(format: KeyFormat, wrappedKey: BufferSource, unwrappingKey: CryptoKey, unwrapAlgorithm: AlgorithmIdentifier | RsaOaepParams | AesCtrParams | AesCbcParams | AesGcmParams, unwrappedKeyAlgorithm: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams | HmacImportParams | AesKeyAlgorithm, extractable: boolean, keyUsages: Iterable<KeyUsage>): Promise<CryptoKey>;\n}\n\ninterface URLSearchParamsIterator<T> extends IteratorObject<T, BuiltinIteratorReturn, unknown> {\n    [Symbol.iterator](): URLSearchParamsIterator<T>;\n}\n\ninterface URLSearchParams {\n    [Symbol.iterator](): URLSearchParamsIterator<[string, string]>;\n    /** Returns an array of key, value pairs for every entry in the search params. */\n    entries(): URLSearchParamsIterator<[string, string]>;\n    /** Returns a list of keys in the search params. */\n    keys(): URLSearchParamsIterator<string>;\n    /** Returns a list of values in the search params. */\n    values(): URLSearchParamsIterator<string>;\n}\n\ninterface WEBGL_draw_buffers {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_draw_buffers/drawBuffersWEBGL) */\n    drawBuffersWEBGL(buffers: Iterable<GLenum>): void;\n}\n\ninterface WEBGL_multi_draw {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw/multiDrawArraysInstancedWEBGL) */\n    multiDrawArraysInstancedWEBGL(mode: GLenum, firstsList: Int32Array | Iterable<GLint>, firstsOffset: number, countsList: Int32Array | Iterable<GLsizei>, countsOffset: number, instanceCountsList: Int32Array | Iterable<GLsizei>, instanceCountsOffset: number, drawcount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw/multiDrawArraysWEBGL) */\n    multiDrawArraysWEBGL(mode: GLenum, firstsList: Int32Array | Iterable<GLint>, firstsOffset: number, countsList: Int32Array | Iterable<GLsizei>, countsOffset: number, drawcount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw/multiDrawElementsInstancedWEBGL) */\n    multiDrawElementsInstancedWEBGL(mode: GLenum, countsList: Int32Array | Iterable<GLsizei>, countsOffset: number, type: GLenum, offsetsList: Int32Array | Iterable<GLsizei>, offsetsOffset: number, instanceCountsList: Int32Array | Iterable<GLsizei>, instanceCountsOffset: number, drawcount: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WEBGL_multi_draw/multiDrawElementsWEBGL) */\n    multiDrawElementsWEBGL(mode: GLenum, countsList: Int32Array | Iterable<GLsizei>, countsOffset: number, type: GLenum, offsetsList: Int32Array | Iterable<GLsizei>, offsetsOffset: number, drawcount: GLsizei): void;\n}\n\ninterface WebGL2RenderingContextBase {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/clearBuffer) */\n    clearBufferfv(buffer: GLenum, drawbuffer: GLint, values: Iterable<GLfloat>, srcOffset?: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/clearBuffer) */\n    clearBufferiv(buffer: GLenum, drawbuffer: GLint, values: Iterable<GLint>, srcOffset?: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/clearBuffer) */\n    clearBufferuiv(buffer: GLenum, drawbuffer: GLint, values: Iterable<GLuint>, srcOffset?: number): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/drawBuffers) */\n    drawBuffers(buffers: Iterable<GLenum>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getActiveUniforms) */\n    getActiveUniforms(program: WebGLProgram, uniformIndices: Iterable<GLuint>, pname: GLenum): any;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/getUniformIndices) */\n    getUniformIndices(program: WebGLProgram, uniformNames: Iterable<string>): Iterable<GLuint> | null;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/invalidateFramebuffer) */\n    invalidateFramebuffer(target: GLenum, attachments: Iterable<GLenum>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/invalidateSubFramebuffer) */\n    invalidateSubFramebuffer(target: GLenum, attachments: Iterable<GLenum>, x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/transformFeedbackVaryings) */\n    transformFeedbackVaryings(program: WebGLProgram, varyings: Iterable<string>, bufferMode: GLenum): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform1uiv(location: WebGLUniformLocation | null, data: Iterable<GLuint>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform2uiv(location: WebGLUniformLocation | null, data: Iterable<GLuint>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform3uiv(location: WebGLUniformLocation | null, data: Iterable<GLuint>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniform) */\n    uniform4uiv(location: WebGLUniformLocation | null, data: Iterable<GLuint>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix2x3fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix2x4fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix3x2fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix3x4fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix4x2fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/uniformMatrix) */\n    uniformMatrix4x3fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/vertexAttribI) */\n    vertexAttribI4iv(index: GLuint, values: Iterable<GLint>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGL2RenderingContext/vertexAttribI) */\n    vertexAttribI4uiv(index: GLuint, values: Iterable<GLuint>): void;\n}\n\ninterface WebGL2RenderingContextOverloads {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1fv(location: WebGLUniformLocation | null, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1iv(location: WebGLUniformLocation | null, data: Iterable<GLint>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2fv(location: WebGLUniformLocation | null, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2iv(location: WebGLUniformLocation | null, data: Iterable<GLint>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3fv(location: WebGLUniformLocation | null, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3iv(location: WebGLUniformLocation | null, data: Iterable<GLint>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4fv(location: WebGLUniformLocation | null, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4iv(location: WebGLUniformLocation | null, data: Iterable<GLint>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix2fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix3fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix4fv(location: WebGLUniformLocation | null, transpose: GLboolean, data: Iterable<GLfloat>, srcOffset?: number, srcLength?: GLuint): void;\n}\n\ninterface WebGLRenderingContextBase {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib1fv(index: GLuint, values: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib2fv(index: GLuint, values: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib3fv(index: GLuint, values: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/vertexAttrib) */\n    vertexAttrib4fv(index: GLuint, values: Iterable<GLfloat>): void;\n}\n\ninterface WebGLRenderingContextOverloads {\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1fv(location: WebGLUniformLocation | null, v: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform1iv(location: WebGLUniformLocation | null, v: Iterable<GLint>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2fv(location: WebGLUniformLocation | null, v: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform2iv(location: WebGLUniformLocation | null, v: Iterable<GLint>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3fv(location: WebGLUniformLocation | null, v: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform3iv(location: WebGLUniformLocation | null, v: Iterable<GLint>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4fv(location: WebGLUniformLocation | null, v: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniform) */\n    uniform4iv(location: WebGLUniformLocation | null, v: Iterable<GLint>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix2fv(location: WebGLUniformLocation | null, transpose: GLboolean, value: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix3fv(location: WebGLUniformLocation | null, transpose: GLboolean, value: Iterable<GLfloat>): void;\n    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebGLRenderingContext/uniformMatrix) */\n    uniformMatrix4fv(location: WebGLUniformLocation | null, transpose: GLboolean, value: Iterable<GLfloat>): void;\n}\n";
-	//#endregion
-	//#region src/ace/range-singleton.ts
+	// src/ace/range-singleton.ts
 	var AceRange = class AceRange {
 		static getConstructor(editor) {
 			if (!AceRange._instance && editor) AceRange._instance = editor.getSelectionRange().constructor;
 			return AceRange._instance;
 		}
 	};
-	//#endregion
-	//#region src/type-converters/common-converters.ts
+	// src/type-converters/common-converters.ts
 	var CommonConverter;
 	(function(_CommonConverter) {
 		function normalizeRanges(completions) {
@@ -156420,8 +156646,7 @@ ${e.message}`;
 		}
 		_CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 	})(CommonConverter || (CommonConverter = {}));
-	//#endregion
-	//#region src/type-converters/lsp/lsp-converters.ts
+	// src/type-converters/lsp/lsp-converters.ts
 	function filterDiagnostics(diagnostics, filterErrors) {
 		return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el) => {
 			if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) el.severity = import_main.DiagnosticSeverity.Warning;
@@ -156429,8 +156654,7 @@ ${e.message}`;
 			return el;
 		});
 	}
-	//#endregion
-	//#region src/services/typescript/typescript-converters.ts
+	// src/services/typescript/typescript-converters.ts
 	var convertKind = CommonConverter.convertKind;
 	function fromTsDiagnostics(diagnostics, doc, filterErrors) {
 		return convertTsDiagnostics(diagnostics, doc, filterErrors, false);
@@ -156661,8 +156885,7 @@ ${e.message}`;
 		JsxEmit[JsxEmit["ReactJSXDev"] = 5] = "ReactJSXDev";
 		return JsxEmit;
 	}({});
-	//#endregion
-	//#region src/type-converters/lsp/semantic-tokens.ts
+	// src/type-converters/lsp/semantic-tokens.ts
 	var SemanticTokensBuilder = class {
 		constructor() {
 			this._prevData = void 0;
@@ -156708,8 +156931,7 @@ ${e.message}`;
 			return this._prevData !== void 0;
 		}
 	};
-	//#endregion
-	//#region src/services/typescript/typescript-service.ts
+	// src/services/typescript/typescript-service.ts
 	var TypescriptService = class extends BaseService {
 		constructor(mode) {
 			super(mode);
@@ -156828,9 +157050,10 @@ ${e.message}`;
 		}
 		getScriptVersion(fileName) {
 			let document = this.getDocument(fileName);
-			if (document) if (document.version) return document["version"].toString();
-			else return "1";
-			else if (fileName === this.getDefaultLibFileName(this.getCompilationSettings())) return "1";
+			if (document) {
+				if (document.version) return document["version"].toString();
+				else return "1";
+			} else if (fileName === this.getDefaultLibFileName(this.getCompilationSettings())) return "1";
 			return "";
 		}
 		getScriptSnapshot(fileName) {
@@ -156983,6 +157206,5 @@ ${e.message}`;
 			return Promise.resolve(toCodeActions(this.$service.getCodeFixesAtPosition(document.uri, offset.start, offset.end, codeErrors, this.$defaultFormatOptions, {}), fullDocument));
 		}
 	};
-	//#endregion
 	exports.TypescriptService = TypescriptService;
 });

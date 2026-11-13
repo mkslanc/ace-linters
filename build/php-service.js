@@ -2,7 +2,7 @@
 	typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global));
 })(this, function(exports) {
 	Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-	//#region \0rolldown/runtime.js
+	// \0rolldown/runtime.js
 	var __create = Object.create;
 	var __defProp = Object.defineProperty;
 	var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -17,7 +17,7 @@
 			throw err = [e], e;
 		}
 	};
-	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod, mod.exports), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -37,13 +37,12 @@
 		}
 		return to;
 	};
-	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp.call(mod, "default") ? __defProp(target, "default", {
 		value: mod,
 		enumerable: true
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -76,8 +75,7 @@
 		}
 		exports.stringArray = stringArray;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -373,8 +371,7 @@
 			Message.isResponse = isResponse;
 		})(Message || (exports.Message = Message = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -446,9 +443,7 @@
 						case Touch.Last:
 							this.addItemLast(item);
 							break;
-						default:
-							this.addItemLast(item);
-							break;
+						default: this.addItemLast(item);
 					}
 					this._map.set(key, item);
 					this._size++;
@@ -708,8 +703,7 @@
 		};
 		exports.LRUCache = LRUCache;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -721,8 +715,7 @@
 			Disposable.create = create;
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -739,8 +732,7 @@
 		})(RAL || (RAL = {}));
 		exports.default = RAL;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -765,11 +757,13 @@
 			remove(callback, context = null) {
 				if (!this._callbacks) return;
 				let foundCallbackWithDifferentContext = false;
-				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) if (this._contexts[i] === context) {
-					this._callbacks.splice(i, 1);
-					this._contexts.splice(i, 1);
-					return;
-				} else foundCallbackWithDifferentContext = true;
+				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) {
+					if (this._contexts[i] === context) {
+						this._callbacks.splice(i, 1);
+						this._contexts.splice(i, 1);
+						return;
+					} else foundCallbackWithDifferentContext = true;
+				}
 				if (foundCallbackWithDifferentContext) throw new Error("When adding a listener with a context, you should remove it with the same context");
 			}
 			invoke(...args) {
@@ -831,8 +825,7 @@
 		exports.Emitter = Emitter;
 		Emitter._noop = function() {};
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -905,8 +898,7 @@
 		};
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -972,8 +964,7 @@
 		};
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1032,8 +1023,7 @@
 		};
 		exports.Semaphore = Semaphore;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1210,8 +1200,7 @@
 		};
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1320,8 +1309,7 @@
 		};
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1446,8 +1434,7 @@
 		};
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1840,26 +1827,27 @@
 					if (requestMessage.id !== null) requestTokens.set(tokenKey, cancellationSource);
 					try {
 						let handlerResult;
-						if (requestHandler) if (requestMessage.params === void 0) {
-							if (type !== void 0 && type.numberOfParams !== 0) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
-								return;
+						if (requestHandler) {
+							if (requestMessage.params === void 0) {
+								if (type !== void 0 && type.numberOfParams !== 0) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(cancellationSource.token);
+							} else if (Array.isArray(requestMessage.params)) {
+								if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byName) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
+							} else {
+								if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
 							}
-							handlerResult = requestHandler(cancellationSource.token);
-						} else if (Array.isArray(requestMessage.params)) {
-							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byName) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
-								return;
-							}
-							handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
-						} else {
-							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
-								return;
-							}
-							handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
-						}
-						else if (starRequestHandler) handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
+						} else if (starRequestHandler) handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
 						const promise = handlerResult;
 						if (!handlerResult) {
 							requestTokens.delete(tokenKey);
@@ -1887,9 +1875,10 @@
 			}
 			function handleResponse(responseMessage) {
 				if (isDisposed()) return;
-				if (responseMessage.id === null) if (responseMessage.error) logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, void 0, 4)}`);
-				else logger.error(`Received response message without id. No further error information provided.`);
-				else {
+				if (responseMessage.id === null) {
+					if (responseMessage.error) logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, void 0, 4)}`);
+					else logger.error(`Received response message without id. No further error information provided.`);
+				} else {
 					const key = responseMessage.id;
 					const responsePromise = responsePromises.get(key);
 					traceReceivedResponse(responseMessage, responsePromise);
@@ -1926,29 +1915,30 @@
 				}
 				if (notificationHandler || starNotificationHandler) try {
 					traceReceivedNotification(message);
-					if (notificationHandler) if (message.params === void 0) {
-						if (type !== void 0) {
-							if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
-						}
-						notificationHandler();
-					} else if (Array.isArray(message.params)) {
-						const params = message.params;
-						if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) notificationHandler({
-							token: params[0],
-							value: params[1]
-						});
-						else {
+					if (notificationHandler) {
+						if (message.params === void 0) {
 							if (type !== void 0) {
-								if (type.parameterStructures === messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
-								if (type.numberOfParams !== message.params.length) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
+								if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
 							}
-							notificationHandler(...params);
+							notificationHandler();
+						} else if (Array.isArray(message.params)) {
+							const params = message.params;
+							if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) notificationHandler({
+								token: params[0],
+								value: params[1]
+							});
+							else {
+								if (type !== void 0) {
+									if (type.parameterStructures === messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
+									if (type.numberOfParams !== message.params.length) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
+								}
+								notificationHandler(...params);
+							}
+						} else {
+							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
+							notificationHandler(message.params);
 						}
-					} else {
-						if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
-						notificationHandler(message.params);
-					}
-					else if (starNotificationHandler) starNotificationHandler(message.method, message.params);
+					} else if (starNotificationHandler) starNotificationHandler(message.method, message.params);
 				} catch (error) {
 					if (error.message) logger.error(`Notification handler '${message.method}' failed with message: ${error.message}`);
 					else logger.error(`Notification handler '${message.method}' failed unexpectedly.`);
@@ -1988,8 +1978,10 @@
 				if (trace === Trace.Off || !tracer) return;
 				if (traceFormat === TraceFormat.Text) {
 					let data = void 0;
-					if (trace === Trace.Verbose || trace === Trace.Compact) if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
-					else data = "No parameters provided.\n\n";
+					if (trace === Trace.Verbose || trace === Trace.Compact) {
+						if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
+						else data = "No parameters provided.\n\n";
+					}
 					tracer.log(`Sending notification '${message.method}'.`, data);
 				} else logLSPMessage("send-notification", message);
 			}
@@ -2017,8 +2009,10 @@
 				if (trace === Trace.Off || !tracer || message.method === LogTraceNotification.type.method) return;
 				if (traceFormat === TraceFormat.Text) {
 					let data = void 0;
-					if (trace === Trace.Verbose || trace === Trace.Compact) if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
-					else data = "No parameters provided.\n\n";
+					if (trace === Trace.Verbose || trace === Trace.Compact) {
+						if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
+						else data = "No parameters provided.\n\n";
+					}
 					tracer.log(`Received notification '${message.method}'.`, data);
 				} else logLSPMessage("receive-notification", message);
 			}
@@ -2093,7 +2087,6 @@
 						result = [];
 						for (let i = 0; i < params.length && i < numberOfParams; i++) result.push(undefinedToNull(params[i]));
 						if (params.length < numberOfParams) for (let i = params.length; i < numberOfParams; i++) result.push(null);
-						break;
 				}
 				return result;
 			}
@@ -2123,7 +2116,6 @@
 							default:
 								if (parameterStructures === messages_1.ParameterStructures.byName) throw new Error(`Received ${numberOfParams} parameters for 'by Name' notification parameter structure.`);
 								messageParams = args.slice(paramStart, paramEnd).map((value) => undefinedToNull(value));
-								break;
 						}
 					} else {
 						const params = args;
@@ -2145,18 +2137,20 @@
 					throwIfClosedOrDisposed();
 					let method;
 					if (Is.func(type)) starNotificationHandler = type;
-					else if (handler) if (Is.string(type)) {
-						method = type;
-						notificationHandlers.set(type, {
-							type: void 0,
-							handler
-						});
-					} else {
-						method = type.method;
-						notificationHandlers.set(type.method, {
-							type,
-							handler
-						});
+					else if (handler) {
+						if (Is.string(type)) {
+							method = type;
+							notificationHandlers.set(type, {
+								type: void 0,
+								handler
+							});
+						} else {
+							method = type.method;
+							notificationHandlers.set(type.method, {
+								type,
+								handler
+							});
+						}
 					}
 					return { dispose: () => {
 						if (method !== void 0) notificationHandlers.delete(method);
@@ -2209,7 +2203,6 @@
 							default:
 								if (parameterStructures === messages_1.ParameterStructures.byName) throw new Error(`Received ${numberOfParams} parameters for 'by Name' request parameter structure.`);
 								messageParams = args.slice(paramStart, paramEnd).map((value) => undefinedToNull(value));
-								break;
 						}
 					} else {
 						const params = args;
@@ -2298,10 +2291,12 @@
 				trace: async (_value, _tracer, sendNotificationOrTraceOptions) => {
 					let _sendNotification = false;
 					let _traceFormat = TraceFormat.Text;
-					if (sendNotificationOrTraceOptions !== void 0) if (Is.boolean(sendNotificationOrTraceOptions)) _sendNotification = sendNotificationOrTraceOptions;
-					else {
-						_sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
-						_traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
+					if (sendNotificationOrTraceOptions !== void 0) {
+						if (Is.boolean(sendNotificationOrTraceOptions)) _sendNotification = sendNotificationOrTraceOptions;
+						else {
+							_sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
+							_traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
+						}
 					}
 					trace = _value;
 					traceFormat = _traceFormat;
@@ -2353,8 +2348,7 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2731,8 +2725,7 @@
 		});
 		exports.RAL = require_ral().default;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -2866,10 +2859,9 @@
 		})(RIL || (RIL = {}));
 		exports.default = RIL;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
-	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
+	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports, module, this$3) => {
+		var __createBinding = this$3 && this$3.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -2883,8 +2875,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$3) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$3, p)) __createBinding(exports$3, m, p);
+		var __exportStar = this$3 && this$3.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.BrowserMessageWriter = exports.BrowserMessageReader = void 0;
@@ -2936,13 +2928,11 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-types/lib/esm/main.js
+	// ../../node_modules/vscode-languageserver-types/lib/esm/main.js
 	var main_exports = /* @__PURE__ */ __exportAll({
 		AnnotatedTextEdit: () => AnnotatedTextEdit,
 		ChangeAnnotation: () => ChangeAnnotation,
@@ -3678,8 +3668,10 @@
 			*/
 			get edit() {
 				this.initDocumentChanges();
-				if (this._changeAnnotations !== void 0) if (this._changeAnnotations.size === 0) this._workspaceEdit.changeAnnotations = void 0;
-				else this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
+				if (this._changeAnnotations !== void 0) {
+					if (this._changeAnnotations.size === 0) this._workspaceEdit.changeAnnotations = void 0;
+					else this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
+				}
 				return this._workspaceEdit;
 			}
 			getTextEditChange(key) {
@@ -4818,8 +4810,7 @@
 			Is.typedArray = typedArray;
 		})(Is || (Is = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/messages.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/messages.js
 	var require_messages = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProtocolNotificationType = exports.ProtocolNotificationType0 = exports.ProtocolRequestType = exports.ProtocolRequestType0 = exports.RegistrationType = exports.MessageDirection = void 0;
@@ -4861,8 +4852,7 @@
 		};
 		exports.ProtocolNotificationType = ProtocolNotificationType;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
 	var require_is = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.objectLiteral = exports.typedArray = exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -4903,8 +4893,7 @@
 		}
 		exports.objectLiteral = objectLiteral;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
 	var require_protocol_implementation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ImplementationRequest = void 0;
@@ -4921,8 +4910,7 @@
 			ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
 		})(ImplementationRequest || (exports.ImplementationRequest = ImplementationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
 	var require_protocol_typeDefinition = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.TypeDefinitionRequest = void 0;
@@ -4939,8 +4927,7 @@
 			TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
 		})(TypeDefinitionRequest || (exports.TypeDefinitionRequest = TypeDefinitionRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
 	var require_protocol_workspaceFolder = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = void 0;
@@ -4965,8 +4952,7 @@
 			DidChangeWorkspaceFoldersNotification.type = new messages_1.ProtocolNotificationType(DidChangeWorkspaceFoldersNotification.method);
 		})(DidChangeWorkspaceFoldersNotification || (exports.DidChangeWorkspaceFoldersNotification = DidChangeWorkspaceFoldersNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
 	var require_protocol_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ConfigurationRequest = void 0;
@@ -4987,8 +4973,7 @@
 			ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
 		})(ConfigurationRequest || (exports.ConfigurationRequest = ConfigurationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
 	var require_protocol_colorProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
@@ -5018,8 +5003,7 @@
 			ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
 		})(ColorPresentationRequest || (exports.ColorPresentationRequest = ColorPresentationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
 	var require_protocol_foldingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.FoldingRangeRefreshRequest = exports.FoldingRangeRequest = void 0;
@@ -5047,8 +5031,7 @@
 			FoldingRangeRefreshRequest.type = new messages_1.ProtocolRequestType0(FoldingRangeRefreshRequest.method);
 		})(FoldingRangeRefreshRequest || (exports.FoldingRangeRefreshRequest = FoldingRangeRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
 	var require_protocol_declaration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DeclarationRequest = void 0;
@@ -5066,8 +5049,7 @@
 			DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
 		})(DeclarationRequest || (exports.DeclarationRequest = DeclarationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
 	var require_protocol_selectionRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SelectionRangeRequest = void 0;
@@ -5085,8 +5067,7 @@
 			SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
 		})(SelectionRangeRequest || (exports.SelectionRangeRequest = SelectionRangeRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
 	var require_protocol_progress = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = void 0;
@@ -5121,8 +5102,7 @@
 			WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
 		})(WorkDoneProgressCancelNotification || (exports.WorkDoneProgressCancelNotification = WorkDoneProgressCancelNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
 	var require_protocol_callHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.CallHierarchyPrepareRequest = void 0;
@@ -5162,8 +5142,7 @@
 			CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
 		})(CallHierarchyOutgoingCallsRequest || (exports.CallHierarchyOutgoingCallsRequest = CallHierarchyOutgoingCallsRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
 	var require_protocol_semanticTokens = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.SemanticTokensRegistrationType = exports.TokenFormat = void 0;
@@ -5217,8 +5196,7 @@
 			SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
 		})(SemanticTokensRefreshRequest || (exports.SemanticTokensRefreshRequest = SemanticTokensRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
 	var require_protocol_showDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ShowDocumentRequest = void 0;
@@ -5238,8 +5216,7 @@
 			ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
 		})(ShowDocumentRequest || (exports.ShowDocumentRequest = ShowDocumentRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
 	var require_protocol_linkedEditingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.LinkedEditingRangeRequest = void 0;
@@ -5256,8 +5233,7 @@
 			LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
 		})(LinkedEditingRangeRequest || (exports.LinkedEditingRangeRequest = LinkedEditingRangeRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
 	var require_protocol_fileOperations = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.DidRenameFilesNotification = exports.WillRenameFilesRequest = exports.DidCreateFilesNotification = exports.WillCreateFilesRequest = exports.FileOperationPatternKind = void 0;
@@ -5356,8 +5332,7 @@
 			WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
 		})(WillDeleteFilesRequest || (exports.WillDeleteFilesRequest = WillDeleteFilesRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
 	var require_protocol_moniker = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = void 0;
@@ -5423,8 +5398,7 @@
 			MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
 		})(MonikerRequest || (exports.MonikerRequest = MonikerRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
 	var require_protocol_typeHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.TypeHierarchySubtypesRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchyPrepareRequest = void 0;
@@ -5464,8 +5438,7 @@
 			TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
 		})(TypeHierarchySubtypesRequest || (exports.TypeHierarchySubtypesRequest = TypeHierarchySubtypesRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
 	var require_protocol_inlineValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
@@ -5493,8 +5466,7 @@
 			InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
 		})(InlineValueRefreshRequest || (exports.InlineValueRefreshRequest = InlineValueRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
 	var require_protocol_inlayHint = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = void 0;
@@ -5535,8 +5507,7 @@
 			InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
 		})(InlayHintRefreshRequest || (exports.InlayHintRefreshRequest = InlayHintRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
 	var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = void 0;
@@ -5608,8 +5579,7 @@
 			DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
 		})(DiagnosticRefreshRequest || (exports.DiagnosticRefreshRequest = DiagnosticRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
 	var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = void 0;
@@ -5791,8 +5761,7 @@
 			DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
 		})(DidCloseNotebookDocumentNotification || (exports.DidCloseNotebookDocumentNotification = DidCloseNotebookDocumentNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
 	var require_protocol_inlineCompletion = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlineCompletionRequest = void 0;
@@ -5812,8 +5781,7 @@
 			InlineCompletionRequest.type = new messages_1.ProtocolRequestType(InlineCompletionRequest.method);
 		})(InlineCompletionRequest || (exports.InlineCompletionRequest = InlineCompletionRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.js
 	var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WorkspaceSymbolRequest = exports.CodeActionResolveRequest = exports.CodeActionRequest = exports.DocumentSymbolRequest = exports.DocumentHighlightRequest = exports.ReferencesRequest = exports.DefinitionRequest = exports.SignatureHelpRequest = exports.SignatureHelpTriggerKind = exports.HoverRequest = exports.CompletionResolveRequest = exports.CompletionRequest = exports.CompletionTriggerKind = exports.PublishDiagnosticsNotification = exports.WatchKind = exports.RelativePattern = exports.FileChangeType = exports.DidChangeWatchedFilesNotification = exports.WillSaveTextDocumentWaitUntilRequest = exports.WillSaveTextDocumentNotification = exports.TextDocumentSaveReason = exports.DidSaveTextDocumentNotification = exports.DidCloseTextDocumentNotification = exports.DidChangeTextDocumentNotification = exports.TextDocumentContentChangeEvent = exports.DidOpenTextDocumentNotification = exports.TextDocumentSyncKind = exports.TelemetryEventNotification = exports.LogMessageNotification = exports.ShowMessageRequest = exports.ShowMessageNotification = exports.MessageType = exports.DidChangeConfigurationNotification = exports.ExitNotification = exports.ShutdownRequest = exports.InitializedNotification = exports.InitializeErrorCodes = exports.InitializeRequest = exports.WorkDoneProgressOptions = exports.TextDocumentRegistrationOptions = exports.StaticRegistrationOptions = exports.PositionEncodingKind = exports.FailureHandlingKind = exports.ResourceOperationKind = exports.UnregistrationRequest = exports.RegistrationRequest = exports.DocumentSelector = exports.NotebookCellTextDocumentFilter = exports.NotebookDocumentFilter = exports.TextDocumentFilter = void 0;
@@ -7031,8 +6999,7 @@
 			ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType("workspace/applyEdit");
 		})(ApplyWorkspaceEditRequest || (exports.ApplyWorkspaceEditRequest = ApplyWorkspaceEditRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/connection.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/connection.js
 	var require_connection = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createProtocolConnection = void 0;
@@ -7043,10 +7010,9 @@
 		}
 		exports.createProtocolConnection = createProtocolConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/api.js
-	var require_api = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/api.js
+	var require_api = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) => {
+		var __createBinding = this$2 && this$2.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7060,8 +7026,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$2) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$2, p)) __createBinding(exports$2, m, p);
+		var __exportStar = this$2 && this$2.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.LSPErrorCodes = exports.createProtocolConnection = void 0;
@@ -7127,10 +7093,9 @@
 			LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
 		})(LSPErrorCodes || (exports.LSPErrorCodes = LSPErrorCodes = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
-	var require_main = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
+	var require_main = /* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
+		var __createBinding = this$1 && this$1.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7144,8 +7109,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$1) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$1, p)) __createBinding(exports$1, m, p);
+		var __exportStar = this$1 && this$1.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createProtocolConnection = void 0;
@@ -7157,8 +7122,7 @@
 		}
 		exports.createProtocolConnection = createProtocolConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js
+	// ../../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js
 	function getDefaultExportFromCjs(x) {
 		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
 	}
@@ -7291,8 +7255,7 @@
 		browserExports = browser.exports;
 		process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
 	}));
-	//#endregion
-	//#region src/utils.ts
+	// src/utils.ts
 	var import_main = /* @__PURE__ */ __toESM(require_main());
 	function mergeObjects(obj1, obj2, excludeUndefined = false) {
 		if (!obj1) return obj2;
@@ -7321,8 +7284,7 @@
 		for (let i = 0; i < regexpArray.length; i++) if (regexpArray[i].test(value)) return true;
 		return false;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
+	// ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
 	var FullTextDocument = class FullTextDocument {
 		constructor(uri, languageId, version, content) {
 			this._uri = uri;
@@ -7354,6 +7316,13 @@
 				const startOffset = this.offsetAt(range.start);
 				const endOffset = this.offsetAt(range.end);
 				this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+				const insertedEndOffset = startOffset + change.text.length;
+				const crlfAtStart = this._content.charCodeAt(startOffset - 1) === 13 && this._content.charCodeAt(startOffset) === 10;
+				const crlfAtEnd = this._content.charCodeAt(insertedEndOffset - 1) === 13 && this._content.charCodeAt(insertedEndOffset) === 10;
+				if (crlfAtStart || crlfAtEnd) {
+					this._lineOffsets = void 0;
+					continue;
+				}
 				const startLine = Math.max(range.start.line, 0);
 				const endLine = Math.max(range.end.line, 0);
 				let lineOffsets = this._lineOffsets;
@@ -7402,6 +7371,52 @@
 			const nextLineOffset = position.line + 1 < lineOffsets.length ? lineOffsets[position.line + 1] : this._content.length;
 			const offset = Math.min(lineOffset + position.character, nextLineOffset);
 			return this.ensureBeforeEOL(offset, lineOffset);
+		}
+		getLineRange(line) {
+			const lineOffsets = this.getLineOffsets();
+			if (line >= lineOffsets.length) {
+				const lastLine = lineOffsets.length - 1;
+				return {
+					start: {
+						line: lastLine,
+						character: 0
+					},
+					end: {
+						line: lastLine,
+						character: this._content.length - lineOffsets[lastLine]
+					}
+				};
+			} else if (line < 0) return {
+				start: {
+					line: 0,
+					character: 0
+				},
+				end: {
+					line: 0,
+					character: 0
+				}
+			};
+			const startOffset = lineOffsets[line];
+			const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+			const endOffset = this.ensureBeforeEOL(nextLineOffset, startOffset);
+			return {
+				start: {
+					line,
+					character: 0
+				},
+				end: {
+					line,
+					character: endOffset - startOffset
+				}
+			};
+		}
+		getEOLCharacters(line) {
+			const lineOffsets = this.getLineOffsets();
+			if (line >= lineOffsets.length) return "";
+			else if (line < 0) return "";
+			const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+			const eolOffset = this.ensureBeforeEOL(nextLineOffset, lineOffsets[line]);
+			return this._content.substring(eolOffset, nextLineOffset);
 		}
 		ensureBeforeEOL(offset, lineOffset) {
 			while (offset > lineOffset && isEOL(this._content.charCodeAt(offset - 1))) offset--;
@@ -7517,8 +7532,7 @@
 		};
 		return textEdit;
 	}
-	//#endregion
-	//#region src/services/base-service.ts
+	// src/services/base-service.ts
 	var BaseService = class {
 		constructor(mode, workspaceUri) {
 			this.documents = {};
@@ -7703,16 +7717,14 @@
 		}
 		sendResponse(callbackId, args) {}
 	};
-	//#endregion
-	//#region src/ace/range-singleton.ts
+	// src/ace/range-singleton.ts
 	var AceRange = class AceRange {
 		static getConstructor(editor) {
 			if (!AceRange._instance && editor) AceRange._instance = editor.getSelectionRange().constructor;
 			return AceRange._instance;
 		}
 	};
-	//#endregion
-	//#region src/type-converters/common-converters.ts
+	// src/type-converters/common-converters.ts
 	var CommonConverter;
 	(function(_CommonConverter) {
 		function normalizeRanges(completions) {
@@ -7760,8 +7772,7 @@
 		}
 		_CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 	})(CommonConverter || (CommonConverter = {}));
-	//#endregion
-	//#region src/type-converters/lsp/lsp-converters.ts
+	// src/type-converters/lsp/lsp-converters.ts
 	function filterDiagnostics(diagnostics, filterErrors) {
 		return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el) => {
 			if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) el.severity = import_main.DiagnosticSeverity.Warning;
@@ -7779,8 +7790,7 @@
 	*   @url http://glayzzle.com
 	*
 	*/
-	//#endregion
-	//#region src/services/php/php-converters.ts
+	// src/services/php/php-converters.ts
 	var import_php_parser = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
 		init_dist();
 		(function webpackUniversalModuleDefinition(root, factory) {
@@ -7792,7 +7802,7 @@
 			return (() => {
 				"use strict";
 				var __webpack_modules__ = {
-					8938(module$1, __unused_webpack_exports, __webpack_require__) {
+					8938(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8176,9 +8186,12 @@
 							* @param {*} target
 							*/
 							_result.destroy = function(target) {
-								if (docs) if (target) if (!target.leadingComments) target.leadingComments = docs;
-								else target.leadingComments = docs.concat(target.leadingComments);
-								else parser._docIndex = parser._docs.length - docs.length;
+								if (docs) {
+									if (target) {
+										if (!target.leadingComments) target.leadingComments = docs;
+										else target.leadingComments = docs.concat(target.leadingComments);
+									} else parser._docIndex = parser._docs.length - docs.length;
+								}
 								if (parser.debug) delete self.stack[_result.stackUid];
 							};
 							return _result;
@@ -8310,9 +8323,9 @@
 						].forEach(function(ctor) {
 							AST.prototype[ctor.kind] = ctor;
 						});
-						module$1.exports = AST;
+						module.exports = AST;
 					},
-					3160(module$2, __unused_webpack_exports, __webpack_require__) {
+					3160(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8346,7 +8359,7 @@
 						* @property {Array<Entry|Expression|Variable>} items List of array items
 						* @property {boolean} shortForm Indicate if the short array syntax is used, ex `[]` instead `array()`
 						*/
-						module$2.exports = Expr["extends"](KIND, function Array(shortForm, items, docs, location) {
+						module.exports = Expr["extends"](KIND, function Array(shortForm, items, docs, location) {
 							Expr.apply(this, [
 								KIND,
 								docs,
@@ -8356,7 +8369,7 @@
 							this.shortForm = shortForm;
 						});
 					},
-					1654(module$3, __unused_webpack_exports, __webpack_require__) {
+					1654(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8376,7 +8389,7 @@
 						* @property {boolean} nullable
 						* @property {boolean} isStatic
 						*/
-						module$3.exports = Expression["extends"](KIND, function Closure(args, byref, body, type, nullable, isStatic, docs, location) {
+						module.exports = Expression["extends"](KIND, function Closure(args, byref, body, type, nullable, isStatic, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -8390,7 +8403,7 @@
 							this.isStatic = isStatic || false;
 						});
 					},
-					1240(module$4, __unused_webpack_exports, __webpack_require__) {
+					1240(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8407,7 +8420,7 @@
 						* @property {Expression} right
 						* @property {String} operator
 						*/
-						module$4.exports = Expression["extends"](KIND, function Assign(left, right, operator, docs, location) {
+						module.exports = Expression["extends"](KIND, function Assign(left, right, operator, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -8418,7 +8431,7 @@
 							this.operator = operator;
 						});
 					},
-					3979(module$5, __unused_webpack_exports, __webpack_require__) {
+					3979(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8434,7 +8447,7 @@
 						* @property {Expression} left
 						* @property {Expression} right
 						*/
-						module$5.exports = Expression["extends"](KIND, function AssignRef(left, right, docs, location) {
+						module.exports = Expression["extends"](KIND, function AssignRef(left, right, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -8444,7 +8457,7 @@
 							this.right = right;
 						});
 					},
-					2207(module$6, __unused_webpack_exports, __webpack_require__) {
+					2207(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8459,7 +8472,7 @@
 						* @extends {Node}
 						* @property {Attribute[]} attrs
 						*/
-						module$6.exports = Node["extends"](KIND, function AttrGroup(attrs, docs, location) {
+						module.exports = Node["extends"](KIND, function AttrGroup(attrs, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -8468,7 +8481,7 @@
 							this.attrs = attrs || [];
 						});
 					},
-					5553(module$7, __unused_webpack_exports, __webpack_require__) {
+					5553(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8484,7 +8497,7 @@
 						* @property {String} name
 						* @property {Parameter[]} args
 						*/
-						module$7.exports = Node["extends"](KIND, function Attribute(name, args, docs, location) {
+						module.exports = Node["extends"](KIND, function Attribute(name, args, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -8494,7 +8507,7 @@
 							this.args = args;
 						});
 					},
-					2916(module$8, __unused_webpack_exports, __webpack_require__) {
+					2916(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8511,7 +8524,7 @@
 						* @property {Expression} left
 						* @property {Expression} right
 						*/
-						module$8.exports = Operation["extends"](KIND, function Bin(type, left, right, docs, location) {
+						module.exports = Operation["extends"](KIND, function Bin(type, left, right, docs, location) {
 							Operation.apply(this, [
 								KIND,
 								docs,
@@ -8522,7 +8535,7 @@
 							this.right = right;
 						});
 					},
-					4628(module$9, __unused_webpack_exports, __webpack_require__) {
+					4628(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8537,7 +8550,7 @@
 						* @extends {Statement}
 						* @property {Node[]} children
 						*/
-						module$9.exports = Statement["extends"](KIND, function Block(kind, children, docs, location) {
+						module.exports = Statement["extends"](KIND, function Block(kind, children, docs, location) {
 							Statement.apply(this, [
 								kind || KIND,
 								docs,
@@ -8546,7 +8559,7 @@
 							this.children = children.filter(Boolean);
 						});
 					},
-					7509(module$10, __unused_webpack_exports, __webpack_require__) {
+					7509(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8561,7 +8574,7 @@
 						* @extends {Literal}
 						* @property {boolean} value
 						*/
-						module$10.exports = Literal["extends"](KIND, function Boolean(value, raw, docs, location) {
+						module.exports = Literal["extends"](KIND, function Boolean(value, raw, docs, location) {
 							Literal.apply(this, [
 								KIND,
 								value,
@@ -8571,7 +8584,7 @@
 							]);
 						});
 					},
-					2906(module$11, __unused_webpack_exports, __webpack_require__) {
+					2906(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8586,7 +8599,7 @@
 						* @extends {Statement}
 						* @property {Number|Null} level
 						*/
-						module$11.exports = Statement["extends"](KIND, function Break(level, docs, location) {
+						module.exports = Statement["extends"](KIND, function Break(level, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -8595,7 +8608,7 @@
 							this.level = level;
 						});
 					},
-					5723(module$12, __unused_webpack_exports, __webpack_require__) {
+					5723(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8610,7 +8623,7 @@
 						* @extends {Expression}
 						* @property {ExpressionStatement} what
 						*/
-						module$12.exports = Expression["extends"](KIND, function ByRef(what, docs, location) {
+						module.exports = Expression["extends"](KIND, function ByRef(what, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -8619,7 +8632,7 @@
 							this.what = what;
 						});
 					},
-					7561(module$13, __unused_webpack_exports, __webpack_require__) {
+					7561(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8635,7 +8648,7 @@
 						* @property {Identifier|Variable} what
 						* @property {Expression[]} arguments
 						*/
-						module$13.exports = Expression["extends"](KIND, function Call(what, args, docs, location) {
+						module.exports = Expression["extends"](KIND, function Call(what, args, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -8645,7 +8658,7 @@
 							this.arguments = args;
 						});
 					},
-					6473(module$14, __unused_webpack_exports, __webpack_require__) {
+					6473(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8661,7 +8674,7 @@
 						* @property {Expression|null} test - if null, means that the default case
 						* @property {Block|null} body
 						*/
-						module$14.exports = Statement["extends"](KIND, function Case(test, body, docs, location) {
+						module.exports = Statement["extends"](KIND, function Case(test, body, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -8671,7 +8684,7 @@
 							this.body = body;
 						});
 					},
-					9626(module$15, __unused_webpack_exports, __webpack_require__) {
+					9626(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8688,7 +8701,7 @@
 						* @property {String} raw
 						* @property {Expression} expr
 						*/
-						module$15.exports = Operation["extends"](KIND, function Cast(type, raw, expr, docs, location) {
+						module.exports = Operation["extends"](KIND, function Cast(type, raw, expr, docs, location) {
 							Operation.apply(this, [
 								KIND,
 								docs,
@@ -8699,7 +8712,7 @@
 							this.expr = expr;
 						});
 					},
-					4782(module$16, __unused_webpack_exports, __webpack_require__) {
+					4782(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8717,7 +8730,7 @@
 						* @property {Block} body
 						* @see http://php.net/manual/en/language.exceptions.php
 						*/
-						module$16.exports = Statement["extends"](KIND, function Catch(body, what, variable, docs, location) {
+						module.exports = Statement["extends"](KIND, function Catch(body, what, variable, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -8728,7 +8741,7 @@
 							this.variable = variable;
 						});
 					},
-					8477(module$17, __unused_webpack_exports, __webpack_require__) {
+					8477(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8750,7 +8763,7 @@
 						* @property {boolean} isReadonly
 						* @property {AttrGroup[]} attrGroups
 						*/
-						module$17.exports = Declaration["extends"](KIND, function Class(name, ext, impl, body, flags, docs, location) {
+						module.exports = Declaration["extends"](KIND, function Class(name, ext, impl, body, flags, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								name,
@@ -8765,7 +8778,7 @@
 							this.parseFlags(flags);
 						});
 					},
-					5045(module$18, __unused_webpack_exports, __webpack_require__) {
+					5045(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8819,9 +8832,9 @@
 							else if (getVis === 2) this.visibility = IS_PRIVATE;
 							this["final"] = flags[2] === 2;
 						};
-						module$18.exports = ClassConstant;
+						module.exports = ClassConstant;
 					},
-					900(module$19, __unused_webpack_exports, __webpack_require__) {
+					900(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8837,7 +8850,7 @@
 						* @property {Expression} what
 						* @property {Expression|null} properties
 						*/
-						module$19.exports = Expression["extends"](KIND, function Clone(what, properties, docs, location) {
+						module.exports = Expression["extends"](KIND, function Clone(what, properties, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -8847,7 +8860,7 @@
 							if (properties) this.properties = properties;
 						});
 					},
-					4824(module$20, __unused_webpack_exports, __webpack_require__) {
+					4824(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8869,7 +8882,7 @@
 						* @property {boolean} isStatic
 						* @property {AttrGroup[]} attrGroups
 						*/
-						module$20.exports = Expression["extends"](KIND, function Closure(args, byref, uses, type, nullable, isStatic, docs, location) {
+						module.exports = Expression["extends"](KIND, function Closure(args, byref, uses, type, nullable, isStatic, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -8885,7 +8898,7 @@
 							this.attrGroups = [];
 						});
 					},
-					1020(module$21, __unused_webpack_exports, __webpack_require__) {
+					1020(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8899,7 +8912,7 @@
 						* @extends {Node}
 						* @property {String} value
 						*/
-						module$21.exports = Node["extends"]("comment", function Comment(kind, value, docs, location) {
+						module.exports = Node["extends"]("comment", function Comment(kind, value, docs, location) {
 							Node.apply(this, [
 								kind,
 								docs,
@@ -8908,7 +8921,7 @@
 							this.value = value;
 						});
 					},
-					9847(module$22, __unused_webpack_exports, __webpack_require__) {
+					9847(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8922,7 +8935,7 @@
 						* @memberOf module:php-parser
 						* @extends {Comment}
 						*/
-						module$22.exports = Comment["extends"](KIND, function CommentBlock(value, docs, location) {
+						module.exports = Comment["extends"](KIND, function CommentBlock(value, docs, location) {
 							Comment.apply(this, [
 								KIND,
 								value,
@@ -8931,7 +8944,7 @@
 							]);
 						});
 					},
-					2790(module$23, __unused_webpack_exports, __webpack_require__) {
+					2790(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8945,7 +8958,7 @@
 						* @memberOf module:php-parser
 						* @extends {Comment}
 						*/
-						module$23.exports = Comment["extends"](KIND, function CommentLine(value, docs, location) {
+						module.exports = Comment["extends"](KIND, function CommentLine(value, docs, location) {
 							Comment.apply(this, [
 								KIND,
 								value,
@@ -8954,7 +8967,7 @@
 							]);
 						});
 					},
-					1333(module$24, __unused_webpack_exports, __webpack_require__) {
+					1333(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8970,7 +8983,7 @@
 						* @property {string} name
 						* @property {Node|string|number|boolean|null} value
 						*/
-						module$24.exports = Node["extends"](KIND, function Constant(name, value, docs, location) {
+						module.exports = Node["extends"](KIND, function Constant(name, value, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -8980,7 +8993,7 @@
 							this.value = value;
 						});
 					},
-					2112(module$25, __unused_webpack_exports, __webpack_require__) {
+					2112(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -8995,7 +9008,7 @@
 						* @extends {Statement}
 						* @property {Constant[]} constants
 						*/
-						module$25.exports = Statement["extends"](KIND, function ConstantStatement(kind, constants, docs, location) {
+						module.exports = Statement["extends"](KIND, function ConstantStatement(kind, constants, docs, location) {
 							Statement.apply(this, [
 								kind || KIND,
 								docs,
@@ -9004,7 +9017,7 @@
 							this.constants = constants;
 						});
 					},
-					9960(module$26, __unused_webpack_exports, __webpack_require__) {
+					9960(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9019,7 +9032,7 @@
 						* @extends {Statement}
 						* @property {number|null} level
 						*/
-						module$26.exports = Statement["extends"](KIND, function Continue(level, docs, location) {
+						module.exports = Statement["extends"](KIND, function Continue(level, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9028,7 +9041,7 @@
 							this.level = level;
 						});
 					},
-					8533(module$27, __unused_webpack_exports, __webpack_require__) {
+					8533(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9123,9 +9136,9 @@
 								this.visibilitySet = setVis !== -1 ? VISIBILITY_MAP[setVis] : null;
 							}
 						};
-						module$27.exports = Declaration;
+						module.exports = Declaration;
 					},
-					5947(module$28, __unused_webpack_exports, __webpack_require__) {
+					5947(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9191,9 +9204,9 @@
 						* @memberOf module:php-parser
 						*/
 						Declare.MODE_NONE = "none";
-						module$28.exports = Declare;
+						module.exports = Declare;
 					},
-					7786(module$29, __unused_webpack_exports, __webpack_require__) {
+					7786(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9209,7 +9222,7 @@
 						* @property {Identifier} key
 						* @property {Node|string|number|boolean|null} value
 						*/
-						module$29.exports = Node["extends"](KIND, function DeclareDirective(key, value, docs, location) {
+						module.exports = Node["extends"](KIND, function DeclareDirective(key, value, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -9219,7 +9232,7 @@
 							this.value = value;
 						});
 					},
-					5436(module$30, __unused_webpack_exports, __webpack_require__) {
+					5436(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9235,7 +9248,7 @@
 						* @property {Expression} test
 						* @property {Block | null} body
 						*/
-						module$30.exports = Statement["extends"](KIND, function Do(test, body, docs, location) {
+						module.exports = Statement["extends"](KIND, function Do(test, body, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9245,7 +9258,7 @@
 							this.body = body;
 						});
 					},
-					1136(module$31, __unused_webpack_exports, __webpack_require__) {
+					1136(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9261,7 +9274,7 @@
 						* @property {Expression[]} expressions
 						* @extends {Statement}
 						*/
-						module$31.exports = Statement["extends"](KIND, function Echo(expressions, shortForm, docs, location) {
+						module.exports = Statement["extends"](KIND, function Echo(expressions, shortForm, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9271,7 +9284,7 @@
 							this.expressions = expressions;
 						});
 					},
-					380(module$32, __unused_webpack_exports, __webpack_require__) {
+					380(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9286,7 +9299,7 @@
 						* @extends {Expression}
 						* @property {Expression} expression
 						*/
-						module$32.exports = Expression["extends"](KIND, function Empty(expression, docs, location) {
+						module.exports = Expression["extends"](KIND, function Empty(expression, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -9295,7 +9308,7 @@
 							this.expression = expression;
 						});
 					},
-					6129(module$33, __unused_webpack_exports, __webpack_require__) {
+					6129(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9365,9 +9378,9 @@
 						* @memberOf module:php-parser
 						*/
 						Encapsed.TYPE_OFFSET = "offset";
-						module$33.exports = Encapsed;
+						module.exports = Encapsed;
 					},
-					9723(module$34, __unused_webpack_exports, __webpack_require__) {
+					9723(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9384,7 +9397,7 @@
 						* @property {String} syntax
 						* @property {Boolean} curly
 						*/
-						module$34.exports = Expression["extends"](KIND, function EncapsedPart(expression, syntax, curly, docs, location) {
+						module.exports = Expression["extends"](KIND, function EncapsedPart(expression, syntax, curly, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -9395,7 +9408,7 @@
 							this.curly = curly;
 						});
 					},
-					5125(module$35, __unused_webpack_exports, __webpack_require__) {
+					5125(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9413,7 +9426,7 @@
 						* @property {Boolean} byRef By reference
 						* @property {Boolean} unpack Argument unpacking
 						*/
-						module$35.exports = Expression["extends"](KIND, function Entry(key, value, byRef, unpack, docs, location) {
+						module.exports = Expression["extends"](KIND, function Entry(key, value, byRef, unpack, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -9425,7 +9438,7 @@
 							this.unpack = unpack;
 						});
 					},
-					9632(module$36, __unused_webpack_exports, __webpack_require__) {
+					9632(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9443,7 +9456,7 @@
 						* @property {Declaration[]} body
 						* @property {AttrGroup[]} attrGroups
 						*/
-						module$36.exports = Declaration["extends"](KIND, function Enum(name, valueType, impl, body, docs, location) {
+						module.exports = Declaration["extends"](KIND, function Enum(name, valueType, impl, body, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								name,
@@ -9456,7 +9469,7 @@
 							this.attrGroups = [];
 						});
 					},
-					4300(module$37, __unused_webpack_exports, __webpack_require__) {
+					4300(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9472,7 +9485,7 @@
 						* @property {string} name
 						* @property {string|number|null} value
 						*/
-						module$37.exports = Node["extends"](KIND, function EnumCase(name, value, docs, location) {
+						module.exports = Node["extends"](KIND, function EnumCase(name, value, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -9482,7 +9495,7 @@
 							this.value = value;
 						});
 					},
-					1515(module$38, __unused_webpack_exports, __webpack_require__) {
+					1515(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9500,7 +9513,7 @@
 						* @property {number|string} token
 						* @property {string|array} expected
 						*/
-						module$38.exports = Node["extends"](KIND, function Error(message, token, line, expected, docs, location) {
+						module.exports = Node["extends"](KIND, function Error(message, token, line, expected, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -9512,7 +9525,7 @@
 							this.expected = expected;
 						});
 					},
-					3411(module$39, __unused_webpack_exports, __webpack_require__) {
+					3411(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9527,7 +9540,7 @@
 						* @extends {Expression}
 						* @property {Node} source
 						*/
-						module$39.exports = Expression["extends"](KIND, function Eval(source, docs, location) {
+						module.exports = Expression["extends"](KIND, function Eval(source, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -9536,7 +9549,7 @@
 							this.source = source;
 						});
 					},
-					9781(module$40, __unused_webpack_exports, __webpack_require__) {
+					9781(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9552,7 +9565,7 @@
 						* @property {Node|null} expression
 						* @property {boolean} useDie
 						*/
-						module$40.exports = Expression["extends"](KIND, function Exit(expression, useDie, docs, location) {
+						module.exports = Expression["extends"](KIND, function Exit(expression, useDie, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -9562,7 +9575,7 @@
 							this.useDie = useDie;
 						});
 					},
-					839(module$41, __unused_webpack_exports, __webpack_require__) {
+					839(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9577,7 +9590,7 @@
 						* @memberOf module:php-parser
 						* @extends {Node}
 						*/
-						module$41.exports = Node["extends"](KIND, function Expression(kind, docs, location) {
+						module.exports = Node["extends"](KIND, function Expression(kind, docs, location) {
 							Node.apply(this, [
 								kind || KIND,
 								docs,
@@ -9585,7 +9598,7 @@
 							]);
 						});
 					},
-					8374(module$42, __unused_webpack_exports, __webpack_require__) {
+					8374(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9600,7 +9613,7 @@
 						* @extends {Statement}
 						* @property {Expression} expression
 						*/
-						module$42.exports = Statement["extends"](KIND, function ExpressionStatement(expr, docs, location) {
+						module.exports = Statement["extends"](KIND, function ExpressionStatement(expr, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9609,7 +9622,7 @@
 							this.expression = expr;
 						});
 					},
-					9754(module$43, __unused_webpack_exports, __webpack_require__) {
+					9754(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9629,7 +9642,7 @@
 						* @property {boolean} shortForm
 						* @see http://php.net/manual/en/control-structures.for.php
 						*/
-						module$43.exports = Statement["extends"](KIND, function For(init, test, increment, body, shortForm, docs, location) {
+						module.exports = Statement["extends"](KIND, function For(init, test, increment, body, shortForm, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9642,7 +9655,7 @@
 							this.body = body;
 						});
 					},
-					4251(module$44, __unused_webpack_exports, __webpack_require__) {
+					4251(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9662,7 +9675,7 @@
 						* @property {boolean} shortForm
 						* @see http://php.net/manual/en/control-structures.foreach.php
 						*/
-						module$44.exports = Statement["extends"](KIND, function Foreach(source, key, value, body, shortForm, docs, location) {
+						module.exports = Statement["extends"](KIND, function Foreach(source, key, value, body, shortForm, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9675,7 +9688,7 @@
 							this.body = body;
 						});
 					},
-					6553(module$45, __unused_webpack_exports, __webpack_require__) {
+					6553(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9695,7 +9708,7 @@
 						* @property {Block|null} body
 						* @property {AttrGroup[]} attrGroups
 						*/
-						module$45.exports = Declaration["extends"](KIND, function _Function(name, args, byref, type, nullable, docs, location) {
+						module.exports = Declaration["extends"](KIND, function _Function(name, args, byref, type, nullable, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								name,
@@ -9710,7 +9723,7 @@
 							this.attrGroups = [];
 						});
 					},
-					8630(module$46, __unused_webpack_exports, __webpack_require__) {
+					8630(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9725,7 +9738,7 @@
 						* @extends {Statement}
 						* @property {Variable[]} items
 						*/
-						module$46.exports = Statement["extends"](KIND, function Global(items, docs, location) {
+						module.exports = Statement["extends"](KIND, function Global(items, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9734,7 +9747,7 @@
 							this.items = items;
 						});
 					},
-					9786(module$47, __unused_webpack_exports, __webpack_require__) {
+					9786(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9750,7 +9763,7 @@
 						* @property {string} label
 						* @see {Label}
 						*/
-						module$47.exports = Statement["extends"](KIND, function Goto(label, docs, location) {
+						module.exports = Statement["extends"](KIND, function Goto(label, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9759,7 +9772,7 @@
 							this.label = label;
 						});
 					},
-					9742(module$48, __unused_webpack_exports, __webpack_require__) {
+					9742(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9775,7 +9788,7 @@
 						* @property {String} after - String after the halt statement
 						* @see http://php.net/manual/en/function.halt-compiler.php
 						*/
-						module$48.exports = Statement["extends"](KIND, function Halt(after, docs, location) {
+						module.exports = Statement["extends"](KIND, function Halt(after, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9784,7 +9797,7 @@
 							this.after = after;
 						});
 					},
-					1234(module$49, __unused_webpack_exports, __webpack_require__) {
+					1234(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9792,7 +9805,7 @@
 						*/
 						var Node = __webpack_require__(4065);
 						var KIND = "identifier";
-						module$49.exports = Node["extends"](KIND, function Identifier(name, docs, location) {
+						module.exports = Node["extends"](KIND, function Identifier(name, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -9801,7 +9814,7 @@
 							this.name = name;
 						});
 					},
-					6(module$50, __unused_webpack_exports, __webpack_require__) {
+					6(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9819,7 +9832,7 @@
 						* @property {Block|If|null} alternate
 						* @property {boolean} shortForm
 						*/
-						module$50.exports = Statement["extends"](KIND, function If(test, body, alternate, shortForm, docs, location) {
+						module.exports = Statement["extends"](KIND, function If(test, body, alternate, shortForm, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9831,7 +9844,7 @@
 							this.shortForm = shortForm;
 						});
 					},
-					8861(module$51, __unused_webpack_exports, __webpack_require__) {
+					8861(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9848,7 +9861,7 @@
 						* @property {boolean} once
 						* @property {boolean} require
 						*/
-						module$51.exports = Expression["extends"](KIND, function Include(once, require, target, docs, location) {
+						module.exports = Expression["extends"](KIND, function Include(once, require, target, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -9859,7 +9872,7 @@
 							this.target = target;
 						});
 					},
-					7860(module$52, __unused_webpack_exports, __webpack_require__) {
+					7860(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9874,7 +9887,7 @@
 						* @extends {Literal}
 						* @property {string} value
 						*/
-						module$52.exports = Literal["extends"](KIND, function Inline(value, raw, docs, location) {
+						module.exports = Literal["extends"](KIND, function Inline(value, raw, docs, location) {
 							Literal.apply(this, [
 								KIND,
 								value,
@@ -9884,7 +9897,7 @@
 							]);
 						});
 					},
-					9834(module$53, __unused_webpack_exports, __webpack_require__) {
+					9834(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9901,7 +9914,7 @@
 						* @property {Declaration[]} body
 						* @property {AttrGroup[]} attrGroups
 						*/
-						module$53.exports = Declaration["extends"](KIND, function Interface(name, ext, body, attrGroups, docs, location) {
+						module.exports = Declaration["extends"](KIND, function Interface(name, ext, body, attrGroups, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								name,
@@ -9913,7 +9926,7 @@
 							this.attrGroups = attrGroups;
 						});
 					},
-					2724(module$54, __unused_webpack_exports, __webpack_require__) {
+					2724(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9928,7 +9941,7 @@
 						* @extends {Declaration}
 						* @property {TypeReference[]} types
 						*/
-						module$54.exports = Declaration["extends"](KIND, function IntersectionType(types, docs, location) {
+						module.exports = Declaration["extends"](KIND, function IntersectionType(types, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								null,
@@ -9938,7 +9951,7 @@
 							this.types = types;
 						});
 					},
-					6025(module$55, __unused_webpack_exports, __webpack_require__) {
+					6025(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9953,7 +9966,7 @@
 						* @extends {Expression}
 						* @property {Expression[]} variables
 						*/
-						module$55.exports = Expression["extends"](KIND, function Isset(variables, docs, location) {
+						module.exports = Expression["extends"](KIND, function Isset(variables, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -9962,7 +9975,7 @@
 							this.variables = variables;
 						});
 					},
-					2687(module$56, __unused_webpack_exports, __webpack_require__) {
+					2687(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -9977,7 +9990,7 @@
 						* @extends {Statement}
 						* @property {String} name
 						*/
-						module$56.exports = Statement["extends"](KIND, function Label(name, docs, location) {
+						module.exports = Statement["extends"](KIND, function Label(name, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -9986,7 +9999,7 @@
 							this.name = name;
 						});
 					},
-					7633(module$57, __unused_webpack_exports, __webpack_require__) {
+					7633(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10002,7 +10015,7 @@
 						* @property {boolean} shortForm
 						* @property {Entry[]} items
 						*/
-						module$57.exports = Expression["extends"](KIND, function List(items, shortForm, docs, location) {
+						module.exports = Expression["extends"](KIND, function List(items, shortForm, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10012,7 +10025,7 @@
 							this.shortForm = shortForm;
 						});
 					},
-					5514(module$58, __unused_webpack_exports, __webpack_require__) {
+					5514(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10028,7 +10041,7 @@
 						* @property {string} raw
 						* @property {EncapsedPart[]|Node|string|number|boolean|null} value
 						*/
-						module$58.exports = Expression["extends"](KIND, function Literal(kind, value, raw, docs, location) {
+						module.exports = Expression["extends"](KIND, function Literal(kind, value, raw, docs, location) {
 							Expression.apply(this, [
 								kind || KIND,
 								docs,
@@ -10038,14 +10051,14 @@
 							if (raw) this.raw = raw;
 						});
 					},
-					4778(module$59) {
-						module$59.exports = function Location(source, start, end) {
+					4778(module) {
+						module.exports = function Location(source, start, end) {
 							this.source = source;
 							this.start = start;
 							this.end = end;
 						};
 					},
-					7427(module$60, __unused_webpack_exports, __webpack_require__) {
+					7427(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10061,7 +10074,7 @@
 						* @property {Expression} what
 						* @property {Expression} offset
 						*/
-						module$60.exports = Expr["extends"](KIND, function Lookup(kind, what, offset, docs, location) {
+						module.exports = Expr["extends"](KIND, function Lookup(kind, what, offset, docs, location) {
 							Expr.apply(this, [
 								kind || KIND,
 								docs,
@@ -10071,7 +10084,7 @@
 							this.offset = offset;
 						});
 					},
-					1122(module$61, __unused_webpack_exports, __webpack_require__) {
+					1122(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10085,7 +10098,7 @@
 						* @memberOf module:php-parser
 						* @extends {Literal}
 						*/
-						module$61.exports = Literal["extends"](KIND, function Magic(value, raw, docs, location) {
+						module.exports = Literal["extends"](KIND, function Magic(value, raw, docs, location) {
 							Literal.apply(this, [
 								KIND,
 								value,
@@ -10095,7 +10108,7 @@
 							]);
 						});
 					},
-					7256(module$62, __unused_webpack_exports, __webpack_require__) {
+					7256(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10111,7 +10124,7 @@
 						* @property {Expression} cond Condition expression to match against
 						* @property {MatchArm[]} arms Arms for comparison
 						*/
-						module$62.exports = Expression["extends"](KIND, function Match(cond, arms, docs, location) {
+						module.exports = Expression["extends"](KIND, function Match(cond, arms, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10121,7 +10134,7 @@
 							this.arms = arms;
 						});
 					},
-					7416(module$63, __unused_webpack_exports, __webpack_require__) {
+					7416(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10137,7 +10150,7 @@
 						* @property {Expression[]|null} conds The match condition expression list - null indicates default arm
 						* @property {Expression} body The return value expression
 						*/
-						module$63.exports = Expression["extends"](KIND, function MatchArm(conds, body, docs, location) {
+						module.exports = Expression["extends"](KIND, function MatchArm(conds, body, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10147,7 +10160,7 @@
 							this.body = body;
 						});
 					},
-					8140(module$64, __unused_webpack_exports, __webpack_require__) {
+					8140(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10165,12 +10178,12 @@
 						* @property {boolean} isStatic
 						* @property {string} visibility
 						*/
-						module$64.exports = Function_["extends"](KIND, function Method() {
+						module.exports = Function_["extends"](KIND, function Method() {
 							Function_.apply(this, arguments);
 							this.kind = KIND;
 						});
 					},
-					6258(module$65, __unused_webpack_exports, __webpack_require__) {
+					6258(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10221,9 +10234,9 @@
 						* @memberOf module:php-parser
 						*/
 						Name.RELATIVE_NAME = "rn";
-						module$65.exports = Name;
+						module.exports = Name;
 					},
-					6827(module$66, __unused_webpack_exports, __webpack_require__) {
+					6827(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10240,7 +10253,7 @@
 						* @property {Expression} value
 						* @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
 						*/
-						module$66.exports = Expression["extends"](KIND, function namedargument(name, value, docs, location) {
+						module.exports = Expression["extends"](KIND, function namedargument(name, value, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10250,7 +10263,7 @@
 							this.value = value;
 						});
 					},
-					9474(module$67, __unused_webpack_exports, __webpack_require__) {
+					9474(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10266,7 +10279,7 @@
 						* @property {string} name
 						* @property {boolean} withBrackets
 						*/
-						module$67.exports = Block["extends"](KIND, function Namespace(name, children, withBrackets, docs, location) {
+						module.exports = Block["extends"](KIND, function Namespace(name, children, withBrackets, docs, location) {
 							Block.apply(this, [
 								KIND,
 								children,
@@ -10277,7 +10290,7 @@
 							this.withBrackets = withBrackets || false;
 						});
 					},
-					4427(module$68, __unused_webpack_exports, __webpack_require__) {
+					4427(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10293,7 +10306,7 @@
 						* @property {Identifier|Variable|Class} what
 						* @property {Variable[]} arguments
 						*/
-						module$68.exports = Expression["extends"](KIND, function New(what, args, docs, location) {
+						module.exports = Expression["extends"](KIND, function New(what, args, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10303,7 +10316,7 @@
 							this.arguments = args;
 						});
 					},
-					4065(module$69) {
+					4065(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10341,10 +10354,14 @@
 							if (!node)
  /* istanbul ignore next */
 							throw new Error("Node already initialized, you must swap with another node");
-							if (this.leadingComments) if (node.leadingComments) node.leadingComments = Array.concat(this.leadingComments, node.leadingComments);
-							else node.leadingComments = this.leadingComments;
-							if (this.trailingComments) if (node.trailingComments) node.trailingComments = Array.concat(this.trailingComments, node.trailingComments);
-							else node.trailingComments = this.trailingComments;
+							if (this.leadingComments) {
+								if (node.leadingComments) node.leadingComments = Array.concat(this.leadingComments, node.leadingComments);
+								else node.leadingComments = this.leadingComments;
+							}
+							if (this.trailingComments) {
+								if (node.trailingComments) node.trailingComments = Array.concat(this.trailingComments, node.trailingComments);
+								else node.trailingComments = this.trailingComments;
+							}
 							return node;
 						};
 						/**
@@ -10379,9 +10396,9 @@
 							constructor.kind = type;
 							return constructor;
 						};
-						module$69.exports = Node;
+						module.exports = Node;
 					},
-					4297(module$70, __unused_webpack_exports, __webpack_require__) {
+					4297(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10396,7 +10413,7 @@
 						* @memberOf module:php-parser
 						* @extends {Node}
 						*/
-						module$70.exports = Node["extends"](KIND, function Noop(docs, location) {
+						module.exports = Node["extends"](KIND, function Noop(docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -10404,7 +10421,7 @@
 							]);
 						});
 					},
-					5859(module$71, __unused_webpack_exports, __webpack_require__) {
+					5859(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10421,7 +10438,7 @@
 						* @property {string} raw
 						* @property {string} value
 						*/
-						module$71.exports = Literal["extends"](KIND, function Nowdoc(value, raw, label, docs, location) {
+						module.exports = Literal["extends"](KIND, function Nowdoc(value, raw, label, docs, location) {
 							Literal.apply(this, [
 								KIND,
 								value,
@@ -10432,7 +10449,7 @@
 							this.label = label;
 						});
 					},
-					6985(module$72, __unused_webpack_exports, __webpack_require__) {
+					6985(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10446,7 +10463,7 @@
 						* @memberOf module:php-parser
 						* @extends {Node}
 						*/
-						module$72.exports = Node["extends"](KIND, function NullKeyword(raw, docs, location) {
+						module.exports = Node["extends"](KIND, function NullKeyword(raw, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -10455,7 +10472,7 @@
 							this.raw = raw;
 						});
 					},
-					9302(module$73, __unused_webpack_exports, __webpack_require__) {
+					9302(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10469,7 +10486,7 @@
 						* @constructor NullSafePropertyLookup
 						* @extends {Lookup}
 						*/
-						module$73.exports = Lookup["extends"](KIND, function NullSafePropertyLookup(what, offset, docs, location) {
+						module.exports = Lookup["extends"](KIND, function NullSafePropertyLookup(what, offset, docs, location) {
 							Lookup.apply(this, [
 								KIND,
 								what,
@@ -10479,7 +10496,7 @@
 							]);
 						});
 					},
-					8212(module$74, __unused_webpack_exports, __webpack_require__) {
+					8212(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10494,7 +10511,7 @@
 						* @extends {Literal}
 						* @property {number} value
 						*/
-						module$74.exports = Literal["extends"](KIND, function Number(value, raw, docs, location) {
+						module.exports = Literal["extends"](KIND, function Number(value, raw, docs, location) {
 							Literal.apply(this, [
 								KIND,
 								value,
@@ -10504,7 +10521,7 @@
 							]);
 						});
 					},
-					864(module$75, __unused_webpack_exports, __webpack_require__) {
+					864(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10518,7 +10535,7 @@
 						* @memberOf module:php-parser
 						* @extends {Lookup}
 						*/
-						module$75.exports = Lookup["extends"](KIND, function OffsetLookup(what, offset, docs, location) {
+						module.exports = Lookup["extends"](KIND, function OffsetLookup(what, offset, docs, location) {
 							Lookup.apply(this, [
 								KIND,
 								what,
@@ -10528,7 +10545,7 @@
 							]);
 						});
 					},
-					8268(module$76, __unused_webpack_exports, __webpack_require__) {
+					8268(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10542,7 +10559,7 @@
 						* @memberOf module:php-parser
 						* @extends {Expression}
 						*/
-						module$76.exports = Expr["extends"](KIND, function Operation(kind, docs, location) {
+						module.exports = Expr["extends"](KIND, function Operation(kind, docs, location) {
 							Expr.apply(this, [
 								kind || KIND,
 								docs,
@@ -10550,7 +10567,7 @@
 							]);
 						});
 					},
-					7190(module$77, __unused_webpack_exports, __webpack_require__) {
+					7190(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10586,7 +10603,7 @@
 						* @property {PropertyHook[]} hooks
 						* @property {MODIFIER_PUBLIC|MODIFIER_PROTECTED|MODIFIER_PRIVATE} flagsSet
 						*/
-						module$77.exports = Declaration["extends"](KIND, function Parameter(name, type, value, isRef, isVariadic, readonly, nullable, flags, hooks, flagsSet, docs, location) {
+						module.exports = Declaration["extends"](KIND, function Parameter(name, type, value, isRef, isVariadic, readonly, nullable, flags, hooks, flagsSet, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								name,
@@ -10605,7 +10622,7 @@
 							this.attrGroups = [];
 						});
 					},
-					8519(module$78, __unused_webpack_exports, __webpack_require__) {
+					8519(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10613,7 +10630,7 @@
 						*/
 						var Reference = __webpack_require__(8276);
 						var KIND = "parentreference";
-						module$78.exports = Reference["extends"](KIND, function ParentReference(raw, docs, location) {
+						module.exports = Reference["extends"](KIND, function ParentReference(raw, docs, location) {
 							Reference.apply(this, [
 								KIND,
 								docs,
@@ -10622,14 +10639,14 @@
 							this.raw = raw;
 						});
 					},
-					8822(module$79) {
-						module$79.exports = function Position(line, column, offset) {
+					8822(module) {
+						module.exports = function Position(line, column, offset) {
 							this.line = line;
 							this.column = column;
 							this.offset = offset;
 						};
 					},
-					4835(module$80, __unused_webpack_exports, __webpack_require__) {
+					4835(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10645,7 +10662,7 @@
 						* @property {String} type
 						* @property {Variable} what
 						*/
-						module$80.exports = Operation["extends"](KIND, function Post(type, what, docs, location) {
+						module.exports = Operation["extends"](KIND, function Post(type, what, docs, location) {
 							Operation.apply(this, [
 								KIND,
 								docs,
@@ -10655,7 +10672,7 @@
 							this.what = what;
 						});
 					},
-					2056(module$81, __unused_webpack_exports, __webpack_require__) {
+					2056(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10671,7 +10688,7 @@
 						* @property {String} type
 						* @property {Variable} what
 						*/
-						module$81.exports = Operation["extends"](KIND, function Pre(type, what, docs, location) {
+						module.exports = Operation["extends"](KIND, function Pre(type, what, docs, location) {
 							Operation.apply(this, [
 								KIND,
 								docs,
@@ -10681,7 +10698,7 @@
 							this.what = what;
 						});
 					},
-					4838(module$82, __unused_webpack_exports, __webpack_require__) {
+					4838(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10696,7 +10713,7 @@
 						* @extends {Expression}
 						* @property {Expression} expression
 						*/
-						module$82.exports = Expression["extends"](KIND, function Print(expression, docs, location) {
+						module.exports = Expression["extends"](KIND, function Print(expression, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10705,7 +10722,7 @@
 							this.expression = expression;
 						});
 					},
-					7869(module$83, __unused_webpack_exports, __webpack_require__) {
+					7869(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10722,7 +10739,7 @@
 						* @property {Comment[]|null} comments
 						* @property {String[]|null} tokens
 						*/
-						module$83.exports = Block["extends"](KIND, function Program(children, errors, comments, tokens, docs, location) {
+						module.exports = Block["extends"](KIND, function Program(children, errors, comments, tokens, docs, location) {
 							Block.apply(this, [
 								KIND,
 								children,
@@ -10734,7 +10751,7 @@
 							if (tokens) this.tokens = tokens;
 						});
 					},
-					1908(module$84, __unused_webpack_exports, __webpack_require__) {
+					1908(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10755,7 +10772,7 @@
 						* @property {AttrGroup[]} attrGroups
 						* @property {PropertyHook[]} hooks
 						*/
-						module$84.exports = Statement["extends"](KIND, function Property(name, value, readonly, nullable, type, attrGroups, hooks, docs, location) {
+						module.exports = Statement["extends"](KIND, function Property(name, value, readonly, nullable, type, attrGroups, hooks, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -10770,7 +10787,7 @@
 							this.hooks = hooks || [];
 						});
 					},
-					4863(module$85, __unused_webpack_exports, __webpack_require__) {
+					4863(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2024 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10791,7 +10808,7 @@
 						* @property {Block|Expression|null} body
 						* @property {AttrGroup[]} attrGroups
 						*/
-						module$85.exports = Node["extends"](KIND, function PropertyHook(name, isFinal, byref, parameter, body, attrGroups, docs, location) {
+						module.exports = Node["extends"](KIND, function PropertyHook(name, isFinal, byref, parameter, body, attrGroups, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -10805,7 +10822,7 @@
 							this.attrGroups = attrGroups || [];
 						});
 					},
-					170(module$86, __unused_webpack_exports, __webpack_require__) {
+					170(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10819,7 +10836,7 @@
 						* @constructor PropertyLookup
 						* @extends {Lookup}
 						*/
-						module$86.exports = Lookup["extends"](KIND, function PropertyLookup(what, offset, docs, location) {
+						module.exports = Lookup["extends"](KIND, function PropertyLookup(what, offset, docs, location) {
 							Lookup.apply(this, [
 								KIND,
 								what,
@@ -10829,7 +10846,7 @@
 							]);
 						});
 					},
-					1091(module$87, __unused_webpack_exports, __webpack_require__) {
+					1091(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10923,9 +10940,9 @@
 							this.isFinal = flags[2] === 2;
 							this.visibilitySet = setVis !== -1 ? VISIBILITY_MAP[setVis] : null;
 						};
-						module$87.exports = PropertyStatement;
+						module.exports = PropertyStatement;
 					},
-					8276(module$88, __unused_webpack_exports, __webpack_require__) {
+					8276(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10933,7 +10950,7 @@
 						*/
 						var Node = __webpack_require__(4065);
 						var KIND = "reference";
-						module$88.exports = Node["extends"](KIND, function Reference(kind, docs, location) {
+						module.exports = Node["extends"](KIND, function Reference(kind, docs, location) {
 							Node.apply(this, [
 								kind || KIND,
 								docs,
@@ -10941,7 +10958,7 @@
 							]);
 						});
 					},
-					1842(module$89, __unused_webpack_exports, __webpack_require__) {
+					1842(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10958,7 +10975,7 @@
 						* @property {Expression} trueExpr
 						* @property {Expression} falseExpr
 						*/
-						module$89.exports = Expression["extends"](KIND, function RetIf(test, trueExpr, falseExpr, docs, location) {
+						module.exports = Expression["extends"](KIND, function RetIf(test, trueExpr, falseExpr, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10969,7 +10986,7 @@
 							this.falseExpr = falseExpr;
 						});
 					},
-					5739(module$90, __unused_webpack_exports, __webpack_require__) {
+					5739(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10984,7 +11001,7 @@
 						* @extends {Statement}
 						* @property {Expression|null} expr
 						*/
-						module$90.exports = Statement["extends"](KIND, function Return(expr, docs, location) {
+						module.exports = Statement["extends"](KIND, function Return(expr, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -10993,7 +11010,7 @@
 							this.expr = expr;
 						});
 					},
-					1274(module$91, __unused_webpack_exports, __webpack_require__) {
+					1274(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11001,7 +11018,7 @@
 						*/
 						var Reference = __webpack_require__(8276);
 						var KIND = "selfreference";
-						module$91.exports = Reference["extends"](KIND, function SelfReference(raw, docs, location) {
+						module.exports = Reference["extends"](KIND, function SelfReference(raw, docs, location) {
 							Reference.apply(this, [
 								KIND,
 								docs,
@@ -11010,7 +11027,7 @@
 							this.raw = raw;
 						});
 					},
-					4352(module$92, __unused_webpack_exports, __webpack_require__) {
+					4352(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11025,7 +11042,7 @@
 						* @extends {Expression}
 						* @property {Expression} expr
 						*/
-						module$92.exports = Expression["extends"](KIND, function Silent(expr, docs, location) {
+						module.exports = Expression["extends"](KIND, function Silent(expr, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11034,7 +11051,7 @@
 							this.expr = expr;
 						});
 					},
-					9672(module$93, __unused_webpack_exports, __webpack_require__) {
+					9672(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11048,7 +11065,7 @@
 						* @memberOf module:php-parser
 						* @extends {Node}
 						*/
-						module$93.exports = Node["extends"](KIND, function Statement(kind, docs, location) {
+						module.exports = Node["extends"](KIND, function Statement(kind, docs, location) {
 							Node.apply(this, [
 								kind || KIND,
 								docs,
@@ -11056,7 +11073,7 @@
 							]);
 						});
 					},
-					711(module$94, __unused_webpack_exports, __webpack_require__) {
+					711(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11071,7 +11088,7 @@
 						* @extends {Statement}
 						* @property {StaticVariable[]} variables
 						*/
-						module$94.exports = Statement["extends"](KIND, function Static(variables, docs, location) {
+						module.exports = Statement["extends"](KIND, function Static(variables, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11080,7 +11097,7 @@
 							this.variables = variables;
 						});
 					},
-					1865(module$95, __unused_webpack_exports, __webpack_require__) {
+					1865(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11094,7 +11111,7 @@
 						* @memberOf module:php-parser
 						* @extends {Lookup}
 						*/
-						module$95.exports = Lookup["extends"](KIND, function StaticLookup(what, offset, docs, location) {
+						module.exports = Lookup["extends"](KIND, function StaticLookup(what, offset, docs, location) {
 							Lookup.apply(this, [
 								KIND,
 								what,
@@ -11104,7 +11121,7 @@
 							]);
 						});
 					},
-					1102(module$96, __unused_webpack_exports, __webpack_require__) {
+					1102(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11112,7 +11129,7 @@
 						*/
 						var Reference = __webpack_require__(8276);
 						var KIND = "staticreference";
-						module$96.exports = Reference["extends"](KIND, function StaticReference(raw, docs, location) {
+						module.exports = Reference["extends"](KIND, function StaticReference(raw, docs, location) {
 							Reference.apply(this, [
 								KIND,
 								docs,
@@ -11121,7 +11138,7 @@
 							this.raw = raw;
 						});
 					},
-					1231(module$97, __unused_webpack_exports, __webpack_require__) {
+					1231(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11137,7 +11154,7 @@
 						* @property {Variable} variable
 						* @property {Node|string|number|boolean|null} defaultValue
 						*/
-						module$97.exports = Node["extends"](KIND, function StaticVariable(variable, defaultValue, docs, location) {
+						module.exports = Node["extends"](KIND, function StaticVariable(variable, defaultValue, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11147,7 +11164,7 @@
 							this.defaultValue = defaultValue;
 						});
 					},
-					7472(module$98, __unused_webpack_exports, __webpack_require__) {
+					7472(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11165,7 +11182,7 @@
 						* @see {Encapsed}
 						* @property {string} value
 						*/
-						module$98.exports = Literal["extends"](KIND, function String(isDoubleQuote, value, unicode, raw, docs, location) {
+						module.exports = Literal["extends"](KIND, function String(isDoubleQuote, value, unicode, raw, docs, location) {
 							Literal.apply(this, [
 								KIND,
 								value,
@@ -11177,7 +11194,7 @@
 							this.isDoubleQuote = isDoubleQuote;
 						});
 					},
-					6133(module$99, __unused_webpack_exports, __webpack_require__) {
+					6133(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11194,7 +11211,7 @@
 						* @property {Block} body
 						* @property {boolean} shortForm
 						*/
-						module$99.exports = Statement["extends"](KIND, function Switch(test, body, shortForm, docs, location) {
+						module.exports = Statement["extends"](KIND, function Switch(test, body, shortForm, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11205,7 +11222,7 @@
 							this.shortForm = shortForm;
 						});
 					},
-					1197(module$100, __unused_webpack_exports, __webpack_require__) {
+					1197(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11220,7 +11237,7 @@
 						* @extends {Statement}
 						* @property {Expression} what
 						*/
-						module$100.exports = Statement["extends"](KIND, function Throw(what, docs, location) {
+						module.exports = Statement["extends"](KIND, function Throw(what, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11229,7 +11246,7 @@
 							this.what = what;
 						});
 					},
-					6649(module$101, __unused_webpack_exports, __webpack_require__) {
+					6649(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11244,7 +11261,7 @@
 						* @extends {Declaration}
 						* @property {Declaration[]} body
 						*/
-						module$101.exports = Declaration["extends"](KIND, function Trait(name, body, docs, location) {
+						module.exports = Declaration["extends"](KIND, function Trait(name, body, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								name,
@@ -11254,7 +11271,7 @@
 							this.body = body;
 						});
 					},
-					1837(module$102, __unused_webpack_exports, __webpack_require__) {
+					1837(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11276,7 +11293,7 @@
 						* @property {Identifier|null} as
 						* @property {string|null} visibility
 						*/
-						module$102.exports = Node["extends"](KIND, function TraitAlias(trait, method, as, flags, docs, location) {
+						module.exports = Node["extends"](KIND, function TraitAlias(trait, method, as, flags, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11294,7 +11311,7 @@
 							}
 						});
 					},
-					2277(module$103, __unused_webpack_exports, __webpack_require__) {
+					2277(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11311,7 +11328,7 @@
 						* @property {Identifier} method
 						* @property {Identifier[]} instead
 						*/
-						module$103.exports = Node["extends"](KIND, function TraitPrecedence(trait, method, instead, docs, location) {
+						module.exports = Node["extends"](KIND, function TraitPrecedence(trait, method, instead, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11322,7 +11339,7 @@
 							this.instead = instead;
 						});
 					},
-					8010(module$104, __unused_webpack_exports, __webpack_require__) {
+					8010(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11338,7 +11355,7 @@
 						* @property {Identifier[]} traits
 						* @property {Node[]|null} adaptations
 						*/
-						module$104.exports = Node["extends"](KIND, function TraitUse(traits, adaptations, docs, location) {
+						module.exports = Node["extends"](KIND, function TraitUse(traits, adaptations, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11348,7 +11365,7 @@
 							this.adaptations = adaptations;
 						});
 					},
-					7579(module$105, __unused_webpack_exports, __webpack_require__) {
+					7579(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11365,7 +11382,7 @@
 						* @property {Catch[]} catches
 						* @property {Block} always
 						*/
-						module$105.exports = Statement["extends"](KIND, function Try(body, catches, always, docs, location) {
+						module.exports = Statement["extends"](KIND, function Try(body, catches, always, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11376,7 +11393,7 @@
 							this.always = always;
 						});
 					},
-					3460(module$106, __unused_webpack_exports, __webpack_require__) {
+					3460(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11417,9 +11434,9 @@
 							"true",
 							"false"
 						];
-						module$106.exports = TypeReference;
+						module.exports = TypeReference;
 					},
-					2702(module$107, __unused_webpack_exports, __webpack_require__) {
+					2702(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11435,7 +11452,7 @@
 						* @property {string} type
 						* @property {Expression} what
 						*/
-						module$107.exports = Operation["extends"](KIND, function Unary(type, what, docs, location) {
+						module.exports = Operation["extends"](KIND, function Unary(type, what, docs, location) {
 							Operation.apply(this, [
 								KIND,
 								docs,
@@ -11445,7 +11462,7 @@
 							this.what = what;
 						});
 					},
-					514(module$108, __unused_webpack_exports, __webpack_require__) {
+					514(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11460,7 +11477,7 @@
 						* @extends {Declaration}
 						* @property {TypeReference[]} types
 						*/
-						module$108.exports = Declaration["extends"](KIND, function UnionType(types, docs, location) {
+						module.exports = Declaration["extends"](KIND, function UnionType(types, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								null,
@@ -11470,7 +11487,7 @@
 							this.types = types;
 						});
 					},
-					5684(module$109, __unused_webpack_exports, __webpack_require__) {
+					5684(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11484,7 +11501,7 @@
 						* @memberOf module:php-parser
 						* @extends {Statement}
 						*/
-						module$109.exports = Statement["extends"](KIND, function Unset(variables, docs, location) {
+						module.exports = Statement["extends"](KIND, function Unset(variables, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11493,7 +11510,7 @@
 							this.variables = variables;
 						});
 					},
-					8019(module$110, __unused_webpack_exports, __webpack_require__) {
+					8019(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11512,7 +11529,7 @@
 						* @see {Namespace}
 						* @see http://php.net/manual/en/language.namespaces.importing.php
 						*/
-						module$110.exports = Statement["extends"](KIND, function UseGroup(name, type, items, docs, location) {
+						module.exports = Statement["extends"](KIND, function UseGroup(name, type, items, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11523,7 +11540,7 @@
 							this.items = items;
 						});
 					},
-					7721(module$111, __unused_webpack_exports, __webpack_require__) {
+					7721(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11564,9 +11581,9 @@
 						* @memberOf module:php-parser
 						*/
 						UseItem.TYPE_FUNCTION = "function";
-						module$111.exports = UseItem;
+						module.exports = UseItem;
 					},
-					4369(module$112, __unused_webpack_exports, __webpack_require__) {
+					4369(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11592,7 +11609,7 @@
 						* @property {string|Node} name The variable name (can be a complex expression when the name is resolved dynamically)
 						* @property {boolean} curly Indicate if the name is defined between curlies, ex `${foo}`
 						*/
-						module$112.exports = Expression["extends"](KIND, function Variable(name, curly, docs, location) {
+						module.exports = Expression["extends"](KIND, function Variable(name, curly, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11602,7 +11619,7 @@
 							this.curly = curly || false;
 						});
 					},
-					40(module$113, __unused_webpack_exports, __webpack_require__) {
+					40(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11618,7 +11635,7 @@
 						* @property {Array|Expression} what
 						* @see https://wiki.php.net/rfc/argument_unpacking
 						*/
-						module$113.exports = Expression["extends"](KIND, function variadic(what, docs, location) {
+						module.exports = Expression["extends"](KIND, function variadic(what, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11627,7 +11644,7 @@
 							this.what = what;
 						});
 					},
-					4919(module$114, __unused_webpack_exports, __webpack_require__) {
+					4919(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11643,7 +11660,7 @@
 						* @see {Namespace}
 						* @see http://php.net/manual/en/language.namespaces.importing.php
 						*/
-						module$114.exports = Node["extends"](KIND, function VariadicPlaceholder(docs, location) {
+						module.exports = Node["extends"](KIND, function VariadicPlaceholder(docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11651,7 +11668,7 @@
 							]);
 						});
 					},
-					7676(module$115, __unused_webpack_exports, __webpack_require__) {
+					7676(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11668,7 +11685,7 @@
 						* @property {Block | null} body
 						* @property {boolean} shortForm
 						*/
-						module$115.exports = Statement["extends"](KIND, function While(test, body, shortForm, docs, location) {
+						module.exports = Statement["extends"](KIND, function While(test, body, shortForm, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11679,7 +11696,7 @@
 							this.shortForm = shortForm;
 						});
 					},
-					2596(module$116, __unused_webpack_exports, __webpack_require__) {
+					2596(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11696,7 +11713,7 @@
 						* @property {Expression|null} key
 						* @see http://php.net/manual/en/language.generators.syntax.php
 						*/
-						module$116.exports = Expression["extends"](KIND, function Yield(value, key, docs, location) {
+						module.exports = Expression["extends"](KIND, function Yield(value, key, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11706,7 +11723,7 @@
 							this.key = key;
 						});
 					},
-					6744(module$117, __unused_webpack_exports, __webpack_require__) {
+					6744(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11722,7 +11739,7 @@
 						* @property {Expression} value
 						* @see http://php.net/manual/en/language.generators.syntax.php
 						*/
-						module$117.exports = Expression["extends"](KIND, function YieldFrom(value, docs, location) {
+						module.exports = Expression["extends"](KIND, function YieldFrom(value, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11731,7 +11748,7 @@
 							this.value = value;
 						});
 					},
-					5362(module$118, __unused_webpack_exports, __webpack_require__) {
+					5362(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2020 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11931,16 +11948,16 @@
 							return result;
 						};
 						/** @module php-parser */
-						module$118.exports = Engine;
-						module$118.exports.tokens = tokens;
-						module$118.exports.lexer = lexer;
-						module$118.exports.AST = AST;
-						module$118.exports.parser = parser;
-						module$118.exports.combine = combine;
-						module$118.exports.Engine = Engine;
-						module$118.exports["default"] = Engine;
+						module.exports = Engine;
+						module.exports.tokens = tokens;
+						module.exports.lexer = lexer;
+						module.exports.AST = AST;
+						module.exports.parser = parser;
+						module.exports.combine = combine;
+						module.exports.Engine = Engine;
+						module.exports["default"] = Engine;
 					},
-					9108(module$119, __unused_webpack_exports, __webpack_require__) {
+					9108(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -12174,8 +12191,10 @@
 											this.yyprevcol = this.yylloc.last_column;
 											this.yylloc.last_line++;
 											this.yylloc.last_column = 0;
-											if (c !== "\n") if (c === "\r") this.yylloc.last_line++;
-											else this.yylloc.last_column++;
+											if (c !== "\n") {
+												if (c === "\r") this.yylloc.last_line++;
+												else this.yylloc.last_column++;
+											}
 										} else if (c === "\n") {
 											this.yyprevcol = this.yylloc.last_column;
 											this.yylloc.last_line++;
@@ -12397,15 +12416,15 @@
 						].forEach(function(ext) {
 							for (var k in ext) Lexer.prototype[k] = ext[k];
 						});
-						module$119.exports = Lexer;
+						module.exports = Lexer;
 					},
-					9671(module$120) {
+					9671(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$120.exports = {
+						module.exports = {
 							attributeIndex: 0,
 							attributeListDepth: {},
 							matchST_ATTRIBUTE: function matchST_ATTRIBUTE() {
@@ -12474,13 +12493,13 @@
 							}
 						};
 					},
-					2429(module$121) {
+					2429(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$121.exports = {
+						module.exports = {
 							T_COMMENT: function T_COMMENT() {
 								while (this.offset < this.size) {
 									var ch = this.input();
@@ -12515,13 +12534,13 @@
 							}
 						};
 					},
-					3683(module$122) {
+					3683(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$122.exports = {
+						module.exports = {
 							nextINITIAL: function nextINITIAL() {
 								if (this.conditionStack.length > 1 && this.conditionStack[this.conditionStack.length - 1] === "INITIAL") this.popState();
 								else this.begin("ST_IN_SCRIPTING");
@@ -12547,14 +12566,16 @@
 												this.unput(1).appendToken(this.tok.T_OPEN_TAG, 2).nextINITIAL();
 												break;
 											}
-										} else if (this.asp_tags && ch == "%") if (this.tryMatch("%=")) {
-											this.aspTagMode = true;
-											this.unput(1).appendToken(this.tok.T_OPEN_TAG_WITH_ECHO, 3).nextINITIAL();
-											break;
-										} else {
-											this.aspTagMode = true;
-											this.unput(1).appendToken(this.tok.T_OPEN_TAG, 2).nextINITIAL();
-											break;
+										} else if (this.asp_tags && ch == "%") {
+											if (this.tryMatch("%=")) {
+												this.aspTagMode = true;
+												this.unput(1).appendToken(this.tok.T_OPEN_TAG_WITH_ECHO, 3).nextINITIAL();
+												break;
+											} else {
+												this.aspTagMode = true;
+												this.unput(1).appendToken(this.tok.T_OPEN_TAG, 2).nextINITIAL();
+												break;
+											}
 										}
 									}
 								}
@@ -12563,7 +12584,7 @@
 							}
 						};
 					},
-					6545(module$123) {
+					6545(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -12576,7 +12597,7 @@
 							MAX_LENGTH_OF_LONG = 19;
 							long_min_digits = "9223372036854775808";
 						}
-						module$123.exports = {
+						module.exports = {
 							consume_NUM: function consume_NUM() {
 								var ch = this.yytext[0];
 								var hasPoint = ch === ".";
@@ -12698,13 +12719,13 @@
 							}
 						};
 					},
-					3810(module$124) {
+					3810(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$124.exports = {
+						module.exports = {
 							matchST_LOOKING_FOR_PROPERTY: function matchST_LOOKING_FOR_PROPERTY() {
 								var ch = this.input();
 								if (ch === "-") {
@@ -12762,13 +12783,13 @@
 							}
 						};
 					},
-					8510(module$125) {
+					8510(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$125.exports = {
+						module.exports = {
 							matchST_IN_SCRIPTING: function matchST_IN_SCRIPTING() {
 								var ch = this.input();
 								switch (ch) {
@@ -12845,7 +12866,7 @@
 							}
 						};
 					},
-					4401(module$126) {
+					4401(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -12868,7 +12889,7 @@
 							"!",
 							"."
 						]);
-						module$126.exports = {
+						module.exports = {
 							T_CONSTANT_ENCAPSED_STRING: function T_CONSTANT_ENCAPSED_STRING() {
 								var ch;
 								while (this.offset < this.size) {
@@ -13070,13 +13091,14 @@
 									this.unput(1);
 									this.begin("ST_VAR_OFFSET");
 									return this.tok.T_VARIABLE;
-								} else if (ch === "-") if (this.input() === ">") {
-									this.input();
-									if (this.is_LABEL_START()) this.begin("ST_LOOKING_FOR_PROPERTY");
-									this.unput(3);
-									return this.tok.T_VARIABLE;
-								} else this.unput(2);
-								else if (ch) this.unput(1);
+								} else if (ch === "-") {
+									if (this.input() === ">") {
+										this.input();
+										if (this.is_LABEL_START()) this.begin("ST_LOOKING_FOR_PROPERTY");
+										this.unput(3);
+										return this.tok.T_VARIABLE;
+									} else this.unput(2);
+								} else if (ch) this.unput(1);
 								return this.tok.T_VARIABLE;
 							},
 							matchST_BACKQUOTE: function matchST_BACKQUOTE() {
@@ -13205,27 +13227,30 @@
 							}
 						};
 					},
-					4349(module$127) {
+					4349(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$127.exports = {
+						module.exports = {
 							T_STRING: function T_STRING() {
 								var token = this.yytext.toLowerCase();
 								var id = this.keywords[token];
-								if (typeof id !== "number") if (token === "yield") if (this.version >= 700 && this.tryMatch(" from")) {
-									this.consume(5);
-									id = this.tok.T_YIELD_FROM;
-								} else id = this.tok.T_YIELD;
-								else {
-									id = this.tok.T_STRING;
-									if (token === "b" || token === "B") {
-										var ch = this.input();
-										if (ch === "\"") return this.ST_DOUBLE_QUOTES();
-										else if (ch === "'") return this.T_CONSTANT_ENCAPSED_STRING();
-										else if (ch) this.unput(1);
+								if (typeof id !== "number") {
+									if (token === "yield") {
+										if (this.version >= 700 && this.tryMatch(" from")) {
+											this.consume(5);
+											id = this.tok.T_YIELD_FROM;
+										} else id = this.tok.T_YIELD;
+									} else {
+										id = this.tok.T_STRING;
+										if (token === "b" || token === "B") {
+											var ch = this.input();
+											if (ch === "\"") return this.ST_DOUBLE_QUOTES();
+											else if (ch === "'") return this.T_CONSTANT_ENCAPSED_STRING();
+											else if (ch) this.unput(1);
+										}
 									}
 								}
 								if (id === this.tok.T_ENUM) {
@@ -13346,12 +13371,14 @@
 									if (nchar === ">") {
 										this.input();
 										return this.tok.T_DOUBLE_ARROW;
-									} else if (nchar === "=") if (this._input[this.offset + 1] === "=") {
-										this.consume(2);
-										return this.tok.T_IS_IDENTICAL;
-									} else {
-										this.input();
-										return this.tok.T_IS_EQUAL;
+									} else if (nchar === "=") {
+										if (this._input[this.offset + 1] === "=") {
+											this.consume(2);
+											return this.tok.T_IS_IDENTICAL;
+										} else {
+											this.input();
+											return this.tok.T_IS_EQUAL;
+										}
 									}
 									return "=";
 								},
@@ -13367,22 +13394,26 @@
 									return "+";
 								},
 								"!": function _() {
-									if (this._input[this.offset] === "=") if (this._input[this.offset + 1] === "=") {
-										this.consume(2);
-										return this.tok.T_IS_NOT_IDENTICAL;
-									} else {
-										this.input();
-										return this.tok.T_IS_NOT_EQUAL;
+									if (this._input[this.offset] === "=") {
+										if (this._input[this.offset + 1] === "=") {
+											this.consume(2);
+											return this.tok.T_IS_NOT_IDENTICAL;
+										} else {
+											this.input();
+											return this.tok.T_IS_NOT_EQUAL;
+										}
 									}
 									return "!";
 								},
 								"?": function _() {
-									if (this.version >= 700 && this._input[this.offset] === "?") if (this.version >= 704 && this._input[this.offset + 1] === "=") {
-										this.consume(2);
-										return this.tok.T_COALESCE_EQUAL;
-									} else {
-										this.input();
-										return this.tok.T_COALESCE;
+									if (this.version >= 700 && this._input[this.offset] === "?") {
+										if (this.version >= 704 && this._input[this.offset + 1] === "=") {
+											this.consume(2);
+											return this.tok.T_COALESCE_EQUAL;
+										} else {
+											this.input();
+											return this.tok.T_COALESCE;
+										}
 									}
 									if (this.version >= 800 && this._input[this.offset] === "-" && this._input[this.offset + 1] === ">") {
 										this.consume(1);
@@ -13499,14 +13530,14 @@
 							}
 						};
 					},
-					8582(module$128) {
+					8582(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
 						var tokens = ";:,.\\[]()|^&+-/*=%!~$<>?@";
-						module$128.exports = {
+						module.exports = {
 							is_NUM: function is_NUM() {
 								var ch = this._input.charCodeAt(this.offset - 1);
 								return ch > 47 && ch < 58 || ch === 95;
@@ -13575,7 +13606,7 @@
 							}
 						};
 					},
-					7259(module$129, __unused_webpack_exports, __webpack_require__) {
+					7259(module, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -14088,7 +14119,7 @@
 						*/
 						Parser.prototype.lex = function() {
 							if (this.extractTokens) do {
-								this.token = this.lexer.lex() || this.EOF;
+								this.token = this.lexer.lex() || /* istanbul ignore next */ this.EOF;
 								if (this.token === this.EOF) return this;
 								var entry = this.lexer.yytext;
 								if (Object.prototype.hasOwnProperty.call(this.lexer.engine.tokens.values, this.token)) entry = [
@@ -14114,7 +14145,7 @@
 									return this;
 								}
 							} while (this.token === this.tok.T_WHITESPACE || !this.extractDoc && (this.token === this.tok.T_COMMENT || this.token === this.tok.T_DOC_COMMENT) || this.token === this.tok.T_OPEN_TAG);
-							else this.token = this.lexer.lex() || this.EOF;
+							else this.token = this.lexer.lex() || /* istanbul ignore next */ this.EOF;
 							return this;
 						};
 						/**
@@ -14150,15 +14181,15 @@
 								Parser.prototype[k] = ext[k];
 							}
 						});
-						module$129.exports = Parser;
+						module.exports = Parser;
 					},
-					5525(module$130) {
+					5525(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$130.exports = {
+						module.exports = {
 							read_array: function read_array() {
 								var expect;
 								var shortForm = false;
@@ -14215,7 +14246,7 @@
 							}
 						};
 					},
-					7072(module$131) {
+					7072(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -14275,7 +14306,7 @@
 							for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
 							return n;
 						}
-						module$131.exports = {
+						module.exports = {
 							read_class_declaration_statement: function read_class_declaration_statement(attrs) {
 								var result = this.node("class");
 								var flag = this.read_class_modifiers();
@@ -14541,7 +14572,6 @@
 										case this.tok.T_READ_ONLY:
 											idx = 3;
 											val = 1;
-											break;
 									}
 									if (asInterface && idx === 2 && val === 1) {
 										this.error();
@@ -14717,13 +14747,13 @@
 							}
 						};
 					},
-					3997(module$132) {
+					3997(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$132.exports = {
+						module.exports = {
 							read_comment: function read_comment() {
 								var text = this.text();
 								var result = this.ast.prepare(text.substring(0, 2) === "/*" ? "commentblock" : "commentline", null, this);
@@ -14758,13 +14788,13 @@
 							}
 						};
 					},
-					979(module$133) {
+					979(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$133.exports = {
+						module.exports = {
 							read_enum_declaration_statement: function read_enum_declaration_statement(attrs) {
 								var result = this.node("enum");
 								if (!this.expect(this.tok.T_ENUM)) return null;
@@ -14800,13 +14830,13 @@
 							}
 						};
 					},
-					6477(module$134) {
+					6477(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$134.exports = {
+						module.exports = {
 							read_expr: function read_expr(expr) {
 								var result = this.node();
 								if (this.token === "@") {
@@ -14905,9 +14935,7 @@
 									case this.tok.T_REQUIRE:
 										result = this.node("include")(false, true, this.next().read_expr());
 										break;
-									case this.tok.T_REQUIRE_ONCE:
-										result = this.node("include")(true, true, this.next().read_expr());
-										break;
+									case this.tok.T_REQUIRE_ONCE: result = this.node("include")(true, true, this.next().read_expr());
 								}
 								return result;
 							},
@@ -15297,7 +15325,7 @@
 							}
 						};
 					},
-					8214(module$135) {
+					8214(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -15345,7 +15373,7 @@
 						function _arrayWithHoles(r) {
 							if (Array.isArray(r)) return r;
 						}
-						module$135.exports = {
+						module.exports = {
 							is_reference: function is_reference() {
 								if (this.token === "&") {
 									this.next();
@@ -15385,25 +15413,27 @@
 								var name = false, use = [], returnType = null, nullable = false;
 								if (type !== 1) {
 									var nameNode = this.node("identifier");
-									if (type === 2) if (this.version >= 700) {
-										if (this.token === this.tok.T_STRING || this.is("IDENTIFIER")) {
+									if (type === 2) {
+										if (this.version >= 700) {
+											if (this.token === this.tok.T_STRING || this.is("IDENTIFIER")) {
+												name = this.text();
+												this.next();
+											} else if (this.version < 704) this.error("IDENTIFIER");
+										} else if (this.token === this.tok.T_STRING) {
 											name = this.text();
 											this.next();
-										} else if (this.version < 704) this.error("IDENTIFIER");
-									} else if (this.token === this.tok.T_STRING) {
-										name = this.text();
-										this.next();
-									} else this.error("IDENTIFIER");
-									else if (this.version >= 700) if (this.token === this.tok.T_STRING) {
-										name = this.text();
-										this.next();
-									} else if (this.version >= 704) {
-										if (!this.expect("(")) this.next();
+										} else this.error("IDENTIFIER");
+									} else if (this.version >= 700) {
+										if (this.token === this.tok.T_STRING) {
+											name = this.text();
+											this.next();
+										} else if (this.version >= 704) {
+											if (!this.expect("(")) this.next();
+										} else {
+											this.error(this.tok.T_STRING);
+											this.next();
+										}
 									} else {
-										this.error(this.tok.T_STRING);
-										this.next();
-									}
-									else {
 										if (this.expect(this.tok.T_STRING)) name = this.text();
 										this.next();
 									}
@@ -15489,15 +15519,19 @@
 								var readonly = false;
 								var attrs = [];
 								if (this.token === this.tok.T_ATTRIBUTE) attrs = this.read_attr_list();
-								if (this.version >= 801 && this.token === this.tok.T_READ_ONLY) if (is_class_constructor) {
-									this.next();
-									readonly = true;
-								} else this.raiseError("readonly properties can be used only on class constructor");
+								if (this.version >= 801 && this.token === this.tok.T_READ_ONLY) {
+									if (is_class_constructor) {
+										this.next();
+										readonly = true;
+									} else this.raiseError("readonly properties can be used only on class constructor");
+								}
 								var _this$read_promoted2 = _slicedToArray(this.read_promoted(), 2), flags = _this$read_promoted2[0], flagsSet = _this$read_promoted2[1];
-								if (!readonly && this.version >= 801 && this.token === this.tok.T_READ_ONLY) if (is_class_constructor) {
-									this.next();
-									readonly = true;
-								} else this.raiseError("readonly properties can be used only on class constructor");
+								if (!readonly && this.version >= 801 && this.token === this.tok.T_READ_ONLY) {
+									if (is_class_constructor) {
+										this.next();
+										readonly = true;
+									} else this.raiseError("readonly properties can be used only on class constructor");
+								}
 								if (this.token === "?") {
 									this.next();
 									nullable = true;
@@ -15657,13 +15691,13 @@
 							}
 						};
 					},
-					9461(module$136) {
+					9461(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$136.exports = {
+						module.exports = {
 							read_if: function read_if() {
 								var result = this.node("if");
 								var test = this.next().read_if_expr();
@@ -15733,13 +15767,13 @@
 							}
 						};
 					},
-					5931(module$137) {
+					5931(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$137.exports = {
+						module.exports = {
 							read_while: function read_while() {
 								var result = this.node("while");
 								this.expect(this.tok.T_WHILE) && this.next();
@@ -15832,24 +15866,24 @@
 							}
 						};
 					},
-					9147(module$138) {
+					9147(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$138.exports = { read_start: function read_start() {
+						module.exports = { read_start: function read_start() {
 							if (this.token == this.tok.T_NAMESPACE) return this.read_namespace();
 							else return this.read_top_statement();
 						} };
 					},
-					9219(module$139) {
+					9219(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$139.exports = {
+						module.exports = {
 							read_namespace: function read_namespace() {
 								var result = this.node("namespace");
 								var body;
@@ -15965,7 +15999,7 @@
 							}
 						};
 					},
-					7170(module$140) {
+					7170(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -15981,7 +16015,7 @@
 							v: String.fromCharCode(11),
 							e: String.fromCharCode(27)
 						};
-						module$140.exports = {
+						module.exports = {
 							resolve_special_chars: function resolve_special_chars(text, doubleQuote) {
 								if (!doubleQuote) return text.replace(/\\\\/g, "\\").replace(/\\'/g, "'");
 								return text.replace(/\\"/g, "\"").replace(/\\([\\$nrtfve]|[xX][0-9a-fA-F]{1,2}|[0-7]{1,3}|u{([0-9a-fA-F]+)})/g, function($match, p1, p2) {
@@ -16013,8 +16047,10 @@
 									offset++;
 								}
 								while (offset < textSize) {
-									if (inCountingState) if (text[offset] === chToCheck) leadingWhitespaceCharCount++;
-									else inCheckState = true;
+									if (inCountingState) {
+										if (text[offset] === chToCheck) leadingWhitespaceCharCount++;
+										else inCheckState = true;
+									}
 									if (text[offset] !== "\n" && inCheckState && leadingWhitespaceCharCount < indentation) this.raiseError("Invalid body indentation level (expecting an indentation at least ".concat(indentation, ")"));
 									else inCheckState = false;
 									if (text[offset] === "\n") {
@@ -16042,9 +16078,7 @@
 									case this.tok.T_ARRAY:
 										result = this.read_array();
 										break;
-									case "[":
-										result = this.read_array();
-										break;
+									case "[": result = this.read_array();
 								}
 								return result;
 							},
@@ -16065,9 +16099,10 @@
 											value = this.next().text();
 											if (this.lexer.heredoc_label.indentation > 0) value = value.substring(0, value.length - this.lexer.heredoc_label.indentation);
 											var lastCh = value[value.length - 1];
-											if (lastCh === "\n") if (value[value.length - 2] === "\r") value = value.substring(0, value.length - 2);
-											else value = value.substring(0, value.length - 1);
-											else if (lastCh === "\r") value = value.substring(0, value.length - 1);
+											if (lastCh === "\n") {
+												if (value[value.length - 2] === "\r") value = value.substring(0, value.length - 2);
+												else value = value.substring(0, value.length - 1);
+											} else if (lastCh === "\r") value = value.substring(0, value.length - 1);
 											this.expect(this.tok.T_ENCAPSED_AND_WHITESPACE) && this.next();
 											this.expect(this.tok.T_END_HEREDOC) && this.next();
 											var raw = this.lexer._input.substring(start, this.lexer.yylloc.first_offset);
@@ -16175,9 +16210,10 @@
 								if (type === this.ast.encapsed.TYPE_HEREDOC && value.length > 0 && value[value.length - 1].kind === "encapsedpart" && value[value.length - 1].expression.kind === "string") {
 									var _node = value[value.length - 1].expression;
 									var lastCh = _node.value[_node.value.length - 1];
-									if (lastCh === "\n") if (_node.value[_node.value.length - 2] === "\r") _node.value = _node.value.substring(0, _node.value.length - 2);
-									else _node.value = _node.value.substring(0, _node.value.length - 1);
-									else if (lastCh === "\r") _node.value = _node.value.substring(0, _node.value.length - 1);
+									if (lastCh === "\n") {
+										if (_node.value[_node.value.length - 2] === "\r") _node.value = _node.value.substring(0, _node.value.length - 2);
+										else _node.value = _node.value.substring(0, _node.value.length - 1);
+									} else if (lastCh === "\r") _node.value = _node.value.substring(0, _node.value.length - 1);
 								}
 								this.expect(expect) && this.next();
 								var raw = this.lexer._input.substring(type === "heredoc" ? labelStart : start - 1, this.lexer.yylloc.first_offset);
@@ -16196,20 +16232,22 @@
 							}
 						};
 					},
-					6261(module$141) {
+					6261(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$141.exports = {
+						module.exports = {
 							read_top_statements: function read_top_statements(stopAtNamespace) {
 								var result = [];
 								while (this.token !== this.EOF && this.token !== "}") {
 									if (stopAtNamespace && this.token === this.tok.T_NAMESPACE) break;
 									var statement = this.read_top_statement();
-									if (statement) if (Array.isArray(statement)) result = result.concat(statement);
-									else result.push(statement);
+									if (statement) {
+										if (Array.isArray(statement)) result = result.concat(statement);
+										else result.push(statement);
+									}
 								}
 								return result;
 							},
@@ -16246,8 +16284,10 @@
 								var result = [];
 								while (this.token != this.EOF && this.token !== "}") {
 									var statement = this.read_inner_statement();
-									if (statement) if (Array.isArray(statement)) result = result.concat(statement);
-									else result.push(statement);
+									if (statement) {
+										if (Array.isArray(statement)) result = result.concat(statement);
+										else result.push(statement);
+									}
 								}
 								return result;
 							},
@@ -16453,13 +16493,13 @@
 							}
 						};
 					},
-					2478(module$142) {
+					2478(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$142.exports = {
+						module.exports = {
 							read_switch: function read_switch() {
 								var result = this.node("switch");
 								this.expect(this.tok.T_SWITCH) && this.next();
@@ -16498,13 +16538,13 @@
 							}
 						};
 					},
-					77(module$143) {
+					77(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$143.exports = { read_try: function read_try() {
+						module.exports = { read_try: function read_try() {
 							this.expect(this.tok.T_TRY);
 							var result = this.node("try");
 							var always = null;
@@ -16523,13 +16563,13 @@
 							return result(body, catches, always);
 						} };
 					},
-					6077(module$144) {
+					6077(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$144.exports = {
+						module.exports = {
 							read_short_form: function read_short_form(token) {
 								var body = this.node("block");
 								var items = [];
@@ -16557,12 +16597,14 @@
 							},
 							read_list: function read_list(item, separator, preserveFirstSeparator) {
 								var result = [];
-								if (this.token == separator) if (preserveFirstSeparator) {
-									result.push(typeof item === "function" ? this.node("noop")() : null);
-									this.next();
-								} else {
-									this.error();
-									return result;
+								if (this.token == separator) {
+									if (preserveFirstSeparator) {
+										result.push(typeof item === "function" ? this.node("noop")() : null);
+										this.next();
+									} else {
+										this.error();
+										return result;
+									}
 								}
 								if (typeof item === "function") do {
 									var itemResult = item.apply(this, []);
@@ -16622,13 +16664,13 @@
 							}
 						};
 					},
-					1130(module$145) {
+					1130(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$145.exports = {
+						module.exports = {
 							read_variable: function read_variable(read_only, encapsed) {
 								var result;
 								if (this.token === "&") return this.read_byref(this.read_variable.bind(this, read_only, encapsed));
@@ -16746,7 +16788,6 @@
 										name = this.text();
 										this.next();
 										what = what(name);
-										break;
 								}
 								return what;
 							},
@@ -16875,7 +16916,7 @@
 							}
 						};
 					},
-					1906(module$146) {
+					1906(module) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -17142,16 +17183,16 @@
 							}, {}),
 							names: TokenNames
 						};
-						module$146.exports = Object.freeze(tokens);
+						module.exports = Object.freeze(tokens);
 					}
 				};
 				var __webpack_module_cache__ = {};
 				function __webpack_require__(moduleId) {
 					var cachedModule = __webpack_module_cache__[moduleId];
 					if (cachedModule !== void 0) return cachedModule.exports;
-					var module$147 = __webpack_module_cache__[moduleId] = { exports: {} };
-					__webpack_modules__[moduleId](module$147, module$147.exports, __webpack_require__);
-					return module$147.exports;
+					var module = __webpack_module_cache__[moduleId] = { exports: {} };
+					__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+					return module.exports;
 				}
 				var __webpack_exports__ = __webpack_require__(5362);
 				__webpack_exports__ = __webpack_exports__["default"];
@@ -17163,23 +17204,26 @@
 		if (!errors) return [];
 		return errors.map((el) => {
 			let line;
-			if (el.line) if (el.line > 0) line = el.line - 1;
-			else line = el.line;
-			else line = 0;
+			if (el.line) {
+				if (el.line > 0) line = el.line - 1;
+				else line = el.line;
+			} else line = 0;
 			let startLine = line;
 			let startColumn = 0;
 			let endLine = line;
 			let endColumn = 0;
-			if (el.loc) if (el.loc.start.offset > el.loc.end.offset) {
-				startLine = el.loc.end.line - 1;
-				startColumn = el.loc.end.column;
-				endLine = el.loc.start.line - 1;
-				endColumn = el.loc.start.column;
-			} else {
-				startLine = el.loc.start.line - 1;
-				startColumn = el.loc.start.column;
-				endLine = el.loc.end.line - 1;
-				endColumn = el.loc.end.column;
+			if (el.loc) {
+				if (el.loc.start.offset > el.loc.end.offset) {
+					startLine = el.loc.end.line - 1;
+					startColumn = el.loc.end.column;
+					endLine = el.loc.start.line - 1;
+					endColumn = el.loc.start.column;
+				} else {
+					startLine = el.loc.start.line - 1;
+					startColumn = el.loc.start.column;
+					endLine = el.loc.end.line - 1;
+					endColumn = el.loc.end.column;
+				}
 			}
 			return {
 				range: {
@@ -17198,8 +17242,7 @@
 			};
 		});
 	}
-	//#endregion
-	//#region src/services/php/php-service.ts
+	// src/services/php/php-service.ts
 	var PhpService = class extends BaseService {
 		constructor(mode) {
 			super(mode);
@@ -17240,6 +17283,5 @@
 			}
 		}
 	};
-	//#endregion
 	exports.PhpService = PhpService;
 });

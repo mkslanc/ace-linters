@@ -2,7 +2,7 @@
 	typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global));
 })(this, function(exports) {
 	Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-	//#region \0rolldown/runtime.js
+	// \0rolldown/runtime.js
 	var __create = Object.create;
 	var __defProp = Object.defineProperty;
 	var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -17,7 +17,7 @@
 			throw err = [e], e;
 		}
 	};
-	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod, mod.exports), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -37,13 +37,12 @@
 		}
 		return to;
 	};
-	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp.call(mod, "default") ? __defProp(target, "default", {
 		value: mod,
 		enumerable: true
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -76,8 +75,7 @@
 		}
 		exports.stringArray = stringArray;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -373,8 +371,7 @@
 			Message.isResponse = isResponse;
 		})(Message || (exports.Message = Message = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -446,9 +443,7 @@
 						case Touch.Last:
 							this.addItemLast(item);
 							break;
-						default:
-							this.addItemLast(item);
-							break;
+						default: this.addItemLast(item);
 					}
 					this._map.set(key, item);
 					this._size++;
@@ -708,8 +703,7 @@
 		};
 		exports.LRUCache = LRUCache;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -721,8 +715,7 @@
 			Disposable.create = create;
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -739,8 +732,7 @@
 		})(RAL || (RAL = {}));
 		exports.default = RAL;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -765,11 +757,13 @@
 			remove(callback, context = null) {
 				if (!this._callbacks) return;
 				let foundCallbackWithDifferentContext = false;
-				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) if (this._contexts[i] === context) {
-					this._callbacks.splice(i, 1);
-					this._contexts.splice(i, 1);
-					return;
-				} else foundCallbackWithDifferentContext = true;
+				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) {
+					if (this._contexts[i] === context) {
+						this._callbacks.splice(i, 1);
+						this._contexts.splice(i, 1);
+						return;
+					} else foundCallbackWithDifferentContext = true;
+				}
 				if (foundCallbackWithDifferentContext) throw new Error("When adding a listener with a context, you should remove it with the same context");
 			}
 			invoke(...args) {
@@ -831,8 +825,7 @@
 		exports.Emitter = Emitter;
 		Emitter._noop = function() {};
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -905,8 +898,7 @@
 		};
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -972,8 +964,7 @@
 		};
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1032,8 +1023,7 @@
 		};
 		exports.Semaphore = Semaphore;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1210,8 +1200,7 @@
 		};
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1320,8 +1309,7 @@
 		};
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1446,8 +1434,7 @@
 		};
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1840,26 +1827,27 @@
 					if (requestMessage.id !== null) requestTokens.set(tokenKey, cancellationSource);
 					try {
 						let handlerResult;
-						if (requestHandler) if (requestMessage.params === void 0) {
-							if (type !== void 0 && type.numberOfParams !== 0) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
-								return;
+						if (requestHandler) {
+							if (requestMessage.params === void 0) {
+								if (type !== void 0 && type.numberOfParams !== 0) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(cancellationSource.token);
+							} else if (Array.isArray(requestMessage.params)) {
+								if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byName) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
+							} else {
+								if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
+									replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
+									return;
+								}
+								handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
 							}
-							handlerResult = requestHandler(cancellationSource.token);
-						} else if (Array.isArray(requestMessage.params)) {
-							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byName) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
-								return;
-							}
-							handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
-						} else {
-							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
-								replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
-								return;
-							}
-							handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
-						}
-						else if (starRequestHandler) handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
+						} else if (starRequestHandler) handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
 						const promise = handlerResult;
 						if (!handlerResult) {
 							requestTokens.delete(tokenKey);
@@ -1887,9 +1875,10 @@
 			}
 			function handleResponse(responseMessage) {
 				if (isDisposed()) return;
-				if (responseMessage.id === null) if (responseMessage.error) logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, void 0, 4)}`);
-				else logger.error(`Received response message without id. No further error information provided.`);
-				else {
+				if (responseMessage.id === null) {
+					if (responseMessage.error) logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, void 0, 4)}`);
+					else logger.error(`Received response message without id. No further error information provided.`);
+				} else {
 					const key = responseMessage.id;
 					const responsePromise = responsePromises.get(key);
 					traceReceivedResponse(responseMessage, responsePromise);
@@ -1926,29 +1915,30 @@
 				}
 				if (notificationHandler || starNotificationHandler) try {
 					traceReceivedNotification(message);
-					if (notificationHandler) if (message.params === void 0) {
-						if (type !== void 0) {
-							if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
-						}
-						notificationHandler();
-					} else if (Array.isArray(message.params)) {
-						const params = message.params;
-						if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) notificationHandler({
-							token: params[0],
-							value: params[1]
-						});
-						else {
+					if (notificationHandler) {
+						if (message.params === void 0) {
 							if (type !== void 0) {
-								if (type.parameterStructures === messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
-								if (type.numberOfParams !== message.params.length) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
+								if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
 							}
-							notificationHandler(...params);
+							notificationHandler();
+						} else if (Array.isArray(message.params)) {
+							const params = message.params;
+							if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) notificationHandler({
+								token: params[0],
+								value: params[1]
+							});
+							else {
+								if (type !== void 0) {
+									if (type.parameterStructures === messages_1.ParameterStructures.byName) logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
+									if (type.numberOfParams !== message.params.length) logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
+								}
+								notificationHandler(...params);
+							}
+						} else {
+							if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
+							notificationHandler(message.params);
 						}
-					} else {
-						if (type !== void 0 && type.parameterStructures === messages_1.ParameterStructures.byPosition) logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
-						notificationHandler(message.params);
-					}
-					else if (starNotificationHandler) starNotificationHandler(message.method, message.params);
+					} else if (starNotificationHandler) starNotificationHandler(message.method, message.params);
 				} catch (error) {
 					if (error.message) logger.error(`Notification handler '${message.method}' failed with message: ${error.message}`);
 					else logger.error(`Notification handler '${message.method}' failed unexpectedly.`);
@@ -1988,8 +1978,10 @@
 				if (trace === Trace.Off || !tracer) return;
 				if (traceFormat === TraceFormat.Text) {
 					let data = void 0;
-					if (trace === Trace.Verbose || trace === Trace.Compact) if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
-					else data = "No parameters provided.\n\n";
+					if (trace === Trace.Verbose || trace === Trace.Compact) {
+						if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
+						else data = "No parameters provided.\n\n";
+					}
 					tracer.log(`Sending notification '${message.method}'.`, data);
 				} else logLSPMessage("send-notification", message);
 			}
@@ -2017,8 +2009,10 @@
 				if (trace === Trace.Off || !tracer || message.method === LogTraceNotification.type.method) return;
 				if (traceFormat === TraceFormat.Text) {
 					let data = void 0;
-					if (trace === Trace.Verbose || trace === Trace.Compact) if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
-					else data = "No parameters provided.\n\n";
+					if (trace === Trace.Verbose || trace === Trace.Compact) {
+						if (message.params) data = `Params: ${stringifyTrace(message.params)}\n\n`;
+						else data = "No parameters provided.\n\n";
+					}
 					tracer.log(`Received notification '${message.method}'.`, data);
 				} else logLSPMessage("receive-notification", message);
 			}
@@ -2093,7 +2087,6 @@
 						result = [];
 						for (let i = 0; i < params.length && i < numberOfParams; i++) result.push(undefinedToNull(params[i]));
 						if (params.length < numberOfParams) for (let i = params.length; i < numberOfParams; i++) result.push(null);
-						break;
 				}
 				return result;
 			}
@@ -2123,7 +2116,6 @@
 							default:
 								if (parameterStructures === messages_1.ParameterStructures.byName) throw new Error(`Received ${numberOfParams} parameters for 'by Name' notification parameter structure.`);
 								messageParams = args.slice(paramStart, paramEnd).map((value) => undefinedToNull(value));
-								break;
 						}
 					} else {
 						const params = args;
@@ -2145,18 +2137,20 @@
 					throwIfClosedOrDisposed();
 					let method;
 					if (Is.func(type)) starNotificationHandler = type;
-					else if (handler) if (Is.string(type)) {
-						method = type;
-						notificationHandlers.set(type, {
-							type: void 0,
-							handler
-						});
-					} else {
-						method = type.method;
-						notificationHandlers.set(type.method, {
-							type,
-							handler
-						});
+					else if (handler) {
+						if (Is.string(type)) {
+							method = type;
+							notificationHandlers.set(type, {
+								type: void 0,
+								handler
+							});
+						} else {
+							method = type.method;
+							notificationHandlers.set(type.method, {
+								type,
+								handler
+							});
+						}
 					}
 					return { dispose: () => {
 						if (method !== void 0) notificationHandlers.delete(method);
@@ -2209,7 +2203,6 @@
 							default:
 								if (parameterStructures === messages_1.ParameterStructures.byName) throw new Error(`Received ${numberOfParams} parameters for 'by Name' request parameter structure.`);
 								messageParams = args.slice(paramStart, paramEnd).map((value) => undefinedToNull(value));
-								break;
 						}
 					} else {
 						const params = args;
@@ -2298,10 +2291,12 @@
 				trace: async (_value, _tracer, sendNotificationOrTraceOptions) => {
 					let _sendNotification = false;
 					let _traceFormat = TraceFormat.Text;
-					if (sendNotificationOrTraceOptions !== void 0) if (Is.boolean(sendNotificationOrTraceOptions)) _sendNotification = sendNotificationOrTraceOptions;
-					else {
-						_sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
-						_traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
+					if (sendNotificationOrTraceOptions !== void 0) {
+						if (Is.boolean(sendNotificationOrTraceOptions)) _sendNotification = sendNotificationOrTraceOptions;
+						else {
+							_sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
+							_traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
+						}
 					}
 					trace = _value;
 					traceFormat = _traceFormat;
@@ -2353,8 +2348,7 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2731,8 +2725,7 @@
 		});
 		exports.RAL = require_ral().default;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -2866,10 +2859,9 @@
 		})(RIL || (RIL = {}));
 		exports.default = RIL;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
-	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
+	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports, module, this$3) => {
+		var __createBinding = this$3 && this$3.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -2883,8 +2875,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$3) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$3, p)) __createBinding(exports$3, m, p);
+		var __exportStar = this$3 && this$3.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.BrowserMessageWriter = exports.BrowserMessageReader = void 0;
@@ -2936,13 +2928,11 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
+	// ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-types/lib/esm/main.js
+	// ../../node_modules/vscode-languageserver-types/lib/esm/main.js
 	var main_exports = /* @__PURE__ */ __exportAll({
 		AnnotatedTextEdit: () => AnnotatedTextEdit,
 		ChangeAnnotation: () => ChangeAnnotation,
@@ -3017,7 +3007,7 @@
 		TextDocumentIdentifier: () => TextDocumentIdentifier,
 		TextDocumentItem: () => TextDocumentItem,
 		TextEdit: () => TextEdit,
-		URI: () => URI$1,
+		URI: () => URI,
 		VersionedTextDocumentIdentifier: () => VersionedTextDocumentIdentifier,
 		WorkspaceChange: () => WorkspaceChange,
 		WorkspaceEdit: () => WorkspaceEdit,
@@ -3026,7 +3016,7 @@
 		integer: () => integer,
 		uinteger: () => uinteger
 	});
-	var DocumentUri, URI$1, integer, uinteger, Position, Range, Location, LocationLink, Color, ColorInformation, ColorPresentation, FoldingRangeKind, FoldingRange, DiagnosticRelatedInformation, DiagnosticSeverity, DiagnosticTag, CodeDescription, Diagnostic, Command, TextEdit, ChangeAnnotation, ChangeAnnotationIdentifier, AnnotatedTextEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, WorkspaceEdit, TextEditChangeImpl, ChangeAnnotations, WorkspaceChange, TextDocumentIdentifier, VersionedTextDocumentIdentifier, OptionalVersionedTextDocumentIdentifier, TextDocumentItem, MarkupKind, MarkupContent, CompletionItemKind$1, InsertTextFormat, CompletionItemTag, InsertReplaceEdit, InsertTextMode, CompletionItemLabelDetails, CompletionItem, CompletionList, MarkedString, Hover, ParameterInformation, SignatureInformation, DocumentHighlightKind, DocumentHighlight, SymbolKind, SymbolTag, SymbolInformation, WorkspaceSymbol, DocumentSymbol, CodeActionKind, CodeActionTriggerKind, CodeActionContext, CodeAction, CodeLens, FormattingOptions, DocumentLink, SelectionRange, SemanticTokenTypes, SemanticTokenModifiers, SemanticTokens, InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression, InlineValueContext, InlayHintKind, InlayHintLabelPart, InlayHint, StringValue, InlineCompletionItem, InlineCompletionList, InlineCompletionTriggerKind, SelectedCompletionInfo, InlineCompletionContext, WorkspaceFolder, EOL, TextDocument$1, FullTextDocument$1, Is;
+	var DocumentUri, URI, integer, uinteger, Position, Range, Location, LocationLink, Color, ColorInformation, ColorPresentation, FoldingRangeKind, FoldingRange, DiagnosticRelatedInformation, DiagnosticSeverity, DiagnosticTag, CodeDescription, Diagnostic, Command, TextEdit, ChangeAnnotation, ChangeAnnotationIdentifier, AnnotatedTextEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, WorkspaceEdit, TextEditChangeImpl, ChangeAnnotations, WorkspaceChange, TextDocumentIdentifier, VersionedTextDocumentIdentifier, OptionalVersionedTextDocumentIdentifier, TextDocumentItem, MarkupKind, MarkupContent, CompletionItemKind$1, InsertTextFormat, CompletionItemTag, InsertReplaceEdit, InsertTextMode, CompletionItemLabelDetails, CompletionItem, CompletionList, MarkedString, Hover, ParameterInformation, SignatureInformation, DocumentHighlightKind, DocumentHighlight, SymbolKind, SymbolTag, SymbolInformation, WorkspaceSymbol, DocumentSymbol, CodeActionKind, CodeActionTriggerKind, CodeActionContext, CodeAction, CodeLens, FormattingOptions, DocumentLink, SelectionRange, SemanticTokenTypes, SemanticTokenModifiers, SemanticTokens, InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression, InlineValueContext, InlayHintKind, InlayHintLabelPart, InlayHint, StringValue, InlineCompletionItem, InlineCompletionList, InlineCompletionTriggerKind, SelectedCompletionInfo, InlineCompletionContext, WorkspaceFolder, EOL, TextDocument$1, FullTextDocument$1, Is;
 	var init_main = __esmMin((() => {
 		(function(DocumentUri) {
 			function is(value) {
@@ -3039,7 +3029,7 @@
 				return typeof value === "string";
 			}
 			URI.is = is;
-		})(URI$1 || (URI$1 = {}));
+		})(URI || (URI = {}));
 		(function(integer) {
 			integer.MIN_VALUE = -2147483648;
 			integer.MAX_VALUE = 2147483647;
@@ -3678,8 +3668,10 @@
 			*/
 			get edit() {
 				this.initDocumentChanges();
-				if (this._changeAnnotations !== void 0) if (this._changeAnnotations.size === 0) this._workspaceEdit.changeAnnotations = void 0;
-				else this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
+				if (this._changeAnnotations !== void 0) {
+					if (this._changeAnnotations.size === 0) this._workspaceEdit.changeAnnotations = void 0;
+					else this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
+				}
 				return this._workspaceEdit;
 			}
 			getTextEditChange(key) {
@@ -4631,7 +4623,7 @@
 		(function(WorkspaceFolder) {
 			function is(value) {
 				const candidate = value;
-				return Is.objectLiteral(candidate) && URI$1.is(candidate.uri) && Is.string(candidate.name);
+				return Is.objectLiteral(candidate) && URI.is(candidate.uri) && Is.string(candidate.name);
 			}
 			WorkspaceFolder.is = is;
 		})(WorkspaceFolder || (WorkspaceFolder = {}));
@@ -4818,8 +4810,7 @@
 			Is.typedArray = typedArray;
 		})(Is || (Is = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/messages.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/messages.js
 	var require_messages = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProtocolNotificationType = exports.ProtocolNotificationType0 = exports.ProtocolRequestType = exports.ProtocolRequestType0 = exports.RegistrationType = exports.MessageDirection = void 0;
@@ -4861,8 +4852,7 @@
 		};
 		exports.ProtocolNotificationType = ProtocolNotificationType;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
 	var require_is = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.objectLiteral = exports.typedArray = exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -4903,8 +4893,7 @@
 		}
 		exports.objectLiteral = objectLiteral;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
 	var require_protocol_implementation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ImplementationRequest = void 0;
@@ -4921,8 +4910,7 @@
 			ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
 		})(ImplementationRequest || (exports.ImplementationRequest = ImplementationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
 	var require_protocol_typeDefinition = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.TypeDefinitionRequest = void 0;
@@ -4939,8 +4927,7 @@
 			TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
 		})(TypeDefinitionRequest || (exports.TypeDefinitionRequest = TypeDefinitionRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
 	var require_protocol_workspaceFolder = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = void 0;
@@ -4965,8 +4952,7 @@
 			DidChangeWorkspaceFoldersNotification.type = new messages_1.ProtocolNotificationType(DidChangeWorkspaceFoldersNotification.method);
 		})(DidChangeWorkspaceFoldersNotification || (exports.DidChangeWorkspaceFoldersNotification = DidChangeWorkspaceFoldersNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
 	var require_protocol_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ConfigurationRequest = void 0;
@@ -4987,8 +4973,7 @@
 			ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
 		})(ConfigurationRequest || (exports.ConfigurationRequest = ConfigurationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
 	var require_protocol_colorProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
@@ -5018,8 +5003,7 @@
 			ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
 		})(ColorPresentationRequest || (exports.ColorPresentationRequest = ColorPresentationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
 	var require_protocol_foldingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.FoldingRangeRefreshRequest = exports.FoldingRangeRequest = void 0;
@@ -5047,8 +5031,7 @@
 			FoldingRangeRefreshRequest.type = new messages_1.ProtocolRequestType0(FoldingRangeRefreshRequest.method);
 		})(FoldingRangeRefreshRequest || (exports.FoldingRangeRefreshRequest = FoldingRangeRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
 	var require_protocol_declaration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DeclarationRequest = void 0;
@@ -5066,8 +5049,7 @@
 			DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
 		})(DeclarationRequest || (exports.DeclarationRequest = DeclarationRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
 	var require_protocol_selectionRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SelectionRangeRequest = void 0;
@@ -5085,8 +5067,7 @@
 			SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
 		})(SelectionRangeRequest || (exports.SelectionRangeRequest = SelectionRangeRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
 	var require_protocol_progress = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = void 0;
@@ -5121,8 +5102,7 @@
 			WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
 		})(WorkDoneProgressCancelNotification || (exports.WorkDoneProgressCancelNotification = WorkDoneProgressCancelNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
 	var require_protocol_callHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.CallHierarchyPrepareRequest = void 0;
@@ -5162,8 +5142,7 @@
 			CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
 		})(CallHierarchyOutgoingCallsRequest || (exports.CallHierarchyOutgoingCallsRequest = CallHierarchyOutgoingCallsRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
 	var require_protocol_semanticTokens = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.SemanticTokensRegistrationType = exports.TokenFormat = void 0;
@@ -5217,8 +5196,7 @@
 			SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
 		})(SemanticTokensRefreshRequest || (exports.SemanticTokensRefreshRequest = SemanticTokensRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
 	var require_protocol_showDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ShowDocumentRequest = void 0;
@@ -5238,8 +5216,7 @@
 			ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
 		})(ShowDocumentRequest || (exports.ShowDocumentRequest = ShowDocumentRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
 	var require_protocol_linkedEditingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.LinkedEditingRangeRequest = void 0;
@@ -5256,8 +5233,7 @@
 			LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
 		})(LinkedEditingRangeRequest || (exports.LinkedEditingRangeRequest = LinkedEditingRangeRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
 	var require_protocol_fileOperations = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.DidRenameFilesNotification = exports.WillRenameFilesRequest = exports.DidCreateFilesNotification = exports.WillCreateFilesRequest = exports.FileOperationPatternKind = void 0;
@@ -5356,8 +5332,7 @@
 			WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
 		})(WillDeleteFilesRequest || (exports.WillDeleteFilesRequest = WillDeleteFilesRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
 	var require_protocol_moniker = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = void 0;
@@ -5423,8 +5398,7 @@
 			MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
 		})(MonikerRequest || (exports.MonikerRequest = MonikerRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
 	var require_protocol_typeHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.TypeHierarchySubtypesRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchyPrepareRequest = void 0;
@@ -5464,8 +5438,7 @@
 			TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
 		})(TypeHierarchySubtypesRequest || (exports.TypeHierarchySubtypesRequest = TypeHierarchySubtypesRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
 	var require_protocol_inlineValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
@@ -5493,8 +5466,7 @@
 			InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
 		})(InlineValueRefreshRequest || (exports.InlineValueRefreshRequest = InlineValueRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
 	var require_protocol_inlayHint = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = void 0;
@@ -5535,8 +5507,7 @@
 			InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
 		})(InlayHintRefreshRequest || (exports.InlayHintRefreshRequest = InlayHintRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
 	var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = void 0;
@@ -5608,8 +5579,7 @@
 			DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
 		})(DiagnosticRefreshRequest || (exports.DiagnosticRefreshRequest = DiagnosticRefreshRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
 	var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = void 0;
@@ -5791,8 +5761,7 @@
 			DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
 		})(DidCloseNotebookDocumentNotification || (exports.DidCloseNotebookDocumentNotification = DidCloseNotebookDocumentNotification = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
 	var require_protocol_inlineCompletion = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.InlineCompletionRequest = void 0;
@@ -5812,8 +5781,7 @@
 			InlineCompletionRequest.type = new messages_1.ProtocolRequestType(InlineCompletionRequest.method);
 		})(InlineCompletionRequest || (exports.InlineCompletionRequest = InlineCompletionRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/protocol.js
 	var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WorkspaceSymbolRequest = exports.CodeActionResolveRequest = exports.CodeActionRequest = exports.DocumentSymbolRequest = exports.DocumentHighlightRequest = exports.ReferencesRequest = exports.DefinitionRequest = exports.SignatureHelpRequest = exports.SignatureHelpTriggerKind = exports.HoverRequest = exports.CompletionResolveRequest = exports.CompletionRequest = exports.CompletionTriggerKind = exports.PublishDiagnosticsNotification = exports.WatchKind = exports.RelativePattern = exports.FileChangeType = exports.DidChangeWatchedFilesNotification = exports.WillSaveTextDocumentWaitUntilRequest = exports.WillSaveTextDocumentNotification = exports.TextDocumentSaveReason = exports.DidSaveTextDocumentNotification = exports.DidCloseTextDocumentNotification = exports.DidChangeTextDocumentNotification = exports.TextDocumentContentChangeEvent = exports.DidOpenTextDocumentNotification = exports.TextDocumentSyncKind = exports.TelemetryEventNotification = exports.LogMessageNotification = exports.ShowMessageRequest = exports.ShowMessageNotification = exports.MessageType = exports.DidChangeConfigurationNotification = exports.ExitNotification = exports.ShutdownRequest = exports.InitializedNotification = exports.InitializeErrorCodes = exports.InitializeRequest = exports.WorkDoneProgressOptions = exports.TextDocumentRegistrationOptions = exports.StaticRegistrationOptions = exports.PositionEncodingKind = exports.FailureHandlingKind = exports.ResourceOperationKind = exports.UnregistrationRequest = exports.RegistrationRequest = exports.DocumentSelector = exports.NotebookCellTextDocumentFilter = exports.NotebookDocumentFilter = exports.TextDocumentFilter = void 0;
@@ -7031,8 +6999,7 @@
 			ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType("workspace/applyEdit");
 		})(ApplyWorkspaceEditRequest || (exports.ApplyWorkspaceEditRequest = ApplyWorkspaceEditRequest = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/connection.js
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/connection.js
 	var require_connection = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createProtocolConnection = void 0;
@@ -7043,10 +7010,9 @@
 		}
 		exports.createProtocolConnection = createProtocolConnection;
 	}));
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-protocol/lib/common/api.js
-	var require_api = /* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vscode-languageserver-protocol/lib/common/api.js
+	var require_api = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) => {
+		var __createBinding = this$2 && this$2.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7060,8 +7026,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$2) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$2, p)) __createBinding(exports$2, m, p);
+		var __exportStar = this$2 && this$2.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.LSPErrorCodes = exports.createProtocolConnection = void 0;
@@ -7127,10 +7093,9 @@
 			LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
 		})(LSPErrorCodes || (exports.LSPErrorCodes = LSPErrorCodes = {}));
 	}));
-	//#endregion
-	//#region ../../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js
-	var import_main = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports) => {
-		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+	// ../../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js
+	var import_main = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
+		var __createBinding = this$1 && this$1.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
 			if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7144,8 +7109,8 @@
 			if (k2 === void 0) k2 = k;
 			o[k2] = m[k];
 		}));
-		var __exportStar = exports && exports.__exportStar || function(m, exports$1) {
-			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$1, p)) __createBinding(exports$1, m, p);
+		var __exportStar = this$1 && this$1.__exportStar || function(m, exports) {
+			for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createProtocolConnection = void 0;
@@ -7289,387 +7254,379 @@
 	};
 	var browserExports = browser.exports;
 	var process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
-	//#endregion
-	//#region ../../node_modules/vscode-uri/lib/esm/index.mjs
-	var LIB;
-	(() => {
-		"use strict";
-		var t = { 975: (t) => {
-			function e(t) {
-				if ("string" != typeof t) throw new TypeError("Path must be a string. Received " + JSON.stringify(t));
-			}
-			function r(t, e) {
-				for (var r, n = "", i = 0, o = -1, s = 0, h = 0; h <= t.length; ++h) {
-					if (h < t.length) r = t.charCodeAt(h);
-					else {
-						if (47 === r) break;
-						r = 47;
-					}
-					if (47 === r) {
-						if (o === h - 1 || 1 === s);
-						else if (o !== h - 1 && 2 === s) {
-							if (n.length < 2 || 2 !== i || 46 !== n.charCodeAt(n.length - 1) || 46 !== n.charCodeAt(n.length - 2)) {
-								if (n.length > 2) {
-									var a = n.lastIndexOf("/");
-									if (a !== n.length - 1) {
-										-1 === a ? (n = "", i = 0) : i = (n = n.slice(0, a)).length - 1 - n.lastIndexOf("/"), o = h, s = 0;
-										continue;
-									}
-								} else if (2 === n.length || 1 === n.length) {
-									n = "", i = 0, o = h, s = 0;
+	// ../../node_modules/vscode-uri/lib/esm/index.mjs
+	var t$1 = { 975(t) {
+		function e(t) {
+			if ("string" != typeof t) throw new TypeError("Path must be a string. Received " + JSON.stringify(t));
+		}
+		function r(t, e) {
+			for (var r, n = "", i = 0, o = -1, h = 0, s = 0; s <= t.length; ++s) {
+				if (s < t.length) r = t.charCodeAt(s);
+				else {
+					if (47 === r) break;
+					r = 47;
+				}
+				if (47 === r) {
+					if (o === s - 1 || 1 === h);
+					else if (o !== s - 1 && 2 === h) {
+						if (n.length < 2 || 2 !== i || 46 !== n.charCodeAt(n.length - 1) || 46 !== n.charCodeAt(n.length - 2)) {
+							if (n.length > 2) {
+								var a = n.lastIndexOf("/");
+								if (a !== n.length - 1) {
+									-1 === a ? (n = "", i = 0) : i = (n = n.slice(0, a)).length - 1 - n.lastIndexOf("/"), o = s, h = 0;
 									continue;
 								}
+							} else if (2 === n.length || 1 === n.length) {
+								n = "", i = 0, o = s, h = 0;
+								continue;
 							}
-							e && (n.length > 0 ? n += "/.." : n = "..", i = 2);
-						} else n.length > 0 ? n += "/" + t.slice(o + 1, h) : n = t.slice(o + 1, h), i = h - o - 1;
-						o = h, s = 0;
-					} else 46 === r && -1 !== s ? ++s : s = -1;
-				}
-				return n;
+						}
+						e && (n.length > 0 ? n += "/.." : n = "..", i = 2);
+					} else n.length > 0 ? n += "/" + t.slice(o + 1, s) : n = t.slice(o + 1, s), i = s - o - 1;
+					o = s, h = 0;
+				} else 46 === r && -1 !== h ? ++h : h = -1;
 			}
-			var n = {
-				resolve: function() {
-					for (var t, n = "", i = !1, o = arguments.length - 1; o >= -1 && !i; o--) {
-						var s;
-						o >= 0 ? s = arguments[o] : (void 0 === t && (t = process$1.cwd()), s = t), e(s), 0 !== s.length && (n = s + "/" + n, i = 47 === s.charCodeAt(0));
-					}
-					return n = r(n, !i), i ? n.length > 0 ? "/" + n : "/" : n.length > 0 ? n : ".";
-				},
-				normalize: function(t) {
-					if (e(t), 0 === t.length) return ".";
-					var n = 47 === t.charCodeAt(0), i = 47 === t.charCodeAt(t.length - 1);
-					return 0 !== (t = r(t, !n)).length || n || (t = "."), t.length > 0 && i && (t += "/"), n ? "/" + t : t;
-				},
-				isAbsolute: function(t) {
-					return e(t), t.length > 0 && 47 === t.charCodeAt(0);
-				},
-				join: function() {
-					if (0 === arguments.length) return ".";
-					for (var t, r = 0; r < arguments.length; ++r) {
-						var i = arguments[r];
-						e(i), i.length > 0 && (void 0 === t ? t = i : t += "/" + i);
-					}
-					return void 0 === t ? "." : n.normalize(t);
-				},
-				relative: function(t, r) {
-					if (e(t), e(r), t === r) return "";
-					if ((t = n.resolve(t)) === (r = n.resolve(r))) return "";
-					for (var i = 1; i < t.length && 47 === t.charCodeAt(i); ++i);
-					for (var o = t.length, s = o - i, h = 1; h < r.length && 47 === r.charCodeAt(h); ++h);
-					for (var a = r.length - h, c = s < a ? s : a, f = -1, u = 0; u <= c; ++u) {
-						if (u === c) {
-							if (a > c) {
-								if (47 === r.charCodeAt(h + u)) return r.slice(h + u + 1);
-								if (0 === u) return r.slice(h + u);
-							} else s > c && (47 === t.charCodeAt(i + u) ? f = u : 0 === u && (f = 0));
-							break;
-						}
-						var l = t.charCodeAt(i + u);
-						if (l !== r.charCodeAt(h + u)) break;
-						47 === l && (f = u);
-					}
-					var g = "";
-					for (u = i + f + 1; u <= o; ++u) u !== o && 47 !== t.charCodeAt(u) || (0 === g.length ? g += ".." : g += "/..");
-					return g.length > 0 ? g + r.slice(h + f) : (h += f, 47 === r.charCodeAt(h) && ++h, r.slice(h));
-				},
-				_makeLong: function(t) {
-					return t;
-				},
-				dirname: function(t) {
-					if (e(t), 0 === t.length) return ".";
-					for (var r = t.charCodeAt(0), n = 47 === r, i = -1, o = !0, s = t.length - 1; s >= 1; --s) if (47 === (r = t.charCodeAt(s))) {
-						if (!o) {
-							i = s;
-							break;
-						}
-					} else o = !1;
-					return -1 === i ? n ? "/" : "." : n && 1 === i ? "//" : t.slice(0, i);
-				},
-				basename: function(t, r) {
-					if (void 0 !== r && "string" != typeof r) throw new TypeError("\"ext\" argument must be a string");
-					e(t);
-					var n, i = 0, o = -1, s = !0;
-					if (void 0 !== r && r.length > 0 && r.length <= t.length) {
-						if (r.length === t.length && r === t) return "";
-						var h = r.length - 1, a = -1;
-						for (n = t.length - 1; n >= 0; --n) {
-							var c = t.charCodeAt(n);
-							if (47 === c) {
-								if (!s) {
-									i = n + 1;
-									break;
-								}
-							} else -1 === a && (s = !1, a = n + 1), h >= 0 && (c === r.charCodeAt(h) ? -1 == --h && (o = n) : (h = -1, o = a));
-						}
-						return i === o ? o = a : -1 === o && (o = t.length), t.slice(i, o);
-					}
-					for (n = t.length - 1; n >= 0; --n) if (47 === t.charCodeAt(n)) {
-						if (!s) {
-							i = n + 1;
-							break;
-						}
-					} else -1 === o && (s = !1, o = n + 1);
-					return -1 === o ? "" : t.slice(i, o);
-				},
-				extname: function(t) {
-					e(t);
-					for (var r = -1, n = 0, i = -1, o = !0, s = 0, h = t.length - 1; h >= 0; --h) {
-						var a = t.charCodeAt(h);
-						if (47 !== a) -1 === i && (o = !1, i = h + 1), 46 === a ? -1 === r ? r = h : 1 !== s && (s = 1) : -1 !== r && (s = -1);
-						else if (!o) {
-							n = h + 1;
-							break;
-						}
-					}
-					return -1 === r || -1 === i || 0 === s || 1 === s && r === i - 1 && r === n + 1 ? "" : t.slice(r, i);
-				},
-				format: function(t) {
-					if (null === t || "object" != typeof t) throw new TypeError("The \"pathObject\" argument must be of type Object. Received type " + typeof t);
-					return function(t, e) {
-						var r = e.dir || e.root, n = e.base || (e.name || "") + (e.ext || "");
-						return r ? r === e.root ? r + n : r + "/" + n : n;
-					}(0, t);
-				},
-				parse: function(t) {
-					e(t);
-					var r = {
-						root: "",
-						dir: "",
-						base: "",
-						ext: "",
-						name: ""
-					};
-					if (0 === t.length) return r;
-					var n, i = t.charCodeAt(0), o = 47 === i;
-					o ? (r.root = "/", n = 1) : n = 0;
-					for (var s = -1, h = 0, a = -1, c = !0, f = t.length - 1, u = 0; f >= n; --f) if (47 !== (i = t.charCodeAt(f))) -1 === a && (c = !1, a = f + 1), 46 === i ? -1 === s ? s = f : 1 !== u && (u = 1) : -1 !== s && (u = -1);
-					else if (!c) {
-						h = f + 1;
+			return n;
+		}
+		var n = {
+			resolve: function() {
+				for (var t, n = "", i = !1, o = arguments.length - 1; o >= -1 && !i; o--) {
+					var h;
+					o >= 0 ? h = arguments[o] : (void 0 === t && (t = process$1.cwd()), h = t), e(h), 0 !== h.length && (n = h + "/" + n, i = 47 === h.charCodeAt(0));
+				}
+				return n = r(n, !i), i ? n.length > 0 ? "/" + n : "/" : n.length > 0 ? n : ".";
+			},
+			normalize: function(t) {
+				if (e(t), 0 === t.length) return ".";
+				var n = 47 === t.charCodeAt(0), i = 47 === t.charCodeAt(t.length - 1);
+				return 0 !== (t = r(t, !n)).length || n || (t = "."), t.length > 0 && i && (t += "/"), n ? "/" + t : t;
+			},
+			isAbsolute: function(t) {
+				return e(t), t.length > 0 && 47 === t.charCodeAt(0);
+			},
+			join: function() {
+				if (0 === arguments.length) return ".";
+				for (var t, r = 0; r < arguments.length; ++r) {
+					var i = arguments[r];
+					e(i), i.length > 0 && (void 0 === t ? t = i : t += "/" + i);
+				}
+				return void 0 === t ? "." : n.normalize(t);
+			},
+			relative: function(t, r) {
+				if (e(t), e(r), t === r) return "";
+				if ((t = n.resolve(t)) === (r = n.resolve(r))) return "";
+				for (var i = 1; i < t.length && 47 === t.charCodeAt(i); ++i);
+				for (var o = t.length, h = o - i, s = 1; s < r.length && 47 === r.charCodeAt(s); ++s);
+				for (var a = r.length - s, c = h < a ? h : a, f = -1, u = 0; u <= c; ++u) {
+					if (u === c) {
+						if (a > c) {
+							if (47 === r.charCodeAt(s + u)) return r.slice(s + u + 1);
+							if (0 === u) return r.slice(s + u);
+						} else h > c && (47 === t.charCodeAt(i + u) ? f = u : 0 === u && (f = 0));
 						break;
 					}
-					return -1 === s || -1 === a || 0 === u || 1 === u && s === a - 1 && s === h + 1 ? -1 !== a && (r.base = r.name = 0 === h && o ? t.slice(1, a) : t.slice(h, a)) : (0 === h && o ? (r.name = t.slice(1, s), r.base = t.slice(1, a)) : (r.name = t.slice(h, s), r.base = t.slice(h, a)), r.ext = t.slice(s, a)), h > 0 ? r.dir = t.slice(0, h - 1) : o && (r.dir = "/"), r;
-				},
-				sep: "/",
-				delimiter: ":",
-				win32: null,
-				posix: null
-			};
-			n.posix = n, t.exports = n;
-		} }, e = {};
-		function r(n) {
-			var i = e[n];
-			if (void 0 !== i) return i.exports;
-			var o = e[n] = { exports: {} };
-			return t[n](o, o.exports, r), o.exports;
-		}
-		r.d = (t, e) => {
-			for (var n in e) r.o(e, n) && !r.o(t, n) && Object.defineProperty(t, n, {
-				enumerable: !0,
-				get: e[n]
-			});
-		}, r.o = (t, e) => Object.prototype.hasOwnProperty.call(t, e), r.r = (t) => {
-			"undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(t, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(t, "__esModule", { value: !0 });
-		};
-		var n = {};
-		let i;
-		if (r.r(n), r.d(n, {
-			URI: () => l,
-			Utils: () => I
-		}), "object" == typeof process$1) i = "win32" === process$1.platform;
-		else if ("object" == typeof navigator) i = navigator.userAgent.indexOf("Windows") >= 0;
-		const o = /^\w[\w\d+.-]*$/, s = /^\//, h = /^\/\//;
-		function a(t, e) {
-			if (!t.scheme && e) throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t.authority}", path: "${t.path}", query: "${t.query}", fragment: "${t.fragment}"}`);
-			if (t.scheme && !o.test(t.scheme)) throw new Error("[UriError]: Scheme contains illegal characters.");
-			if (t.path) {
-				if (t.authority) {
-					if (!s.test(t.path)) throw new Error("[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash (\"/\") character");
-				} else if (h.test(t.path)) throw new Error("[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters (\"//\")");
-			}
-		}
-		const c = "", f = "/", u = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
-		class l {
-			static isUri(t) {
-				return t instanceof l || !!t && "string" == typeof t.authority && "string" == typeof t.fragment && "string" == typeof t.path && "string" == typeof t.query && "string" == typeof t.scheme && "string" == typeof t.fsPath && "function" == typeof t.with && "function" == typeof t.toString;
-			}
-			scheme;
-			authority;
-			path;
-			query;
-			fragment;
-			constructor(t, e, r, n, i, o = !1) {
-				"object" == typeof t ? (this.scheme = t.scheme || c, this.authority = t.authority || c, this.path = t.path || c, this.query = t.query || c, this.fragment = t.fragment || c) : (this.scheme = function(t, e) {
-					return t || e ? t : "file";
-				}(t, o), this.authority = e || c, this.path = function(t, e) {
-					switch (t) {
-						case "https":
-						case "http":
-						case "file": e ? e[0] !== f && (e = f + e) : e = f;
-					}
-					return e;
-				}(this.scheme, r || c), this.query = n || c, this.fragment = i || c, a(this, o));
-			}
-			get fsPath() {
-				return v(this, !1);
-			}
-			with(t) {
-				if (!t) return this;
-				let { scheme: e, authority: r, path: n, query: i, fragment: o } = t;
-				return void 0 === e ? e = this.scheme : null === e && (e = c), void 0 === r ? r = this.authority : null === r && (r = c), void 0 === n ? n = this.path : null === n && (n = c), void 0 === i ? i = this.query : null === i && (i = c), void 0 === o ? o = this.fragment : null === o && (o = c), e === this.scheme && r === this.authority && n === this.path && i === this.query && o === this.fragment ? this : new d(e, r, n, i, o);
-			}
-			static parse(t, e = !1) {
-				const r = u.exec(t);
-				return r ? new d(r[2] || c, w(r[4] || c), w(r[5] || c), w(r[7] || c), w(r[9] || c), e) : new d(c, c, c, c, c);
-			}
-			static file(t) {
-				let e = c;
-				if (i && (t = t.replace(/\\/g, f)), t[0] === f && t[1] === f) {
-					const r = t.indexOf(f, 2);
-					-1 === r ? (e = t.substring(2), t = f) : (e = t.substring(2, r), t = t.substring(r) || f);
+					var l = t.charCodeAt(i + u);
+					if (l !== r.charCodeAt(s + u)) break;
+					47 === l && (f = u);
 				}
-				return new d("file", e, t, c, c);
-			}
-			static from(t) {
-				const e = new d(t.scheme, t.authority, t.path, t.query, t.fragment);
-				return a(e, !0), e;
-			}
-			toString(t = !1) {
-				return b(this, t);
-			}
-			toJSON() {
-				return this;
-			}
-			static revive(t) {
-				if (t) {
-					if (t instanceof l) return t;
-					{
-						const e = new d(t);
-						return e._formatted = t.external, e._fsPath = t._sep === g ? t.fsPath : null, e;
-					}
-				}
+				var g = "";
+				for (u = i + f + 1; u <= o; ++u) u !== o && 47 !== t.charCodeAt(u) || (0 === g.length ? g += ".." : g += "/..");
+				return g.length > 0 ? g + r.slice(s + f) : (s += f, 47 === r.charCodeAt(s) && ++s, r.slice(s));
+			},
+			_makeLong: function(t) {
 				return t;
-			}
-		}
-		const g = i ? 1 : void 0;
-		class d extends l {
-			_formatted = null;
-			_fsPath = null;
-			get fsPath() {
-				return this._fsPath || (this._fsPath = v(this, !1)), this._fsPath;
-			}
-			toString(t = !1) {
-				return t ? b(this, !0) : (this._formatted || (this._formatted = b(this, !1)), this._formatted);
-			}
-			toJSON() {
-				const t = { $mid: 1 };
-				return this._fsPath && (t.fsPath = this._fsPath, t._sep = g), this._formatted && (t.external = this._formatted), this.path && (t.path = this.path), this.scheme && (t.scheme = this.scheme), this.authority && (t.authority = this.authority), this.query && (t.query = this.query), this.fragment && (t.fragment = this.fragment), t;
-			}
-		}
-		const p = {
-			58: "%3A",
-			47: "%2F",
-			63: "%3F",
-			35: "%23",
-			91: "%5B",
-			93: "%5D",
-			64: "%40",
-			33: "%21",
-			36: "%24",
-			38: "%26",
-			39: "%27",
-			40: "%28",
-			41: "%29",
-			42: "%2A",
-			43: "%2B",
-			44: "%2C",
-			59: "%3B",
-			61: "%3D",
-			32: "%20"
+			},
+			dirname: function(t) {
+				if (e(t), 0 === t.length) return ".";
+				for (var r = t.charCodeAt(0), n = 47 === r, i = -1, o = !0, h = t.length - 1; h >= 1; --h) if (47 === (r = t.charCodeAt(h))) {
+					if (!o) {
+						i = h;
+						break;
+					}
+				} else o = !1;
+				return -1 === i ? n ? "/" : "." : n && 1 === i ? "//" : t.slice(0, i);
+			},
+			basename: function(t, r) {
+				if (void 0 !== r && "string" != typeof r) throw new TypeError("\"ext\" argument must be a string");
+				e(t);
+				var n, i = 0, o = -1, h = !0;
+				if (void 0 !== r && r.length > 0 && r.length <= t.length) {
+					if (r.length === t.length && r === t) return "";
+					var s = r.length - 1, a = -1;
+					for (n = t.length - 1; n >= 0; --n) {
+						var c = t.charCodeAt(n);
+						if (47 === c) {
+							if (!h) {
+								i = n + 1;
+								break;
+							}
+						} else -1 === a && (h = !1, a = n + 1), s >= 0 && (c === r.charCodeAt(s) ? -1 === --s && (o = n) : (s = -1, o = a));
+					}
+					return i === o ? o = a : -1 === o && (o = t.length), t.slice(i, o);
+				}
+				for (n = t.length - 1; n >= 0; --n) if (47 === t.charCodeAt(n)) {
+					if (!h) {
+						i = n + 1;
+						break;
+					}
+				} else -1 === o && (h = !1, o = n + 1);
+				return -1 === o ? "" : t.slice(i, o);
+			},
+			extname: function(t) {
+				e(t);
+				for (var r = -1, n = 0, i = -1, o = !0, h = 0, s = t.length - 1; s >= 0; --s) {
+					var a = t.charCodeAt(s);
+					if (47 !== a) -1 === i && (o = !1, i = s + 1), 46 === a ? -1 === r ? r = s : 1 !== h && (h = 1) : -1 !== r && (h = -1);
+					else if (!o) {
+						n = s + 1;
+						break;
+					}
+				}
+				return -1 === r || -1 === i || 0 === h || 1 === h && r === i - 1 && r === n + 1 ? "" : t.slice(r, i);
+			},
+			format: function(t) {
+				if (null === t || "object" != typeof t) throw new TypeError("The \"pathObject\" argument must be of type Object. Received type " + typeof t);
+				return function(t, e) {
+					var r = e.dir || e.root, n = e.base || (e.name || "") + (e.ext || "");
+					return r ? r === e.root ? r + n : r + "/" + n : n;
+				}(0, t);
+			},
+			parse: function(t) {
+				e(t);
+				var r = {
+					root: "",
+					dir: "",
+					base: "",
+					ext: "",
+					name: ""
+				};
+				if (0 === t.length) return r;
+				var n, i = t.charCodeAt(0), o = 47 === i;
+				o ? (r.root = "/", n = 1) : n = 0;
+				for (var h = -1, s = 0, a = -1, c = !0, f = t.length - 1, u = 0; f >= n; --f) if (47 !== (i = t.charCodeAt(f))) -1 === a && (c = !1, a = f + 1), 46 === i ? -1 === h ? h = f : 1 !== u && (u = 1) : -1 !== h && (u = -1);
+				else if (!c) {
+					s = f + 1;
+					break;
+				}
+				return -1 === h || -1 === a || 0 === u || 1 === u && h === a - 1 && h === s + 1 ? -1 !== a && (r.base = r.name = 0 === s && o ? t.slice(1, a) : t.slice(s, a)) : (0 === s && o ? (r.name = t.slice(1, h), r.base = t.slice(1, a)) : (r.name = t.slice(s, h), r.base = t.slice(s, a)), r.ext = t.slice(h, a)), s > 0 ? r.dir = t.slice(0, s - 1) : o && (r.dir = "/"), r;
+			},
+			sep: "/",
+			delimiter: ":",
+			win32: null,
+			posix: null
 		};
-		function m(t, e, r) {
-			let n, i = -1;
-			for (let o = 0; o < t.length; o++) {
-				const s = t.charCodeAt(o);
-				if (s >= 97 && s <= 122 || s >= 65 && s <= 90 || s >= 48 && s <= 57 || 45 === s || 46 === s || 95 === s || 126 === s || e && 47 === s || r && 91 === s || r && 93 === s || r && 58 === s) -1 !== i && (n += encodeURIComponent(t.substring(i, o)), i = -1), void 0 !== n && (n += t.charAt(o));
-				else {
-					void 0 === n && (n = t.substr(0, o));
-					const e = p[s];
-					void 0 !== e ? (-1 !== i && (n += encodeURIComponent(t.substring(i, o)), i = -1), n += e) : -1 === i && (i = o);
+		n.posix = n, t.exports = n;
+	} };
+	var e = {};
+	function r(n) {
+		var i = e[n];
+		if (void 0 !== i) return i.exports;
+		var o = e[n] = { exports: {} };
+		return t$1[n](o, o.exports, r), o.exports;
+	}
+	var n;
+	if (r.d = (t, e) => {
+		for (var n in e) r.o(e, n) && !r.o(t, n) && Object.defineProperty(t, n, {
+			enumerable: !0,
+			get: e[n]
+		});
+	}, r.o = (t, e) => Object.prototype.hasOwnProperty.call(t, e), "object" == typeof process$1) n = "win32" === process$1.platform;
+	else if ("object" == typeof navigator) n = navigator.userAgent.indexOf("Windows") >= 0;
+	var i = /^\w[\w\d+.-]*$/;
+	var o = /^\//;
+	var h = /^\/\//;
+	function s(t, e) {
+		if (!t.scheme && e) throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t.authority}", path: "${t.path}", query: "${t.query}", fragment: "${t.fragment}"}`);
+		if (t.scheme && !i.test(t.scheme)) throw new Error("[UriError]: Scheme contains illegal characters.");
+		if (t.path) {
+			if (t.authority) {
+				if (!o.test(t.path)) throw new Error("[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash (\"/\") character");
+			} else if (h.test(t.path)) throw new Error("[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters (\"//\")");
+		}
+	}
+	var a = "";
+	var c = "/";
+	var f = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+	var u = class u {
+		static isUri(t) {
+			return t instanceof u || !!t && "string" == typeof t.authority && "string" == typeof t.fragment && "string" == typeof t.path && "string" == typeof t.query && "string" == typeof t.scheme && "string" == typeof t.fsPath && "function" == typeof t.with && "function" == typeof t.toString;
+		}
+		scheme;
+		authority;
+		path;
+		query;
+		fragment;
+		constructor(t, e, r, n, i, o = !1) {
+			"object" == typeof t ? (this.scheme = t.scheme || a, this.authority = t.authority || a, this.path = t.path || a, this.query = t.query || a, this.fragment = t.fragment || a) : (this.scheme = function(t, e) {
+				return t || e ? t : "file";
+			}(t, o), this.authority = e || a, this.path = function(t, e) {
+				switch (t) {
+					case "https":
+					case "http":
+					case "file": e ? e[0] !== c && (e = c + e) : e = c;
+				}
+				return e;
+			}(this.scheme, r || a), this.query = n || a, this.fragment = i || a, s(this, o));
+		}
+		get fsPath() {
+			return y(this, !1);
+		}
+		with(t) {
+			if (!t) return this;
+			let { scheme: e, authority: r, path: n, query: i, fragment: o } = t;
+			return void 0 === e ? e = this.scheme : null === e && (e = a), void 0 === r ? r = this.authority : null === r && (r = a), void 0 === n ? n = this.path : null === n && (n = a), void 0 === i ? i = this.query : null === i && (i = a), void 0 === o ? o = this.fragment : null === o && (o = a), e === this.scheme && r === this.authority && n === this.path && i === this.query && o === this.fragment ? this : new g(e, r, n, i, o);
+		}
+		static parse(t, e = !1) {
+			const r = f.exec(t);
+			return r ? new g(r[2] || a, A(r[4] || a), A(r[5] || a), A(r[7] || a), A(r[9] || a), e) : new g(a, a, a, a, a);
+		}
+		static file(t) {
+			let e = a;
+			if (n && (t = t.replace(/\\/g, c)), t[0] === c && t[1] === c) {
+				const r = t.indexOf(c, 2);
+				-1 === r ? (e = t.substring(2), t = c) : (e = t.substring(2, r), t = t.substring(r) || c);
+			}
+			return new g("file", e, t, a, a);
+		}
+		static from(t) {
+			const e = new g(t.scheme, t.authority, t.path, t.query, t.fragment);
+			return s(e, !0), e;
+		}
+		toString(t = !1) {
+			return v(this, t);
+		}
+		toJSON() {
+			return this;
+		}
+		static revive(t) {
+			if (t) {
+				if (t instanceof u) return t;
+				{
+					const e = new g(t);
+					return e._formatted = t.external, e._fsPath = t._sep === l ? t.fsPath : null, e;
 				}
 			}
-			return -1 !== i && (n += encodeURIComponent(t.substring(i))), void 0 !== n ? n : t;
+			return t;
 		}
-		function y(t) {
-			let e;
-			for (let r = 0; r < t.length; r++) {
-				const n = t.charCodeAt(r);
-				35 === n || 63 === n ? (void 0 === e && (e = t.substr(0, r)), e += p[n]) : void 0 !== e && (e += t[r]);
+	};
+	var l = n ? 1 : void 0;
+	var g = class extends u {
+		_formatted = null;
+		_fsPath = null;
+		get fsPath() {
+			return this._fsPath || (this._fsPath = y(this, !1)), this._fsPath;
+		}
+		toString(t = !1) {
+			return t ? v(this, !0) : (this._formatted || (this._formatted = v(this, !1)), this._formatted);
+		}
+		toJSON() {
+			const t = { $mid: 1 };
+			return this._fsPath && (t.fsPath = this._fsPath, t._sep = l), this._formatted && (t.external = this._formatted), this.path && (t.path = this.path), this.scheme && (t.scheme = this.scheme), this.authority && (t.authority = this.authority), this.query && (t.query = this.query), this.fragment && (t.fragment = this.fragment), t;
+		}
+	};
+	var p = {
+		58: "%3A",
+		47: "%2F",
+		63: "%3F",
+		35: "%23",
+		91: "%5B",
+		93: "%5D",
+		64: "%40",
+		33: "%21",
+		36: "%24",
+		38: "%26",
+		39: "%27",
+		40: "%28",
+		41: "%29",
+		42: "%2A",
+		43: "%2B",
+		44: "%2C",
+		59: "%3B",
+		61: "%3D",
+		32: "%20"
+	};
+	function d(t, e, r) {
+		let n, i = -1;
+		for (let o = 0; o < t.length; o++) {
+			const h = t.charCodeAt(o);
+			if (h >= 97 && h <= 122 || h >= 65 && h <= 90 || h >= 48 && h <= 57 || 45 === h || 46 === h || 95 === h || 126 === h || e && 47 === h || r && 91 === h || r && 93 === h || r && 58 === h) -1 !== i && (n += encodeURIComponent(t.substring(i, o)), i = -1), void 0 !== n && (n += t.charAt(o));
+			else {
+				void 0 === n && (n = t.substr(0, o));
+				const e = p[h];
+				void 0 !== e ? (-1 !== i && (n += encodeURIComponent(t.substring(i, o)), i = -1), n += e) : -1 === i && (i = o);
 			}
-			return void 0 !== e ? e : t;
 		}
-		function v(t, e) {
-			let r;
-			return r = t.authority && t.path.length > 1 && "file" === t.scheme ? `//${t.authority}${t.path}` : 47 === t.path.charCodeAt(0) && (t.path.charCodeAt(1) >= 65 && t.path.charCodeAt(1) <= 90 || t.path.charCodeAt(1) >= 97 && t.path.charCodeAt(1) <= 122) && 58 === t.path.charCodeAt(2) ? e ? t.path.substr(1) : t.path[1].toLowerCase() + t.path.substr(2) : t.path, i && (r = r.replace(/\//g, "\\")), r;
+		return -1 !== i && (n += encodeURIComponent(t.substring(i))), void 0 !== n ? n : t;
+	}
+	function m(t) {
+		let e;
+		for (let r = 0; r < t.length; r++) {
+			const n = t.charCodeAt(r);
+			35 === n || 63 === n ? (void 0 === e && (e = t.substr(0, r)), e += p[n]) : void 0 !== e && (e += t[r]);
 		}
-		function b(t, e) {
-			const r = e ? y : m;
-			let n = "", { scheme: i, authority: o, path: s, query: h, fragment: a } = t;
-			if (i && (n += i, n += ":"), (o || "file" === i) && (n += f, n += f), o) {
-				let t = o.indexOf("@");
-				if (-1 !== t) {
-					const e = o.substr(0, t);
-					o = o.substr(t + 1), t = e.lastIndexOf(":"), -1 === t ? n += r(e, !1, !1) : (n += r(e.substr(0, t), !1, !1), n += ":", n += r(e.substr(t + 1), !1, !0)), n += "@";
-				}
-				o = o.toLowerCase(), t = o.lastIndexOf(":"), -1 === t ? n += r(o, !1, !0) : (n += r(o.substr(0, t), !1, !0), n += o.substr(t));
+		return void 0 !== e ? e : t;
+	}
+	function y(t, e) {
+		let r;
+		return r = t.authority && t.path.length > 1 && "file" === t.scheme ? `//${t.authority}${t.path}` : 47 === t.path.charCodeAt(0) && (t.path.charCodeAt(1) >= 65 && t.path.charCodeAt(1) <= 90 || t.path.charCodeAt(1) >= 97 && t.path.charCodeAt(1) <= 122) && 58 === t.path.charCodeAt(2) ? e ? t.path.substr(1) : t.path[1].toLowerCase() + t.path.substr(2) : t.path, n && (r = r.replace(/\//g, "\\")), r;
+	}
+	function v(t, e) {
+		const r = e ? m : d;
+		let n = "", { scheme: i, authority: o, path: h, query: s, fragment: a } = t;
+		if (i && (n += i, n += ":"), (o || "file" === i) && (n += c, n += c), o) {
+			let t = o.indexOf("@");
+			if (-1 !== t) {
+				const e = o.substr(0, t);
+				o = o.substr(t + 1), t = e.lastIndexOf(":"), -1 === t ? n += r(e, !1, !1) : (n += r(e.substr(0, t), !1, !1), n += ":", n += r(e.substr(t + 1), !1, !0)), n += "@";
 			}
-			if (s) {
-				if (s.length >= 3 && 47 === s.charCodeAt(0) && 58 === s.charCodeAt(2)) {
-					const t = s.charCodeAt(1);
-					t >= 65 && t <= 90 && (s = `/${String.fromCharCode(t + 32)}:${s.substr(3)}`);
-				} else if (s.length >= 2 && 58 === s.charCodeAt(1)) {
-					const t = s.charCodeAt(0);
-					t >= 65 && t <= 90 && (s = `${String.fromCharCode(t + 32)}:${s.substr(2)}`);
-				}
-				n += r(s, !0, !1);
+			o = o.toLowerCase(), t = o.lastIndexOf(":"), -1 === t ? n += r(o, !1, !0) : (n += r(o.substr(0, t), !1, !0), n += o.substr(t));
+		}
+		if (h) {
+			if (h.length >= 3 && 47 === h.charCodeAt(0) && 58 === h.charCodeAt(2)) {
+				const t = h.charCodeAt(1);
+				t >= 65 && t <= 90 && (h = `/${String.fromCharCode(t + 32)}:${h.substr(3)}`);
+			} else if (h.length >= 2 && 58 === h.charCodeAt(1)) {
+				const t = h.charCodeAt(0);
+				t >= 65 && t <= 90 && (h = `${String.fromCharCode(t + 32)}:${h.substr(2)}`);
 			}
-			return h && (n += "?", n += r(h, !1, !1)), a && (n += "#", n += e ? a : m(a, !1, !1)), n;
+			n += r(h, !0, !1);
 		}
-		function C(t) {
-			try {
-				return decodeURIComponent(t);
-			} catch {
-				return t.length > 3 ? t.substr(0, 3) + C(t.substr(3)) : t;
-			}
+		return s && (n += "?", n += r(s, !1, !1)), a && (n += "#", n += e ? a : d(a, !1, !1)), n;
+	}
+	function b(t) {
+		try {
+			return decodeURIComponent(t);
+		} catch {
+			return t.length > 3 ? t.substr(0, 3) + b(t.substr(3)) : t;
 		}
-		const A = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
-		function w(t) {
-			return t.match(A) ? t.replace(A, ((t) => C(t))) : t;
-		}
-		var x = r(975);
-		const P = x.posix || x, _ = "/";
-		var I;
-		(function(t) {
-			t.joinPath = function(t, ...e) {
-				return t.with({ path: P.join(t.path, ...e) });
-			}, t.resolvePath = function(t, ...e) {
-				let r = t.path, n = !1;
-				r[0] !== _ && (r = _ + r, n = !0);
-				let i = P.resolve(r, ...e);
-				return n && i[0] === _ && !t.authority && (i = i.substring(1)), t.with({ path: i });
-			}, t.dirname = function(t) {
-				if (0 === t.path.length || t.path === _) return t;
-				let e = P.dirname(t.path);
-				return 1 === e.length && 46 === e.charCodeAt(0) && (e = ""), t.with({ path: e });
-			}, t.basename = function(t) {
-				return P.basename(t.path);
-			}, t.extname = function(t) {
-				return P.extname(t.path);
-			};
-		})(I || (I = {})), LIB = n;
-	})();
-	var { URI, Utils } = LIB;
-	//#endregion
-	//#region src/utils.ts
+	}
+	var C = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
+	function A(t) {
+		return t.match(C) ? t.replace(C, (t) => b(t)) : t;
+	}
+	var w = r(975);
+	var x = w.posix || w;
+	var P = "/";
+	var _;
+	(function(t) {
+		t.joinPath = function(t, ...e) {
+			return t.with({ path: x.join(t.path, ...e) });
+		}, t.resolvePath = function(t, ...e) {
+			let r = t.path, n = !1;
+			r[0] !== P && (r = P + r, n = !0);
+			let i = x.resolve(r, ...e);
+			return n && i[0] === P && !t.authority && (i = i.substring(1)), t.with({ path: i });
+		}, t.dirname = function(t) {
+			if (0 === t.path.length || t.path === P) return t;
+			let e = x.dirname(t.path);
+			return 1 === e.length && 46 === e.charCodeAt(0) && (e = ""), t.with({ path: e });
+		}, t.basename = function(t) {
+			return x.basename(t.path);
+		}, t.extname = function(t) {
+			return x.extname(t.path);
+		};
+	})(_ || (_ = {}));
+	// src/utils.ts
 	function mergeObjects(obj1, obj2, excludeUndefined = false) {
 		if (!obj1) return obj2;
 		if (!obj2) return obj1;
@@ -7697,8 +7654,7 @@
 		for (let i = 0; i < regexpArray.length; i++) if (regexpArray[i].test(value)) return true;
 		return false;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
+	// ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
 	var FullTextDocument = class FullTextDocument {
 		constructor(uri, languageId, version, content) {
 			this._uri = uri;
@@ -7730,6 +7686,13 @@
 				const startOffset = this.offsetAt(range.start);
 				const endOffset = this.offsetAt(range.end);
 				this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+				const insertedEndOffset = startOffset + change.text.length;
+				const crlfAtStart = this._content.charCodeAt(startOffset - 1) === 13 && this._content.charCodeAt(startOffset) === 10;
+				const crlfAtEnd = this._content.charCodeAt(insertedEndOffset - 1) === 13 && this._content.charCodeAt(insertedEndOffset) === 10;
+				if (crlfAtStart || crlfAtEnd) {
+					this._lineOffsets = void 0;
+					continue;
+				}
 				const startLine = Math.max(range.start.line, 0);
 				const endLine = Math.max(range.end.line, 0);
 				let lineOffsets = this._lineOffsets;
@@ -7778,6 +7741,52 @@
 			const nextLineOffset = position.line + 1 < lineOffsets.length ? lineOffsets[position.line + 1] : this._content.length;
 			const offset = Math.min(lineOffset + position.character, nextLineOffset);
 			return this.ensureBeforeEOL(offset, lineOffset);
+		}
+		getLineRange(line) {
+			const lineOffsets = this.getLineOffsets();
+			if (line >= lineOffsets.length) {
+				const lastLine = lineOffsets.length - 1;
+				return {
+					start: {
+						line: lastLine,
+						character: 0
+					},
+					end: {
+						line: lastLine,
+						character: this._content.length - lineOffsets[lastLine]
+					}
+				};
+			} else if (line < 0) return {
+				start: {
+					line: 0,
+					character: 0
+				},
+				end: {
+					line: 0,
+					character: 0
+				}
+			};
+			const startOffset = lineOffsets[line];
+			const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+			const endOffset = this.ensureBeforeEOL(nextLineOffset, startOffset);
+			return {
+				start: {
+					line,
+					character: 0
+				},
+				end: {
+					line,
+					character: endOffset - startOffset
+				}
+			};
+		}
+		getEOLCharacters(line) {
+			const lineOffsets = this.getLineOffsets();
+			if (line >= lineOffsets.length) return "";
+			else if (line < 0) return "";
+			const nextLineOffset = line + 1 < lineOffsets.length ? lineOffsets[line + 1] : this._content.length;
+			const eolOffset = this.ensureBeforeEOL(nextLineOffset, lineOffsets[line]);
+			return this._content.substring(eolOffset, nextLineOffset);
 		}
 		ensureBeforeEOL(offset, lineOffset) {
 			while (offset > lineOffset && isEOL$1(this._content.charCodeAt(offset - 1))) offset--;
@@ -7893,8 +7902,7 @@
 		};
 		return textEdit;
 	}
-	//#endregion
-	//#region src/services/base-service.ts
+	// src/services/base-service.ts
 	var BaseService = class {
 		constructor(mode, workspaceUri) {
 			this.documents = {};
@@ -8079,8 +8087,7 @@
 		}
 		sendResponse(callbackId, args) {}
 	};
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/htmlparser.js
+	// ../../node_modules/htmlhint/dist/core/htmlparser.js
 	var require_htmlparser = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var HTMLParser = class {
@@ -8269,8 +8276,7 @@
 		};
 		exports.default = HTMLParser;
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/reporter.js
+	// ../../node_modules/htmlhint/dist/core/reporter.js
 	var require_reporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var Reporter = class {
@@ -8328,8 +8334,7 @@
 		};
 		exports.default = Reporter;
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/alt-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/alt-require.js
 	var require_alt_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8352,8 +8357,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-lowercase.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-lowercase.js
 	var require_attr_lowercase = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var svgIgnores = [
@@ -8460,8 +8464,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-no-duplication.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-no-duplication.js
 	var require_attr_no_duplication = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8484,8 +8487,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-no-unnecessary-whitespace.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-no-unnecessary-whitespace.js
 	var require_attr_no_unnecessary_whitespace = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8504,8 +8506,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-value-no-duplication.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-value-no-duplication.js
 	var require_attr_value_no_duplication = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8536,8 +8537,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-sorted.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-sorted.js
 	var require_attr_sorted = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8583,8 +8583,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-unsafe-chars.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-unsafe-chars.js
 	var require_attr_unsafe_chars = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8609,8 +8608,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-value-double-quotes.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-value-double-quotes.js
 	var require_attr_value_double_quotes = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8629,8 +8627,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-value-not-empty.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-value-not-empty.js
 	var require_attr_value_not_empty = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8649,8 +8646,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-value-single-quotes.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-value-single-quotes.js
 	var require_attr_value_single_quotes = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8669,8 +8665,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/attr-whitespace.js
+	// ../../node_modules/htmlhint/dist/core/rules/attr-whitespace.js
 	var require_attr_whitespace = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8693,8 +8688,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/button-type-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/button-type-require.js
 	var require_button_type_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8716,8 +8710,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/doctype-first.js
+	// ../../node_modules/htmlhint/dist/core/rules/doctype-first.js
 	var require_doctype_first = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8743,8 +8736,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/doctype-html5.js
+	// ../../node_modules/htmlhint/dist/core/rules/doctype-html5.js
 	var require_doctype_html5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8763,8 +8755,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/empty-tag-not-self-closed.js
+	// ../../node_modules/htmlhint/dist/core/rules/empty-tag-not-self-closed.js
 	var require_empty_tag_not_self_closed = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8781,8 +8772,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/form-method-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/form-method-require.js
 	var require_form_method_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8805,8 +8795,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/frame-title-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/frame-title-require.js
 	var require_frame_title_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8829,8 +8818,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/h1-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/h1-require.js
 	var require_h1_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8881,8 +8869,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/head-script-disabled.js
+	// ../../node_modules/htmlhint/dist/core/rules/head-script-disabled.js
 	var require_head_script_disabled = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8901,9 +8888,11 @@
 						const isModule = type === "module";
 						const isDeferred = defer !== void 0;
 						const isAsync = mapAttrs.async !== void 0;
-						if (!type || reScript.test(type) === true || isModule) if (options === "allow-non-blocking") {
-							if (!isModule && !isDeferred && !isAsync) reporter.warn("The <script> tag cannot be used in a <head> tag unless it has type=\"module\", defer, or async attribute.", event.line, event.col, this, event.raw);
-						} else reporter.warn("The <script> tag cannot be used in a <head> tag.", event.line, event.col, this, event.raw);
+						if (!type || reScript.test(type) === true || isModule) {
+							if (options === "allow-non-blocking") {
+								if (!isModule && !isDeferred && !isAsync) reporter.warn("The <script> tag cannot be used in a <head> tag unless it has type=\"module\", defer, or async attribute.", event.line, event.col, this, event.raw);
+							} else reporter.warn("The <script> tag cannot be used in a <head> tag.", event.line, event.col, this, event.raw);
+						}
 					}
 				};
 				const onTagEnd = (event) => {
@@ -8917,8 +8906,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/href-abs-or-rel.js
+	// ../../node_modules/htmlhint/dist/core/rules/href-abs-or-rel.js
 	var require_href_abs_or_rel = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8941,8 +8929,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/html-lang-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/html-lang-require.js
 	var require_html_lang_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var languageTag = `((?<grandfathered>(en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang))|((?<language>([A-Za-z]{2,3}(-(?<extlang>[A-Za-z]{3}(-[A-Za-z]{3}){0,2}))?)|[A-Za-z]{4}|[A-Za-z]{5,8})(-(?<script>[A-Za-z]{4}))?(-(?<region>[A-Za-z]{2}|[0-9]{3}))?(-(?<variant>[A-Za-z0-9]{5,8}|[0-9][A-Za-z0-9]{3}))*(-(?<extension>[0-9A-WY-Za-wy-z](-[A-Za-z0-9]{2,8})+))*(-(?<privateUse>x(-[A-Za-z0-9]{1,8})+))?)|(?<privateUse2>x(-[A-Za-z0-9]{1,8})+))`;
@@ -8955,16 +8942,17 @@
 					const mapAttrs = parser.getMapAttrs(event.attrs);
 					const col = event.col + tagName.length + 1;
 					const langValidityPattern = new RegExp(languageTag, "g");
-					if (tagName === "html") if ("lang" in mapAttrs) {
-						if (!mapAttrs["lang"]) reporter.warn("The lang attribute of <html> element must have a value.", event.line, col, this, event.raw);
-						else if (!langValidityPattern.test(mapAttrs["lang"])) reporter.warn("The lang attribute value of <html> element must be a valid BCP47.", event.line, col, this, event.raw);
-					} else reporter.warn("An lang attribute must be present on <html> elements.", event.line, col, this, event.raw);
+					if (tagName === "html") {
+						if ("lang" in mapAttrs) {
+							if (!mapAttrs["lang"]) reporter.warn("The lang attribute of <html> element must have a value.", event.line, col, this, event.raw);
+							else if (!langValidityPattern.test(mapAttrs["lang"])) reporter.warn("The lang attribute value of <html> element must be a valid BCP47.", event.line, col, this, event.raw);
+						} else reporter.warn("An lang attribute must be present on <html> elements.", event.line, col, this, event.raw);
+					}
 				});
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/id-class-ad-disabled.js
+	// ../../node_modules/htmlhint/dist/core/rules/id-class-ad-disabled.js
 	var require_id_class_ad_disabled = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -8987,8 +8975,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/id-class-value.js
+	// ../../node_modules/htmlhint/dist/core/rules/id-class-value.js
 	var require_id_class_value = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9039,8 +9026,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/id-unique.js
+	// ../../node_modules/htmlhint/dist/core/rules/id-unique.js
 	var require_id_unique = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9069,8 +9055,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/inline-script-disabled.js
+	// ../../node_modules/htmlhint/dist/core/rules/inline-script-disabled.js
 	var require_inline_script_disabled = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9095,8 +9080,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/inline-style-disabled.js
+	// ../../node_modules/htmlhint/dist/core/rules/inline-style-disabled.js
 	var require_inline_style_disabled = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9115,8 +9099,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/input-requires-label.js
+	// ../../node_modules/htmlhint/dist/core/rules/input-requires-label.js
 	var require_input_requires_label = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9159,8 +9142,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/link-rel-canonical-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/link-rel-canonical-require.js
 	var require_link_rel_canonical_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9194,8 +9176,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/main-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/main-require.js
 	var require_main_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9230,8 +9211,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/meta-charset-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/meta-charset-require.js
 	var require_meta_charset_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9265,8 +9245,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/meta-description-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/meta-description-require.js
 	var require_meta_description_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9300,8 +9279,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/meta-viewport-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/meta-viewport-require.js
 	var require_meta_viewport_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9335,8 +9313,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/script-disabled.js
+	// ../../node_modules/htmlhint/dist/core/rules/script-disabled.js
 	var require_script_disabled = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9349,8 +9326,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/space-tab-mixed-disabled.js
+	// ../../node_modules/htmlhint/dist/core/rules/space-tab-mixed-disabled.js
 	var require_space_tab_mixed_disabled = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9385,8 +9361,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/spec-char-escape.js
+	// ../../node_modules/htmlhint/dist/core/rules/spec-char-escape.js
 	var require_spec_char_escape = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9405,8 +9380,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/src-not-empty.js
+	// ../../node_modules/htmlhint/dist/core/rules/src-not-empty.js
 	var require_src_not_empty = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9426,8 +9400,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/style-disabled.js
+	// ../../node_modules/htmlhint/dist/core/rules/style-disabled.js
 	var require_style_disabled = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9440,8 +9413,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/tag-no-obsolete.js
+	// ../../node_modules/htmlhint/dist/core/rules/tag-no-obsolete.js
 	var require_tag_no_obsolete = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var OBSOLETE_TAGS = [
@@ -9485,8 +9457,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/tagname-lowercase.js
+	// ../../node_modules/htmlhint/dist/core/rules/tagname-lowercase.js
 	var require_tagname_lowercase = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var svgTagNameIgnores = [
@@ -9548,8 +9519,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/tagname-specialchars.js
+	// ../../node_modules/htmlhint/dist/core/rules/tagname-specialchars.js
 	var require_tagname_specialchars = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9564,8 +9534,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/tag-pair.js
+	// ../../node_modules/htmlhint/dist/core/rules/tag-pair.js
 	var require_tag_pair = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9608,8 +9577,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/tags-check.js
+	// ../../node_modules/htmlhint/dist/core/rules/tags-check.js
 	var require_tags_check = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var tagsTypings = {
@@ -9682,8 +9650,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/tag-self-close.js
+	// ../../node_modules/htmlhint/dist/core/rules/tag-self-close.js
 	var require_tag_self_close = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9700,8 +9667,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/title-require.js
+	// ../../node_modules/htmlhint/dist/core/rules/title-require.js
 	var require_title_require = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.default = {
@@ -9731,8 +9697,7 @@
 			}
 		};
 	}));
-	//#endregion
-	//#region ../../node_modules/htmlhint/dist/core/rules/index.js
+	// ../../node_modules/htmlhint/dist/core/rules/index.js
 	var require_rules = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.titleRequire = exports.tagSelfClose = exports.tagsCheck = exports.tagPair = exports.tagnameSpecialChars = exports.tagnameLowercase = exports.tagNoObsolete = exports.styleDisabled = exports.srcNotEmpty = exports.specCharEscape = exports.spaceTabMixedDisabled = exports.scriptDisabled = exports.metaViewportRequire = exports.metaDescriptionRequire = exports.metaCharsetRequire = exports.mainRequire = exports.linkRelCanonicalRequire = exports.inputRequiresLabel = exports.inlineStyleDisabled = exports.inlineScriptDisabled = exports.idUnique = exports.idClassValue = exports.idClassAdDisabled = exports.htmlLangRequire = exports.hrefAbsOrRel = exports.headScriptDisabled = exports.h1Require = exports.frameTitleRequire = exports.formMethodRequire = exports.emptyTagNotSelfClosed = exports.doctypeHTML5 = exports.doctypeFirst = exports.buttonTypeRequire = exports.attrWhitespace = exports.attrValueSingleQuotes = exports.attrValueNotEmpty = exports.attrValueDoubleQuotes = exports.attrUnsafeChars = exports.attrSort = exports.attrValueNoDuplication = exports.attrNoUnnecessaryWhitespace = exports.attrNoDuplication = exports.attrLowercase = exports.altRequire = void 0;
@@ -10045,8 +10010,7 @@
 			}
 		});
 	}));
-	//#endregion
-	//#region ../../node_modules/@vscode/l10n/dist/browser.js
+	// ../../node_modules/@vscode/l10n/dist/browser.js
 	var import_core = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.HTMLParser = exports.Reporter = exports.HTMLRules = exports.HTMLHint = void 0;
@@ -10121,26 +10085,27 @@
 					const line = i + 1;
 					const commentOnLine = comments.find((c) => c.line === line);
 					if (commentOnLine) {
-						if (commentOnLine.command === "disable") if (commentOnLine.isNextLine) {
-							const nextLine = line + 1;
-							if (commentOnLine.rulesStr) {
+						if (commentOnLine.command === "disable") {
+							if (commentOnLine.isNextLine) {
+								const nextLine = line + 1;
+								if (commentOnLine.rulesStr) {
+									const rules = commentOnLine.rulesStr.split(/\s+/).filter((r) => r.length > 0);
+									if (!disabledRulesMap[nextLine]) disabledRulesMap[nextLine] = {};
+									if (!disabledRulesMap[nextLine].rules) disabledRulesMap[nextLine].rules = /* @__PURE__ */ new Set();
+									rules.forEach((r) => disabledRulesMap[nextLine].rules.add(r));
+								} else {
+									if (!disabledRulesMap[nextLine]) disabledRulesMap[nextLine] = {};
+									disabledRulesMap[nextLine].all = true;
+								}
+							} else if (commentOnLine.rulesStr) {
 								const rules = commentOnLine.rulesStr.split(/\s+/).filter((r) => r.length > 0);
-								if (!disabledRulesMap[nextLine]) disabledRulesMap[nextLine] = {};
-								if (!disabledRulesMap[nextLine].rules) disabledRulesMap[nextLine].rules = /* @__PURE__ */ new Set();
-								rules.forEach((r) => disabledRulesMap[nextLine].rules.add(r));
+								currentDisabledRules = new Set(rules);
+								isAllDisabled = false;
 							} else {
-								if (!disabledRulesMap[nextLine]) disabledRulesMap[nextLine] = {};
-								disabledRulesMap[nextLine].all = true;
+								currentDisabledRules = null;
+								isAllDisabled = true;
 							}
-						} else if (commentOnLine.rulesStr) {
-							const rules = commentOnLine.rulesStr.split(/\s+/).filter((r) => r.length > 0);
-							currentDisabledRules = new Set(rules);
-							isAllDisabled = false;
-						} else {
-							currentDisabledRules = null;
-							isAllDisabled = true;
-						}
-						else if (commentOnLine.command === "enable") {
+						} else if (commentOnLine.command === "enable") {
 							currentDisabledRules = null;
 							isAllDisabled = false;
 						}
@@ -10238,8 +10203,7 @@
 		if (Object.keys(values).length === 0) return template;
 		return template.replace(_format2Regexp, (match, group) => values[group] ?? match);
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/htmlLanguageTypes.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/htmlLanguageTypes.js
 	init_main();
 	var TokenType;
 	(function(TokenType) {
@@ -10306,8 +10270,7 @@
 		*/
 		FileType[FileType["SymbolicLink"] = 64] = "SymbolicLink";
 	})(FileType || (FileType = {}));
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/parser/htmlScanner.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/parser/htmlScanner.js
 	var MultiLineStream = class {
 		constructor(source, position) {
 			this.source = source;
@@ -10555,9 +10518,10 @@
 						return finishToken(offset, TokenType.StartTagSelfClose);
 					}
 					if (stream.advanceIfChar(_RAN)) {
-						if (lastTag === "script") if (lastTypeValue && htmlScriptContents[lastTypeValue]) state = ScannerState.WithinContent;
-						else state = ScannerState.WithinScriptContent;
-						else if (lastTag === "style") state = ScannerState.WithinStyleContent;
+						if (lastTag === "script") {
+							if (lastTypeValue && htmlScriptContents[lastTypeValue]) state = ScannerState.WithinContent;
+							else state = ScannerState.WithinScriptContent;
+						} else if (lastTag === "style") state = ScannerState.WithinStyleContent;
 						else state = ScannerState.WithinContent;
 						return finishToken(offset, TokenType.StartTagClose);
 					}
@@ -10647,8 +10611,7 @@
 			getTokenError: () => tokenError
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/utils/arrays.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/utils/arrays.js
 	/**
 	* Takes a sorted array and a function p. The array is sorted in such a way that all elements where p(x) is false
 	* are located before all elements where p(x) is true.
@@ -10675,8 +10638,7 @@
 		}
 		return -(low + 1);
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/parser/htmlParser.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/parser/htmlParser.js
 	var Node = class {
 		get attributeNames() {
 			return this.attributes ? Object.keys(this.attributes) : [];
@@ -10818,8 +10780,7 @@
 			};
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/parser/htmlEntities.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/parser/htmlEntities.js
 	/**
 	* HTML 5 character entities
 	* https://www.w3.org/TR/html5/syntax.html#named-character-references
@@ -13057,8 +13018,7 @@
 		"zwj;": "‍",
 		"zwnj;": "‌"
 	};
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/utils/strings.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/utils/strings.js
 	function startsWith(haystack, needle) {
 		if (haystack.length < needle.length) return false;
 		for (let i = 0; i < needle.length; i++) if (haystack[i] !== needle[i]) return false;
@@ -13092,13 +13052,11 @@
 		const c = text.charCodeAt(index);
 		return _a <= c && c <= _z || _A <= c && c <= _Z || _0 <= c && c <= _9;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/utils/object.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/utils/object.js
 	function isDefined(obj) {
 		return typeof obj !== "undefined";
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/utils/markup.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/utils/markup.js
 	function normalizeMarkupContent(input) {
 		if (!input) return;
 		if (typeof input === "string") return {
@@ -13110,8 +13068,7 @@
 			value: input.value
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/languageFacts/dataProvider.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/languageFacts/dataProvider.js
 	var BaselineImages = {
 		BASELINE_LIMITED: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCA1NDAgMzAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxzdHlsZT4KICAgIC5ncmF5LXNoYXBlIHsKICAgICAgZmlsbDogI0M2QzZDNjsgLyogTGlnaHQgbW9kZSAqLwogICAgfQoKICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgLmdyYXktc2hhcGUgewogICAgICAgIGZpbGw6ICM1NjU2NTY7IC8qIERhcmsgbW9kZSAqLwogICAgICB9CiAgICB9CiAgPC9zdHlsZT4KICA8cGF0aCBkPSJNMTUwIDBMMjQwIDkwTDIxMCAxMjBMMTIwIDMwTDE1MCAwWiIgZmlsbD0iI0YwOTQwOSIvPgogIDxwYXRoIGQ9Ik00MjAgMzBMNTQwIDE1MEw0MjAgMjcwTDM5MCAyNDBMNDgwIDE1MEwzOTAgNjBMNDIwIDMwWiIgY2xhc3M9ImdyYXktc2hhcGUiLz4KICA8cGF0aCBkPSJNMzMwIDE4MEwzMDAgMjEwTDM5MCAzMDBMNDIwIDI3MEwzMzAgMTgwWiIgZmlsbD0iI0YwOTQwOSIvPgogIDxwYXRoIGQ9Ik0xMjAgMzBMMTUwIDYwTDYwIDE1MEwxNTAgMjQwTDEyMCAyNzBMMCAxNTBMMTIwIDMwWiIgY2xhc3M9ImdyYXktc2hhcGUiLz4KICA8cGF0aCBkPSJNMzkwIDBMNDIwIDMwTDE1MCAzMDBMMTIwIDI3MEwzOTAgMFoiIGZpbGw9IiNGMDk0MDkiLz4KPC9zdmc+",
 		BASELINE_LOW: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCA1NDAgMzAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxzdHlsZT4KICAgIC5ibHVlLXNoYXBlIHsKICAgICAgZmlsbDogI0E4QzdGQTsgLyogTGlnaHQgbW9kZSAqLwogICAgfQoKICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgLmJsdWUtc2hhcGUgewogICAgICAgIGZpbGw6ICMyRDUwOUU7IC8qIERhcmsgbW9kZSAqLwogICAgICB9CiAgICB9CgogICAgLmRhcmtlci1ibHVlLXNoYXBlIHsKICAgICAgICBmaWxsOiAjMUI2RUYzOwogICAgfQoKICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgICAuZGFya2VyLWJsdWUtc2hhcGUgewogICAgICAgICAgICBmaWxsOiAjNDE4NUZGOwogICAgICAgIH0KICAgIH0KCiAgPC9zdHlsZT4KICA8cGF0aCBkPSJNMTUwIDBMMTgwIDMwTDE1MCA2MEwxMjAgMzBMMTUwIDBaIiBjbGFzcz0iYmx1ZS1zaGFwZSIvPgogIDxwYXRoIGQ9Ik0yMTAgNjBMMjQwIDkwTDIxMCAxMjBMMTgwIDkwTDIxMCA2MFoiIGNsYXNzPSJibHVlLXNoYXBlIi8+CiAgPHBhdGggZD0iTTQ1MCA2MEw0ODAgOTBMNDUwIDEyMEw0MjAgOTBMNDUwIDYwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNNTEwIDEyMEw1NDAgMTUwTDUxMCAxODBMNDgwIDE1MEw1MTAgMTIwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNNDUwIDE4MEw0ODAgMjEwTDQ1MCAyNDBMNDIwIDIxMEw0NTAgMTgwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNMzkwIDI0MEw0MjAgMjcwTDM5MCAzMDBMMzYwIDI3MEwzOTAgMjQwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNMzMwIDE4MEwzNjAgMjEwTDMzMCAyNDBMMzAwIDIxMEwzMzAgMTgwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNOTAgNjBMMTIwIDkwTDkwIDEyMEw2MCA5MEw5MCA2MFoiIGNsYXNzPSJibHVlLXNoYXBlIi8+CiAgPHBhdGggZD0iTTM5MCAwTDQyMCAzMEwxNTAgMzAwTDAgMTUwTDMwIDEyMEwxNTAgMjQwTDM5MCAwWiIgY2xhc3M9ImRhcmtlci1ibHVlLXNoYXBlIi8+Cjwvc3ZnPg==",
@@ -13292,8 +13249,7 @@
 		if (result.value === "") return;
 		return result;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/pathCompletion.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/pathCompletion.js
 	var PathCompletionParticipant = class {
 		constructor(dataManager, readDirectory) {
 			this.dataManager = dataManager;
@@ -13310,11 +13266,13 @@
 			};
 			for (const attributeCompletion of this.atributeCompletions) {
 				const fullValue = stripQuotes(document.getText(attributeCompletion.range));
-				if (isCompletablePath(fullValue)) if (fullValue === "." || fullValue === "..") result.isIncomplete = true;
-				else {
-					const replaceRange = pathToReplaceRange(attributeCompletion.value, fullValue, attributeCompletion.range);
-					const suggestions = await this.providePathSuggestions(attributeCompletion.value, replaceRange, document, documentContext, attributeCompletion);
-					for (const item of suggestions) result.items.push(item);
+				if (isCompletablePath(fullValue)) {
+					if (fullValue === "." || fullValue === "..") result.isIncomplete = true;
+					else {
+						const replaceRange = pathToReplaceRange(attributeCompletion.value, fullValue, attributeCompletion.range);
+						const suggestions = await this.providePathSuggestions(attributeCompletion.value, replaceRange, document, documentContext, attributeCompletion);
+						for (const item of suggestions) result.items.push(item);
+					}
 				}
 			}
 			return result;
@@ -13469,8 +13427,7 @@
 		const end = shiftPosition(range.end, endOffset);
 		return Range.create(start, end);
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlCompletion.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlCompletion.js
 	var HTMLCompletion = class {
 		constructor(lsOptions, dataManager) {
 			this.lsOptions = lsOptions;
@@ -13824,9 +13781,7 @@
 					case TokenType.Content:
 						if (offset <= scanner.getTokenEnd()) return collectInsideContent();
 						break;
-					default:
-						if (offset <= scanner.getTokenEnd()) return result;
-						break;
+					default: if (offset <= scanner.getTokenEnd()) return result;
 				}
 				token = scanner.scan();
 			}
@@ -13880,8 +13835,10 @@
 					const scanner = createScanner(document.getText(), node.start);
 					let token = scanner.scan();
 					while (token !== TokenType.EOS && scanner.getTokenEnd() <= offset) {
-						if (token === TokenType.EndTagOpen && scanner.getTokenEnd() === offset) if (document.getText().charAt(offset) !== ">") return `${node.tag}>`;
-						else return node.tag;
+						if (token === TokenType.EndTagOpen && scanner.getTokenEnd() === offset) {
+							if (document.getText().charAt(offset) !== ">") return `${node.tag}>`;
+							else return node.tag;
+						}
 						token = scanner.scan();
 					}
 				}
@@ -13929,8 +13886,7 @@
 		while (offset < limit && !isWhiteSpace(s[offset])) offset++;
 		return offset;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlHover.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlHover.js
 	var HTMLHover = class {
 		constructor(lsOptions, dataManager) {
 			this.lsOptions = lsOptions;
@@ -14114,15 +14070,17 @@
 			return null;
 		}
 		convertContents(contents) {
-			if (!this.doesSupportMarkdown()) if (typeof contents === "string") return contents;
-			else if ("kind" in contents) return {
-				kind: "plaintext",
-				value: contents.value
-			};
-			else if (Array.isArray(contents)) contents.map((c) => {
-				return typeof c === "string" ? c : c.value;
-			});
-			else return contents.value;
+			if (!this.doesSupportMarkdown()) {
+				if (typeof contents === "string") return contents;
+				else if ("kind" in contents) return {
+					kind: "plaintext",
+					value: contents.value
+				};
+				else if (Array.isArray(contents)) contents.map((c) => {
+					return typeof c === "string" ? c : c.value;
+				});
+				else return contents.value;
+			}
 			return contents;
 		}
 		doesSupportMarkdown() {
@@ -14143,13 +14101,11 @@
 		if (s[s.length - 1] === `'` || s[s.length - 1] === `"`) s = s.slice(0, -1);
 		return s;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/beautify/beautify.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/beautify/beautify.js
 	function js_beautify(js_source_text, options) {
 		return js_source_text;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/beautify/beautify-css.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/beautify/beautify-css.js
 	var legacy_beautify_css;
 	(function() {
 		"use strict";
@@ -14932,35 +14888,36 @@
 								this.eatWhitespace(true);
 								this._output.space_before_token = true;
 							}
-						} else if (this._ch === "(") if (this._input.lookBack("url")) {
-							this.print_string(this._ch);
-							this.eatWhitespace();
-							parenLevel++;
-							this.indent();
-							this._ch = this._input.next();
-							if (this._ch === ")" || this._ch === "\"" || this._ch === "'") this._input.back();
-							else if (this._ch) {
-								this.print_string(this._ch + this.eatString(")"));
-								if (parenLevel) {
-									parenLevel--;
-									this.outdent();
-								}
-							}
-						} else {
-							var space_needed = false;
-							if (this._input.lookBack("with")) space_needed = true;
-							this.preserveSingleSpace(isAfterSpace || space_needed);
-							this.print_string(this._ch);
-							if (insidePropertyValue && previous_ch === "$" && this._options.selector_separator_newline) {
-								this._output.add_new_line();
-								insideScssMap = true;
-							} else {
+						} else if (this._ch === "(") {
+							if (this._input.lookBack("url")) {
+								this.print_string(this._ch);
 								this.eatWhitespace();
 								parenLevel++;
 								this.indent();
+								this._ch = this._input.next();
+								if (this._ch === ")" || this._ch === "\"" || this._ch === "'") this._input.back();
+								else if (this._ch) {
+									this.print_string(this._ch + this.eatString(")"));
+									if (parenLevel) {
+										parenLevel--;
+										this.outdent();
+									}
+								}
+							} else {
+								var space_needed = false;
+								if (this._input.lookBack("with")) space_needed = true;
+								this.preserveSingleSpace(isAfterSpace || space_needed);
+								this.print_string(this._ch);
+								if (insidePropertyValue && previous_ch === "$" && this._options.selector_separator_newline) {
+									this._output.add_new_line();
+									insideScssMap = true;
+								} else {
+									this.eatWhitespace();
+									parenLevel++;
+									this.indent();
+								}
 							}
-						}
-						else if (this._ch === ")") {
+						} else if (this._ch === ")") {
 							if (parenLevel) {
 								parenLevel--;
 								this.outdent();
@@ -14976,16 +14933,17 @@
 							this.eatWhitespace(true);
 							if (this._options.selector_separator_newline && (!insidePropertyValue || insideScssMap) && parenLevel === 0 && !insideNonNestedAtRule) this._output.add_new_line();
 							else this._output.space_before_token = true;
-						} else if ((this._ch === ">" || this._ch === "+" || this._ch === "~") && !insidePropertyValue && parenLevel === 0) if (this._options.space_around_combinator) {
-							this._output.space_before_token = true;
-							this.print_string(this._ch);
-							this._output.space_before_token = true;
-						} else {
-							this.print_string(this._ch);
-							this.eatWhitespace();
-							if (this._ch && whitespaceChar.test(this._ch)) this._ch = "";
-						}
-						else if (this._ch === "]") this.print_string(this._ch);
+						} else if ((this._ch === ">" || this._ch === "+" || this._ch === "~") && !insidePropertyValue && parenLevel === 0) {
+							if (this._options.space_around_combinator) {
+								this._output.space_before_token = true;
+								this.print_string(this._ch);
+								this._output.space_before_token = true;
+							} else {
+								this.print_string(this._ch);
+								this.eatWhitespace();
+								if (this._ch && whitespaceChar.test(this._ch)) this._ch = "";
+							}
+						} else if (this._ch === "]") this.print_string(this._ch);
 						else if (this._ch === "[") {
 							this.preserveSingleSpace(isAfterSpace);
 							this.print_string(this._ch);
@@ -15041,8 +14999,7 @@
 		legacy_beautify_css = __webpack_require__(15);
 	})();
 	var css_beautify = legacy_beautify_css;
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/beautify/beautify-html.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/beautify/beautify-html.js
 	var legacy_beautify_html;
 	(function() {
 		"use strict";
@@ -16174,11 +16131,12 @@
 					};
 					printer.set_space_before_token(raw_token.newlines || raw_token.whitespace_before !== "", true);
 					if (last_tag_token.is_unformatted) printer.add_raw_token(raw_token);
-					else if (last_tag_token.tag_start_char === "{" && raw_token.type === TOKEN.TEXT) if (printer.print_preserved_newlines(raw_token)) {
-						raw_token.newlines = 0;
-						printer.add_raw_token(raw_token);
-					} else printer.print_token(raw_token);
-					else {
+					else if (last_tag_token.tag_start_char === "{" && raw_token.type === TOKEN.TEXT) {
+						if (printer.print_preserved_newlines(raw_token)) {
+							raw_token.newlines = 0;
+							printer.add_raw_token(raw_token);
+						} else printer.print_token(raw_token);
+					} else {
 						if (raw_token.type === TOKEN.ATTRIBUTE) printer.set_space_before_token(true);
 						else if (raw_token.type === TOKEN.EQUALS) printer.set_space_before_token(false);
 						else if (raw_token.type === TOKEN.VALUE && raw_token.previous.type === TOKEN.EQUALS) printer.set_space_before_token(false);
@@ -16239,20 +16197,24 @@
 								if (matched) raw_token.whitespace_before = matched[0];
 							}
 						}
-						if (text) if (_beautifier) {
-							var Child_options = function() {
-								this.eol = "\n";
-							};
-							Child_options.prototype = this._options.raw_options;
-							var child_options = new Child_options();
-							text = _beautifier(indentation + text, child_options);
-						} else {
-							var white = raw_token.whitespace_before;
-							if (white) text = text.replace(new RegExp("\n(" + white + ")?", "g"), "\n");
-							text = indentation + text.replace(/\n/g, "\n" + indentation);
+						if (text) {
+							if (_beautifier) {
+								var Child_options = function() {
+									this.eol = "\n";
+								};
+								Child_options.prototype = this._options.raw_options;
+								var child_options = new Child_options();
+								text = _beautifier(indentation + text, child_options);
+							} else {
+								var white = raw_token.whitespace_before;
+								if (white) text = text.replace(new RegExp("\n(" + white + ")?", "g"), "\n");
+								text = indentation + text.replace(/\n/g, "\n" + indentation);
+							}
 						}
-						if (pre) if (!text) text = pre + post;
-						else text = pre + text + "\n" + post;
+						if (pre) {
+							if (!text) text = pre + post;
+							else text = pre + text + "\n" + post;
+						}
 						printer.print_newline(false);
 						if (text) {
 							raw_token.text = text;
@@ -16319,8 +16281,10 @@
 						} else {
 							tag_check_match = raw_token.text.match(/^{{~?(?:[\^]|#\*?)?([^\s}]+)/);
 							this.tag_check = tag_check_match ? tag_check_match[1] : "";
-							if ((raw_token.text.startsWith("{{#>") || raw_token.text.startsWith("{{~#>")) && this.tag_check[0] === ">") if (this.tag_check === ">" && raw_token.next !== null) this.tag_check = raw_token.next.text.split(" ")[0];
-							else this.tag_check = raw_token.text.split(">")[1];
+							if ((raw_token.text.startsWith("{{#>") || raw_token.text.startsWith("{{~#>")) && this.tag_check[0] === ">") {
+								if (this.tag_check === ">" && raw_token.next !== null) this.tag_check = raw_token.next.text.split(" ")[0];
+								else this.tag_check = raw_token.text.split(">")[1];
+							}
 						}
 						this.tag_check = this.tag_check.toLowerCase();
 						if (raw_token.type === TOKEN.COMMENT) this.tag_complete = true;
@@ -16345,13 +16309,15 @@
 					return parser_token;
 				};
 				Beautifier.prototype._set_tag_position = function(printer, raw_token, parser_token, last_tag_token, last_token) {
-					if (!parser_token.is_empty_element) if (parser_token.is_end_tag) parser_token.start_tag_token = this._tag_stack.try_pop(parser_token.tag_name);
-					else {
-						if (this._do_optional_end_element(parser_token)) {
-							if (!parser_token.is_inline_element) printer.print_newline(false);
+					if (!parser_token.is_empty_element) {
+						if (parser_token.is_end_tag) parser_token.start_tag_token = this._tag_stack.try_pop(parser_token.tag_name);
+						else {
+							if (this._do_optional_end_element(parser_token)) {
+								if (!parser_token.is_inline_element) printer.print_newline(false);
+							}
+							this._tag_stack.record_tag(parser_token);
+							if ((parser_token.tag_name === "script" || parser_token.tag_name === "style") && !(parser_token.is_unformatted || parser_token.is_content_unformatted)) parser_token.custom_beautifier_name = get_custom_beautifier_name(parser_token.tag_check, raw_token);
 						}
-						this._tag_stack.record_tag(parser_token);
-						if ((parser_token.tag_name === "script" || parser_token.tag_name === "style") && !(parser_token.is_unformatted || parser_token.is_content_unformatted)) parser_token.custom_beautifier_name = get_custom_beautifier_name(parser_token.tag_check, raw_token);
 					}
 					if (in_array(parser_token.tag_check, this._options.extra_liners)) {
 						printer.print_newline(false);
@@ -16756,13 +16722,15 @@
 					var resulting_string = null;
 					var token = null;
 					if (!open_token || open_token.type === TOKEN.CONTROL_FLOW_OPEN) {
-						if ((this._options.templating.includes("angular") || this._options.indent_handlebars) && c === "{" && this._input.peek(1) === "{") if (this._options.indent_handlebars && this._input.peek(2) === "!") {
-							resulting_string = this.__patterns.handlebars_comment.read();
-							resulting_string = resulting_string || this.__patterns.handlebars.read();
-							token = this._create_token(TOKEN.COMMENT, resulting_string);
-						} else {
-							resulting_string = this.__patterns.handlebars_open.read();
-							token = this._create_token(TOKEN.TAG_OPEN, resulting_string);
+						if ((this._options.templating.includes("angular") || this._options.indent_handlebars) && c === "{" && this._input.peek(1) === "{") {
+							if (this._options.indent_handlebars && this._input.peek(2) === "!") {
+								resulting_string = this.__patterns.handlebars_comment.read();
+								resulting_string = resulting_string || this.__patterns.handlebars.read();
+								token = this._create_token(TOKEN.COMMENT, resulting_string);
+							} else {
+								resulting_string = this.__patterns.handlebars_open.read();
+								token = this._create_token(TOKEN.TAG_OPEN, resulting_string);
+							}
 						}
 					}
 					return token;
@@ -16809,16 +16777,20 @@
 				Tokenizer.prototype._read_attribute = function(c, previous_token, open_token) {
 					var token = null;
 					var resulting_string = "";
-					if (open_token && open_token.text[0] === "<") if (c === "=") token = this._create_token(TOKEN.EQUALS, this._input.next());
-					else if (c === "\"" || c === "'") {
-						var content = this._input.next();
-						if (c === "\"") content += this.__patterns.double_quote.read();
-						else content += this.__patterns.single_quote.read();
-						token = this._create_token(TOKEN.VALUE, content);
-					} else {
-						resulting_string = this.__patterns.attribute.read();
-						if (resulting_string) if (previous_token.type === TOKEN.EQUALS) token = this._create_token(TOKEN.VALUE, resulting_string);
-						else token = this._create_token(TOKEN.ATTRIBUTE, resulting_string);
+					if (open_token && open_token.text[0] === "<") {
+						if (c === "=") token = this._create_token(TOKEN.EQUALS, this._input.next());
+						else if (c === "\"" || c === "'") {
+							var content = this._input.next();
+							if (c === "\"") content += this.__patterns.double_quote.read();
+							else content += this.__patterns.single_quote.read();
+							token = this._create_token(TOKEN.VALUE, content);
+						} else {
+							resulting_string = this.__patterns.attribute.read();
+							if (resulting_string) {
+								if (previous_token.type === TOKEN.EQUALS) token = this._create_token(TOKEN.VALUE, resulting_string);
+								else token = this._create_token(TOKEN.ATTRIBUTE, resulting_string);
+							}
+						}
 					}
 					return token;
 				};
@@ -16876,8 +16848,7 @@
 	function html_beautify(html_source, options) {
 		return legacy_beautify_html(html_source, options, js_beautify, css_beautify);
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlFormatter.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlFormatter.js
 	function format(document, range, options) {
 		let value = document.getText();
 		let includesEnd = true;
@@ -16983,8 +16954,7 @@
 	function isWhitespace(text, offset) {
 		return " 	".indexOf(text.charAt(offset)) !== -1;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlLinks.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlLinks.js
 	function normalizeRef(url) {
 		const first = url[0];
 		if (first === url[url.length - 1] && (first === "'" || first === "\"")) url = url.substring(1, url.length - 1);
@@ -17027,7 +16997,7 @@
 	var _hash = "#".charCodeAt(0);
 	function validateAndCleanURI(uriStr, document) {
 		try {
-			let uri = URI.parse(uriStr);
+			let uri = u.parse(uriStr);
 			if (uri.scheme === "file" && uri.query) {
 				uri = uri.with({ query: null });
 				uriStr = uri.toString(true);
@@ -17060,24 +17030,22 @@
 					case TokenType.AttributeName:
 						lastAttributeName = scanner.getTokenText().toLowerCase();
 						break;
-					case TokenType.AttributeValue:
-						if (lastTagName && lastAttributeName && this.dataManager.isPathAttribute(lastTagName, lastAttributeName)) {
-							const attributeValue = scanner.getTokenText();
-							if (!afterBase) {
-								const link = createLink(document, documentContext, attributeValue, scanner.getTokenOffset(), scanner.getTokenEnd(), base);
-								if (link) newLinks.push(link);
-							}
-							if (afterBase && typeof base === "undefined") {
-								base = normalizeRef(attributeValue);
-								if (base && documentContext) base = documentContext.resolveReference(base, document.uri);
-							}
-							afterBase = false;
-							lastAttributeName = void 0;
-						} else if (lastAttributeName === "id") {
-							const id = normalizeRef(scanner.getTokenText());
-							idLocations[id] = scanner.getTokenOffset();
+					case TokenType.AttributeValue: if (lastTagName && lastAttributeName && this.dataManager.isPathAttribute(lastTagName, lastAttributeName)) {
+						const attributeValue = scanner.getTokenText();
+						if (!afterBase) {
+							const link = createLink(document, documentContext, attributeValue, scanner.getTokenOffset(), scanner.getTokenEnd(), base);
+							if (link) newLinks.push(link);
 						}
-						break;
+						if (afterBase && typeof base === "undefined") {
+							base = normalizeRef(attributeValue);
+							if (base && documentContext) base = documentContext.resolveReference(base, document.uri);
+						}
+						afterBase = false;
+						lastAttributeName = void 0;
+					} else if (lastAttributeName === "id") {
+						const id = normalizeRef(scanner.getTokenText());
+						idLocations[id] = scanner.getTokenOffset();
+					}
 				}
 				token = scanner.scan();
 			}
@@ -17094,8 +17062,7 @@
 			return newLinks;
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlHighlighting.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlHighlighting.js
 	function findDocumentHighlights(document, position, htmlDocument) {
 		const offset = document.offsetAt(position);
 		const node = htmlDocument.findNodeAt(offset);
@@ -17131,8 +17098,7 @@
 		};
 		return null;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlSymbolsProvider.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlSymbolsProvider.js
 	function findDocumentSymbols(document, htmlDocument) {
 		const symbols = [];
 		const symbols2 = findDocumentSymbols2(document, htmlDocument);
@@ -17172,8 +17138,7 @@
 		}
 		return name || "?";
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlRename.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlRename.js
 	function doRename(document, position, newName, htmlDocument) {
 		const offset = document.offsetAt(position);
 		const node = htmlDocument.findNodeAt(offset);
@@ -17206,8 +17171,7 @@
 		}
 		return node.start + 1 <= offset && offset <= node.start + 1 + nodeTag.length;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlMatchingTagPosition.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlMatchingTagPosition.js
 	function findMatchingTagPosition(document, position, htmlDocument) {
 		const offset = document.offsetAt(position);
 		const node = htmlDocument.findNodeAt(offset);
@@ -17223,8 +17187,7 @@
 		}
 		return null;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlLinkedEditing.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlLinkedEditing.js
 	function findLinkedEditingRanges(document, position, htmlDocument) {
 		const offset = document.offsetAt(position);
 		const node = htmlDocument.findNodeAt(offset);
@@ -17233,8 +17196,7 @@
 		if (node.start + 1 <= offset && offset <= node.start + 1 + tagLength || node.endTagStart + 2 <= offset && offset <= node.endTagStart + 2 + tagLength) return [Range.create(document.positionAt(node.start + 1), document.positionAt(node.start + 1 + tagLength)), Range.create(document.positionAt(node.endTagStart + 2), document.positionAt(node.endTagStart + 2 + tagLength))];
 		return null;
 	}
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlFolding.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlFolding.js
 	var HTMLFolding = class {
 		constructor(dataManager) {
 			this.dataManager = dataManager;
@@ -17345,26 +17307,27 @@
 					case TokenType.Comment: {
 						let startLine = document.positionAt(scanner.getTokenOffset()).line;
 						const m = scanner.getTokenText().match(/^\s*#(region\b)|(endregion\b)/);
-						if (m) if (m[1]) stack.push({
-							startLine,
-							tagName: ""
-						});
-						else {
-							let i = stack.length - 1;
-							while (i >= 0 && stack[i].tagName.length) i--;
-							if (i >= 0) {
-								const stackElement = stack[i];
-								stack.length = i;
-								const endLine = startLine;
-								startLine = stackElement.startLine;
-								if (endLine > startLine && prevStart !== startLine) addRange({
-									startLine,
-									endLine,
-									kind: FoldingRangeKind.Region
-								});
+						if (m) {
+							if (m[1]) stack.push({
+								startLine,
+								tagName: ""
+							});
+							else {
+								let i = stack.length - 1;
+								while (i >= 0 && stack[i].tagName.length) i--;
+								if (i >= 0) {
+									const stackElement = stack[i];
+									stack.length = i;
+									const endLine = startLine;
+									startLine = stackElement.startLine;
+									if (endLine > startLine && prevStart !== startLine) addRange({
+										startLine,
+										endLine,
+										kind: FoldingRangeKind.Region
+									});
+								}
 							}
-						}
-						else {
+						} else {
 							const endLine = document.positionAt(scanner.getTokenOffset() + scanner.getTokenLength()).line;
 							if (startLine < endLine) addRange({
 								startLine,
@@ -17382,8 +17345,7 @@
 			return ranges;
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlSelectionRange.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlSelectionRange.js
 	var HTMLSelectionRange = class {
 		constructor(htmlParser) {
 			this.htmlParser = htmlParser;
@@ -17502,8 +17464,7 @@
 			});
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/languageFacts/data/webCustomData.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/languageFacts/data/webCustomData.js
 	var htmlData = {
 		"version": 1.1,
 		"tags": [
@@ -28074,8 +28035,7 @@
 			}
 		]
 	};
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/languageFacts/dataManager.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/languageFacts/dataManager.js
 	var HTMLDataManager = class {
 		constructor(options) {
 			this.dataProviders = [];
@@ -28103,8 +28063,10 @@
 		isPathAttribute(tag, attr) {
 			if (attr === "src" || attr === "href") return true;
 			const a = PATH_TAG_AND_ATTR[tag];
-			if (a) if (typeof a === "string") return a === attr;
-			else return a.indexOf(attr) !== -1;
+			if (a) {
+				if (typeof a === "string") return a === attr;
+				else return a.indexOf(attr) !== -1;
+			}
 			return false;
 		}
 	};
@@ -28132,8 +28094,7 @@
 		track: "src",
 		video: ["src", "poster"]
 	};
-	//#endregion
-	//#region ../../node_modules/vscode-html-languageservice/lib/esm/htmlLanguageService.js
+	// ../../node_modules/vscode-html-languageservice/lib/esm/htmlLanguageService.js
 	var defaultLanguageServiceOptions = {};
 	function getLanguageService(options = defaultLanguageServiceOptions) {
 		const dataManager = new HTMLDataManager(options);
@@ -28166,16 +28127,14 @@
 			findLinkedEditingRanges
 		};
 	}
-	//#endregion
-	//#region src/ace/range-singleton.ts
+	// src/ace/range-singleton.ts
 	var AceRange = class AceRange {
 		static getConstructor(editor) {
 			if (!AceRange._instance && editor) AceRange._instance = editor.getSelectionRange().constructor;
 			return AceRange._instance;
 		}
 	};
-	//#endregion
-	//#region src/type-converters/common-converters.ts
+	// src/type-converters/common-converters.ts
 	var CommonConverter;
 	(function(_CommonConverter) {
 		function normalizeRanges(completions) {
@@ -28223,8 +28182,7 @@
 		}
 		_CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 	})(CommonConverter || (CommonConverter = {}));
-	//#endregion
-	//#region src/services/html/html-converters.ts
+	// src/services/html/html-converters.ts
 	function toDiagnostics(diagnostics, filterErrors) {
 		return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el) => {
 			let severity;
@@ -28247,8 +28205,7 @@
 			};
 		});
 	}
-	//#endregion
-	//#region src/services/html/html-service.ts
+	// src/services/html/html-service.ts
 	var HtmlService = class extends BaseService {
 		constructor(mode) {
 			super(mode);
@@ -28331,6 +28288,5 @@
 			return this.$service.findDocumentHighlights(fullDocument, position, htmlDocument);
 		}
 	};
-	//#endregion
 	exports.HtmlService = HtmlService;
 });
